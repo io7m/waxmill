@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -202,12 +203,7 @@ public final class WXMCommandVMDefineTest
     );
 
     final var machineSet =
-      new WXMVirtualMachineParsers()
-        .parse(
-          Files.list(this.vmDirectory)
-            .findFirst()
-            .orElseThrow()
-        );
+      parseFirst(this.vmDirectory);
 
     assertEquals(1, machineSet.machines().size());
   }

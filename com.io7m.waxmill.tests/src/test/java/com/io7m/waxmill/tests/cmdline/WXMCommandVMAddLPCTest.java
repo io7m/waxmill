@@ -24,7 +24,6 @@ import com.io7m.waxmill.client.api.WXMTTYBackendStdio;
 import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
-import com.io7m.waxmill.xml.WXMVirtualMachineParsers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +35,7 @@ import java.util.UUID;
 import static com.io7m.waxmill.client.api.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 import static com.io7m.waxmill.client.api.WXMTTYBackends.NMDMSide.NMDM_HOST;
 import static com.io7m.waxmill.client.api.WXMTTYBackends.nmdmPath;
+import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -241,12 +241,7 @@ public final class WXMCommandVMAddLPCTest
     );
 
     final var machineSet =
-      new WXMVirtualMachineParsers()
-        .parse(
-          Files.list(this.vmDirectory)
-            .findFirst()
-            .orElseThrow()
-        );
+      parseFirst(this.vmDirectory);
 
     final var machine =
       machineSet.machines()
@@ -308,12 +303,7 @@ public final class WXMCommandVMAddLPCTest
     );
 
     final var machineSet =
-      new WXMVirtualMachineParsers()
-        .parse(
-          Files.list(this.vmDirectory)
-            .findFirst()
-            .orElseThrow()
-        );
+      parseFirst(this.vmDirectory);
 
     final var machine =
       machineSet.machines()
@@ -373,12 +363,7 @@ public final class WXMCommandVMAddLPCTest
     );
 
     final var machineSet =
-      new WXMVirtualMachineParsers()
-        .parse(
-          Files.list(this.vmDirectory)
-            .findFirst()
-            .orElseThrow()
-        );
+      parseFirst(this.vmDirectory);
 
     final var machine =
       machineSet.machines()
