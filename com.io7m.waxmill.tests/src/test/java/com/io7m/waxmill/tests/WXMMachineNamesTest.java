@@ -26,29 +26,6 @@ import java.util.stream.Stream;
 
 public final class WXMMachineNamesTest
 {
-  @TestFactory
-  public Stream<DynamicTest> testNamesValid()
-  {
-    return Stream.of(
-      "a",
-      "0",
-      "-",
-      ".",
-      "com.io7m.waxmill.tests.com.io7m.waxmill.tests.com.io7m.waxmill.t"
-    ).map(WXMMachineNamesTest::makeNameValid);
-  }
-
-  @TestFactory
-  public Stream<DynamicTest> testNamesInvalid()
-  {
-    return Stream.of(
-      "",
-      "@",
-      "♯",
-      "com.io7m.waxmill.tests.com.io7m.waxmill.tests.com.io7m.waxmill.te"
-    ).map(WXMMachineNamesTest::makeNameInvalid);
-  }
-
   private static DynamicTest makeNameValid(
     final String s)
   {
@@ -75,5 +52,28 @@ public final class WXMMachineNamesTest
           IllegalArgumentException.class, () -> WXMMachineName.of(s));
       }
     );
+  }
+
+  @TestFactory
+  public Stream<DynamicTest> testNamesValid()
+  {
+    return Stream.of(
+      "a",
+      "0",
+      "-",
+      ".",
+      "com.io7m.waxmill.tests.com.io7m.waxmill.tests.com.io7m.waxmill.t"
+    ).map(WXMMachineNamesTest::makeNameValid);
+  }
+
+  @TestFactory
+  public Stream<DynamicTest> testNamesInvalid()
+  {
+    return Stream.of(
+      "",
+      "@",
+      "♯",
+      "com.io7m.waxmill.tests.com.io7m.waxmill.tests.com.io7m.waxmill.te"
+    ).map(WXMMachineNamesTest::makeNameInvalid);
   }
 }

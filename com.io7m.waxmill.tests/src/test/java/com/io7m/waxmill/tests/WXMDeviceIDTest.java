@@ -29,7 +29,9 @@ public final class WXMDeviceIDTest
   {
     for (int id = VALID_DEVICE_IDS.lower(); id <= VALID_DEVICE_IDS.upper(); ++id) {
       WXMDeviceID.of(id);
-      Assertions.assertEquals(0, WXMDeviceID.of(id).compareTo(WXMDeviceID.of(id)));
+      Assertions.assertEquals(
+        0,
+        WXMDeviceID.of(id).compareTo(WXMDeviceID.of(id)));
     }
   }
 

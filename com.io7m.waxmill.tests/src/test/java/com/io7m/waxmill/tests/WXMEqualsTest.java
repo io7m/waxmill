@@ -16,20 +16,20 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMDeviceVirtioNetwork;
-import com.io7m.waxmill.client.api.WXMStorageBackendFile;
 import com.io7m.waxmill.client.api.WXMCPUTopology;
 import com.io7m.waxmill.client.api.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.client.api.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.client.api.WXMDeviceHostBridge;
 import com.io7m.waxmill.client.api.WXMDeviceID;
 import com.io7m.waxmill.client.api.WXMDeviceLPC;
+import com.io7m.waxmill.client.api.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.client.api.WXMFlags;
 import com.io7m.waxmill.client.api.WXMMACAddress;
 import com.io7m.waxmill.client.api.WXMMachineName;
 import com.io7m.waxmill.client.api.WXMMemory;
 import com.io7m.waxmill.client.api.WXMPinCPU;
 import com.io7m.waxmill.client.api.WXMSectorSizes;
+import com.io7m.waxmill.client.api.WXMStorageBackendFile;
 import com.io7m.waxmill.client.api.WXMTAPDeviceName;
 import com.io7m.waxmill.client.api.WXMTTYBackendFile;
 import com.io7m.waxmill.client.api.WXMTTYBackendStdio;
@@ -50,7 +50,7 @@ import java.util.stream.Stream;
 
 public final class WXMEqualsTest
 {
-  private static List<WXMClassUnderTest> CLASSES =
+  private static final List<WXMClassUnderTest> CLASSES =
     List.of(
       new WXMClassUnderTest(
         WXMParseError.class,
@@ -111,7 +111,14 @@ public final class WXMEqualsTest
         Set.of("comment", "device")),
       new WXMClassUnderTest(
         WXMVirtualMachine.class,
-        Set.of("id", "comment", "name", "flags", "devices", "cpuTopology", "memory")),
+        Set.of(
+          "id",
+          "comment",
+          "name",
+          "flags",
+          "devices",
+          "cpuTopology",
+          "memory")),
       new WXMClassUnderTest(
         WXMVirtualMachineSet.class,
         Set.of("machines")),

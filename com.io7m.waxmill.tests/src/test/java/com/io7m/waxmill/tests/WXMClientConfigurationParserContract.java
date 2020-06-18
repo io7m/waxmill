@@ -56,7 +56,9 @@ public abstract class WXMClientConfigurationParserContract
     final var configOpt = this.parseResource("config0.xml");
     assertTrue(configOpt.isPresent());
     final var config = configOpt.get();
-    assertEquals("/etc/waxmill/vm", config.virtualMachineConfigurationDirectory().toString());
+    assertEquals(
+      "/etc/waxmill/vm",
+      config.virtualMachineConfigurationDirectory().toString());
   }
 
   private Optional<WXMClientConfiguration> parseResource(

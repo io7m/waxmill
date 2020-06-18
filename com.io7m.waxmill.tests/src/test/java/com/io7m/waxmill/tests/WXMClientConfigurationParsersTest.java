@@ -17,10 +17,7 @@
 package com.io7m.waxmill.tests;
 
 import com.io7m.waxmill.parser.api.WXMClientConfigurationParserProviderType;
-import com.io7m.waxmill.parser.api.WXMClientConfigurationParserType;
-import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
 import com.io7m.waxmill.xml.WXMClientConfigurationParsers;
-import com.io7m.waxmill.xml.WXMVirtualMachineParsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

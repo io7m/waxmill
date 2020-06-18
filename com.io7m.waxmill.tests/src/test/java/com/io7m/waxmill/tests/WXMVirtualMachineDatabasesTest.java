@@ -24,11 +24,8 @@ import com.io7m.waxmill.client.api.WXMMemory;
 import com.io7m.waxmill.client.api.WXMVirtualMachine;
 import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.vanilla.WXMVirtualMachineDatabases;
-import org.checkerframework.checker.units.qual.A;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,7 +35,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystemException;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.spi.FileSystemProvider;
@@ -47,9 +43,14 @@ import java.util.UUID;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public final class WXMVirtualMachineDatabasesTest
 {
@@ -75,7 +76,7 @@ public final class WXMVirtualMachineDatabasesTest
         .setCpuTopology(
           WXMCPUTopology.builder()
             .build())
-       .build();
+        .build();
 
     this.filesystem =
       mock(FileSystem.class);
@@ -99,7 +100,10 @@ public final class WXMVirtualMachineDatabasesTest
       .when(this.provider)
       .createDirectory(any(), any());
 
-    when(this.provider.readAttributes(any(), eq(BasicFileAttributes.class), any()))
+    when(this.provider.readAttributes(
+      any(),
+      eq(BasicFileAttributes.class),
+      any()))
       .thenThrow(new IOException("Failed to read attributes!"));
 
     final var configuration =
@@ -109,7 +113,9 @@ public final class WXMVirtualMachineDatabasesTest
 
     final var databases = new WXMVirtualMachineDatabases();
 
-    final var ex = assertThrows(WXMException.class, () -> databases.open(configuration));
+    final var ex = assertThrows(
+      WXMException.class,
+      () -> databases.open(configuration));
     final var cause = ex.getCause();
     assertEquals(FileAlreadyExistsException.class, cause.getClass());
     assertEquals("FAILURE!", cause.getMessage());
