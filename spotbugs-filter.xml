@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FindBugsFilter xmlns="https://github.com/spotbugs/filter/3.0.0"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+  <Match>
+    <!-- Generated types. -->
+    <Class name="~com\.io7m\.waxmill\..+\$InitShim"/>
+  </Match>
+
+  <Match>
+    <!-- Generated types. -->
+    <Class name="~com\.io7m\.waxmill\..+\$Builder"/>
+  </Match>
+
+  <Match>
+    <And>
+      <Or>
+        <Class name="~com\.io7m\.waxmill\.xml\.vm\.v1\..+"/>
+        <Class name="~com\.io7m\.waxmill\.xml\.config\.v1\..+"/>
+      </Or>
+      <Or>
+        <Bug pattern="IMC_IMMATURE_CLASS_NO_TOSTRING"/>
+        <Bug pattern="ITC_INHERITANCE_TYPE_CHECKING"/>
+      </Or>
+    </And>
+  </Match>
+
+  <Match>
+    <Or>
+      <!-- Generated types. -->
+      <Class name="com.io7m.waxmill.client.api.WXMApplicationVersion"/>
+      <Class name="com.io7m.waxmill.client.api.WXMCPUTopology"/>
+      <Class name="com.io7m.waxmill.client.api.WXMClientConfiguration"/>
+      <Class name="com.io7m.waxmill.client.api.WXMDeviceAHCIDisk"/>
+      <Class name="com.io7m.waxmill.client.api.WXMDeviceAHCIOpticalDisk"/>
+      <Class name="com.io7m.waxmill.client.api.WXMDeviceHostBridge"/>
+      <Class name="com.io7m.waxmill.client.api.WXMDeviceID"/>
+      <Class name="com.io7m.waxmill.client.api.WXMDeviceLPC"/>
+      <Class name="com.io7m.waxmill.client.api.WXMDeviceVirtioNetwork"/>
+      <Class name="com.io7m.waxmill.client.api.WXMFlags"/>
+      <Class name="com.io7m.waxmill.client.api.WXMMACAddress"/>
+      <Class name="com.io7m.waxmill.client.api.WXMMachineName"/>
+      <Class name="com.io7m.waxmill.client.api.WXMMemory"/>
+      <Class name="com.io7m.waxmill.client.api.WXMPinCPU"/>
+      <Class name="com.io7m.waxmill.client.api.WXMSectorSizes"/>
+      <Class name="com.io7m.waxmill.client.api.WXMStorageBackendFile"/>
+      <Class name="com.io7m.waxmill.client.api.WXMTAPDeviceName"/>
+      <Class name="com.io7m.waxmill.client.api.WXMTTYBackendFile"/>
+      <Class name="com.io7m.waxmill.client.api.WXMTTYBackendStdio"/>
+      <Class name="com.io7m.waxmill.client.api.WXMTap"/>
+      <Class name="com.io7m.waxmill.client.api.WXMVMNet"/>
+      <Class name="com.io7m.waxmill.client.api.WXMVMNetDeviceName"/>
+      <Class name="com.io7m.waxmill.client.api.WXMVirtualMachine"/>
+      <Class name="com.io7m.waxmill.client.api.WXMVirtualMachineSet"/>
+      <Class name="com.io7m.waxmill.parser.api.WXMParseError"/>
+      <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Comment"/>
+      <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Flag"/>
+      <Class name="com.io7m.waxmill.xml.vm.v1.WXM1OpenOptions"/>
+      <Class name="com.io7m.waxmill.xml.vm.v1.WXM1PinCPUs"/>
+    </Or>
+  </Match>
+
+  <Match>
+    <Or>
+      <Bug pattern="OPM_OVERLY_PERMISSIVE_METHOD"/>
+      <Bug pattern="OCP_OVERLY_CONCRETE_PARAMETER"/>
+    </Or>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Anyone serializing exceptions is asking for trouble anyway. -->
+      <Class name="com.io7m.waxmill.parser.api.WXMParseException"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- jxe removes the XXE -->
+      <Or>
+        <Class name="com.io7m.waxmill.xml.vm.v1.WXMVirtualMachineParser"/>
+        <Class name="com.io7m.waxmill.xml.config.v1.WXMClientConfigurationParser"/>
+      </Or>
+      <Or>
+        <Bug pattern="XXE_XMLREADER"/>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CHECKED"/>
+      </Or>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <Class name="com.io7m.waxmill.cmdline.Main" />
+      <Or>
+        <Bug pattern="UVA_USE_VAR_ARGS"/>
+      </Or>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- The purpose of the root command is to configure logging. -->
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMCommandRoot"/>
+      <Bug pattern="LO_SUSPECT_LOG_CLASS"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <Class name="com.io7m.waxmill.client.api.WXMApplicationVersions"/>
+      <Method name="ofProperties"/>
+      <Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <Class name="com.io7m.waxmill.parser.api.WXMParserProviderType"/>
+      <Method name="parse"/>
+      <Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <Class name="com.io7m.waxmill.client.api.WXMStorageBackends"/>
+      <Method name="zfsVolumePath"/>
+      <Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Deriving a path from user input is the point of the method. -->
+      <Class name="com.io7m.waxmill.client.api.WXMTTYBackends"/>
+      <Method name="nmdmPath"/>
+      <Bug pattern="PATH_TRAVERSAL_IN"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Deriving a path from user input is the point of the method. -->
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMStorageBackendConverter"/>
+      <Method name="convert"/>
+      <Bug pattern="PATH_TRAVERSAL_IN"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Indexing is preceded by a check. -->
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMTTYBackendConverter"/>
+      <Method name="convertFile"/>
+      <Bug pattern="CLI_CONSTANT_LIST_INDEX"/>
+    </And>
+  </Match>
+
+  <Match>
+    <Or>
+      <!-- Issues we just don't care about. -->
+      <Bug pattern="CRLF_INJECTION_LOGS"/>
+      <Bug pattern="DRE_DECLARED_RUNTIME_EXCEPTION"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+    </Or>
+  </Match>
+
+  <Match>
+    <!-- That's not XML. -->
+    <And>
+      <Or>
+        <Class name="com.io7m.waxmill.cmdline.internal.WXMVirtioNetworkBackendConverter"/>
+        <Class name="com.io7m.waxmill.cmdline.internal.WXMTTYBackendConverter"/>
+      </Or>
+      <Bug pattern="CBX_CUSTOM_BUILT_XML"/>
+    </And>
+  </Match>
+
+  <Match>
+    <!-- I'm not convinced this is a real issue. -->
+    <Class name="com.io7m.waxmill.serializer.api.WXMSerializerProviderType"/>
+    <Method name="serialize"/>
+    <Bug pattern="AFBR_ABNORMAL_FINALLY_BLOCK_RETURN"/>
+  </Match>
+
+  <Match>
+    <Class name="com.io7m.waxmill.cmdline.internal.WXMEnvironment"/>
+    <Method name="configurationFile"/>
+    <Bug pattern="AI_ANNOTATION_ISSUES_NEEDS_NULLABLE"/>
+  </Match>
+
+</FindBugsFilter>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<VirtualMachines xmlns="urn:com.io7m.waxmill.vm:1:0">
+  <VirtualMachine id="1a438a53-2fcd-498f-8cc2-0ff0456e3dc4"
+                  name="example0">
+
+    <Comment>An example virtual machine.</Comment>
+
+    <CPUTopology sockets="1"
+                 threads="1"
+                 cores="4">
+      <Comment>
+        A CPU topology simulating a quad core CPU. The first two CPUs are pinned to the first two CPUs on the host.
+      </Comment>
+      <PinCPUs>
+        <PinCPU host="0"
+                guest="0"/>
+        <PinCPU host="1"
+                guest="1"/>
+      </PinCPUs>
+    </CPUTopology>
+
+    <Memory gigabytes="0"
+            megabytes="512">
+      <Comment>512mb of memory.</Comment>
+    </Memory>
+
+    <Devices>
+      <HostBridge id="0"
+                  vendor="AMD">
+        <Comment>An AMD-branded host bridge.</Comment>
+      </HostBridge>
+
+      <VirtioNetworkDevice id="1">
+        <Comment>A TAP-based network device.</Comment>
+        <TAPDevice name="tap23"
+                   address="d7:94:b5:60:0d:ac">
+          <Comment>A TAP device.</Comment>
+        </TAPDevice>
+      </VirtioNetworkDevice>
+
+      <VirtioNetworkDevice id="2">
+        <Comment>A VMNet-based network device.</Comment>
+        <VMNetDevice name="vmnet23"
+                     address="d7:92:b5:60:0d:ac">
+          <Comment>A VMNet device.</Comment>
+        </VMNetDevice>
+      </VirtioNetworkDevice>
+
+      <AHCIDiskDevice id="3">
+        <Comment>A disk device.</Comment>
+        <StorageBackendFile path="/path/to/storage">
+          <Comment>File-based storage.</Comment>
+          <OpenOptions>
+            <OpenOption value="NO_CACHE"/>
+          </OpenOptions>
+          <SectorSizes logical="4096"
+                       physical="4096"/>
+        </StorageBackendFile>
+      </AHCIDiskDevice>
+
+      <AHCIOpticalDiskDevice id="4">
+        <Comment>An optical disk device.</Comment>
+        <StorageBackendFile path="/path/to/cd">
+          <Comment>File-based storage.</Comment>
+          <OpenOptions>
+            <OpenOption value="READ_ONLY"/>
+          </OpenOptions>
+        </StorageBackendFile>
+      </AHCIOpticalDiskDevice>
+
+      <LPCDevice id="5">
+        <Comment>A TTY based on a filesystem socket.</Comment>
+        <TTYBackendNMDM device="com2"/>
+        <TTYBackendFile device="com1"
+                        path="/dev/nmdm_1a438a53-2fcd-498f-8cc2-0ff0456e3dc4_B"/>
+        <TTYBackendStdio device="com0"/>
+      </LPCDevice>
+    </Devices>
+
+    <Flags>
+      <Flag name="DisableMPTableGeneration"
+            enabled="false"/>
+      <Flag name="ForceVirtualIOPCIToUseMSI"
+            enabled="false"/>
+      <Flag name="GenerateACPITables"
+            enabled="true"/>
+      <Flag name="GuestAPICIsX2APIC"
+            enabled="false"/>
+      <Flag name="IncludeGuestMemoryInCoreFiles"
+            enabled="false"/>
+      <Flag name="RealTimeClockIsUTC"
+            enabled="true"/>
+      <Flag name="WireGuestMemory"
+            enabled="false"/>
+      <Flag name="YieldCPUOnHLT"
+            enabled="true"/>
+    </Flags>
+
+  </VirtualMachine>
+</VirtualMachines>

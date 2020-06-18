@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:wxm="urn:com.io7m.waxmill.vm:1:0"
+            targetNamespace="urn:com.io7m.waxmill.vm:1:0">
+
+  <xsd:simpleType name="UuidType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A UUID value.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="MACAddressType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        An ethernet MAC address.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="MachineNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A virtual machine name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-z_0-9.\-]{1,64}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="TAPDeviceNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A TAP device name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="tap[a-z_0-9]{1,13}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="VMNetDeviceNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A VMNet device name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="vmnet[a-z_0-9]{1,11}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DeviceIdType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A device ID.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:integer">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="31"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Comment">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+  </xsd:element>
+
+  <xsd:element name="VirtualMachine">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+        <xsd:element ref="wxm:CPUTopology"/>
+        <xsd:element ref="wxm:Memory"/>
+        <xsd:element ref="wxm:Devices"/>
+        <xsd:element ref="wxm:Flags"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="id"
+                     type="wxm:UuidType"
+                     use="required"/>
+      <xsd:attribute name="name"
+                     type="wxm:MachineNameType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="VirtualMachines">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxm:VirtualMachine"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="VirtualMachinesIDUnique">
+      <xsd:selector xpath="wxm:VirtualMachine"/>
+      <xsd:field xpath="@id"/>
+    </xsd:key>
+    <xsd:key name="VirtualMachinesNamesUnique">
+      <xsd:selector xpath="wxm:VirtualMachine"/>
+      <xsd:field xpath="@name"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:simpleType name="FlagType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="DisableMPTableGeneration"/>
+      <xsd:enumeration value="ForceVirtualIOPCIToUseMSI"/>
+      <xsd:enumeration value="GenerateACPITables"/>
+      <xsd:enumeration value="GuestAPICIsX2APIC"/>
+      <xsd:enumeration value="IncludeGuestMemoryInCoreFiles"/>
+      <xsd:enumeration value="RealTimeClockIsUTC"/>
+      <xsd:enumeration value="WireGuestMemory"/>
+      <xsd:enumeration value="YieldCPUOnHLT"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Flag">
+    <xsd:complexType>
+      <xsd:attribute name="name"
+                     use="required"
+                     type="wxm:FlagType"/>
+      <xsd:attribute name="enabled"
+                     use="required"
+                     type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Flags">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:Flag"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="FlagNamesUnique">
+      <xsd:selector xpath="wxm:Flag"/>
+      <xsd:field xpath="@name"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:complexType name="DeviceType">
+    <xsd:sequence minOccurs="0"
+                  maxOccurs="1">
+      <xsd:element ref="wxm:Comment"/>
+    </xsd:sequence>
+    <xsd:attribute name="id"
+                   type="wxm:DeviceIdType"
+                   use="required"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="HostBridgeVendor">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="UNSPECIFIED"/>
+      <xsd:enumeration value="AMD"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="HostBridge">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="vendor"
+                         use="optional"
+                         type="wxm:HostBridgeVendor"
+                         default="UNSPECIFIED"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="TAPDevice">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="name"
+                     type="wxm:TAPDeviceNameType"
+                     use="required"/>
+      <xsd:attribute name="address"
+                     type="wxm:MACAddressType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="VMNetDevice">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="name"
+                     type="wxm:VMNetDeviceNameType"
+                     use="required"/>
+      <xsd:attribute name="address"
+                     type="wxm:MACAddressType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="VirtioNetworkDevice">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:TAPDevice"/>
+            <xsd:element ref="wxm:VMNetDevice"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="VirtioBlockStorageDevice">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:StorageBackendFile"/>
+            <xsd:element ref="wxm:StorageBackendZFSVolume"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="StorageOpenOptionValue">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="NO_CACHE"/>
+      <xsd:enumeration value="SYNCHRONOUS"/>
+      <xsd:enumeration value="READ_ONLY"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="OpenOptions">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:OpenOption"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="OpenOption">
+    <xsd:complexType>
+      <xsd:attribute name="value"
+                     type="wxm:StorageOpenOptionValue"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="SectorSizes">
+    <xsd:complexType>
+      <xsd:attribute name="logical"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+      <xsd:attribute name="physical"
+                     type="xsd:nonNegativeInteger"
+                     use="optional"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="StorageBackendZFSVolume">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="StorageBackendFile">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:OpenOptions"/>
+        </xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:SectorSizes"/>
+        </xsd:sequence>
+      </xsd:sequence>
+      <xsd:attribute name="path"
+                     use="required"
+                     type="xsd:anyURI"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="AHCIDiskDevice">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:StorageBackendFile"/>
+            <xsd:element ref="wxm:StorageBackendZFSVolume"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="AHCIOpticalDiskDevice">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:StorageBackendFile"/>
+            <xsd:element ref="wxm:StorageBackendZFSVolume"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="TTYBackendType">
+    <xsd:attribute name="device"
+                   use="required"
+                   type="xsd:string"/>
+  </xsd:complexType>
+
+  <xsd:element name="TTYBackendFile">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:TTYBackendType">
+          <xsd:attribute name="path"
+                         type="xsd:anyURI"
+                         use="required"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="TTYBackendStdio">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:TTYBackendType"/>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="TTYBackendNMDM">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:TTYBackendType"/>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LPCDevice">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice minOccurs="1"
+                      maxOccurs="unbounded">
+            <xsd:element ref="wxm:TTYBackendFile"/>
+            <xsd:element ref="wxm:TTYBackendNMDM"/>
+            <xsd:element ref="wxm:TTYBackendStdio"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:key name="TTYDevicePathsUnique">
+      <xsd:selector xpath="wxm:TTYFileDevice"/>
+      <xsd:field xpath="@path"/>
+    </xsd:key>
+    <xsd:key name="TTYDeviceAssignmentsUnique">
+      <xsd:selector xpath="wxm:TTYFileDevice|wxm:TTYStdio|wxm:TTYNMDM"/>
+      <xsd:field xpath="@device"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="Devices">
+    <xsd:complexType>
+      <xsd:choice minOccurs="0"
+                  maxOccurs="unbounded">
+        <xsd:element ref="wxm:AHCIDiskDevice"/>
+        <xsd:element ref="wxm:AHCIOpticalDiskDevice"/>
+        <xsd:element ref="wxm:HostBridge"/>
+        <xsd:element ref="wxm:LPCDevice"/>
+        <xsd:element ref="wxm:VirtioBlockStorageDevice"/>
+        <xsd:element ref="wxm:VirtioNetworkDevice"/>
+      </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:key name="DeviceIDKey">
+      <xsd:selector xpath="*"/>
+      <xsd:field xpath="@id"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="PinCPU">
+    <xsd:complexType>
+      <xsd:attribute name="host"
+                     use="required"
+                     type="xsd:nonNegativeInteger"/>
+      <xsd:attribute name="guest"
+                     use="required"
+                     type="xsd:nonNegativeInteger"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="PinCPUs">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:PinCPU"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="CPUTopology">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:PinCPUs"/>
+        </xsd:sequence>
+      </xsd:sequence>
+
+      <xsd:attribute name="sockets"
+                     use="required"
+                     type="xsd:positiveInteger"/>
+      <xsd:attribute name="threads"
+                     use="required"
+                     type="xsd:positiveInteger"/>
+      <xsd:attribute name="cores"
+                     use="required"
+                     type="xsd:positiveInteger"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Memory">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="gigabytes"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+      <xsd:attribute name="megabytes"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:wxmc="urn:com.io7m.waxmill.config:1:0"
+            targetNamespace="urn:com.io7m.waxmill.config:1:0">
+
+  <xsd:simpleType name="PathType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="VirtualMachineConfigurationsDirectory"/>
+      <xsd:enumeration value="ZFSVirtualMachinesDirectory"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Path">
+    <xsd:complexType>
+      <xsd:attribute name="type"
+                     type="wxmc:PathType"
+                     use="required"/>
+      <xsd:attribute name="value"
+                     type="xsd:anyURI"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Paths">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="wxmc:Path"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="PathsUnique">
+      <xsd:selector xpath="wxmc:Path"/>
+      <xsd:field xpath="@type"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="Configuration">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxmc:Paths"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

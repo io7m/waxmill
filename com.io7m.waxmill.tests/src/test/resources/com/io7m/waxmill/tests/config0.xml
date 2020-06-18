@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration xmlns="urn:com.io7m.waxmill.config:1:0">
+  <Paths>
+    <Path type="VirtualMachineConfigurationsDirectory"
+          value="/etc/waxmill/vm"/>
+    <Path type="ZFSVirtualMachinesDirectory"
+          value="/storage/vm"/>
+  </Paths>
+</Configuration>
