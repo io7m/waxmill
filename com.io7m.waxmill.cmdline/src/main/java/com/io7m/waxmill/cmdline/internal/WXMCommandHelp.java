@@ -16,36 +16,49 @@
 
 package com.io7m.waxmill.cmdline.internal;
 
+import com.beust.jcommander.DefaultUsageFormatter;
+import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
-import com.io7m.waxmill.client.api.WXMApplicationVersion;
+
+import java.util.Objects;
 
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 
-@Parameters(commandDescription = "Show the application version.")
-public final class WXMCommandVersion extends WXMCommandRoot
+@Parameters(commandDescription = "Show a detailed help message describing all available commands.")
+public final class WXMCommandHelp extends WXMCommandRoot
 {
-  public WXMCommandVersion()
-  {
+  private final JCommander commander;
 
+  public WXMCommandHelp(
+    final JCommander inCommander)
+  {
+    this.commander = Objects.requireNonNull(inCommander, "commander");
   }
 
   @Override
-  public WXMCommandType.Status execute()
+  public Status execute()
     throws Exception
   {
     if (super.execute() == FAILURE) {
       return FAILURE;
     }
 
-    final WXMApplicationVersion version =
-      WXMServices.findApplicationVersion();
+    final var console = new WXMStringBuilderConsole();
+    this.commander.setUsageFormatter(new DefaultUsageFormatter(this.commander));
+    this.commander.setConsole(console);
+    this.commander.usage();
 
-    System.out.printf(
-      "%s %s%n",
-      version.applicationName(),
-      version.applicationVersion()
-    );
+    System.err.println(console.builder());
     return SUCCESS;
+  }
+
+  @Override
+  public String toString()
+  {
+    return String.format(
+      "[WXMCommandHelp 0x%s]",
+      Long.toUnsignedString(System.identityHashCode(this), 16)
+    );
   }
 }

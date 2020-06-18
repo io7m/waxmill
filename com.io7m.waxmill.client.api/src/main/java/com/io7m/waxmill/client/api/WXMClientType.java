@@ -16,6 +16,7 @@
 
 package com.io7m.waxmill.client.api;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -54,15 +55,17 @@ public interface WXMClientType extends AutoCloseable
     throws WXMException;
 
   /**
-   * Define a new virtual machine.
+   * Find a virtual machine with the given ID.
    *
-   * @param machine The virtual machine
+   * @param id The ID of the machine
+   *
+   * @return A virtual machine, if one exists
    *
    * @throws WXMException On errors
    */
 
-  void vmDefine(
-    WXMVirtualMachine machine)
+  Optional<WXMVirtualMachine> vmFindOptional(
+    UUID id)
     throws WXMException;
 
   /**
@@ -82,4 +85,31 @@ public interface WXMClientType extends AutoCloseable
    */
 
   WXMClientConfiguration configuration();
+
+  /**
+   * Define a set of new virtual machines.
+   *
+   * @param machines The virtual machine
+   *
+   * @throws WXMException On errors
+   */
+
+  void vmDefineAll(
+    WXMVirtualMachineSet machines)
+    throws WXMException;
+
+  /**
+   * Define a new virtual machine.
+   *
+   * @param machine The virtual machine
+   *
+   * @throws WXMException On errors
+   */
+
+  default void vmDefine(
+    final WXMVirtualMachine machine)
+    throws WXMException
+  {
+    this.vmDefineAll(WXMVirtualMachineSets.one(machine));
+  }
 }

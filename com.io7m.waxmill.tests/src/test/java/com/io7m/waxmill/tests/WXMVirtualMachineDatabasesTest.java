@@ -18,50 +18,55 @@ package com.io7m.waxmill.tests;
 
 import com.io7m.waxmill.client.api.WXMCPUTopology;
 import com.io7m.waxmill.client.api.WXMException;
+import com.io7m.waxmill.client.api.WXMExceptionDuplicate;
 import com.io7m.waxmill.client.api.WXMFlags;
 import com.io7m.waxmill.client.api.WXMMachineName;
 import com.io7m.waxmill.client.api.WXMMemory;
 import com.io7m.waxmill.client.api.WXMVirtualMachine;
+import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
 import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
+import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.database.vanilla.WXMVirtualMachineDatabases;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
-import java.net.URI;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.spi.FileSystemProvider;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
-import static java.nio.file.StandardOpenOption.WRITE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public final class WXMVirtualMachineDatabasesTest
 {
-  private WXMVirtualMachine virtualMachine;
   private FileSystem filesystem;
   private FileSystemProvider provider;
+  private Path directory;
+  private WXMVirtualMachine virtualMachine0;
+  private WXMVirtualMachineDatabaseType database;
+  private Map<UUID, WXMVirtualMachine> virtualMachineOthers;
 
   @BeforeEach
   public void setup()
+    throws Exception
   {
-    this.virtualMachine =
+    this.directory =
+      WXMTestDirectories.createTempDirectory();
+    this.database =
+      new WXMVirtualMachineDatabases()
+        .open(WXMDatabaseConfiguration.builder()
+                .setDatabaseDirectory(this.directory)
+                .build());
+
+    this.virtualMachine0 =
       WXMVirtualMachine.builder()
         .setId(UUID.randomUUID())
         .setName(WXMMachineName.of("test"))
@@ -78,110 +83,89 @@ public final class WXMVirtualMachineDatabasesTest
             .build())
         .build();
 
-    this.filesystem =
-      mock(FileSystem.class);
-    this.provider =
-      mock(FileSystemProvider.class);
-    when(this.filesystem.provider())
-      .thenReturn(this.provider);
+    this.virtualMachineOthers =
+      Stream.of(
+        UUID.randomUUID(),
+        UUID.randomUUID(),
+        UUID.randomUUID()
+      ).map(uuid -> {
+        return WXMVirtualMachine.builder()
+          .setId(uuid)
+          .setName(WXMMachineName.of(uuid.toString()))
+          .setFlags(
+            WXMFlags.builder()
+              .build())
+          .setMemory(
+            WXMMemory.builder()
+              .setGigabytes(BigInteger.ONE)
+              .setMegabytes(BigInteger.TEN)
+              .build())
+          .setCpuTopology(
+            WXMCPUTopology.builder()
+              .build())
+          .build();
+      }).collect(Collectors.toMap(
+        WXMVirtualMachine::id,
+        Function.identity()
+      ));
   }
 
   @Test
-  public void faultyFilesystemCannotOpen()
-    throws IOException
+  public void defineExists()
+    throws WXMException
   {
-    final var path = mock(Path.class);
-    when(path.getParent()).thenReturn(null);
-    when(path.toAbsolutePath()).thenReturn(path);
-    when(path.resolve(anyString())).thenReturn(path);
-    when(path.getFileSystem()).thenReturn(this.filesystem);
+    this.database.vmDefine(this.virtualMachine0);
 
-    doThrow(new FileAlreadyExistsException("FAILURE!"))
-      .when(this.provider)
-      .createDirectory(any(), any());
-
-    when(this.provider.readAttributes(
-      any(),
-      eq(BasicFileAttributes.class),
-      any()))
-      .thenThrow(new IOException("Failed to read attributes!"));
-
-    final var configuration =
-      WXMDatabaseConfiguration.builder()
-        .setDatabaseDirectory(path)
-        .build();
-
-    final var databases = new WXMVirtualMachineDatabases();
-
-    final var ex = assertThrows(
-      WXMException.class,
-      () -> databases.open(configuration));
-    final var cause = ex.getCause();
-    assertEquals(FileAlreadyExistsException.class, cause.getClass());
-    assertEquals("FAILURE!", cause.getMessage());
+    assertEquals(
+      this.virtualMachine0,
+      this.database.vmGet(this.virtualMachine0.id())
+        .orElseThrow()
+        .withConfigurationFile(Optional.empty())
+    );
   }
 
   @Test
-  public void faultyFilesystemCannotWrite()
-    throws IOException, WXMException
+  public void defineAllExists()
+    throws WXMException
   {
-    final var machineFile = mock(Path.class);
-    when(machineFile.getFileSystem()).thenReturn(this.filesystem);
-    when(machineFile.toString()).thenReturn("MACHINE FILE");
-    when(machineFile.toUri()).thenReturn(URI.create("urn:x"));
+    this.database.vmDefineAll(
+      WXMVirtualMachineSet.builder()
+        .setMachines(new TreeMap<>(this.virtualMachineOthers))
+        .build()
+    );
 
-    final var machineFileTmp = mock(Path.class);
-    when(machineFileTmp.getFileSystem()).thenReturn(this.filesystem);
-    when(machineFileTmp.toString()).thenReturn("MACHINE FILE TEMP");
-    when(machineFileTmp.toUri()).thenReturn(URI.create("urn:x"));
+    for (final var machine : this.virtualMachineOthers.values()) {
+      assertEquals(
+        machine,
+        this.database.vmGet(machine.id())
+          .orElseThrow()
+          .withConfigurationFile(Optional.empty())
+      );
+    }
+  }
 
-    final var lockFile = mock(Path.class);
-    when(lockFile.toString()).thenReturn("LOCK FILE");
-    when(lockFile.getFileSystem()).thenReturn(this.filesystem);
+  @Test
+  public void defineDuplicate()
+    throws WXMException
+  {
+    this.database.vmDefine(this.virtualMachine0);
 
-    final var path = mock(Path.class);
-    when(path.getFileSystem()).thenReturn(this.filesystem);
-
-    when(path.resolve("lock"))
-      .thenReturn(lockFile);
-    when(path.resolve(eq(this.virtualMachine.id() + ".wvmx")))
-      .thenReturn(machineFile);
-    when(path.resolve(eq(this.virtualMachine.id() + ".wvmx.tmp")))
-      .thenReturn(machineFileTmp);
-
-    final var lockStream = mock(OutputStream.class);
-    final var lockChannel = mock(FileChannel.class);
-    final var lockLock = mock(FileLock.class);
-
-    when(lockChannel.lock())
-      .thenReturn(lockLock);
-
-    doThrow(new IOException("Unreadable!"))
-      .when(this.provider)
-      .checkAccess(eq(machineFile), any());
-
-    when(this.provider.newOutputStream(eq(lockFile), eq(CREATE), eq(WRITE)))
-      .thenReturn(lockStream);
-    when(this.provider.newOutputStream(eq(lockFile), eq(CREATE)))
-      .thenReturn(lockStream);
-    when(this.provider.newFileChannel(eq(lockFile), any()))
-      .thenReturn(lockChannel);
-    when(this.provider.newOutputStream(eq(machineFileTmp), eq(CREATE_NEW)))
-      .thenThrow(new IOException("Write failure!"));
-
-    final var configuration =
-      WXMDatabaseConfiguration.builder()
-        .setDatabaseDirectory(path)
-        .build();
-
-    final var databases = new WXMVirtualMachineDatabases();
-    final var database = databases.open(configuration);
-
-    final var ex = assertThrows(WXMException.class, () -> {
-      database.vmDefine(this.virtualMachine);
+    assertThrows(WXMExceptionDuplicate.class, () -> {
+      this.database.vmDefine(this.virtualMachine0);
     });
-    final var cause = ex.getCause();
-    assertEquals(IOException.class, cause.getClass());
-    assertEquals("Write failure!", cause.getMessage());
+  }
+
+  @Test
+  public void updateExists()
+    throws WXMException
+  {
+    this.database.vmUpdate(this.virtualMachine0);
+
+    assertEquals(
+      this.virtualMachine0,
+      this.database.vmGet(this.virtualMachine0.id())
+        .orElseThrow()
+        .withConfigurationFile(Optional.empty())
+    );
   }
 }

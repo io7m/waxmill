@@ -42,7 +42,7 @@ import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
 
-@Parameters(commandDescription = "Add a virtio disk to a virtual machine")
+@Parameters(commandDescription = "Add a virtio disk to a virtual machine.")
 public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
 {
   private static final Logger LOG =

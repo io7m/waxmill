@@ -18,7 +18,8 @@ package com.io7m.waxmill.cmdline;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import com.beust.jcommander.internal.Console;
+import com.io7m.waxmill.cmdline.internal.WXMBriefUsageFormatter;
+import com.io7m.waxmill.cmdline.internal.WXMCommandHelp;
 import com.io7m.waxmill.cmdline.internal.WXMCommandRoot;
 import com.io7m.waxmill.cmdline.internal.WXMCommandType;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIDisk;
@@ -26,8 +27,11 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddLPC;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioNetworkDevice;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDefine;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMExport;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMImport;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMList;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVersion;
+import com.io7m.waxmill.cmdline.internal.WXMStringBuilderConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,20 +58,42 @@ public final class Main implements Runnable
       Objects.requireNonNull(inArgs, "Command line arguments");
 
     final WXMCommandRoot r = new WXMCommandRoot();
-
-    this.commands =
-      Map.of(
-        "version", new WXMCommandVersion(),
-        "vm-add-ahci-disk", new WXMCommandVMAddAHCIDisk(),
-        "vm-add-lpc-device", new WXMCommandVMAddLPC(),
-        "vm-add-virtio-disk", new WXMCommandVMAddVirtioDisk(),
-        "vm-add-virtio-network-device", new WXMCommandVMAddVirtioNetworkDevice(),
-        "vm-define", new WXMCommandVMDefine(),
-        "vm-list", new WXMCommandVMList()
-      );
-
     this.commander = new JCommander(r);
     this.commander.setProgramName("waxmill");
+
+    this.commands =
+      Map.ofEntries(
+        Map.entry(
+          "help",
+          new WXMCommandHelp(this.commander)),
+        Map.entry(
+          "version",
+          new WXMCommandVersion()),
+        Map.entry(
+          "vm-add-ahci-disk",
+          new WXMCommandVMAddAHCIDisk()),
+        Map.entry(
+          "vm-add-lpc-device",
+          new WXMCommandVMAddLPC()),
+        Map.entry(
+          "vm-add-virtio-disk",
+          new WXMCommandVMAddVirtioDisk()),
+        Map.entry(
+          "vm-add-virtio-network-device",
+          new WXMCommandVMAddVirtioNetworkDevice()),
+        Map.entry(
+          "vm-define",
+          new WXMCommandVMDefine()),
+        Map.entry(
+          "vm-import",
+          new WXMCommandVMImport()),
+        Map.entry(
+          "vm-export",
+          new WXMCommandVMExport()),
+        Map.entry(
+          "vm-list",
+          new WXMCommandVMList())
+      );
 
     for (final var entry : this.commands.entrySet()) {
       this.commander.addCommand(entry.getKey(), entry.getValue());
@@ -143,10 +169,11 @@ public final class Main implements Runnable
 
       final String cmd = this.commander.getParsedCommand();
       if (cmd == null) {
-        final StringBuilderConsole console = new StringBuilderConsole();
+        final var console = new WXMStringBuilderConsole();
+        this.commander.setUsageFormatter(new WXMBriefUsageFormatter(this.commander));
         this.commander.setConsole(console);
         this.commander.usage();
-        LOG.info("Arguments required.\n{}", console.builder);
+        System.err.println(console.builder());
         this.exitCode = 1;
         return;
       }
@@ -170,34 +197,5 @@ public final class Main implements Runnable
       "[Main 0x%s]",
       Long.toUnsignedString(System.identityHashCode(this), 16)
     );
-  }
-
-  private static final class StringBuilderConsole implements Console
-  {
-    private final StringBuilder builder;
-
-    StringBuilderConsole()
-    {
-      this.builder = new StringBuilder(128);
-    }
-
-    @Override
-    public void print(final String s)
-    {
-      this.builder.append(s);
-    }
-
-    @Override
-    public void println(final String s)
-    {
-      this.builder.append(s);
-      this.builder.append('\n');
-    }
-
-    @Override
-    public char[] readPassword(final boolean b)
-    {
-      return new char[0];
-    }
   }
 }

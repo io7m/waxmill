@@ -34,7 +34,7 @@ import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
 
-@Parameters(commandDescription = "Add a virtio network device to a virtual machine")
+@Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
 public final class WXMCommandVMAddVirtioNetworkDevice extends WXMCommandRoot
 {
   private static final Logger LOG =

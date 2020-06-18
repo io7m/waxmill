@@ -16,36 +16,47 @@
 
 package com.io7m.waxmill.cmdline.internal;
 
-import com.beust.jcommander.Parameters;
-import com.io7m.waxmill.client.api.WXMApplicationVersion;
+import com.beust.jcommander.internal.Console;
 
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
-
-@Parameters(commandDescription = "Show the application version.")
-public final class WXMCommandVersion extends WXMCommandRoot
+public final class WXMStringBuilderConsole implements Console
 {
-  public WXMCommandVersion()
-  {
+  private final StringBuilder builder;
 
+  public WXMStringBuilderConsole()
+  {
+    this.builder = new StringBuilder(128);
   }
 
   @Override
-  public WXMCommandType.Status execute()
-    throws Exception
+  public void print(final String s)
   {
-    if (super.execute() == FAILURE) {
-      return FAILURE;
-    }
+    this.builder.append(s);
+  }
 
-    final WXMApplicationVersion version =
-      WXMServices.findApplicationVersion();
+  @Override
+  public void println(final String s)
+  {
+    this.builder.append(s);
+    this.builder.append('\n');
+  }
 
-    System.out.printf(
-      "%s %s%n",
-      version.applicationName(),
-      version.applicationVersion()
+  public StringBuilder builder()
+  {
+    return this.builder;
+  }
+
+  @Override
+  public char[] readPassword(final boolean b)
+  {
+    return new char[0];
+  }
+
+  @Override
+  public String toString()
+  {
+    return String.format(
+      "[WXMStringBuilderConsole 0x%s]",
+      Long.toUnsignedString(System.identityHashCode(this), 16)
     );
-    return SUCCESS;
   }
 }

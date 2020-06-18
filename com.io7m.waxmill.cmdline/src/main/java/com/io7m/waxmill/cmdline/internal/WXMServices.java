@@ -19,6 +19,8 @@ package com.io7m.waxmill.cmdline.internal;
 import com.io7m.waxmill.client.api.WXMApplicationVersion;
 import com.io7m.waxmill.client.api.WXMApplicationVersions;
 import com.io7m.waxmill.client.api.WXMClientProviderType;
+import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
+import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,9 +35,25 @@ final class WXMServices
 
   public static WXMClientProviderType clients()
   {
-    return ServiceLoader.load(WXMClientProviderType.class)
+    return findService(WXMClientProviderType.class);
+  }
+
+  public static WXMVirtualMachineSerializerProviderType vmSerializers()
+  {
+    return findService(WXMVirtualMachineSerializerProviderType.class);
+  }
+
+  public static WXMVirtualMachineParserProviderType vmParsers()
+  {
+    return findService(WXMVirtualMachineParserProviderType.class);
+  }
+
+  private static <T> T findService(
+    final Class<T> service)
+  {
+    return ServiceLoader.load(service)
       .findFirst()
-      .orElseThrow(() -> missingService(WXMClientProviderType.class));
+      .orElseThrow(() -> missingService(service));
   }
 
   private static IllegalStateException missingService(

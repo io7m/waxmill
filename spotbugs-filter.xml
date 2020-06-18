@@ -161,7 +161,8 @@
 
   <Match>
     <Or>
-      <!-- Issues we just don't care about. -->
+      <!-- Issues we either don't care about, or don't believe are issues. -->
+      <Bug pattern="BED_HIERARCHICAL_EXCEPTION_DECLARATION"/>
       <Bug pattern="CRLF_INJECTION_LOGS"/>
       <Bug pattern="DRE_DECLARED_RUNTIME_EXCEPTION"/>
       <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>

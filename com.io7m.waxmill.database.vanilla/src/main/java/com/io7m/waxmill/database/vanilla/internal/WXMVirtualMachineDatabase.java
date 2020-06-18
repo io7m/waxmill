@@ -40,6 +40,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.WRITE;
 
@@ -94,6 +96,12 @@ public final class WXMVirtualMachineDatabase
     }
   }
 
+  private static boolean appearsToBeVirtualMachine(
+    final Path path)
+  {
+    return path.toString().toUpperCase(Locale.ROOT).endsWith(".WVMX");
+  }
+
   private DatabaseWriteLock acquireWriteLock()
     throws WXMException
   {
@@ -125,35 +133,71 @@ public final class WXMVirtualMachineDatabase
   }
 
   @Override
-  public void vmDefine(
-    final WXMVirtualMachine machine)
-    throws WXMException
+  public void vmDefineAll(
+    final WXMVirtualMachineSet machines)
+    throws WXMException, WXMExceptionDuplicate
   {
-    final var machineId =
-      machine.id();
-    final Path base =
-      this.configuration.databaseDirectory();
-    final var file =
-      base.resolve(machineId + ".wvmx");
-    final var fileTmp =
-      base.resolve(machineId + ".wvmx.tmp");
+    Objects.requireNonNull(machines, "machines");
+
+    final Path base = this.configuration.databaseDirectory();
 
     try (var ignored = this.acquireWriteLock()) {
-      final var existing = this.vmGet(machineId);
-      if (existing.isPresent()) {
-        throw new WXMExceptionDuplicate(
-          String.format(
-            "A virtual machine already exists with ID %s", machineId
-          )
-        );
+      final var entries = machines.machines().entrySet();
+      for (final var entry : entries) {
+        final var machineId = entry.getKey();
+        final var existing = this.vmGet(machineId);
+        if (existing.isPresent()) {
+          throw new WXMExceptionDuplicate(
+            String.format(
+              "A virtual machine already exists with ID %s", machineId
+            )
+          );
+        }
       }
+
+      final var exceptions = new WXMExceptions();
+      for (final var entry : entries) {
+        this.serializeChecked(base, exceptions, entry.getValue());
+      }
+
+      exceptions.throwIfRequired();
+    }
+  }
+
+  private void serializeChecked(
+    final Path base,
+    final WXMExceptions exceptions,
+    final WXMVirtualMachine machine)
+  {
+    final var machineId = machine.id();
+    final var file =
+      base.resolve(String.format("%s.wvmx", machineId));
+    final var fileTmp =
+      base.resolve(String.format("%s.wvmx.tmp", machineId));
+    final var fileTmpTmp =
+      base.resolve(String.format("%s.wvmx.tmp.tmp", machineId));
+
+    try {
       this.serializers.serialize(
-        file,
         fileTmp,
+        fileTmpTmp,
         WXMVirtualMachineSets.one(machine)
       );
-    } catch (final IOException e) {
-      throw new WXMException(e);
+      this.parsers.parse(fileTmp);
+      Files.move(fileTmp, file, REPLACE_EXISTING, ATOMIC_MOVE);
+    } catch (final Exception e) {
+      exceptions.add(e);
+
+      try {
+        Files.deleteIfExists(fileTmpTmp);
+      } catch (final IOException ioException) {
+        exceptions.add(ioException);
+      }
+      try {
+        Files.deleteIfExists(fileTmp);
+      } catch (final IOException ioException) {
+        exceptions.add(ioException);
+      }
     }
   }
 
@@ -162,30 +206,14 @@ public final class WXMVirtualMachineDatabase
     final WXMVirtualMachine machine)
     throws WXMException
   {
-    final var machineId =
-      machine.id();
-    final Path base =
-      this.configuration.databaseDirectory();
-    final var file =
-      base.resolve(machineId + ".wvmx");
-    final var fileTmp =
-      base.resolve(machineId + ".wvmx.tmp");
+    Objects.requireNonNull(machine, "machine");
 
+    final Path base = this.configuration.databaseDirectory();
+    final var exceptions = new WXMExceptions();
     try (var ignored = this.acquireWriteLock()) {
-      this.serializers.serialize(
-        file,
-        fileTmp,
-        WXMVirtualMachineSets.one(machine)
-      );
-    } catch (final IOException e) {
-      throw new WXMException(e);
+      this.serializeChecked(base, exceptions, machine);
+      exceptions.throwIfRequired();
     }
-  }
-
-  private static boolean appearsToBeVirtualMachine(
-    final Path path)
-  {
-    return path.toString().toUpperCase(Locale.ROOT).endsWith(".WVMX");
   }
 
   @Override
@@ -220,6 +248,15 @@ public final class WXMVirtualMachineDatabase
   public void close()
   {
 
+  }
+
+  @Override
+  public String toString()
+  {
+    return String.format(
+      "[WXMVirtualMachineDatabase 0x%s]",
+      Long.toUnsignedString(System.identityHashCode(this), 16)
+    );
   }
 
   private static final class DatabaseWriteLock implements AutoCloseable
@@ -286,14 +323,5 @@ public final class WXMVirtualMachineDatabase
           16)
       );
     }
-  }
-
-  @Override
-  public String toString()
-  {
-    return String.format(
-      "[WXMVirtualMachineDatabase 0x%s]",
-      Long.toUnsignedString(System.identityHashCode(this), 16)
-    );
   }
 }

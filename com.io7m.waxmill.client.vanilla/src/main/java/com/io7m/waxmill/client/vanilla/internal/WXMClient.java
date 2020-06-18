@@ -63,11 +63,20 @@ public final class WXMClient implements WXMClientType
   {
     Objects.requireNonNull(id, "id");
 
-    final var existing = this.vmList();
-    return Optional.ofNullable(existing.machines().get(id))
+    return this.database.vmGet(id)
       .orElseThrow(() -> new WXMException(
         String.format("No such virtual machine: %s", id))
       );
+  }
+
+  @Override
+  public Optional<WXMVirtualMachine> vmFindOptional(
+    final UUID id)
+    throws WXMException
+  {
+    return this.database.vmGet(
+      Objects.requireNonNull(id, "id")
+    );
   }
 
   @Override
@@ -92,6 +101,15 @@ public final class WXMClient implements WXMClientType
   public WXMClientConfiguration configuration()
   {
     return this.configuration;
+  }
+
+  @Override
+  public void vmDefineAll(
+    final WXMVirtualMachineSet machines)
+    throws WXMException
+  {
+    Objects.requireNonNull(machines, "machines");
+    this.database.vmDefineAll(machines);
   }
 
   @Override

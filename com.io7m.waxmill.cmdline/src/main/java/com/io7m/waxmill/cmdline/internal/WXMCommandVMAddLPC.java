@@ -40,7 +40,7 @@ import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
 
-@Parameters(commandDescription = "Add an LPC device to a virtual machine")
+@Parameters(commandDescription = "Add an LPC device to a virtual machine.")
 public final class WXMCommandVMAddLPC extends WXMCommandRoot
 {
   private static final Logger LOG =
@@ -72,7 +72,7 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
     names = "--add-backend",
     description = "A specification of the device backend to add "
       + "(such as 'file;com1;/dev/nmdm54B', 'stdio;com2', 'nmdm;com1;')",
-    required = false,
+    required = true,
     converter = WXMTTYBackendConverter.class
   )
   private List<WXMTTYBackendType> backends = List.of();

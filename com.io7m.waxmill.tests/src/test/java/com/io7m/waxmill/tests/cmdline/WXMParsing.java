@@ -23,6 +23,7 @@ import com.io7m.waxmill.xml.WXMVirtualMachineParsers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public final class WXMParsing
 {
@@ -31,17 +32,23 @@ public final class WXMParsing
 
   }
 
+  public static Stream<Path> listVMFiles(
+    final Path vmDirectory)
+    throws IOException
+  {
+    return Files.list(vmDirectory)
+      .filter(path -> !path.endsWith("lock"));
+  }
+
   public static WXMVirtualMachineSet parseFirst(
     final Path vmDirectory)
     throws IOException, WXMException
   {
-    return
-      new WXMVirtualMachineParsers()
-        .parse(
-          Files.list(vmDirectory)
-            .filter(path -> !path.endsWith("lock"))
-            .findFirst()
-            .orElseThrow()
-        );
+    return new WXMVirtualMachineParsers()
+      .parse(
+        listVMFiles(vmDirectory)
+          .findFirst()
+          .orElseThrow()
+      );
   }
 }

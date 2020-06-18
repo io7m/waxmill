@@ -38,7 +38,7 @@ import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
 
-@Parameters(commandDescription = "Define a new virtual machine")
+@Parameters(commandDescription = "Define a new virtual machine.")
 public final class WXMCommandVMDefine extends WXMCommandRoot
 {
   private static final Logger LOG =

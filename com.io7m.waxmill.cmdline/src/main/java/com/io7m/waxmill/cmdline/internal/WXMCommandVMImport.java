@@ -18,20 +18,24 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
+import com.io7m.waxmill.client.api.WXMVirtualMachineSets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
 
-@Parameters(commandDescription = "List the available virtual machines.")
-public final class WXMCommandVMList extends WXMCommandRoot
+@Parameters(commandDescription = "Import virtual machine descriptions.")
+public final class WXMCommandVMImport extends WXMCommandRoot
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMCommandVMList.class);
+    LoggerFactory.getLogger(WXMCommandVMImport.class);
 
   @Parameter(
     names = "--configuration",
@@ -40,7 +44,14 @@ public final class WXMCommandVMList extends WXMCommandRoot
   )
   private Path configurationFile = WXMEnvironment.configurationFile();
 
-  public WXMCommandVMList()
+  @Parameter(
+    names = "--file",
+    description = "Files containing virtual machine descriptions",
+    required = false
+  )
+  private List<Path> files = List.of();
+
+  public WXMCommandVMImport()
   {
 
   }
@@ -55,18 +66,18 @@ public final class WXMCommandVMList extends WXMCommandRoot
     if (!checkConfigurationPath(LOG, this.configurationFile)) {
       return FAILURE;
     }
-    try (var client = WXMServices.clients().open(this.configurationFile)) {
-      final var machineSet = client.vmList();
-      if (machineSet.machines().isEmpty()) {
-        return SUCCESS;
-      }
 
-      System.out.printf("# %-40s %-16s%n", "ID", "Name");
-      for (final var entry : machineSet.machines().entrySet()) {
-        final var id = entry.getKey();
-        final var machine = entry.getValue();
-        System.out.printf("%-40s %-16s%n", id, machine.name().value());
+    final var parsers = WXMServices.vmParsers();
+    try (var client = WXMServices.clients().open(this.configurationFile)) {
+      final var machineSets = new ArrayList<WXMVirtualMachineSet>();
+      for (final var path : this.files) {
+        machineSets.add(parsers.parse(path));
       }
+      final var set = WXMVirtualMachineSets.merge(machineSets);
+      client.vmDefineAll(set);
+
+      LOG.info("imported {} virtual machines",
+               Integer.valueOf(set.machines().size()));
     }
     return SUCCESS;
   }
