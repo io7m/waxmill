@@ -27,6 +27,10 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+/**
+ * An abstract implementation of the {@link WXMStringsType} interface.
+ */
+
 public abstract class WXMAbstractStrings implements WXMStringsType
 {
   private final ResourceBundle resources;

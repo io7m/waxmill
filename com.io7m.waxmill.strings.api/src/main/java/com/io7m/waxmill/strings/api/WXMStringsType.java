@@ -20,9 +20,28 @@ import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * A provider of string resources.
+ */
+
 public interface WXMStringsType
 {
+  /**
+   * @return The underlying resource bundle
+   */
+
   ResourceBundle resources();
+
+  /**
+   * Format a message.
+   *
+   * @param id   The string resource ID
+   * @param args Any required string format arguments
+   *
+   * @return A formatted string
+   *
+   * @see MessageFormat
+   */
 
   default String format(
     final String id,
