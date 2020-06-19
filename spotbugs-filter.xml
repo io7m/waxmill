@@ -31,29 +31,29 @@
     <Or>
       <!-- Generated types. -->
       <Class name="com.io7m.waxmill.client.api.WXMApplicationVersion"/>
-      <Class name="com.io7m.waxmill.client.api.WXMCPUTopology"/>
       <Class name="com.io7m.waxmill.client.api.WXMClientConfiguration"/>
-      <Class name="com.io7m.waxmill.client.api.WXMDeviceAHCIDisk"/>
-      <Class name="com.io7m.waxmill.client.api.WXMDeviceAHCIOpticalDisk"/>
-      <Class name="com.io7m.waxmill.client.api.WXMDeviceHostBridge"/>
-      <Class name="com.io7m.waxmill.client.api.WXMDeviceID"/>
-      <Class name="com.io7m.waxmill.client.api.WXMDeviceLPC"/>
-      <Class name="com.io7m.waxmill.client.api.WXMDeviceVirtioNetwork"/>
-      <Class name="com.io7m.waxmill.client.api.WXMFlags"/>
-      <Class name="com.io7m.waxmill.client.api.WXMMACAddress"/>
-      <Class name="com.io7m.waxmill.client.api.WXMMachineName"/>
-      <Class name="com.io7m.waxmill.client.api.WXMMemory"/>
-      <Class name="com.io7m.waxmill.client.api.WXMPinCPU"/>
-      <Class name="com.io7m.waxmill.client.api.WXMSectorSizes"/>
-      <Class name="com.io7m.waxmill.client.api.WXMStorageBackendFile"/>
-      <Class name="com.io7m.waxmill.client.api.WXMTAPDeviceName"/>
-      <Class name="com.io7m.waxmill.client.api.WXMTTYBackendFile"/>
-      <Class name="com.io7m.waxmill.client.api.WXMTTYBackendStdio"/>
-      <Class name="com.io7m.waxmill.client.api.WXMTap"/>
-      <Class name="com.io7m.waxmill.client.api.WXMVMNet"/>
-      <Class name="com.io7m.waxmill.client.api.WXMVMNetDeviceName"/>
-      <Class name="com.io7m.waxmill.client.api.WXMVirtualMachine"/>
-      <Class name="com.io7m.waxmill.client.api.WXMVirtualMachineSet"/>
+      <Class name="com.io7m.waxmill.machines.WXMCPUTopology"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIDisk"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceHostBridge"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceID"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceLPC"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceVirtioNetwork"/>
+      <Class name="com.io7m.waxmill.machines.WXMFlags"/>
+      <Class name="com.io7m.waxmill.machines.WXMMACAddress"/>
+      <Class name="com.io7m.waxmill.machines.WXMMachineName"/>
+      <Class name="com.io7m.waxmill.machines.WXMMemory"/>
+      <Class name="com.io7m.waxmill.machines.WXMPinCPU"/>
+      <Class name="com.io7m.waxmill.machines.WXMSectorSizes"/>
+      <Class name="com.io7m.waxmill.machines.WXMStorageBackendFile"/>
+      <Class name="com.io7m.waxmill.machines.WXMTAPDeviceName"/>
+      <Class name="com.io7m.waxmill.machines.WXMTTYBackendFile"/>
+      <Class name="com.io7m.waxmill.machines.WXMTTYBackendStdio"/>
+      <Class name="com.io7m.waxmill.machines.WXMTap"/>
+      <Class name="com.io7m.waxmill.machines.WXMVMNet"/>
+      <Class name="com.io7m.waxmill.machines.WXMVMNetDeviceName"/>
+      <Class name="com.io7m.waxmill.machines.WXMVirtualMachine"/>
+      <Class name="com.io7m.waxmill.machines.WXMVirtualMachineSet"/>
       <Class name="com.io7m.waxmill.parser.api.WXMParseError"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Comment"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Flag"/>
@@ -126,7 +126,7 @@
 
   <Match>
     <And>
-      <Class name="com.io7m.waxmill.client.api.WXMStorageBackends"/>
+      <Class name="com.io7m.waxmill.machines.WXMStorageBackends"/>
       <Method name="zfsVolumePath"/>
       <Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING"/>
     </And>
@@ -135,7 +135,7 @@
   <Match>
     <And>
       <!-- Deriving a path from user input is the point of the method. -->
-      <Class name="com.io7m.waxmill.client.api.WXMTTYBackends"/>
+      <Class name="com.io7m.waxmill.machines.WXMTTYBackends"/>
       <Method name="nmdmPath"/>
       <Bug pattern="PATH_TRAVERSAL_IN"/>
     </And>

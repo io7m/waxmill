@@ -17,12 +17,12 @@
 package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
-import com.io7m.waxmill.client.api.WXMDeviceAHCIDisk;
-import com.io7m.waxmill.client.api.WXMDeviceAHCIOpticalDisk;
-import com.io7m.waxmill.client.api.WXMStorageBackendFile;
-import com.io7m.waxmill.client.api.WXMStorageBackendZFSVolume;
-import com.io7m.waxmill.client.api.WXMStorageBackends;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
+import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMStorageBackendFile;
+import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
+import com.io7m.waxmill.machines.WXMStorageBackends;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -185,7 +185,10 @@ public final class WXMCommandVMAddAHCIDiskTest
     assertEquals(
       this.zfsDirectory.resolve(id.toString())
         .resolve(String.format("disk-%d", Integer.valueOf(disk.id().value()))),
-      WXMStorageBackends.zfsVolumePath(this.configuration, id, disk.id())
+      WXMStorageBackends.zfsVolumePath(
+        this.configuration.zfsVirtualMachineDirectory().orElseThrow(),
+        id,
+        disk.id())
     );
   }
 

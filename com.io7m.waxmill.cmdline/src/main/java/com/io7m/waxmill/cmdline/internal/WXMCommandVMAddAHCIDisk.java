@@ -20,15 +20,14 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.client.api.WXMClientType;
-import com.io7m.waxmill.client.api.WXMDeviceAHCIDisk;
-import com.io7m.waxmill.client.api.WXMDeviceAHCIOpticalDisk;
-import com.io7m.waxmill.client.api.WXMDeviceID;
-import com.io7m.waxmill.client.api.WXMDeviceType;
-import com.io7m.waxmill.client.api.WXMException;
-import com.io7m.waxmill.client.api.WXMStorageBackendFile;
-import com.io7m.waxmill.client.api.WXMStorageBackendZFSVolume;
-import com.io7m.waxmill.client.api.WXMStorageBackends;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
+import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceType;
+import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMStorageBackendFile;
+import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +36,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
+import static com.io7m.waxmill.machines.WXMStorageBackends.zfsVolumePath;
 
 @Parameters(commandDescription = "Add an AHCI disk to a virtual machine.")
 public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
@@ -184,11 +184,7 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
         LOG.info(
           "Added {} disk zfs volume {} @ slot {}",
           this.optical ? "AHCI optical" : "AHCI",
-          WXMStorageBackends.zfsVolumePath(
-            client.configuration(),
-            machine.id(),
-            deviceId
-          ),
+          showZFSPath(client, machine, deviceId),
           Integer.valueOf(deviceId.value())
         );
         break;
@@ -197,5 +193,17 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
         break;
       }
     }
+  }
+
+  private static String showZFSPath(
+    final WXMClientType client,
+    final WXMVirtualMachine machine,
+    final WXMDeviceID deviceId)
+  {
+    return client.configuration()
+      .zfsVirtualMachineDirectory()
+      .map(path -> zfsVolumePath(path, machine.id(), deviceId))
+      .map(Path::toString)
+      .orElse("<unconfigured>");
   }
 }

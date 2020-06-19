@@ -18,10 +18,10 @@ package com.io7m.waxmill.client.vanilla.internal;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.client.api.WXMClientType;
-import com.io7m.waxmill.client.api.WXMException;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMException;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 
 import java.util.Objects;
 import java.util.Optional;

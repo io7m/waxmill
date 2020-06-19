@@ -14,31 +14,33 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
-import java.util.Objects;
+import com.io7m.immutables.styles.ImmutablesStyleType;
+import org.immutables.value.Value;
 
-public class WXMException extends Exception
+/**
+ * A machine name, such as {@code oregano.example.com}.
+ */
+
+@Value.Immutable
+@ImmutablesStyleType
+public interface WXMMachineNameType
 {
-  public WXMException(
-    final String message)
-  {
-    super(Objects.requireNonNull(message, "message"));
-  }
+  /**
+   * @return The machine name
+   */
 
-  public WXMException(
-    final String message,
-    final Throwable cause)
-  {
-    super(
-      Objects.requireNonNull(message, "message"),
-      Objects.requireNonNull(cause, "cause")
-    );
-  }
+  @Value.Parameter
+  String value();
 
-  public WXMException(
-    final Throwable cause)
+  /**
+   * Check preconditions for the type.
+   */
+
+  @Value.Check
+  default void checkPreconditions()
   {
-    super(Objects.requireNonNull(cause, "cause"));
+    WXMMachineNames.checkValid(this.value());
   }
 }

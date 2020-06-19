@@ -16,18 +16,18 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMDeviceAHCIDisk;
-import com.io7m.waxmill.client.api.WXMDeviceAHCIOpticalDisk;
-import com.io7m.waxmill.client.api.WXMDeviceHostBridge;
-import com.io7m.waxmill.client.api.WXMDeviceLPC;
-import com.io7m.waxmill.client.api.WXMDeviceVirtioNetwork;
-import com.io7m.waxmill.client.api.WXMSectorSizes;
-import com.io7m.waxmill.client.api.WXMStorageBackendFile;
-import com.io7m.waxmill.client.api.WXMTTYBackendFile;
-import com.io7m.waxmill.client.api.WXMTTYBackendStdio;
-import com.io7m.waxmill.client.api.WXMTap;
-import com.io7m.waxmill.client.api.WXMVMNet;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
+import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMDeviceHostBridge;
+import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMSectorSizes;
+import com.io7m.waxmill.machines.WXMStorageBackendFile;
+import com.io7m.waxmill.machines.WXMTTYBackendFile;
+import com.io7m.waxmill.machines.WXMTTYBackendStdio;
+import com.io7m.waxmill.machines.WXMTap;
+import com.io7m.waxmill.machines.WXMVMNet;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.parser.api.WXMParseError;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,9 +43,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_AMD;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.NO_CACHE;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.READ_ONLY;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_AMD;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.NO_CACHE;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.READ_ONLY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

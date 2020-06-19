@@ -14,68 +14,44 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
-
-import com.io7m.junreachable.UnreachableCodeException;
+package com.io7m.waxmill.machines;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Functions over TTY backends.
+ * Functions over storage backends.
  */
 
-public final class WXMTTYBackends
+public final class WXMStorageBackends
 {
-  private WXMTTYBackends()
+  private WXMStorageBackends()
   {
 
   }
 
   /**
-   * The "side" of an NMDM device. This is either the host-accessible side,
-   * or the guest-accessible side.
-   */
-
-  public enum NMDMSide
-  {
-    /**
-     * The host side.
-     */
-
-    NMDM_HOST,
-
-    /**
-     * The guest side.
-     */
-
-    NMDM_GUEST
-  }
-
-  /**
-   * Derive the nmdm device path for the given machine ID and side.
+   * Derive the ZFS volume device path for the given machine and device IDs.
    *
-   * @param machineId The machine ID
-   * @param side      The device side
+   * @param machineId        The machine ID
+   * @param machineDirectory The machine directory
+   * @param deviceID         The device ID
    *
    * @return The device path
    */
 
-  public static Path nmdmPath(
+  public static Path zfsVolumePath(
+    final Path machineDirectory,
     final UUID machineId,
-    final NMDMSide side)
+    final WXMDeviceID deviceID)
   {
+    Objects.requireNonNull(machineDirectory, "machineDirectory");
     Objects.requireNonNull(machineId, "machineId");
-    Objects.requireNonNull(side, "side");
+    Objects.requireNonNull(deviceID, "deviceID");
 
-    switch (side) {
-      case NMDM_HOST:
-        return Paths.get(String.format("/dev/nmdm_%s_B", machineId));
-      case NMDM_GUEST:
-        return Paths.get(String.format("/dev/nmdm_%s_A", machineId));
-    }
-    throw new UnreachableCodeException();
+    return machineDirectory
+      .resolve(machineId.toString())
+      .resolve(String.format("disk-%d", Integer.valueOf(deviceID.value())));
   }
 }

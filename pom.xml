@@ -20,15 +20,16 @@
   <url>https://www.github.com/io7m/waxmill</url>
 
   <modules>
-    <module>com.io7m.waxmill.tests</module>
     <module>com.io7m.waxmill.client.api</module>
-    <module>com.io7m.waxmill.xml</module>
     <module>com.io7m.waxmill.client.vanilla</module>
     <module>com.io7m.waxmill.cmdline</module>
-    <module>com.io7m.waxmill.parser.api</module>
-    <module>com.io7m.waxmill.serializer.api</module>
     <module>com.io7m.waxmill.database.api</module>
     <module>com.io7m.waxmill.database.vanilla</module>
+    <module>com.io7m.waxmill.machines</module>
+    <module>com.io7m.waxmill.parser.api</module>
+    <module>com.io7m.waxmill.serializer.api</module>
+    <module>com.io7m.waxmill.tests</module>
+    <module>com.io7m.waxmill.xml</module>
   </modules>
 
   <properties>

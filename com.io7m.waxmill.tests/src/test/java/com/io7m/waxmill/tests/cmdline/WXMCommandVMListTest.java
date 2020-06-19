@@ -16,14 +16,14 @@
 
 package com.io7m.waxmill.tests.cmdline;
 
-import com.io7m.waxmill.client.api.WXMCPUTopology;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
-import com.io7m.waxmill.client.api.WXMFlags;
-import com.io7m.waxmill.client.api.WXMMachineName;
-import com.io7m.waxmill.client.api.WXMMemory;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSets;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.machines.WXMCPUTopology;
+import com.io7m.waxmill.machines.WXMFlags;
+import com.io7m.waxmill.machines.WXMMachineName;
+import com.io7m.waxmill.machines.WXMMemory;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachineSets;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import com.io7m.waxmill.xml.WXMVirtualMachineSerializers;

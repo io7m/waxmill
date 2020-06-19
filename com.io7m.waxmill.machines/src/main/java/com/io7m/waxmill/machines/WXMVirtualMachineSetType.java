@@ -14,54 +14,17 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
-import com.io7m.jranges.RangeCheck;
-import com.io7m.jranges.RangeInclusiveI;
 import org.immutables.value.Value;
 
-/**
- * A device ID.
- */
+import java.util.SortedMap;
+import java.util.UUID;
 
-@Value.Immutable
 @ImmutablesStyleType
-public interface WXMDeviceIDType extends Comparable<WXMDeviceIDType>
+@Value.Immutable
+public interface WXMVirtualMachineSetType
 {
-  /**
-   * The inclusive range of valid device IDs.
-   */
-
-  RangeInclusiveI VALID_DEVICE_IDS =
-    RangeInclusiveI.of(0, 31);
-
-  /**
-   * @return The raw device ID value
-   */
-
-  @Value.Parameter
-  int value();
-
-  /**
-   * Check preconditions for the type.
-   */
-
-  @Value.Check
-  default void checkPreconditions()
-  {
-    RangeCheck.checkIncludedInInteger(
-      this.value(),
-      "Device ID",
-      VALID_DEVICE_IDS,
-      "Valid device IDs"
-    );
-  }
-
-  @Override
-  default int compareTo(
-    final WXMDeviceIDType other)
-  {
-    return Integer.compare(this.value(), other.value());
-  }
+  SortedMap<UUID, WXMVirtualMachine> machines();
 }

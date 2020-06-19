@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMMemory;
+import com.io7m.waxmill.machines.WXMMemory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

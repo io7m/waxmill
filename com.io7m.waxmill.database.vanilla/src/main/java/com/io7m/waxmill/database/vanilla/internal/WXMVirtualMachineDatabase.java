@@ -16,12 +16,12 @@
 
 package com.io7m.waxmill.database.vanilla.internal;
 
-import com.io7m.waxmill.client.api.WXMException;
-import com.io7m.waxmill.client.api.WXMExceptionDuplicate;
-import com.io7m.waxmill.client.api.WXMExceptions;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSets;
+import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMExceptionDuplicate;
+import com.io7m.waxmill.machines.WXMExceptions;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMVirtualMachineSets;
 import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;

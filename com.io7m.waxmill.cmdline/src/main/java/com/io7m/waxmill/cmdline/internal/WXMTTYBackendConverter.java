@@ -17,17 +17,16 @@
 package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.IStringConverter;
-import com.io7m.waxmill.client.api.WXMTTYBackendFile;
-import com.io7m.waxmill.client.api.WXMTTYBackendNMDM;
-import com.io7m.waxmill.client.api.WXMTTYBackendStdio;
+import com.io7m.waxmill.machines.WXMTTYBackendFile;
+import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
+import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Locale;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMTTYBackendType;
-
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
 public final class WXMTTYBackendConverter
   implements IStringConverter<WXMTTYBackendType>
 {

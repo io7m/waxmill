@@ -20,16 +20,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.io7m.jaffirm</groupId>
-      <artifactId>com.io7m.jaffirm.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jranges</groupId>
-      <artifactId>com.io7m.jranges.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.junreachable</groupId>
-      <artifactId>com.io7m.junreachable.core</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.waxmill.machines</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

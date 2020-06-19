@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import com.io7m.junreachable.UnreachableCodeException;
@@ -27,19 +27,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.Kind.WXM_AHCI_CD;
-import static com.io7m.waxmill.client.api.WXMDeviceType.Kind.WXM_AHCI_HD;
-import static com.io7m.waxmill.client.api.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
-import static com.io7m.waxmill.client.api.WXMDeviceType.Kind.WXM_LPC;
-import static com.io7m.waxmill.client.api.WXMDeviceType.Kind.WXM_VIRTIO_BLOCK;
-import static com.io7m.waxmill.client.api.WXMDeviceType.Kind.WXM_VIRTIO_NETWORK;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_TAP;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_VMNET;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_FILE;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_ZFS_VOLUME;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMTTYBackendType.Kind.WXM_FILE;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMTTYBackendType.Kind.WXM_NMDM;
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMTTYBackendType.Kind.WXM_STDIO;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_CD;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_HD;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_BLOCK;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_NETWORK;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_TAP;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_VMNET;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_FILE;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_ZFS_VOLUME;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_FILE;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_NMDM;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_STDIO;
 
 /**
  * The type of devices that can be attached to virtual machines.

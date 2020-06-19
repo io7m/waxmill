@@ -14,31 +14,33 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
-import java.util.Objects;
+import com.io7m.immutables.styles.ImmutablesStyleType;
+import org.immutables.value.Value;
 
-public class WXMExceptionNonexistent extends WXMException
+/**
+ * A MAC address, such as {@code d7:94:b5:60:0d:ac}.
+ */
+
+@Value.Immutable
+@ImmutablesStyleType
+public interface WXMMACAddressType
 {
-  public WXMExceptionNonexistent(
-    final String message)
-  {
-    super(Objects.requireNonNull(message, "message"));
-  }
+  /**
+   * @return The MAC address string
+   */
 
-  public WXMExceptionNonexistent(
-    final String message,
-    final Throwable cause)
-  {
-    super(
-      Objects.requireNonNull(message, "message"),
-      Objects.requireNonNull(cause, "cause")
-    );
-  }
+  @Value.Parameter
+  String value();
 
-  public WXMExceptionNonexistent(
-    final Throwable cause)
+  /**
+   * Check preconditions for the type.
+   */
+
+  @Value.Check
+  default void checkPreconditions()
   {
-    super(Objects.requireNonNull(cause, "cause"));
+    WXMMACAddresses.checkValid(this.value());
   }
 }

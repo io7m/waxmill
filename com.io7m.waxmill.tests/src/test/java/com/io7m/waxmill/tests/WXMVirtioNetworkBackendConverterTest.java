@@ -16,9 +16,9 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMTap;
-import com.io7m.waxmill.client.api.WXMVMNet;
 import com.io7m.waxmill.cmdline.internal.WXMVirtioNetworkBackendConverter;
+import com.io7m.waxmill.machines.WXMTap;
+import com.io7m.waxmill.machines.WXMVMNet;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

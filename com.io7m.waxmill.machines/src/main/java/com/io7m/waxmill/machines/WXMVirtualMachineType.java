@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import org.immutables.value.Value;
@@ -27,8 +27,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.io7m.waxmill.client.api.WXMDeviceID.of;
-import static com.io7m.waxmill.client.api.WXMDeviceIDType.VALID_DEVICE_IDS;
+import static com.io7m.waxmill.machines.WXMDeviceIDType.VALID_DEVICE_IDS;
 
 @Value.Immutable
 @ImmutablesStyleType
@@ -105,7 +104,7 @@ public interface WXMVirtualMachineType
     for (int deviceId = VALID_DEVICE_IDS.lower();
          deviceId <= VALID_DEVICE_IDS.upper();
          ++deviceId) {
-      final var possibleDeviceId = of(deviceId);
+      final var possibleDeviceId = WXMDeviceID.of(deviceId);
       if (!devicesMap.containsKey(possibleDeviceId)) {
         return Optional.of(possibleDeviceId);
       }

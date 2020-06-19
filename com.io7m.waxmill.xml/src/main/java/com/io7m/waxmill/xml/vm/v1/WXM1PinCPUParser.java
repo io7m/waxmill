@@ -18,7 +18,7 @@ package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
-import com.io7m.waxmill.client.api.WXMPinCPU;
+import com.io7m.waxmill.machines.WXMPinCPU;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 

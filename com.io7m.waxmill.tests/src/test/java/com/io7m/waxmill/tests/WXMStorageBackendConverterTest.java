@@ -16,9 +16,9 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMStorageBackendFile;
-import com.io7m.waxmill.client.api.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.cmdline.internal.WXMStorageBackendConverter;
+import com.io7m.waxmill.machines.WXMStorageBackendFile;
+import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -24,7 +24,7 @@ import com.io7m.junreachable.UnreachableCodeException;
 
 import java.util.Map;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
 public final class WXM1OpenOptionsParser

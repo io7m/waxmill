@@ -18,8 +18,8 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSets;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMVirtualMachineSets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,6 @@ import java.util.List;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
-
 @Parameters(commandDescription = "Import virtual machine descriptions.")
 public final class WXMCommandVMImport extends WXMCommandRoot
 {

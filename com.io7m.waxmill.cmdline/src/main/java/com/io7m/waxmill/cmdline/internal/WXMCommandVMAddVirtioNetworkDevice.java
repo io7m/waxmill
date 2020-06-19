@@ -18,12 +18,12 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.io7m.waxmill.client.api.WXMDeviceType;
-import com.io7m.waxmill.client.api.WXMDeviceVirtioNetwork;
-import com.io7m.waxmill.client.api.WXMException;
-import com.io7m.waxmill.client.api.WXMTap;
-import com.io7m.waxmill.client.api.WXMVMNet;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMDeviceType;
+import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMTap;
+import com.io7m.waxmill.machines.WXMVMNet;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

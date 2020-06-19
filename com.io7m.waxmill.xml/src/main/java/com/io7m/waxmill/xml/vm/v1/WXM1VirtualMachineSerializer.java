@@ -17,27 +17,27 @@
 package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.junreachable.UnimplementedCodeException;
-import com.io7m.waxmill.client.api.WXMCPUTopology;
-import com.io7m.waxmill.client.api.WXMDeviceAHCIDisk;
-import com.io7m.waxmill.client.api.WXMDeviceAHCIOpticalDisk;
-import com.io7m.waxmill.client.api.WXMDeviceHostBridge;
-import com.io7m.waxmill.client.api.WXMDeviceLPC;
-import com.io7m.waxmill.client.api.WXMDeviceType;
-import com.io7m.waxmill.client.api.WXMDeviceVirtioBlockStorage;
-import com.io7m.waxmill.client.api.WXMDeviceVirtioNetwork;
-import com.io7m.waxmill.client.api.WXMFlags;
-import com.io7m.waxmill.client.api.WXMMemory;
-import com.io7m.waxmill.client.api.WXMPinCPU;
-import com.io7m.waxmill.client.api.WXMSectorSizes;
-import com.io7m.waxmill.client.api.WXMStorageBackendFile;
-import com.io7m.waxmill.client.api.WXMStorageBackendZFSVolume;
-import com.io7m.waxmill.client.api.WXMTTYBackendFile;
-import com.io7m.waxmill.client.api.WXMTTYBackendNMDM;
-import com.io7m.waxmill.client.api.WXMTTYBackendStdio;
-import com.io7m.waxmill.client.api.WXMTap;
-import com.io7m.waxmill.client.api.WXMVMNet;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMCPUTopology;
+import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
+import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMDeviceHostBridge;
+import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceType;
+import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
+import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMFlags;
+import com.io7m.waxmill.machines.WXMMemory;
+import com.io7m.waxmill.machines.WXMPinCPU;
+import com.io7m.waxmill.machines.WXMSectorSizes;
+import com.io7m.waxmill.machines.WXMStorageBackendFile;
+import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
+import com.io7m.waxmill.machines.WXMTTYBackendFile;
+import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
+import com.io7m.waxmill.machines.WXMTTYBackendStdio;
+import com.io7m.waxmill.machines.WXMTap;
+import com.io7m.waxmill.machines.WXMVMNet;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.serializer.api.WXMSerializerType;
 import com.io7m.waxmill.xml.WXMSchemas;
 
@@ -58,7 +58,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class WXM1VirtualMachineSerializer implements WXMSerializerType

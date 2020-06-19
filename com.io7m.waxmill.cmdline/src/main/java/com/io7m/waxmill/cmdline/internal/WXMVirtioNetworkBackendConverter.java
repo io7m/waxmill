@@ -17,17 +17,16 @@
 package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.IStringConverter;
-import com.io7m.waxmill.client.api.WXMMACAddress;
-import com.io7m.waxmill.client.api.WXMTAPDeviceName;
-import com.io7m.waxmill.client.api.WXMTap;
-import com.io7m.waxmill.client.api.WXMVMNet;
-import com.io7m.waxmill.client.api.WXMVMNetDeviceName;
+import com.io7m.waxmill.machines.WXMMACAddress;
+import com.io7m.waxmill.machines.WXMTAPDeviceName;
+import com.io7m.waxmill.machines.WXMTap;
+import com.io7m.waxmill.machines.WXMVMNet;
+import com.io7m.waxmill.machines.WXMVMNetDeviceName;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType;
-
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType;
 public final class WXMVirtioNetworkBackendConverter
   implements IStringConverter<WXMVirtioNetworkBackendType>
 {

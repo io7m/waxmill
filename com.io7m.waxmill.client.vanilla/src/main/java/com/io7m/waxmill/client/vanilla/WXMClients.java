@@ -19,7 +19,7 @@ package com.io7m.waxmill.client.vanilla;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.client.api.WXMClientProviderType;
 import com.io7m.waxmill.client.api.WXMClientType;
-import com.io7m.waxmill.client.api.WXMException;
+import com.io7m.waxmill.machines.WXMException;
 import com.io7m.waxmill.client.vanilla.internal.WXMClient;
 import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseProviderType;

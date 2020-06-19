@@ -17,7 +17,7 @@
 package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
-import com.io7m.waxmill.client.api.WXMPinCPU;
+import com.io7m.waxmill.machines.WXMPinCPU;
 import org.immutables.value.Value;
 
 import java.util.List;

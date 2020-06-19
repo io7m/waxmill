@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.parser.api;
 
-import com.io7m.waxmill.client.api.WXMException;
+import com.io7m.waxmill.machines.WXMException;
 
 import java.io.IOException;
 import java.io.InputStream;

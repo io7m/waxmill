@@ -18,13 +18,13 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.io7m.waxmill.client.api.WXMDeviceLPC;
-import com.io7m.waxmill.client.api.WXMException;
-import com.io7m.waxmill.client.api.WXMTTYBackendFile;
-import com.io7m.waxmill.client.api.WXMTTYBackendNMDM;
-import com.io7m.waxmill.client.api.WXMTTYBackendStdio;
-import com.io7m.waxmill.client.api.WXMTTYBackends;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMTTYBackendFile;
+import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
+import com.io7m.waxmill.machines.WXMTTYBackendStdio;
+import com.io7m.waxmill.machines.WXMTTYBackends;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +34,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMTTYBackendType;
-import static com.io7m.waxmill.client.api.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
+import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 
 @Parameters(commandDescription = "Add an LPC device to a virtual machine.")
 public final class WXMCommandVMAddLPC extends WXMCommandRoot

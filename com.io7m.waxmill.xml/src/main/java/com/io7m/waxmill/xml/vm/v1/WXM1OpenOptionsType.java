@@ -21,7 +21,7 @@ import org.immutables.value.Value;
 
 import java.util.List;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
 
 @Value.Immutable
 @ImmutablesStyleType

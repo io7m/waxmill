@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.xml;
 
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.serializer.api.WXMSerializerType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 import com.io7m.waxmill.xml.vm.v1.WXM1VirtualMachineSerializer;

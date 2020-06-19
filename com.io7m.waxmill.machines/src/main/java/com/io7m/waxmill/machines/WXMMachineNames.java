@@ -14,29 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * Functions over TAP device names.
+ * Functions over machine names.
  */
 
-public final class WXMTAPDeviceNames
+public final class WXMMachineNames
 {
   private static final Pattern VALID_NAME =
-    Pattern.compile("tap[a-z_0-9]{1,13}");
+    Pattern.compile("[a-z_0-9.\\-]{1,64}");
 
-  private WXMTAPDeviceNames()
+  private WXMMachineNames()
   {
 
   }
 
   /**
-   * @param name The raw TAP device name string
+   * @param name The raw name string
    *
-   * @return {@code true} if the given string represents a valid TAP device name
+   * @return {@code true} if the given string represents a valid machine name
    */
 
   public static boolean isValid(
@@ -48,13 +48,13 @@ public final class WXMTAPDeviceNames
   }
 
   /**
-   * Check that a string represents a valid TAP device name.
+   * Check that a string represents a valid machine name.
    *
-   * @param name The raw TAP device name string
+   * @param name The raw name string
    *
    * @return {@code name}
    *
-   * @throws IllegalArgumentException If the string is not a TAP device name
+   * @throws IllegalArgumentException If the string is not a machine name
    */
 
   public static String checkValid(

@@ -14,29 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * Functions over machine names.
+ * Functions over VMNet device names.
  */
 
-public final class WXMMachineNames
+public final class WXMVMNetDeviceNames
 {
   private static final Pattern VALID_NAME =
-    Pattern.compile("[a-z_0-9.\\-]{1,64}");
+    Pattern.compile("vmnet[a-z_0-9]{1,11}");
 
-  private WXMMachineNames()
+  private WXMVMNetDeviceNames()
   {
 
   }
 
   /**
-   * @param name The raw name string
+   * @param name The raw VMNet device name string
    *
-   * @return {@code true} if the given string represents a valid machine name
+   * @return {@code true} if the given string represents a valid VMNet device name
    */
 
   public static boolean isValid(
@@ -48,13 +48,13 @@ public final class WXMMachineNames
   }
 
   /**
-   * Check that a string represents a valid machine name.
+   * Check that a string represents a valid VMNet device name.
    *
-   * @param name The raw name string
+   * @param name The raw VMNet device name string
    *
    * @return {@code name}
    *
-   * @throws IllegalArgumentException If the string is not a machine name
+   * @throws IllegalArgumentException If the string is not a VMNet device name
    */
 
   public static String checkValid(

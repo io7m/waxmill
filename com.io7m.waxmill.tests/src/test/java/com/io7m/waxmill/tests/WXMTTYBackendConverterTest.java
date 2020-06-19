@@ -16,10 +16,10 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMTTYBackendFile;
-import com.io7m.waxmill.client.api.WXMTTYBackendNMDM;
-import com.io7m.waxmill.client.api.WXMTTYBackendStdio;
 import com.io7m.waxmill.cmdline.internal.WXMTTYBackendConverter;
+import com.io7m.waxmill.machines.WXMTTYBackendFile;
+import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
+import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -17,7 +17,7 @@
 package com.io7m.waxmill.tests;
 
 import com.io7m.jaffirm.core.PreconditionViolationException;
-import com.io7m.waxmill.client.api.WXMCPUTopology;
+import com.io7m.waxmill.machines.WXMCPUTopology;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

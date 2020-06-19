@@ -17,10 +17,10 @@
 package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
-import com.io7m.waxmill.client.api.WXMDeviceVirtioNetwork;
-import com.io7m.waxmill.client.api.WXMTap;
-import com.io7m.waxmill.client.api.WXMVMNet;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMTap;
+import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;

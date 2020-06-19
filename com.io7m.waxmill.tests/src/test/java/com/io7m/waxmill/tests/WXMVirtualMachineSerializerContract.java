@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.parser.api.WXMParseError;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;

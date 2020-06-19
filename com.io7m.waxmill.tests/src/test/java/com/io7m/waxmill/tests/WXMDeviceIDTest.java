@@ -16,11 +16,11 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.io7m.waxmill.client.api.WXMDeviceIDType.VALID_DEVICE_IDS;
+import static com.io7m.waxmill.machines.WXMDeviceIDType.VALID_DEVICE_IDS;
 
 public final class WXMDeviceIDTest
 {

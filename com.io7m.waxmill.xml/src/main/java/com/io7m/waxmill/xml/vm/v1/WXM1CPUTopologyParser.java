@@ -21,7 +21,7 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.client.api.WXMCPUTopology;
+import com.io7m.waxmill.machines.WXMCPUTopology;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 

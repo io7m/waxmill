@@ -16,8 +16,8 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMMachineName;
-import com.io7m.waxmill.client.api.WXMMachineNames;
+import com.io7m.waxmill.machines.WXMMachineName;
+import com.io7m.waxmill.machines.WXMMachineNames;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;

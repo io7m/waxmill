@@ -14,51 +14,68 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
+
+import com.io7m.junreachable.UnreachableCodeException;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Functions over storage backends.
+ * Functions over TTY backends.
  */
 
-public final class WXMStorageBackends
+public final class WXMTTYBackends
 {
-  private WXMStorageBackends()
+  private WXMTTYBackends()
   {
 
   }
 
   /**
-   * Derive the ZFS volume device path for the given machine and device IDs.
+   * The "side" of an NMDM device. This is either the host-accessible side,
+   * or the guest-accessible side.
+   */
+
+  public enum NMDMSide
+  {
+    /**
+     * The host side.
+     */
+
+    NMDM_HOST,
+
+    /**
+     * The guest side.
+     */
+
+    NMDM_GUEST
+  }
+
+  /**
+   * Derive the nmdm device path for the given machine ID and side.
    *
-   * @param machineId     The machine ID
-   * @param configuration The client configuration
-   * @param deviceID      The device ID
+   * @param machineId The machine ID
+   * @param side      The device side
    *
    * @return The device path
    */
 
-  public static Path zfsVolumePath(
-    final WXMClientConfiguration configuration,
+  public static Path nmdmPath(
     final UUID machineId,
-    final WXMDeviceID deviceID)
+    final NMDMSide side)
   {
-    Objects.requireNonNull(configuration, "configuration");
     Objects.requireNonNull(machineId, "machineId");
-    Objects.requireNonNull(deviceID, "deviceID");
+    Objects.requireNonNull(side, "side");
 
-    final var baseOpt = configuration.zfsVirtualMachineDirectory();
-    if (baseOpt.isEmpty()) {
-      throw new IllegalArgumentException(
-        "A ZFS virtual machine directory must be specified in the client configuration"
-      );
+    switch (side) {
+      case NMDM_HOST:
+        return Paths.get(String.format("/dev/nmdm_%s_B", machineId));
+      case NMDM_GUEST:
+        return Paths.get(String.format("/dev/nmdm_%s_A", machineId));
     }
-
-    return baseOpt.get()
-      .resolve(machineId.toString())
-      .resolve(String.format("disk-%d", Integer.valueOf(deviceID.value())));
+    throw new UnreachableCodeException();
   }
 }

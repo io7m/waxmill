@@ -16,6 +16,11 @@
 
 package com.io7m.waxmill.client.api;
 
+import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMVirtualMachineSets;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
+
 import java.util.Optional;
 import java.util.UUID;
 

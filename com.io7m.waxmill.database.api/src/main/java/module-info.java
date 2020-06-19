@@ -25,7 +25,7 @@ module com.io7m.waxmill.database.api
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
-  requires com.io7m.waxmill.client.api;
+  requires com.io7m.waxmill.machines;
 
   exports com.io7m.waxmill.database.api;
 }

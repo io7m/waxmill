@@ -17,14 +17,14 @@
 package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.IStringConverter;
-import com.io7m.waxmill.client.api.WXMStorageBackendFile;
-import com.io7m.waxmill.client.api.WXMStorageBackendZFSVolume;
+import com.io7m.waxmill.machines.WXMStorageBackendFile;
+import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Paths;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMStorageBackendType;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 
 public final class WXMStorageBackendConverter
   implements IStringConverter<WXMStorageBackendType>

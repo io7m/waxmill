@@ -43,6 +43,7 @@ module com.io7m.waxmill.xml
   requires com.io7m.waxmill.serializer.api;
   requires java.xml;
   requires org.slf4j;
+  requires com.io7m.waxmill.machines;
 
   provides WXMClientConfigurationParserProviderType
     with WXMClientConfigurationParsers;

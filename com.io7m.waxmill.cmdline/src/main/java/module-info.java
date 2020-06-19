@@ -31,6 +31,7 @@ module com.io7m.waxmill.cmdline
   requires jcommander;
   requires org.apache.commons.io;
   requires org.slf4j;
+  requires com.io7m.waxmill.machines;
 
   opens com.io7m.waxmill.cmdline.internal to jcommander;
 

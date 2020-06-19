@@ -14,29 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * Functions over VMNet device names.
+ * Functions over TAP device names.
  */
 
-public final class WXMVMNetDeviceNames
+public final class WXMTAPDeviceNames
 {
   private static final Pattern VALID_NAME =
-    Pattern.compile("vmnet[a-z_0-9]{1,11}");
+    Pattern.compile("tap[a-z_0-9]{1,13}");
 
-  private WXMVMNetDeviceNames()
+  private WXMTAPDeviceNames()
   {
 
   }
 
   /**
-   * @param name The raw VMNet device name string
+   * @param name The raw TAP device name string
    *
-   * @return {@code true} if the given string represents a valid VMNet device name
+   * @return {@code true} if the given string represents a valid TAP device name
    */
 
   public static boolean isValid(
@@ -48,13 +48,13 @@ public final class WXMVMNetDeviceNames
   }
 
   /**
-   * Check that a string represents a valid VMNet device name.
+   * Check that a string represents a valid TAP device name.
    *
-   * @param name The raw VMNet device name string
+   * @param name The raw TAP device name string
    *
    * @return {@code name}
    *
-   * @throws IllegalArgumentException If the string is not a VMNet device name
+   * @throws IllegalArgumentException If the string is not a TAP device name
    */
 
   public static String checkValid(

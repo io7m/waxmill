@@ -14,33 +14,31 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
-import com.io7m.immutables.styles.ImmutablesStyleType;
-import org.immutables.value.Value;
+import java.util.Objects;
 
-/**
- * A VMNet device name, such as {@code vmnet23}.
- */
-
-@Value.Immutable
-@ImmutablesStyleType
-public interface WXMVMNetDeviceNameType
+public class WXMException extends Exception
 {
-  /**
-   * @return The device name
-   */
-
-  @Value.Parameter
-  String value();
-
-  /**
-   * Check preconditions for the type.
-   */
-
-  @Value.Check
-  default void checkPreconditions()
+  public WXMException(
+    final String message)
   {
-    WXMVMNetDeviceNames.checkValid(this.value());
+    super(Objects.requireNonNull(message, "message"));
+  }
+
+  public WXMException(
+    final String message,
+    final Throwable cause)
+  {
+    super(
+      Objects.requireNonNull(message, "message"),
+      Objects.requireNonNull(cause, "cause")
+    );
+  }
+
+  public WXMException(
+    final Throwable cause)
+  {
+    super(Objects.requireNonNull(cause, "cause"));
   }
 }

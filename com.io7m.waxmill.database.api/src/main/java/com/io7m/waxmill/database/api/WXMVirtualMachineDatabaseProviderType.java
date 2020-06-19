@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.database.api;
 
-import com.io7m.waxmill.client.api.WXMException;
+import com.io7m.waxmill.machines.WXMException;
 
 public interface WXMVirtualMachineDatabaseProviderType extends
   WXMDatabaseProviderType

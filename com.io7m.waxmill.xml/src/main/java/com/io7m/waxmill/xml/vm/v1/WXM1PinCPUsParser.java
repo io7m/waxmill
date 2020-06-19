@@ -21,7 +21,7 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.client.api.WXMPinCPU;
+import com.io7m.waxmill.machines.WXMPinCPU;
 
 import java.util.Map;
 

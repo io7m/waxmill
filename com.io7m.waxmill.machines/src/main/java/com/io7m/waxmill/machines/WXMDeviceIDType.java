@@ -14,25 +14,34 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.jranges.RangeCheck;
+import com.io7m.jranges.RangeInclusiveI;
 import org.immutables.value.Value;
 
 /**
- * A TAP device name, such as {@code tap23}.
+ * A device ID.
  */
 
 @Value.Immutable
 @ImmutablesStyleType
-public interface WXMTAPDeviceNameType
+public interface WXMDeviceIDType extends Comparable<WXMDeviceIDType>
 {
   /**
-   * @return The device name
+   * The inclusive range of valid device IDs.
+   */
+
+  RangeInclusiveI VALID_DEVICE_IDS =
+    RangeInclusiveI.of(0, 31);
+
+  /**
+   * @return The raw device ID value
    */
 
   @Value.Parameter
-  String value();
+  int value();
 
   /**
    * Check preconditions for the type.
@@ -41,6 +50,18 @@ public interface WXMTAPDeviceNameType
   @Value.Check
   default void checkPreconditions()
   {
-    WXMTAPDeviceNames.checkValid(this.value());
+    RangeCheck.checkIncludedInInteger(
+      this.value(),
+      "Device ID",
+      VALID_DEVICE_IDS,
+      "Valid device IDs"
+    );
+  }
+
+  @Override
+  default int compareTo(
+    final WXMDeviceIDType other)
+  {
+    return Integer.compare(this.value(), other.value());
   }
 }

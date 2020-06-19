@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.serializer.api;
 
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 
 public interface WXMVirtualMachineSerializerProviderType
   extends WXMSerializerProviderType<WXMVirtualMachineSet>

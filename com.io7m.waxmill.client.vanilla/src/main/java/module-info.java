@@ -33,6 +33,7 @@ module com.io7m.waxmill.client.vanilla
   requires com.io7m.waxmill.parser.api;
   requires com.io7m.waxmill.serializer.api;
   requires com.io7m.waxmill.database.api;
+  requires com.io7m.waxmill.machines;
 
   uses WXMClientConfigurationParserProviderType;
   uses WXMClientConfigurationSerializerProviderType;

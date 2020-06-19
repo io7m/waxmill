@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public final class WXMCommandHelpTest
 {
   private Path directory;

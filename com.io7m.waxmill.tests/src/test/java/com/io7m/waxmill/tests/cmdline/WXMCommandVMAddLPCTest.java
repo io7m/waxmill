@@ -17,11 +17,11 @@
 package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
-import com.io7m.waxmill.client.api.WXMDeviceLPC;
-import com.io7m.waxmill.client.api.WXMTTYBackendFile;
-import com.io7m.waxmill.client.api.WXMTTYBackendNMDM;
-import com.io7m.waxmill.client.api.WXMTTYBackendStdio;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMTTYBackendFile;
+import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
+import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +32,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import static com.io7m.waxmill.client.api.WXMTTYBackends.NMDMSide.NMDM_GUEST;
-import static com.io7m.waxmill.client.api.WXMTTYBackends.NMDMSide.NMDM_HOST;
-import static com.io7m.waxmill.client.api.WXMTTYBackends.nmdmPath;
+import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
+import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
+import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -16,17 +16,17 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.client.api.WXMCPUTopology;
-import com.io7m.waxmill.client.api.WXMException;
-import com.io7m.waxmill.client.api.WXMExceptionDuplicate;
-import com.io7m.waxmill.client.api.WXMFlags;
-import com.io7m.waxmill.client.api.WXMMachineName;
-import com.io7m.waxmill.client.api.WXMMemory;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
-import com.io7m.waxmill.client.api.WXMVirtualMachineSet;
 import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.database.vanilla.WXMVirtualMachineDatabases;
+import com.io7m.waxmill.machines.WXMCPUTopology;
+import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMExceptionDuplicate;
+import com.io7m.waxmill.machines.WXMFlags;
+import com.io7m.waxmill.machines.WXMMachineName;
+import com.io7m.waxmill.machines.WXMMemory;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -14,31 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+/**
+ * FreeBSD BHyve Manager (Virtual machine domain model).
+ */
 
-import java.util.Objects;
-
-public class WXMExceptionDuplicate extends WXMException
+module com.io7m.waxmill.machines
 {
-  public WXMExceptionDuplicate(
-    final String message)
-  {
-    super(Objects.requireNonNull(message, "message"));
-  }
+  requires static com.io7m.immutables.style;
+  requires static org.immutables.value;
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
 
-  public WXMExceptionDuplicate(
-    final String message,
-    final Throwable cause)
-  {
-    super(
-      Objects.requireNonNull(message, "message"),
-      Objects.requireNonNull(cause, "cause")
-    );
-  }
+  requires com.io7m.jranges.core;
+  requires com.io7m.jaffirm.core;
+  requires com.io7m.junreachable.core;
 
-  public WXMExceptionDuplicate(
-    final Throwable cause)
-  {
-    super(Objects.requireNonNull(cause, "cause"));
-  }
+  exports com.io7m.waxmill.machines;
 }

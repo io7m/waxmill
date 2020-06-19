@@ -14,21 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.client.api;
+package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import org.immutables.value.Value;
 
 /**
- * A machine name, such as {@code oregano.example.com}.
+ * A VMNet device name, such as {@code vmnet23}.
  */
 
 @Value.Immutable
 @ImmutablesStyleType
-public interface WXMMachineNameType
+public interface WXMVMNetDeviceNameType
 {
   /**
-   * @return The machine name
+   * @return The device name
    */
 
   @Value.Parameter
@@ -41,6 +41,6 @@ public interface WXMMachineNameType
   @Value.Check
   default void checkPreconditions()
   {
-    WXMMachineNames.checkValid(this.value());
+    WXMVMNetDeviceNames.checkValid(this.value());
   }
 }

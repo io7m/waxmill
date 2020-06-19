@@ -18,13 +18,13 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.io7m.waxmill.client.api.WXMCPUTopology;
-import com.io7m.waxmill.client.api.WXMDeviceHostBridge;
-import com.io7m.waxmill.client.api.WXMDeviceID;
-import com.io7m.waxmill.client.api.WXMFlags;
-import com.io7m.waxmill.client.api.WXMMachineName;
-import com.io7m.waxmill.client.api.WXMMemory;
-import com.io7m.waxmill.client.api.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMCPUTopology;
+import com.io7m.waxmill.machines.WXMDeviceHostBridge;
+import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMFlags;
+import com.io7m.waxmill.machines.WXMMachineName;
+import com.io7m.waxmill.machines.WXMMemory;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +33,10 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.io7m.waxmill.client.api.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_UNSPECIFIED;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
-
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_UNSPECIFIED;
 @Parameters(commandDescription = "Define a new virtual machine.")
 public final class WXMCommandVMDefine extends WXMCommandRoot
 {
