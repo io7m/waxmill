@@ -327,13 +327,6 @@ public interface WXMDeviceType
       return "";
     }
 
-    enum WXMOpenOption
-    {
-      NO_CACHE,
-      SYNCHRONOUS,
-      READ_ONLY
-    }
-
     /**
      * Check preconditions for the type.
      */
@@ -346,6 +339,13 @@ public interface WXMDeviceType
         Path::isAbsolute,
         path -> "Storage backend path must be absolute"
       );
+    }
+
+    enum WXMOpenOption
+    {
+      NO_CACHE,
+      SYNCHRONOUS,
+      READ_ONLY
     }
   }
 

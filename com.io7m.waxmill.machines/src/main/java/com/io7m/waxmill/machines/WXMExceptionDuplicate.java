@@ -18,27 +18,21 @@ package com.io7m.waxmill.machines;
 
 import java.util.Objects;
 
+/**
+ * An exception caused by some sort of duplicate value.
+ */
+
 public class WXMExceptionDuplicate extends WXMException
 {
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public WXMExceptionDuplicate(
     final String message)
   {
     super(Objects.requireNonNull(message, "message"));
-  }
-
-  public WXMExceptionDuplicate(
-    final String message,
-    final Throwable cause)
-  {
-    super(
-      Objects.requireNonNull(message, "message"),
-      Objects.requireNonNull(cause, "cause")
-    );
-  }
-
-  public WXMExceptionDuplicate(
-    final Throwable cause)
-  {
-    super(Objects.requireNonNull(cause, "cause"));
   }
 }

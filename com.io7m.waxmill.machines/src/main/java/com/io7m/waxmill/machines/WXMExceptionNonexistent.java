@@ -18,27 +18,21 @@ package com.io7m.waxmill.machines;
 
 import java.util.Objects;
 
+/**
+ * An exception caused by some sort of nonexistent value.
+ */
+
 public class WXMExceptionNonexistent extends WXMException
 {
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public WXMExceptionNonexistent(
     final String message)
   {
     super(Objects.requireNonNull(message, "message"));
-  }
-
-  public WXMExceptionNonexistent(
-    final String message,
-    final Throwable cause)
-  {
-    super(
-      Objects.requireNonNull(message, "message"),
-      Objects.requireNonNull(cause, "cause")
-    );
-  }
-
-  public WXMExceptionNonexistent(
-    final Throwable cause)
-  {
-    super(Objects.requireNonNull(cause, "cause"));
   }
 }

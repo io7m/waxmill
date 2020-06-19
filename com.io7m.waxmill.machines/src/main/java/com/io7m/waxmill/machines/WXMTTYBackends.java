@@ -35,26 +35,6 @@ public final class WXMTTYBackends
   }
 
   /**
-   * The "side" of an NMDM device. This is either the host-accessible side,
-   * or the guest-accessible side.
-   */
-
-  public enum NMDMSide
-  {
-    /**
-     * The host side.
-     */
-
-    NMDM_HOST,
-
-    /**
-     * The guest side.
-     */
-
-    NMDM_GUEST
-  }
-
-  /**
    * Derive the nmdm device path for the given machine ID and side.
    *
    * @param machineId The machine ID
@@ -77,5 +57,25 @@ public final class WXMTTYBackends
         return Paths.get(String.format("/dev/nmdm_%s_A", machineId));
     }
     throw new UnreachableCodeException();
+  }
+
+  /**
+   * The "side" of an NMDM device. This is either the host-accessible side,
+   * or the guest-accessible side.
+   */
+
+  public enum NMDMSide
+  {
+    /**
+     * The host side.
+     */
+
+    NMDM_HOST,
+
+    /**
+     * The guest side.
+     */
+
+    NMDM_GUEST
   }
 }

@@ -29,11 +29,6 @@ import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelIn
 
 public interface WXMBootConfigurationType
 {
-  enum Kind
-  {
-    GRUB_BHYVE
-  }
-
   Kind kind();
 
   WXMBootConfigurationName name();
@@ -41,6 +36,11 @@ public interface WXMBootConfigurationType
   default String comment()
   {
     return "";
+  }
+
+  enum Kind
+  {
+    GRUB_BHYVE
   }
 
   @ImmutablesStyleType
@@ -68,13 +68,13 @@ public interface WXMBootConfigurationType
 
   interface WXMGRUBKernelInstructionsType
   {
+    Kind kind();
+
     enum Kind
     {
       KERNEL_OPENBSD,
       KERNEL_LINUX
     }
-
-    Kind kind();
   }
 
   @ImmutablesStyleType
