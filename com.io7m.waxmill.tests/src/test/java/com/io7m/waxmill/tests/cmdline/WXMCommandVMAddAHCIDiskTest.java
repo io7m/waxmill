@@ -185,7 +185,7 @@ public final class WXMCommandVMAddAHCIDiskTest
     assertEquals(
       this.zfsDirectory.resolve(id.toString())
         .resolve(String.format("disk-%d", Integer.valueOf(disk.id().value()))),
-      WXMStorageBackends.zfsVolumePath(
+      WXMStorageBackends.determineZFSVolumePath(
         this.configuration.zfsVirtualMachineDirectory().orElseThrow(),
         id,
         disk.id())

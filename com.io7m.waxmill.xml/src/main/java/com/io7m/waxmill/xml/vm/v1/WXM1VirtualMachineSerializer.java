@@ -17,15 +17,20 @@
 package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.junreachable.UnimplementedCodeException;
+import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
+import com.io7m.waxmill.machines.WXMBootConfigurationType;
 import com.io7m.waxmill.machines.WXMCPUTopology;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceType;
+import com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMFlags;
+import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
+import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMMemory;
 import com.io7m.waxmill.machines.WXMPinCPU;
 import com.io7m.waxmill.machines.WXMSectorSizes;
@@ -53,7 +58,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -122,7 +126,104 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
     this.serializeCPUTopology(machine.cpuTopology());
     this.serializeMemory(machine.memory());
     this.serializeDevices(machine.devices());
+    this.serializeBootConfigurations(machine.bootConfigurations());
     this.serializeFlags(machine.flags());
+
+    this.writer.writeEndElement();
+  }
+
+  private void serializeBootConfigurations(
+    final List<WXMBootConfigurationType> bootConfigurations)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "BootConfigurations");
+
+    final var iter =
+      bootConfigurations.stream()
+        .sorted(Comparator.comparing(WXMBootConfigurationType::name))
+        .iterator();
+
+    while (iter.hasNext()) {
+      final var configuration = iter.next();
+      switch (configuration.kind()) {
+        case GRUB_BHYVE:
+          this.serializeBootConfigurationGRUBBhyve(
+            (WXMBootConfigurationGRUBBhyve) configuration
+          );
+          break;
+      }
+    }
+
+    this.writer.writeEndElement();
+  }
+
+  private void serializeBootConfigurationGRUBBhyve(
+    final WXMBootConfigurationGRUBBhyve configuration)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "BootConfigurationGRUBBhyve");
+    this.writer.writeAttribute("name", configuration.name().value());
+
+    final var instructions = configuration.kernelInstructions();
+    switch (instructions.kind()) {
+      case KERNEL_OPENBSD:
+        this.serializeGRUBKernelOpenBSD((WXMGRUBKernelOpenBSD) instructions);
+        break;
+      case KERNEL_LINUX:
+        this.serializeGRUBKernelLinux((WXMGRUBKernelLinux) instructions);
+        break;
+    }
+
+    this.writer.writeEndElement();
+  }
+
+  private void serializeGRUBKernelOpenBSD(
+    final WXMGRUBKernelOpenBSD kernel)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "GRUBBhyveKernelOpenBSD");
+    this.writer.writeAttribute(
+      "bootDevice",
+      String.valueOf(kernel.bootDevice().value())
+    );
+    this.writer.writeAttribute(
+      "kernelPath",
+      kernel.kernelPath().toString()
+    );
+    this.writer.writeEndElement();
+  }
+
+  private void serializeGRUBKernelLinux(
+    final WXMGRUBKernelLinux kernel)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "GRUBBhyveKernelLinux");
+    this.writer.writeAttribute(
+      "kernelDevice",
+      String.valueOf(kernel.kernelDevice().value())
+    );
+    this.writer.writeAttribute(
+      "kernelPath",
+      kernel.kernelPath().toString()
+    );
+    this.writer.writeAttribute(
+      "initRDDevice",
+      String.valueOf(kernel.initRDDevice().value())
+    );
+    this.writer.writeAttribute(
+      "initRDPath",
+      kernel.initRDPath().toString()
+    );
+
+    for (final var argument : kernel.kernelArguments()) {
+      this.writer.writeStartElement(namespaceURI, "LinuxKernelArgument");
+      this.writer.writeAttribute("value", argument);
+      this.writer.writeEndElement();
+    }
 
     this.writer.writeEndElement();
   }
@@ -177,14 +278,12 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
 
     final var iter =
       device.backends()
-        .entrySet()
         .stream()
-        .sorted(Map.Entry.comparingByKey())
+        .sorted(Comparator.comparing(WXMTTYBackendType::device))
         .iterator();
 
     while (iter.hasNext()) {
-      final var entry = iter.next();
-      final var backend = entry.getValue();
+      final var backend = iter.next();
       switch (backend.kind()) {
         case WXM_FILE:
           this.serializeTTYFileBackend((WXMTTYBackendFile) backend);

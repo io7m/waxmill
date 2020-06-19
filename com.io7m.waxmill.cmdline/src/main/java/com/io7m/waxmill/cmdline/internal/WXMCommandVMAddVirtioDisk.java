@@ -40,7 +40,7 @@ import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
-import static com.io7m.waxmill.machines.WXMStorageBackends.zfsVolumePath;
+import static com.io7m.waxmill.machines.WXMStorageBackends.determineZFSVolumePath;
 
 @Parameters(commandDescription = "Add a virtio disk to a virtual machine.")
 public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
@@ -184,7 +184,7 @@ public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
   {
     return client.configuration()
       .zfsVirtualMachineDirectory()
-      .map(path -> zfsVolumePath(path, machine.id(), deviceId))
+      .map(path -> determineZFSVolumePath(path, machine.id(), deviceId))
       .map(Path::toString)
       .orElse("<unconfigured>");
   }

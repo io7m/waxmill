@@ -17,6 +17,7 @@
 package com.io7m.waxmill.client.api;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
 import java.nio.file.Path;
@@ -46,5 +47,28 @@ public interface WXMClientConfigurationType
    */
 
   Optional<Path> zfsVirtualMachineDirectory();
+
+  /**
+   * Check preconditions for the type.
+   */
+
+  @Value.Check
+  default void checkPreconditions()
+  {
+    Preconditions.checkPrecondition(
+      this.virtualMachineConfigurationDirectory(),
+      Path::isAbsolute,
+      path -> "Virtual machine configuration directory must be absolute"
+    );
+
+    this.zfsVirtualMachineDirectory()
+      .ifPresent(path -> {
+        Preconditions.checkPrecondition(
+          path,
+          Path::isAbsolute,
+          q -> "ZFS virtual machine directory must be absolute"
+        );
+      });
+  }
 }
 

@@ -39,13 +39,21 @@ public interface WXMMemoryType
    * @return The number of megabytes
    */
 
-  BigInteger megabytes();
+  @Value.Default
+  default BigInteger megabytes()
+  {
+    return valueOf(512L);
+  }
 
   /**
    * @return The number of gigabytes
    */
 
-  BigInteger gigabytes();
+  @Value.Default
+  default BigInteger gigabytes()
+  {
+    return valueOf(0L);
+  }
 
   /**
    * @return A descriptive comment

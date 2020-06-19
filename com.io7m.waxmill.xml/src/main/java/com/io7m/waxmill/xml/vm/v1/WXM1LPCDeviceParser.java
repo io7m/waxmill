@@ -76,7 +76,7 @@ public final class WXM1LPCDeviceParser
       this.builder.setComment(((WXM1Comment) result).text());
     } else if (result instanceof WXMDeviceType.WXMTTYBackendType) {
       final var backend = (WXMDeviceType.WXMTTYBackendType) result;
-      this.builder.putBackends(backend.device(), backend);
+      this.builder.addBackends(backend);
     } else {
       throw new UnreachableCodeException();
     }

@@ -41,7 +41,7 @@ public final class WXMStorageBackends
    * @return The device path
    */
 
-  public static Path zfsVolumePath(
+  public static Path determineZFSVolumePath(
     final Path machineDirectory,
     final UUID machineId,
     final WXMDeviceID deviceID)

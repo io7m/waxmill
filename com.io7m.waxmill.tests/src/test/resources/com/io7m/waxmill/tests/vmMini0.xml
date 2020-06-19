@@ -9,5 +9,6 @@
   <Memory gigabytes="0"
           megabytes="512"/>
   <Devices/>
+  <BootConfigurations/>
   <Flags/>
 </VirtualMachine>

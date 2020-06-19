@@ -26,12 +26,13 @@ module com.io7m.waxmill.cmdline
   requires ch.qos.logback.classic;
   requires com.io7m.junreachable.core;
   requires com.io7m.waxmill.client.api;
+  requires com.io7m.waxmill.machines;
   requires com.io7m.waxmill.parser.api;
   requires com.io7m.waxmill.serializer.api;
+  requires com.io7m.waxmill.strings.api;
   requires jcommander;
   requires org.apache.commons.io;
   requires org.slf4j;
-  requires com.io7m.waxmill.machines;
 
   opens com.io7m.waxmill.cmdline.internal to jcommander;
 

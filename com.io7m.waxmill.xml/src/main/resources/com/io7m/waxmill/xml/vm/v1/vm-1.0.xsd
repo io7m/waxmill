@@ -71,6 +71,17 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="BootConfigurationNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A boot configuration name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[\p{L}\p{N}_\-.]{1,32}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:element name="Comment">
     <xsd:simpleType>
       <xsd:restriction base="xsd:string"/>
@@ -87,6 +98,7 @@
         <xsd:element ref="wxm:CPUTopology"/>
         <xsd:element ref="wxm:Memory"/>
         <xsd:element ref="wxm:Devices"/>
+        <xsd:element ref="wxm:BootConfigurations"/>
         <xsd:element ref="wxm:Flags"/>
       </xsd:sequence>
 
@@ -471,6 +483,78 @@
                      use="required"/>
       <xsd:attribute name="megabytes"
                      type="xsd:nonNegativeInteger"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="BootConfigurations">
+    <xsd:complexType>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="wxm:BootConfigurationGRUBBhyve"/>
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="BootConfigurationType">
+    <xsd:sequence minOccurs="0"
+                  maxOccurs="1">
+      <xsd:element ref="wxm:Comment"/>
+    </xsd:sequence>
+    <xsd:attribute name="name"
+                   type="wxm:BootConfigurationNameType"
+                   use="required"/>
+  </xsd:complexType>
+
+  <xsd:element name="BootConfigurationGRUBBhyve">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:BootConfigurationType">
+          <xsd:choice>
+            <xsd:element ref="wxm:GRUBBhyveKernelLinux"/>
+            <xsd:element ref="wxm:GRUBBhyveKernelOpenBSD"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GRUBBhyveKernelOpenBSD">
+    <xsd:complexType>
+      <xsd:attribute name="bootDevice"
+                     type="wxm:DeviceIdType"
+                     use="required"/>
+      <xsd:attribute name="kernelPath"
+                     type="xsd:anyURI"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GRUBBhyveKernelLinux">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:LinuxKernelArgument"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="kernelDevice"
+                     type="wxm:DeviceIdType"
+                     use="required"/>
+      <xsd:attribute name="kernelPath"
+                     type="xsd:anyURI"
+                     use="required"/>
+      <xsd:attribute name="initRDDevice"
+                     type="wxm:DeviceIdType"
+                     use="required"/>
+      <xsd:attribute name="initRDPath"
+                     type="xsd:anyURI"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LinuxKernelArgument">
+    <xsd:complexType>
+      <xsd:attribute name="value"
+                     type="xsd:string"
                      use="required"/>
     </xsd:complexType>
   </xsd:element>

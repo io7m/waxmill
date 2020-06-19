@@ -16,6 +16,8 @@
 
 package com.io7m.waxmill.tests;
 
+import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
+import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMCPUTopology;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
@@ -23,7 +25,10 @@ import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceID;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMFlags;
+import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
+import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMMACAddress;
 import com.io7m.waxmill.machines.WXMMachineName;
 import com.io7m.waxmill.machines.WXMMemory;
@@ -52,6 +57,21 @@ public final class WXMEqualsTest
 {
   private static final List<WXMClassUnderTest> CLASSES =
     List.of(
+      new WXMClassUnderTest(
+        WXMBootConfigurationGRUBBhyve.class,
+        Set.of("name", "kernelInstructions")),
+      new WXMClassUnderTest(
+        WXMBootConfigurationName.class,
+        Set.of("value")),
+      new WXMClassUnderTest(
+        WXMEvaluatedBootConfigurationGRUBBhyve.class,
+        Set.of("deviceMap", "grubConfiguration")),
+      new WXMClassUnderTest(
+        WXMGRUBKernelLinux.class,
+        Set.of("kernelDevice", "kernelPath", "initRDDevice", "initRDPath", "kernelArguments")),
+      new WXMClassUnderTest(
+        WXMGRUBKernelOpenBSD.class,
+        Set.of("bootDevice", "kernelPath")),
       new WXMClassUnderTest(
         WXMParseError.class,
         Set.of("lexical", "severity", "message")),
@@ -113,6 +133,7 @@ public final class WXMEqualsTest
         WXMVirtualMachine.class,
         Set.of(
           "id",
+          "bootConfigurations",
           "comment",
           "name",
           "flags",

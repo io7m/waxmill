@@ -21,6 +21,7 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.waxmill.machines.WXMBootConfigurationType;
 import com.io7m.waxmill.machines.WXMCPUTopology;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMFlags;
@@ -76,6 +77,10 @@ public final class WXM1VirtualMachineParser
         c -> new WXM1DevicesParser()
       ),
       Map.entry(
+        element("BootConfigurations"),
+        c -> new WXM1BootConfigurationsParser()
+      ),
+      Map.entry(
         element("Flags"),
         c -> new WXM1FlagsParser()
       )
@@ -94,7 +99,20 @@ public final class WXM1VirtualMachineParser
     } else if (result instanceof WXMCPUTopology) {
       this.builder.setCpuTopology((WXMCPUTopology) result);
     } else if (result instanceof List) {
-      this.builder.setDevices((Iterable<? extends WXMDeviceType>) result);
+      final var items = (List<?>) result;
+      if (!items.isEmpty()) {
+        if (items.get(0) instanceof WXMDeviceType) {
+          this.builder.setDevices(
+            (Iterable<? extends WXMDeviceType>) items);
+          return;
+        }
+        if (items.get(0) instanceof WXMBootConfigurationType) {
+          this.builder.setBootConfigurations(
+            (Iterable<? extends WXMBootConfigurationType>) items);
+          return;
+        }
+        throw new UnreachableCodeException();
+      }
     } else if (result instanceof WXMFlags) {
       this.builder.setFlags((WXMFlags) result);
     } else {

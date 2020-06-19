@@ -30,6 +30,8 @@
     <module>com.io7m.waxmill.serializer.api</module>
     <module>com.io7m.waxmill.tests</module>
     <module>com.io7m.waxmill.xml</module>
+    <module>com.io7m.waxmill.boot</module>
+    <module>com.io7m.waxmill.strings.api</module>
   </modules>
 
   <properties>

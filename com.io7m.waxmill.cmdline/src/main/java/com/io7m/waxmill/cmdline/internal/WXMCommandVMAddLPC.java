@@ -113,7 +113,7 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
       final var lpc =
         WXMDeviceLPC.builder()
           .setId(deviceId)
-          .setBackends(backendMap)
+          .addAllBackends(backendMap.values())
           .build();
 
       final var updatedMachine =

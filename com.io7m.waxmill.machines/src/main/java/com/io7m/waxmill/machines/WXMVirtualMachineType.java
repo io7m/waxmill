@@ -59,13 +59,23 @@ public interface WXMVirtualMachineType
    * @return The CPU topology
    */
 
-  WXMCPUTopology cpuTopology();
+  @Value.Default
+  default WXMCPUTopology cpuTopology()
+  {
+    return WXMCPUTopology.builder()
+      .build();
+  }
 
   /**
    * @return The machine's memory configuration
    */
 
-  WXMMemory memory();
+  @Value.Default
+  default WXMMemory memory()
+  {
+    return WXMMemory.builder()
+      .build();
+  }
 
   /**
    * @return The list of devices attached to the machine
@@ -77,7 +87,18 @@ public interface WXMVirtualMachineType
    * @return The machine flags
    */
 
-  WXMFlags flags();
+  @Value.Default
+  default WXMFlags flags()
+  {
+    return WXMFlags.builder()
+      .build();
+  }
+
+  /**
+   * @return The list of boot configurations associated with the machine
+   */
+
+  List<WXMBootConfigurationType> bootConfigurations();
 
   /**
    * @return The configuration file path, if the VM was configured from a file
@@ -91,7 +112,22 @@ public interface WXMVirtualMachineType
   {
     return this.devices()
       .stream()
-      .collect(Collectors.toMap(WXMDeviceType::id, Function.identity()));
+      .collect(Collectors.toMap(
+        WXMDeviceType::id,
+        Function.identity()
+      ));
+  }
+
+  @Value.Derived
+  @Value.Auxiliary
+  default Map<WXMBootConfigurationName, WXMBootConfigurationType> bootConfigurationMap()
+  {
+    return this.bootConfigurations()
+      .stream()
+      .collect(Collectors.toMap(
+        WXMBootConfigurationType::name,
+        Function.identity()
+      ));
   }
 
   /**

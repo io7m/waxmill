@@ -71,12 +71,28 @@
 
       <LPCDevice id="5">
         <Comment>A TTY based on a filesystem socket.</Comment>
-        <TTYBackendNMDM device="com2"/>
+        <TTYBackendStdio device="com0"/>
         <TTYBackendFile device="com1"
                         path="/dev/nmdm_1a438a53-2fcd-498f-8cc2-0ff0456e3dc4_B"/>
-        <TTYBackendStdio device="com0"/>
+        <TTYBackendNMDM device="com2"/>
       </LPCDevice>
     </Devices>
+
+    <BootConfigurations>
+      <BootConfigurationGRUBBhyve name="install">
+        <GRUBBhyveKernelOpenBSD bootDevice="4"
+                                kernelPath="/6.6/amd64/bsd.rd"/>
+      </BootConfigurationGRUBBhyve>
+      <BootConfigurationGRUBBhyve name="run">
+        <GRUBBhyveKernelLinux initRDDevice="4"
+                              initRDPath="/initrd.img"
+                              kernelDevice="4"
+                              kernelPath="/vmlinuz">
+          <LinuxKernelArgument value="root=/dev/sda1"/>
+          <LinuxKernelArgument value="init=/sbin/runit-init"/>
+        </GRUBBhyveKernelLinux>
+      </BootConfigurationGRUBBhyve>
+    </BootConfigurations>
 
     <Flags>
       <Flag name="DisableMPTableGeneration"

@@ -252,9 +252,9 @@ public final class WXMCommandVMAddLPCTest
     final var net =
       (WXMDeviceLPC) machine.devices().get(1);
     final var tty0 =
-      (WXMTTYBackendStdio) net.backends().get("com1");
+      (WXMTTYBackendStdio) net.backendMap().get("com1");
     final var tty1 =
-      (WXMTTYBackendFile) net.backends().get("com2");
+      (WXMTTYBackendFile) net.backendMap().get("com2");
 
     assertEquals("com1", tty0.device());
     assertEquals("com2", tty1.device());
@@ -314,9 +314,9 @@ public final class WXMCommandVMAddLPCTest
     final var net =
       (WXMDeviceLPC) machine.devices().get(1);
     final var tty0 =
-      (WXMTTYBackendStdio) net.backends().get("com1");
+      (WXMTTYBackendStdio) net.backendMap().get("com1");
     final var tty1 =
-      (WXMTTYBackendStdio) net.backends().get("com2");
+      (WXMTTYBackendStdio) net.backendMap().get("com2");
 
     assertEquals("com1", tty0.device());
     assertEquals("com2", tty1.device());
@@ -374,7 +374,7 @@ public final class WXMCommandVMAddLPCTest
     final var net =
       (WXMDeviceLPC) machine.devices().get(1);
     final var tty0 =
-      (WXMTTYBackendNMDM) net.backends().get("com1");
+      (WXMTTYBackendNMDM) net.backendMap().get("com1");
 
     assertEquals("com1", tty0.device());
     assertEquals(

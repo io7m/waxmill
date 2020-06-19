@@ -16,11 +16,14 @@
 
 package com.io7m.waxmill.tests;
 
+import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
+import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMSectorSizes;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
@@ -156,9 +159,9 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals(5, lpc.id().value());
     assertEquals("A TTY based on a filesystem socket.", lpc.comment());
 
-    final var stdio = (WXMTTYBackendStdio) lpc.backends().get("com0");
+    final var stdio = (WXMTTYBackendStdio) lpc.backendMap().get("com0");
     assertEquals("com0", stdio.device());
-    final var file = (WXMTTYBackendFile) lpc.backends().get("com1");
+    final var file = (WXMTTYBackendFile) lpc.backendMap().get("com1");
     assertEquals("com1", file.device());
     assertEquals(
       "/dev/nmdm_1a438a53-2fcd-498f-8cc2-0ff0456e3dc4_B",
@@ -173,6 +176,21 @@ public abstract class WXMVirtualMachineParserContract
     assertTrue(flags.realTimeClockIsUTC());
     assertFalse(flags.wireGuestMemory());
     assertTrue(flags.yieldCPUOnHLT());
+
+    final var boots = machine.bootConfigurations();
+    final var install = (WXMBootConfigurationGRUBBhyve) boots.get(0);
+    final var installK = (WXMGRUBKernelOpenBSD) install.kernelInstructions();
+    assertEquals("install", install.name().value());
+    assertEquals(4, installK.bootDevice().value());
+    assertEquals("/6.6/amd64/bsd.rd", installK.kernelPath().toString());
+
+    final var run = (WXMBootConfigurationGRUBBhyve) boots.get(1);
+    final var runK = (WXMGRUBKernelLinux) run.kernelInstructions();
+    assertEquals("run", run.name().value());
+    assertEquals(4, runK.kernelDevice().value());
+    assertEquals("/vmlinuz", runK.kernelPath().toString());
+    assertEquals(4, runK.initRDDevice().value());
+    assertEquals("/initrd.img", runK.initRDPath().toString());
   }
 
   /**

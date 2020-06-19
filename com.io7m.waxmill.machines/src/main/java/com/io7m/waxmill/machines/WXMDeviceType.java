@@ -17,15 +17,19 @@
 package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.junreachable.UnreachableCodeException;
 import org.immutables.value.Value;
 
 import java.math.BigInteger;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_CD;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_HD;
@@ -329,6 +333,20 @@ public interface WXMDeviceType
       SYNCHRONOUS,
       READ_ONLY
     }
+
+    /**
+     * Check preconditions for the type.
+     */
+
+    @Value.Check
+    default void checkPreconditions()
+    {
+      Preconditions.checkPrecondition(
+        this.file(),
+        Path::isAbsolute,
+        path -> "Storage backend path must be absolute"
+      );
+    }
   }
 
   @ImmutablesStyleType
@@ -473,6 +491,20 @@ public interface WXMDeviceType
     {
       return "";
     }
+
+    /**
+     * Check preconditions for the type.
+     */
+
+    @Value.Check
+    default void checkPreconditions()
+    {
+      Preconditions.checkPrecondition(
+        this.path(),
+        Path::isAbsolute,
+        q -> "TTY backend path must be absolute"
+      );
+    }
   }
 
   @ImmutablesStyleType
@@ -543,6 +575,31 @@ public interface WXMDeviceType
       return "lpc";
     }
 
-    Map<String, WXMTTYBackendType> backends();
+    List<WXMTTYBackendType> backends();
+
+    @Value.Derived
+    @Value.Auxiliary
+    default Map<String, WXMTTYBackendType> backendMap()
+    {
+      return this.backends()
+        .stream()
+        .collect(Collectors.toMap(
+          WXMTTYBackendType::device,
+          Function.identity()
+        ));
+    }
+
+    /**
+     * Check preconditions for the type.
+     */
+
+    @Value.Check
+    default void checkPreconditions()
+    {
+      Preconditions.checkPrecondition(
+        !this.backends().isEmpty(),
+        "At least one LPC TTY backend must be provided."
+      );
+    }
   }
 }

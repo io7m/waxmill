@@ -16,24 +16,17 @@
 
 package com.io7m.waxmill.cmdline.internal;
 
+import com.io7m.waxmill.strings.api.WXMAbstractStrings;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Objects;
-import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Set;
 
-public final class WXMMessages
+public final class WXMMessages extends WXMAbstractStrings
 {
-  private final ResourceBundle resources;
-
   private WXMMessages(
     final ResourceBundle inResources)
   {
-    this.resources = Objects.requireNonNull(inResources, "inResources");
+    super(inResources);
   }
 
   public static WXMMessages create()
@@ -41,47 +34,7 @@ public final class WXMMessages
   {
     try (var stream = WXMMessages.class.getResourceAsStream(
       "/com/io7m/waxmill/cmdline/internal/Messages.xml")) {
-      return new WXMMessages(new XMLResourceBundle(stream));
-    }
-  }
-
-  public String format(
-    final String id,
-    final Object... args)
-  {
-    Objects.requireNonNull(id, "id");
-    Objects.requireNonNull(args, "args");
-    return MessageFormat.format(this.resources.getString(id), args);
-  }
-
-  private static final class XMLResourceBundle extends ResourceBundle
-  {
-    private final Properties props;
-
-    XMLResourceBundle(
-      final InputStream stream)
-      throws IOException
-    {
-      this.props = new Properties();
-      this.props.loadFromXML(
-        Objects.requireNonNull(stream, "stream")
-      );
-    }
-
-    @Override
-    protected Object handleGetObject(
-      final String key)
-    {
-      return this.props.getProperty(
-        Objects.requireNonNull(key, "key")
-      );
-    }
-
-    @Override
-    public Enumeration<String> getKeys()
-    {
-      final Set<String> handleKeys = this.props.stringPropertyNames();
-      return Collections.enumeration(handleKeys);
+      return new WXMMessages(ofXML(stream));
     }
   }
 
