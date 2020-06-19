@@ -179,12 +179,14 @@ public abstract class WXMVirtualMachineParserContract
 
     final var boots = machine.bootConfigurations();
     final var install = (WXMBootConfigurationGRUBBhyve) boots.get(0);
+    assertEquals("The installation configuration, booting from a CD.", install.comment());
     final var installK = (WXMGRUBKernelOpenBSD) install.kernelInstructions();
     assertEquals("install", install.name().value());
     assertEquals(4, installK.bootDevice().value());
     assertEquals("/6.6/amd64/bsd.rd", installK.kernelPath().toString());
 
     final var run = (WXMBootConfigurationGRUBBhyve) boots.get(1);
+    assertEquals("The normal configuration, booting from the disk.", run.comment());
     final var runK = (WXMGRUBKernelLinux) run.kernelInstructions();
     assertEquals("run", run.name().value());
     assertEquals(4, runK.kernelDevice().value());

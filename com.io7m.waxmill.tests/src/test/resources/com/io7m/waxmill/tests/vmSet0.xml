@@ -80,10 +80,12 @@
 
     <BootConfigurations>
       <BootConfigurationGRUBBhyve name="install">
+        <Comment>The installation configuration, booting from a CD.</Comment>
         <GRUBBhyveKernelOpenBSD bootDevice="4"
                                 kernelPath="/6.6/amd64/bsd.rd"/>
       </BootConfigurationGRUBBhyve>
       <BootConfigurationGRUBBhyve name="run">
+        <Comment>The normal configuration, booting from the disk.</Comment>
         <GRUBBhyveKernelLinux initRDDevice="4"
                               initRDPath="/initrd.img"
                               kernelDevice="4"

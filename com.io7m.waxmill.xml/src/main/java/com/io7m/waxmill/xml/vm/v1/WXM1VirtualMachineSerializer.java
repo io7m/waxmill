@@ -165,6 +165,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     this.writer.writeStartElement(namespaceURI, "BootConfigurationGRUBBhyve");
     this.writer.writeAttribute("name", configuration.name().value());
+    this.serializeComment(configuration.comment());
 
     final var instructions = configuration.kernelInstructions();
     switch (instructions.kind()) {

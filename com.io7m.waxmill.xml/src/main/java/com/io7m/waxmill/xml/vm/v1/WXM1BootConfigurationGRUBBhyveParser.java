@@ -48,6 +48,10 @@ public final class WXM1BootConfigurationGRUBBhyveParser
   {
     return Map.ofEntries(
       Map.entry(
+        element("Comment"),
+        c -> new WXM1CommentParser()
+      ),
+      Map.entry(
         element("GRUBBhyveKernelOpenBSD"),
         c -> new WXM1GRUBBhyveKernelOpenBSDParser()
       ),
@@ -65,6 +69,8 @@ public final class WXM1BootConfigurationGRUBBhyveParser
   {
     if (result instanceof WXMGRUBKernelInstructionsType) {
       this.builder.setKernelInstructions((WXMGRUBKernelInstructionsType) result);
+    } else if (result instanceof WXM1Comment) {
+      this.builder.setComment(((WXM1Comment) result).text());
     } else {
       throw new UnreachableCodeException();
     }

@@ -38,6 +38,11 @@ public interface WXMBootConfigurationType
 
   WXMBootConfigurationName name();
 
+  default String comment()
+  {
+    return "";
+  }
+
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMBootConfigurationGRUBBhyveType extends WXMBootConfigurationType
@@ -46,6 +51,13 @@ public interface WXMBootConfigurationType
     default Kind kind()
     {
       return GRUB_BHYVE;
+    }
+
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
     }
 
     @Override

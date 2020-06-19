@@ -59,7 +59,7 @@ public final class WXMEqualsTest
     List.of(
       new WXMClassUnderTest(
         WXMBootConfigurationGRUBBhyve.class,
-        Set.of("name", "kernelInstructions")),
+        Set.of("comment", "name", "kernelInstructions")),
       new WXMClassUnderTest(
         WXMBootConfigurationName.class,
         Set.of("value")),
