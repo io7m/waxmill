@@ -21,6 +21,7 @@ import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.util.function.Consumer;
 
 public interface WXMVirtualMachineParserProviderType
@@ -28,6 +29,7 @@ public interface WXMVirtualMachineParserProviderType
 {
   @Override
   WXMVirtualMachineParserType create(
+    FileSystem fileSystem,
     URI uri,
     InputStream stream,
     Consumer<WXMParseError> errors)

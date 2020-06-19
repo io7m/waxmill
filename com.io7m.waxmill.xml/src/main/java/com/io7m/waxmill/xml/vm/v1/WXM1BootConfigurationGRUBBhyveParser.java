@@ -26,7 +26,9 @@ import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
+import java.nio.file.FileSystem;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
@@ -35,9 +37,13 @@ public final class WXM1BootConfigurationGRUBBhyveParser
   implements BTElementHandlerType<Object, WXMBootConfigurationGRUBBhyve>
 {
   private final WXMBootConfigurationGRUBBhyve.Builder builder;
+  private final FileSystem fileSystem;
 
-  public WXM1BootConfigurationGRUBBhyveParser()
+  public WXM1BootConfigurationGRUBBhyveParser(
+    final FileSystem inFileSystem)
   {
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
     this.builder = WXMBootConfigurationGRUBBhyve.builder();
   }
 
@@ -53,11 +59,11 @@ public final class WXM1BootConfigurationGRUBBhyveParser
       ),
       Map.entry(
         element("GRUBBhyveKernelOpenBSD"),
-        c -> new WXM1GRUBBhyveKernelOpenBSDParser()
+        c -> new WXM1GRUBBhyveKernelOpenBSDParser(this.fileSystem)
       ),
       Map.entry(
         element("GRUBBhyveKernelLinux"),
-        c -> new WXM1GRUBBhyveKernelLinuxParser()
+        c -> new WXM1GRUBBhyveKernelLinuxParser(this.fileSystem)
       )
     );
   }

@@ -28,6 +28,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -52,6 +53,7 @@ public final class WXMClientConfigurationParsers
 
   @Override
   public WXMClientConfigurationParserType create(
+    final FileSystem fileSystem,
     final URI uri,
     final InputStream stream,
     final Consumer<WXMParseError> errors)

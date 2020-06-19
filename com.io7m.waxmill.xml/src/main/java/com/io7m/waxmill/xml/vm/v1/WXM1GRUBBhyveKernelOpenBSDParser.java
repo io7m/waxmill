@@ -23,15 +23,19 @@ import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
-import java.nio.file.Paths;
+import java.nio.file.FileSystem;
+import java.util.Objects;
 
 public final class WXM1GRUBBhyveKernelOpenBSDParser
   implements BTElementHandlerType<Object, WXMGRUBKernelOpenBSD>
 {
   private final WXMGRUBKernelOpenBSD.Builder builder;
+  private final FileSystem fileSystem;
 
-  public WXM1GRUBBhyveKernelOpenBSDParser()
+  public WXM1GRUBBhyveKernelOpenBSDParser(
+    final FileSystem inFileSystem)
   {
+    this.fileSystem = Objects.requireNonNull(inFileSystem, "inFileSystem");
     this.builder = WXMGRUBKernelOpenBSD.builder();
   }
 
@@ -43,7 +47,7 @@ public final class WXM1GRUBBhyveKernelOpenBSDParser
   {
     try {
       this.builder.setKernelPath(
-        Paths.get(attributes.getValue("kernelPath").trim())
+        this.fileSystem.getPath(attributes.getValue("kernelPath").trim())
           .toAbsolutePath()
       );
       this.builder.setBootDevice(

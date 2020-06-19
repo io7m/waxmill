@@ -25,6 +25,7 @@ import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -37,11 +38,15 @@ public final class WXM1VirtualMachineSetParser
 {
   private final WXMVirtualMachineSet.Builder builder;
   private final TreeMap<UUID, WXMVirtualMachine> machines;
+  private final FileSystem fileSystem;
   private final URI sourceURI;
 
   public WXM1VirtualMachineSetParser(
+    final FileSystem inFileSystem,
     final URI inSourceURI)
   {
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "inFileSystem");
     this.sourceURI =
       Objects.requireNonNull(inSourceURI, "sourceURI");
     this.builder = WXMVirtualMachineSet.builder();
@@ -56,7 +61,7 @@ public final class WXM1VirtualMachineSetParser
     return Map.ofEntries(
       Map.entry(
         element("VirtualMachine"),
-        c -> new WXM1VirtualMachineParser(this.sourceURI)
+        c -> new WXM1VirtualMachineParser(this.fileSystem, this.sourceURI)
       )
     );
   }

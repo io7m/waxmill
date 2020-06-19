@@ -34,6 +34,7 @@ import org.xml.sax.XMLReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -53,15 +54,19 @@ public final class WXMVirtualMachineParser
 
   private final XMLReader reader;
   private final InputStream stream;
+  private final FileSystem fileSystem;
   private final Consumer<WXMParseError> errors;
   private final URI source;
 
   public WXMVirtualMachineParser(
+    final FileSystem inFileSystem,
     final Consumer<WXMParseError> inErrors,
     final URI inSource,
     final InputStream inStream,
     final XMLReader inReader)
   {
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "inFileSystem");
     this.errors =
       Objects.requireNonNull(inErrors, "inErrors");
     this.source =
@@ -107,11 +112,11 @@ public final class WXMVirtualMachineParser
         Map.ofEntries(
           Map.entry(
             element("VirtualMachines"),
-            c -> new WXM1VirtualMachineSetParser(this.source)
+            c -> new WXM1VirtualMachineSetParser(this.fileSystem, this.source)
           ),
           Map.entry(
             element("VirtualMachine"),
-            c -> new WXM1VirtualMachineParser(this.source)
+            c -> new WXM1VirtualMachineParser(this.fileSystem, this.source)
           )
         )
       );

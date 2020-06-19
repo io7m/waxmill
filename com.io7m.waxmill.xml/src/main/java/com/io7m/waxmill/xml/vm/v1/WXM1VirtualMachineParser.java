@@ -32,6 +32,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,11 +44,15 @@ public final class WXM1VirtualMachineParser
   implements BTElementHandlerType<Object, WXMVirtualMachine>
 {
   private final WXMVirtualMachine.Builder builder;
+  private final FileSystem fileSystem;
   private final URI sourceURI;
 
   public WXM1VirtualMachineParser(
+    final FileSystem inFileSystem,
     final URI inSourceURI)
   {
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
     this.sourceURI =
       Objects.requireNonNull(inSourceURI, "sourceURI");
     this.builder =
@@ -78,7 +83,7 @@ public final class WXM1VirtualMachineParser
       ),
       Map.entry(
         element("BootConfigurations"),
-        c -> new WXM1BootConfigurationsParser()
+        c -> new WXM1BootConfigurationsParser(this.fileSystem)
       ),
       Map.entry(
         element("Flags"),

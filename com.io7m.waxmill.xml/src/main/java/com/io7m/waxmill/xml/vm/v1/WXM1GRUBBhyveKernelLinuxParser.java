@@ -26,8 +26,9 @@ import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
-import java.nio.file.Paths;
+import java.nio.file.FileSystem;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
@@ -35,9 +36,13 @@ public final class WXM1GRUBBhyveKernelLinuxParser
   implements BTElementHandlerType<Object, WXMGRUBKernelLinux>
 {
   private final WXMGRUBKernelLinux.Builder builder;
+  private final FileSystem fileSystem;
 
-  public WXM1GRUBBhyveKernelLinuxParser()
+  public WXM1GRUBBhyveKernelLinuxParser(
+    final FileSystem inFileSystem)
   {
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
     this.builder = WXMGRUBKernelLinux.builder();
   }
 
@@ -74,7 +79,7 @@ public final class WXM1GRUBBhyveKernelLinuxParser
   {
     try {
       this.builder.setInitRDPath(
-        Paths.get(attributes.getValue("initRDPath").trim())
+        this.fileSystem.getPath(attributes.getValue("initRDPath").trim())
           .toAbsolutePath()
       );
       this.builder.setInitRDDevice(
@@ -82,7 +87,7 @@ public final class WXM1GRUBBhyveKernelLinuxParser
           Integer.parseInt(attributes.getValue("initRDDevice").trim()))
       );
       this.builder.setKernelPath(
-        Paths.get(attributes.getValue("kernelPath").trim())
+        this.fileSystem.getPath(attributes.getValue("kernelPath").trim())
           .toAbsolutePath()
       );
       this.builder.setKernelDevice(

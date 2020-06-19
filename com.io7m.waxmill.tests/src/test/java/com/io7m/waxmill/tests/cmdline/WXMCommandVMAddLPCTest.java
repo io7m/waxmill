@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -379,9 +380,9 @@ public final class WXMCommandVMAddLPCTest
     assertEquals("com1", tty0.device());
     assertEquals(
       String.format("/dev/nmdm_%s_A", machine.id()),
-      nmdmPath(machine.id(), NMDM_GUEST).toString());
+      nmdmPath(FileSystems.getDefault(), machine.id(), NMDM_GUEST).toString());
     assertEquals(
       String.format("/dev/nmdm_%s_B", machine.id()),
-      nmdmPath(machine.id(), NMDM_HOST).toString());
+      nmdmPath(FileSystems.getDefault(), machine.id(), NMDM_HOST).toString());
   }
 }

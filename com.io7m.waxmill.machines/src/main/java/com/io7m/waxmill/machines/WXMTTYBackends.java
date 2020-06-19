@@ -18,8 +18,8 @@ package com.io7m.waxmill.machines;
 
 import com.io7m.junreachable.UnreachableCodeException;
 
+import java.nio.file.FileSystem;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,13 +37,15 @@ public final class WXMTTYBackends
   /**
    * Derive the nmdm device path for the given machine ID and side.
    *
-   * @param machineId The machine ID
-   * @param side      The device side
+   * @param fileSystem The file system
+   * @param machineId  The machine ID
+   * @param side       The device side
    *
    * @return The device path
    */
 
   public static Path nmdmPath(
+    final FileSystem fileSystem,
     final UUID machineId,
     final NMDMSide side)
   {
@@ -52,9 +54,9 @@ public final class WXMTTYBackends
 
     switch (side) {
       case NMDM_HOST:
-        return Paths.get(String.format("/dev/nmdm_%s_B", machineId));
+        return fileSystem.getPath(String.format("/dev/nmdm_%s_B", machineId));
       case NMDM_GUEST:
-        return Paths.get(String.format("/dev/nmdm_%s_A", machineId));
+        return fileSystem.getPath(String.format("/dev/nmdm_%s_A", machineId));
     }
     throw new UnreachableCodeException();
   }

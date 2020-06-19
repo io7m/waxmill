@@ -28,6 +28,7 @@ import com.io7m.waxmill.machines.WXMVirtualMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -140,7 +141,7 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
             LOG.info(
               "Backend nmdm {} {}",
               nmdmBackend.device(),
-              WXMTTYBackends.nmdmPath(machine.id(), NMDM_GUEST));
+              WXMTTYBackends.nmdmPath(FileSystems.getDefault(), machine.id(), NMDM_GUEST));
             break;
           case WXM_STDIO:
             final var stdioBackend = (WXMTTYBackendStdio) device;

@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -71,6 +72,7 @@ public abstract class WXMClientConfigurationParserContract
       name)) {
 
       try (var parser = this.parsers().create(
+        FileSystems.getDefault(),
         URI.create("urn:unknown"),
         stream,
         this::logError)) {

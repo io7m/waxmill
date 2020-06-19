@@ -23,9 +23,11 @@ import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMBootConfigurationType;
 
+import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
@@ -33,9 +35,13 @@ public final class WXM1BootConfigurationsParser
   implements BTElementHandlerType<Object, List<WXMBootConfigurationType>>
 {
   private final List<WXMBootConfigurationType> bootConfigurations;
+  private final FileSystem fileSystem;
 
-  public WXM1BootConfigurationsParser()
+  public WXM1BootConfigurationsParser(
+    final FileSystem inFileSystem)
   {
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
     this.bootConfigurations = new ArrayList<>();
   }
 
@@ -47,7 +53,7 @@ public final class WXM1BootConfigurationsParser
     return Map.ofEntries(
       Map.entry(
         element("BootConfigurationGRUBBhyve"),
-        c -> new WXM1BootConfigurationGRUBBhyveParser()
+        c -> new WXM1BootConfigurationGRUBBhyveParser(this.fileSystem)
       )
     );
   }

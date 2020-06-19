@@ -21,6 +21,7 @@ import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.util.function.Consumer;
 
 public interface WXMClientConfigurationParserProviderType
@@ -28,6 +29,7 @@ public interface WXMClientConfigurationParserProviderType
 {
   @Override
   WXMClientConfigurationParserType create(
+    FileSystem fileSystem,
     URI uri,
     InputStream stream,
     Consumer<WXMParseError> errors)

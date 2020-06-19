@@ -21,6 +21,7 @@ import com.io7m.waxmill.machines.WXMException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import static com.io7m.waxmill.parser.api.WXMParseErrorType.Severity.ERROR;
 public interface WXMParserProviderType<T>
 {
   WXMParserType<T> create(
+    FileSystem fileSystem,
     URI uri,
     InputStream stream,
     Consumer<WXMParseError> errors)
@@ -56,7 +58,11 @@ public interface WXMParserProviderType<T>
 
     try (var stream = Files.newInputStream(path)) {
       final var errors = new ArrayList<WXMParseError>();
-      try (var parser = this.create(path.toUri(), stream, errors::add)) {
+      try (var parser = this.create(
+        path.getFileSystem(),
+        path.toUri(),
+        stream,
+        errors::add)) {
         final var result = parser.parse();
         if (errors.stream().anyMatch(e -> e.severity() == ERROR)) {
           throw new WXMParseException(
