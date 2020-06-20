@@ -256,7 +256,7 @@ public final class WXMBootConfigurationEvaluator
         );
     }
 
-    throw new UnimplementedCodeException();
+    throw new UnreachableCodeException();
   }
 
   private String errorNoZFSVolumeConfigured()

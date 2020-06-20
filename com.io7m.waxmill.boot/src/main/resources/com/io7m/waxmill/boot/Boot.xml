@@ -16,7 +16,7 @@
 ]]>
   </entry>
 
-  <entry key="bootNoSuchDevice"><![CDATA[The boot instructions specify a nonexistent boot device ID.
+  <entry key="bootNoSuchDevice"><![CDATA[The boot instructions specify a nonexistent or inappropriate boot device ID.
   Machine:                   {0}
   Boot configuration:        {1}
   Device:                    {2}

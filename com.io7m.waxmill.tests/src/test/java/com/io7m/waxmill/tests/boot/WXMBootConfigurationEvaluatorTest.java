@@ -17,7 +17,6 @@
 package com.io7m.waxmill.tests.boot;
 
 import com.io7m.waxmill.boot.WXMBootConfigurationEvaluator;
-import com.io7m.waxmill.boot.WXMBootMessages;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
@@ -202,7 +201,7 @@ public final class WXMBootConfigurationEvaluatorTest
 
     final var ex =
       assertThrowsLogged(WXMExceptionNonexistent.class, evaluator::evaluate);
-    assertTrue(ex.getMessage().contains("nonexistent boot device"));
+    assertTrue(ex.getMessage().contains("nonexistent or inappropriate boot device"));
   }
 
   @Test
@@ -424,7 +423,7 @@ public final class WXMBootConfigurationEvaluatorTest
 
     final var ex =
       assertThrowsLogged(WXMExceptionNonexistent.class, evaluator::evaluate);
-    assertTrue(ex.getMessage().contains("nonexistent boot device"));
+    assertTrue(ex.getMessage().contains("nonexistent or inappropriate boot device"));
   }
 
   @Test
@@ -471,7 +470,7 @@ public final class WXMBootConfigurationEvaluatorTest
 
     final var ex =
       assertThrowsLogged(WXMExceptionNonexistent.class, evaluator::evaluate);
-    assertTrue(ex.getMessage().contains("nonexistent boot device"));
+    assertTrue(ex.getMessage().contains("nonexistent or inappropriate boot device"));
   }
 
   @Test
@@ -616,6 +615,61 @@ public final class WXMBootConfigurationEvaluatorTest
       grubConfiguration.get(2)
     );
     assertEquals(3, grubConfiguration.size());
+  }
+
+  @Test
+  public void notAStorageDevice()
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .addBootConfigurations(
+          WXMBootConfigurationGRUBBhyve.builder()
+            .setName(WXMBootConfigurationName.of("install"))
+            .setKernelInstructions(
+              WXMGRUBKernelLinux.builder()
+                .setKernelDevice(WXMDeviceID.of(1))
+                .setKernelPath(Paths.get("/vmlinux"))
+                .addKernelArguments("root=/dev/sda1")
+                .addKernelArguments("init=/sbin/runit-init")
+                .setInitRDDevice(WXMDeviceID.of(1))
+                .setInitRDPath(Paths.get("/initrd.img"))
+                .build())
+            .build()
+        )
+        .addDevices(
+          WXMDeviceVirtioBlockStorage.builder()
+            .setId(WXMDeviceID.of(0))
+            .setBackend(WXMStorageBackendZFSVolume.builder().build())
+            .build()
+        )
+        .addDevices(
+          WXMDeviceLPC.builder()
+            .setId(WXMDeviceID.of(1))
+            .addBackends(WXMTTYBackendStdio.builder()
+                           .setDevice("com1")
+                           .build())
+            .build()
+        )
+        .build();
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setZfsVirtualMachineDirectory(this.vms)
+        .build();
+
+    final var evaluator =
+      new WXMBootConfigurationEvaluator(
+        clientConfiguration,
+        machine,
+        WXMBootConfigurationName.of("install")
+      );
+
+    final var ex =
+      assertThrowsLogged(WXMExceptionNonexistent.class, evaluator::evaluate);
+    assertTrue(ex.getMessage().contains("nonexistent or inappropriate boot device"));
   }
 
   private static <T extends Throwable> T assertThrowsLogged(
