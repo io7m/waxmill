@@ -60,6 +60,7 @@
       <Class name="com.io7m.waxmill.machines.WXMVirtualMachine"/>
       <Class name="com.io7m.waxmill.machines.WXMVirtualMachineSet"/>
       <Class name="com.io7m.waxmill.parser.api.WXMParseError"/>
+      <Class name="com.io7m.waxmill.process.api.WXMProcessDescription"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Comment"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Flag"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1OpenOptions"/>
@@ -206,7 +207,14 @@
 
   <Match>
     <!-- If an IOException actually happens, it's a bug and should not be caught. -->
-    <Class name="com.io7m.waxmill.boot.WXMBootMessages"/>
+    <Class name="com.io7m.waxmill.boot.internal.WXMBootMessages"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    <Method name="create"/>
+  </Match>
+
+  <Match>
+    <!-- If an IOException actually happens, it's a bug and should not be caught. -->
+    <Class name="com.io7m.waxmill.process.posix.internal.WXMProcessMessages"/>
     <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
     <Method name="create"/>
   </Match>
@@ -216,6 +224,13 @@
     <Class name="com.io7m.waxmill.serializer.api.WXMSerializerProviderType"/>
     <Method name="serialize"/>
     <Bug pattern="AFBR_ABNORMAL_FINALLY_BLOCK_RETURN"/>
+  </Match>
+
+  <Match>
+    <!-- This class is entirely for the purposes of command injection! -->
+    <Class name="com.io7m.waxmill.process.posix.WXMProcessesPOSIX"/>
+    <Method name="processStart"/>
+    <Bug pattern="COMMAND_INJECTION"/>
   </Match>
 
   <Match>

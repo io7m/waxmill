@@ -32,6 +32,8 @@
     <module>com.io7m.waxmill.xml</module>
     <module>com.io7m.waxmill.boot</module>
     <module>com.io7m.waxmill.strings.api</module>
+    <module>com.io7m.waxmill.process.api</module>
+    <module>com.io7m.waxmill.process.posix</module>
   </modules>
 
   <properties>
@@ -213,6 +215,11 @@
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>3.3.3</version>
+      </dependency>
+      <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>5.5.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

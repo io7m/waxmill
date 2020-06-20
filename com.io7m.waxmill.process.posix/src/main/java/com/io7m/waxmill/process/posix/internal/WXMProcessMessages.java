@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.boot;
+package com.io7m.waxmill.process.posix.internal;
 
 import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
@@ -22,20 +22,20 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ResourceBundle;
 
-public final class WXMBootMessages extends WXMAbstractStrings
+public final class WXMProcessMessages extends WXMAbstractStrings
 {
-  private WXMBootMessages(
+  private WXMProcessMessages(
     final ResourceBundle inResources)
   {
     super(inResources);
   }
 
-  public static WXMBootMessages create()
+  public static WXMProcessMessages create()
   {
     try {
-      try (var stream = WXMBootMessages.class.getResourceAsStream(
-        "/com/io7m/waxmill/boot/Boot.xml")) {
-        return new WXMBootMessages(ofXML(stream));
+      try (var stream = WXMProcessMessages.class.getResourceAsStream(
+        "/com/io7m/waxmill/boot/internal/Boot.xml")) {
+        return new WXMProcessMessages(ofXML(stream));
       }
     } catch (final IOException e) {
       throw new UncheckedIOException(e);
@@ -46,7 +46,7 @@ public final class WXMBootMessages extends WXMAbstractStrings
   public String toString()
   {
     return String.format(
-      "[WXMBootMessages 0x%s]",
+      "[WXMProcessMessages 0x%s]",
       Long.toUnsignedString(System.identityHashCode(this), 16)
     );
   }

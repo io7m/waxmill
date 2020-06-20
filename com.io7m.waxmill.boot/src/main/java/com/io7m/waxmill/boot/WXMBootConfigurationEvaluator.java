@@ -19,6 +19,7 @@ package com.io7m.waxmill.boot;
 import com.io7m.jaffirm.core.Invariants;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.waxmill.boot.internal.WXMBootMessages;
 import com.io7m.waxmill.boot.internal.WXMGRUBDeviceAndPath;
 import com.io7m.waxmill.boot.internal.WXMGRUBDeviceMap;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
@@ -61,7 +62,7 @@ public final class WXMBootConfigurationEvaluator
   private final WXMVirtualMachine machine;
   private final WXMBootConfigurationName bootName;
 
-  public WXMBootConfigurationEvaluator(
+  private WXMBootConfigurationEvaluator(
     final WXMClientConfiguration inClientConfiguration,
     final WXMBootMessages inMessages,
     final WXMVirtualMachine inMachine,
