@@ -6,8 +6,11 @@
 
   <xsd:simpleType name="PathType">
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value="VirtualMachineConfigurationsDirectory"/>
-      <xsd:enumeration value="ZFSVirtualMachinesDirectory"/>
+      <xsd:enumeration value="BhyveExecutable"/>
+      <xsd:enumeration value="GRUBBhyveExecutable"/>
+      <xsd:enumeration value="VirtualMachineConfigurationDirectory"/>
+      <xsd:enumeration value="VirtualMachineRuntimeDirectory"/>
+      <xsd:enumeration value="ZFSExecutable"/>
     </xsd:restriction>
   </xsd:simpleType>
 

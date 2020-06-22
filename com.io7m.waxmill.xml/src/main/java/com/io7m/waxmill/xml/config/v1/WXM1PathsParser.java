@@ -21,7 +21,9 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 
+import java.nio.file.FileSystem;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.io7m.waxmill.xml.config.v1.WXM1CNames.element;
 
@@ -29,10 +31,15 @@ public final class WXM1PathsParser
   implements BTElementHandlerType<WXM1Path, WXM1Paths>
 {
   private final WXM1Paths.Builder builder;
+  private final FileSystem fileSystem;
 
-  public WXM1PathsParser()
+  public WXM1PathsParser(
+    final FileSystem inFileSystem)
   {
-    this.builder = WXM1Paths.builder();
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
+    this.builder =
+      WXM1Paths.builder();
   }
 
   @Override
@@ -42,7 +49,7 @@ public final class WXM1PathsParser
   {
     return Map.of(
       element("Path"),
-      c -> new WXM1PathParser()
+      c -> new WXM1PathParser(this.fileSystem)
     );
   }
 

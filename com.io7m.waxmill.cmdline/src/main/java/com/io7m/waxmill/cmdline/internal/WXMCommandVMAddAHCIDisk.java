@@ -200,10 +200,10 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
     final WXMVirtualMachine machine,
     final WXMDeviceID deviceId)
   {
-    return client.configuration()
-      .zfsVirtualMachineDirectory()
-      .map(path -> determineZFSVolumePath(path, machine.id(), deviceId))
-      .map(Path::toString)
-      .orElse("<unconfigured>");
+    return determineZFSVolumePath(
+      client.configuration().virtualMachineRuntimeDirectory(),
+      machine.id(),
+      deviceId
+    ).toString();
   }
 }

@@ -22,6 +22,7 @@ import org.immutables.value.Value;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.Kind.GRUB_BHYVE;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType.Kind.KERNEL_LINUX;
@@ -149,6 +150,17 @@ public interface WXMBootConfigurationType
   interface WXMEvaluatedBootConfigurationType
   {
     Kind kind();
+
+    WXMEvaluatedBootCommands commands();
+  }
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMEvaluatedBootCommandsType
+  {
+    List<WXMCommandExecution> configurationCommands();
+
+    Optional<WXMCommandExecution> lastExecution();
   }
 
   @ImmutablesStyleType
@@ -161,6 +173,9 @@ public interface WXMBootConfigurationType
     {
       return GRUB_BHYVE;
     }
+
+    @Override
+    WXMEvaluatedBootCommands commands();
 
     List<String> deviceMap();
 

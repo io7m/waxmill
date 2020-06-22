@@ -23,7 +23,6 @@ import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMFlags;
 
-import java.util.Locale;
 import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
@@ -56,36 +55,40 @@ public final class WXM1FlagsParser
     final BTElementParsingContextType context,
     final WXM1Flag result)
   {
-    switch (result.name().toUpperCase(Locale.ROOT).trim()) {
-      case "DISABLEMPTABLEGENERATION": {
+    switch (result.name().trim()) {
+      case "ExitCPUOnPAUSE": {
+        this.builder.setExitOnPAUSE(result.value());
+        break;
+      }
+      case "DisableMPTableGeneration": {
         this.builder.setDisableMPTableGeneration(result.value());
         break;
       }
-      case "FORCEVIRTUALIOPCITOUSEMSI": {
+      case "ForceVirtualIOPCIToUseMSI": {
         this.builder.setForceVirtualIOPCIToUseMSI(result.value());
         break;
       }
-      case "GENERATEACPITABLES": {
+      case "GenerateACPITables": {
         this.builder.setGenerateACPITables(result.value());
         break;
       }
-      case "GUESTAPICISX2APIC": {
+      case "GuestAPICIsX2APIC": {
         this.builder.setGuestAPICIsX2APIC(result.value());
         break;
       }
-      case "INCLUDEGUESTMEMORYINCOREFILES": {
+      case "IncludeGuestMemoryInCoreFiles": {
         this.builder.setIncludeGuestMemoryInCoreFiles(result.value());
         break;
       }
-      case "REALTIMECLOCKISUTC": {
+      case "RealTimeClockIsUTC": {
         this.builder.setRealTimeClockIsUTC(result.value());
         break;
       }
-      case "WIREGUESTMEMORY": {
+      case "WireGuestMemory": {
         this.builder.setWireGuestMemory(result.value());
         break;
       }
-      case "YIELDCPUONHLT": {
+      case "YieldCPUOnHLT": {
         this.builder.setYieldCPUOnHLT(result.value());
         break;
       }

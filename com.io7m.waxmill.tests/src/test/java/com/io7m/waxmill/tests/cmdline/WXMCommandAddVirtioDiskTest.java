@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -59,7 +60,7 @@ public final class WXMCommandAddVirtioDiskTest
     this.configuration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
-        .setZfsVirtualMachineDirectory(this.zfsDirectory)
+        .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
         .build();
 
     new WXMClientConfigurationSerializers()
@@ -186,7 +187,7 @@ public final class WXMCommandAddVirtioDiskTest
       this.zfsDirectory.resolve(id.toString())
         .resolve(String.format("disk-%d", Integer.valueOf(disk.id().value()))),
       WXMStorageBackends.determineZFSVolumePath(
-        this.configuration.zfsVirtualMachineDirectory().orElseThrow(),
+        this.configuration.virtualMachineRuntimeDirectory(),
         id,
         disk.id())
     );

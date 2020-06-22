@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -86,24 +85,26 @@ public final class WXM1ClientConfigurationSerializer
     final var namespaceURI = WXMSchemas.configSchemaV1p0NamespaceText();
     this.writer.writeStartElement(namespaceURI, "Paths");
     this.serializePath(
-      "VirtualMachineConfigurationsDirectory",
+      "VirtualMachineConfigurationDirectory",
       this.clientConfiguration.virtualMachineConfigurationDirectory()
     );
-    this.serializePathOptional(
-      "ZFSVirtualMachinesDirectory",
-      this.clientConfiguration.zfsVirtualMachineDirectory()
+    this.serializePath(
+      "VirtualMachineRuntimeDirectory",
+      this.clientConfiguration.virtualMachineRuntimeDirectory()
+    );
+    this.serializePath(
+      "BhyveExecutable",
+      this.clientConfiguration.bhyveExecutable()
+    );
+    this.serializePath(
+      "GRUBBhyveExecutable",
+      this.clientConfiguration.grubBhyveExecutable()
+    );
+    this.serializePath(
+      "ZFSExecutable",
+      this.clientConfiguration.zfsExecutable()
     );
     this.writer.writeEndElement();
-  }
-
-  private void serializePathOptional(
-    final String type,
-    final Optional<Path> value)
-    throws XMLStreamException
-  {
-    if (value.isPresent()) {
-      this.serializePath(type, value.get());
-    }
   }
 
   private void serializePath(

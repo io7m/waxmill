@@ -33,6 +33,7 @@ import org.xml.sax.XMLReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -53,13 +54,17 @@ public final class WXMClientConfigurationParser
   private final InputStream stream;
   private final Consumer<WXMParseError> errors;
   private final URI source;
+  private final FileSystem fileSystem;
 
   public WXMClientConfigurationParser(
+    final FileSystem inFileSystem,
     final Consumer<WXMParseError> inErrors,
     final URI inSource,
     final InputStream inStream,
     final XMLReader inReader)
   {
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
     this.errors =
       Objects.requireNonNull(inErrors, "inErrors");
     this.source =
@@ -105,7 +110,7 @@ public final class WXMClientConfigurationParser
         Map.ofEntries(
           Map.entry(
             element("Configuration"),
-            c -> new WXM1ClientConfigurationParser()
+            c -> new WXM1ClientConfigurationParser(this.fileSystem)
           )
         )
       );

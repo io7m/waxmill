@@ -35,12 +35,14 @@
       <Class name="com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve"/>
       <Class name="com.io7m.waxmill.machines.WXMBootConfigurationName"/>
       <Class name="com.io7m.waxmill.machines.WXMCPUTopology"/>
+      <Class name="com.io7m.waxmill.machines.WXMCommandExecution"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIDisk"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceHostBridge"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceID"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceLPC"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceVirtioNetwork"/>
+      <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootCommands"/>
       <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve"/>
       <Class name="com.io7m.waxmill.machines.WXMFlags"/>
       <Class name="com.io7m.waxmill.machines.WXMGRUBKernelLinux"/>

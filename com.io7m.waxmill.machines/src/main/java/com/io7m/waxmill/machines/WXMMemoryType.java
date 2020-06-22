@@ -100,4 +100,17 @@ public interface WXMMemoryType
       this.gigabytes().multiply(gigabytesToBytes);
     return mbb.add(gbb);
   }
+
+  /**
+   * @return The total size of the memory in megabytes
+   */
+
+  default BigInteger totalMegabytes()
+  {
+    final var gigabytesToMegabytes =
+      valueOf(1_000L);
+    final var gmb =
+      this.gigabytes().multiply(gigabytesToMegabytes);
+    return this.megabytes().add(gmb);
+  }
 }

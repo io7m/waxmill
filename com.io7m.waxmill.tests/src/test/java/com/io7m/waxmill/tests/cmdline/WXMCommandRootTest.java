@@ -51,7 +51,7 @@ public final class WXMCommandRootTest
     this.configuration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
-        .setZfsVirtualMachineDirectory(this.zfsDirectory)
+        .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
         .build();
 
     new WXMClientConfigurationSerializers()

@@ -21,7 +21,8 @@ import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Configuration values passed to the client.
@@ -41,12 +42,66 @@ public interface WXMClientConfigurationType
 
   /**
    * A directory that contains virtual machines. This directory will contain
-   * one filesystem per virtual machine.
+   * one ZFS filesystem per virtual machine.
    *
    * @return The ZFS directory containing virtual machines
    */
 
-  Optional<Path> zfsVirtualMachineDirectory();
+  Path virtualMachineRuntimeDirectory();
+
+  /**
+   * @return The "bhyve" executable path, such as {@code /usr/sbin/bhyve}
+   */
+
+  @Value.Default
+  default Path bhyveExecutable()
+  {
+    return this.virtualMachineConfigurationDirectory()
+      .getFileSystem()
+      .getPath("/usr/sbin/bhyve");
+  }
+
+  /**
+   * @return The "grub-bhyve" executable path, such as {@code /usr/local/sbin/grub-bhyve}
+   */
+
+  @Value.Default
+  default Path grubBhyveExecutable()
+  {
+    return this.virtualMachineConfigurationDirectory()
+      .getFileSystem()
+      .getPath("/usr/local/sbin/grub-bhyve");
+  }
+
+  /**
+   * @return The "zfs" executable path, such as {@code /sbin/zfs}
+   */
+
+  @Value.Default
+  default Path zfsExecutable()
+  {
+    return this.virtualMachineConfigurationDirectory()
+      .getFileSystem()
+      .getPath("/sbin/zfs");
+  }
+
+  /**
+   * Derive a runtime directory for a specific virtual machine.
+   *
+   * @param machineId The machine ID
+   *
+   * @return A runtime directory
+   */
+
+  default Path virtualMachineRuntimeDirectoryFor(
+    final UUID machineId)
+  {
+    Objects.requireNonNull(machineId, "machineId");
+
+    return this.virtualMachineRuntimeDirectory()
+      .resolve(machineId.toString())
+      .toAbsolutePath();
+  }
 
   /**
    * Check preconditions for the type.
@@ -56,19 +111,34 @@ public interface WXMClientConfigurationType
   default void checkPreconditions()
   {
     Preconditions.checkPrecondition(
+      this.bhyveExecutable(),
+      Path::isAbsolute,
+      path -> "bhyve executable path must be absolute"
+    );
+
+    Preconditions.checkPrecondition(
+      this.grubBhyveExecutable(),
+      Path::isAbsolute,
+      path -> "grub-bhyve executable path must be absolute"
+    );
+
+    Preconditions.checkPrecondition(
+      this.zfsExecutable(),
+      Path::isAbsolute,
+      path -> "zfs executable path must be absolute"
+    );
+
+    Preconditions.checkPrecondition(
       this.virtualMachineConfigurationDirectory(),
       Path::isAbsolute,
       path -> "Virtual machine configuration directory must be absolute"
     );
 
-    this.zfsVirtualMachineDirectory()
-      .ifPresent(path -> {
-        Preconditions.checkPrecondition(
-          path,
-          Path::isAbsolute,
-          q -> "ZFS virtual machine directory must be absolute"
-        );
-      });
+    Preconditions.checkPrecondition(
+      this.virtualMachineRuntimeDirectory(),
+      Path::isAbsolute,
+      path -> "Virtual machine runtime directory must be absolute"
+    );
   }
 }
 

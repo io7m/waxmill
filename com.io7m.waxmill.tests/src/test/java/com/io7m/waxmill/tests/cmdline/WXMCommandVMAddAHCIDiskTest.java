@@ -60,7 +60,7 @@ public final class WXMCommandVMAddAHCIDiskTest
     this.configuration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
-        .setZfsVirtualMachineDirectory(this.zfsDirectory)
+        .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
         .build();
 
     new WXMClientConfigurationSerializers()
@@ -186,7 +186,7 @@ public final class WXMCommandVMAddAHCIDiskTest
       this.zfsDirectory.resolve(id.toString())
         .resolve(String.format("disk-%d", Integer.valueOf(disk.id().value()))),
       WXMStorageBackends.determineZFSVolumePath(
-        this.configuration.zfsVirtualMachineDirectory().orElseThrow(),
+        this.configuration.virtualMachineRuntimeDirectory(),
         id,
         disk.id())
     );

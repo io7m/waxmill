@@ -553,6 +553,9 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
       "WireGuestMemory",
       flags.wireGuestMemory());
     this.serializeFlag(
+      "ExitCPUOnPAUSE",
+      flags.exitOnPAUSE());
+    this.serializeFlag(
       "YieldCPUOnHLT",
       flags.yieldCPUOnHLT());
     this.writer.writeEndElement();

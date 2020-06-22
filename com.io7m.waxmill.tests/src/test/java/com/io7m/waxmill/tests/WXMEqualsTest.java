@@ -19,12 +19,14 @@ package com.io7m.waxmill.tests;
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMCPUTopology;
+import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceID;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMFlags;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
@@ -58,6 +60,12 @@ public final class WXMEqualsTest
   private static final List<WXMClassUnderTest> CLASSES =
     List.of(
       new WXMClassUnderTest(
+        WXMCommandExecution.class,
+        Set.of("executable", "arguments")),
+      new WXMClassUnderTest(
+        WXMEvaluatedBootCommands.class,
+        Set.of("configurationCommands", "lastExecution")),
+      new WXMClassUnderTest(
         WXMBootConfigurationGRUBBhyve.class,
         Set.of("comment", "name", "kernelInstructions")),
       new WXMClassUnderTest(
@@ -65,7 +73,7 @@ public final class WXMEqualsTest
         Set.of("value")),
       new WXMClassUnderTest(
         WXMEvaluatedBootConfigurationGRUBBhyve.class,
-        Set.of("deviceMap", "grubConfiguration")),
+        Set.of("deviceMap", "grubConfiguration", "commands")),
       new WXMClassUnderTest(
         WXMGRUBKernelLinux.class,
         Set.of("kernelDevice", "kernelPath", "initRDDevice", "initRDPath", "kernelArguments")),

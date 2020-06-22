@@ -21,16 +21,22 @@ import com.io7m.blackthorne.api.BTElementParsingContextType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import java.nio.file.Path;
+import java.nio.file.FileSystem;
+import java.util.Objects;
 
 public final class WXM1PathParser
   implements BTElementHandlerType<Object, WXM1Path>
 {
   private final WXM1Path.Builder builder;
+  private final FileSystem fileSystem;
 
-  public WXM1PathParser()
+  public WXM1PathParser(
+    final FileSystem inFileSystem)
   {
-    this.builder = WXM1Path.builder();
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
+    this.builder =
+      WXM1Path.builder();
   }
 
   @Override
@@ -43,7 +49,9 @@ public final class WXM1PathParser
       this.builder.setType(
         attributes.getValue("type"));
       this.builder.setPath(
-        Path.of(attributes.getValue("value")));
+        this.fileSystem.getPath(attributes.getValue("value"))
+          .toAbsolutePath()
+      );
     } catch (final Exception e) {
       throw context.parseException(e);
     }

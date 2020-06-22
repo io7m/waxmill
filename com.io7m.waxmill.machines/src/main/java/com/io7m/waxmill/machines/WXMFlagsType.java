@@ -54,6 +54,19 @@ public interface WXMFlagsType
   }
 
   /**
+   * Force the guest virtual CPU to exit when a PAUSE instruction
+   * is detected.
+   *
+   * @return {@code true} if the virtual CPU should exit on PAUSE
+   */
+
+  @Value.Default
+  default boolean exitOnPAUSE()
+  {
+    return true;
+  }
+
+  /**
    * Generate ACPI tables.  Required for FreeBSD/amd64 guests.
    *
    * @return {@code true} if ACPI tables should be generated.

@@ -25,8 +25,9 @@ import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import java.util.Locale;
+import java.nio.file.FileSystem;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.io7m.waxmill.xml.config.v1.WXM1CNames.element;
 
@@ -34,10 +35,15 @@ public final class WXM1ClientConfigurationParser
   implements BTElementHandlerType<Object, WXMClientConfiguration>
 {
   private final WXMClientConfiguration.Builder builder;
+  private final FileSystem fileSystem;
 
-  public WXM1ClientConfigurationParser()
+  public WXM1ClientConfigurationParser(
+    final FileSystem inFileSystem)
   {
-    this.builder = WXMClientConfiguration.builder();
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
+    this.builder =
+      WXMClientConfiguration.builder();
   }
 
   @Override
@@ -48,7 +54,7 @@ public final class WXM1ClientConfigurationParser
     return Map.ofEntries(
       Map.entry(
         element("Paths"),
-        c -> new WXM1PathsParser()
+        c -> new WXM1PathsParser(this.fileSystem)
       )
     );
   }
@@ -73,18 +79,32 @@ public final class WXM1ClientConfigurationParser
   {
     for (final var path : result.paths()) {
       final var type = path.type();
-      switch (type.toUpperCase(Locale.ROOT)) {
-        case "VIRTUALMACHINECONFIGURATIONSDIRECTORY": {
+      switch (type) {
+        case "VirtualMachineConfigurationDirectory": {
           this.builder.setVirtualMachineConfigurationDirectory(path.path());
           break;
         }
-        case "ZFSVIRTUALMACHINESDIRECTORY": {
-          this.builder.setZfsVirtualMachineDirectory(path.path());
+        case "VirtualMachineRuntimeDirectory": {
+          this.builder.setVirtualMachineRuntimeDirectory(path.path());
+          break;
+        }
+        case "GRUBBhyveExecutable": {
+          this.builder.setGrubBhyveExecutable(path.path());
+          break;
+        }
+        case "BhyveExecutable": {
+          this.builder.setBhyveExecutable(path.path());
+          break;
+        }
+        case "ZFSExecutable": {
+          this.builder.setZfsExecutable(path.path());
           break;
         }
         default:
           throw context.parseException(
-            new IllegalArgumentException("Unrecognized path type: " + type)
+            new IllegalArgumentException(String.format(
+              "Unrecognized path type: %s",
+              type))
           );
       }
     }

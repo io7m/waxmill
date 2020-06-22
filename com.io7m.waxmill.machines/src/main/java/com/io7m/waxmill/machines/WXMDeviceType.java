@@ -345,7 +345,20 @@ public interface WXMDeviceType
     {
       NO_CACHE,
       SYNCHRONOUS,
-      READ_ONLY
+      READ_ONLY;
+
+      public String externalName()
+      {
+        switch (this) {
+          case NO_CACHE:
+            return "nocache";
+          case SYNCHRONOUS:
+            return "direct";
+          case READ_ONLY:
+            return "ro";
+        }
+        throw new UnreachableCodeException();
+      }
     }
   }
 

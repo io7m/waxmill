@@ -71,6 +71,7 @@ public final class WXMClientConfigurationParsers
           WXMSchemas.schemas()
         );
       return new WXMClientConfigurationParser(
+        fileSystem,
         errors,
         uri,
         stream,

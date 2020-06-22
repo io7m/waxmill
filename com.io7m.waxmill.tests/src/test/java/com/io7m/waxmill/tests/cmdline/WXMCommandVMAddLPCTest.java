@@ -63,7 +63,7 @@ public final class WXMCommandVMAddLPCTest
     this.configuration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
-        .setZfsVirtualMachineDirectory(this.zfsDirectory)
+        .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
         .build();
 
     new WXMClientConfigurationSerializers()

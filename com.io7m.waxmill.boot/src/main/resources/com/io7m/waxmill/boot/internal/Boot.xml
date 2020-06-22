@@ -10,12 +10,6 @@
 ]]>
   </entry>
 
-  <entry key="bootNoZFSVolumeConfigured"><![CDATA[You must specify a ZFS volume in the client configuration to boot this machine.
-  Machine:            {0}
-  Boot configuration: {1}
-]]>
-  </entry>
-
   <entry key="bootNoSuchDevice"><![CDATA[The boot instructions specify a nonexistent or inappropriate boot device ID.
   Machine:                   {0}
   Boot configuration:        {1}
