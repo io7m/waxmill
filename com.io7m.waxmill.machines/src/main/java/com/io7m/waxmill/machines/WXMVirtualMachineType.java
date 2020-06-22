@@ -17,6 +17,7 @@
 package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
 import java.net.URI;
@@ -28,6 +29,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMDeviceIDType.VALID_DEVICE_IDS;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 
 @Value.Immutable
 @ImmutablesStyleType
@@ -146,5 +149,46 @@ public interface WXMVirtualMachineType
       }
     }
     return Optional.empty();
+  }
+
+  /**
+   * Check preconditions for the type.
+   */
+
+  @Value.Check
+  default void checkPreconditions()
+  {
+    this.checkAtMostOneLPC();
+    this.checkAtMostOneHostBridge();
+  }
+
+  private void checkAtMostOneLPC()
+  {
+    final var lpcDevices =
+      this.devices().stream()
+        .filter(device -> device.kind() == WXM_LPC)
+        .collect(Collectors.toList());
+
+    final var lpcCount = lpcDevices.size();
+    Preconditions.checkPreconditionI(
+      lpcCount,
+      lpcCount <= 1,
+      count -> "At most 1 LPC device can be added to a virtual machine"
+    );
+  }
+
+  private void checkAtMostOneHostBridge()
+  {
+    final var hbDevices =
+      this.devices().stream()
+        .filter(device -> device.kind() == WXM_HOSTBRIDGE)
+        .collect(Collectors.toList());
+
+    final var hbCount = hbDevices.size();
+    Preconditions.checkPreconditionI(
+      hbCount,
+      hbCount <= 1,
+      count -> "At most 1 host bridge device can be added to a virtual machine"
+    );
   }
 }

@@ -241,4 +241,14 @@
     <Bug pattern="AI_ANNOTATION_ISSUES_NEEDS_NULLABLE"/>
   </Match>
 
+  <Match>
+    <!-- False positive: The methods _are_ called by checkPreconditions(). -->
+    <Class name="com.io7m.waxmill.machines.WXMVirtualMachineType"/>
+    <Or>
+      <Method name="checkAtMostOneHostBridge"/>
+      <Method name="checkAtMostOneLPC"/>
+    </Or>
+    <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+  </Match>
+
 </FindBugsFilter>
