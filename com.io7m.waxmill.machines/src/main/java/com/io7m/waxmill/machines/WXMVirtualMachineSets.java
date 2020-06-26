@@ -16,6 +16,7 @@
 
 package com.io7m.waxmill.machines;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -55,6 +56,7 @@ public final class WXMVirtualMachineSets
   /**
    * Create a set consisting of the union of all of the given sets.
    *
+   * @param messages The machine messages
    * @param machineSets The sets of machines
    *
    * @return A set consisting of all of the machines in all sets
@@ -63,6 +65,7 @@ public final class WXMVirtualMachineSets
    */
 
   public static WXMVirtualMachineSet merge(
+    final WXMMachineMessages messages,
     final Collection<WXMVirtualMachineSet> machineSets)
     throws WXMException
   {
@@ -80,7 +83,7 @@ public final class WXMVirtualMachineSets
 
         final var existing = machines.get(machineId);
         exceptions.add(
-          new WXMException(errorMachineConflict(machine, existing))
+          new WXMException(errorMachineConflict(messages, machine, existing))
         );
       }
     }
@@ -92,39 +95,17 @@ public final class WXMVirtualMachineSets
   }
 
   private static String errorMachineConflict(
+    final WXMMachineMessages messages,
     final WXMVirtualMachine machine0,
     final WXMVirtualMachine machine1)
   {
-    final var lineSeparator = System.lineSeparator();
-    final var builder = new StringBuilder(128);
-    builder
-      .append("One or more virtual machines encountered with the same ID.")
-      .append(lineSeparator);
-
-    builder.append("  ID: ")
-      .append(machine0.id())
-      .append(lineSeparator);
-
-    builder.append("  Machine: ")
-      .append(machine0.name().value())
-      .append(lineSeparator);
-
-    machine0.configurationFile().ifPresent(source -> {
-      builder.append("  Source: ")
-        .append(source)
-        .append(lineSeparator);
-    });
-
-    builder.append("  Machine: ")
-      .append(machine1.name().value())
-      .append(lineSeparator);
-
-    machine1.configurationFile().ifPresent(source -> {
-      builder.append("  Source: ")
-        .append(source)
-        .append(lineSeparator);
-    });
-
-    return builder.toString();
+    return messages.format(
+      "errorMachineConflict",
+      machine0.id(),
+      machine0.name().value(),
+      machine0.configurationFile().map(URI::toString).orElse("<unspecified>"),
+      machine1.name().value(),
+      machine1.configurationFile().map(URI::toString).orElse("<unspecified>")
+    );
   }
 }

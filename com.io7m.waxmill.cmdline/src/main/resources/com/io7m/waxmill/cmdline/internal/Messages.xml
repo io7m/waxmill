@@ -57,6 +57,23 @@
   Received: {0}
 ]]></entry>
 
+  <entry key="errorInvalidDeviceSlot"><![CDATA[Invalid device PCI slot specification.
+
+  Expected:
+    <bus> ':' <slot> ':' <function>
+
+  Where:
+    <bus>      = [0 .. 255]
+    <slot>     = [0 .. 31]
+    <function> = [0 .. 7]
+
+  Examples:
+    0:0:0
+    255:31:7
+
+  Received: {0}
+]]></entry>
+
   <entry key="test">Test: {0}</entry>
 
 </properties>

@@ -21,11 +21,9 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.machines.WXMDeviceID;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceType;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
 
 import java.util.Map;
 
@@ -48,6 +46,10 @@ public final class WXM1LPCDeviceParser
     final BTElementParsingContextType context)
   {
     return Map.ofEntries(
+      Map.entry(
+        element("DeviceSlot"),
+        c -> new WXM1DeviceSlotParser()
+      ),
       Map.entry(
         element("Comment"),
         c -> new WXM1CommentParser()
@@ -77,23 +79,10 @@ public final class WXM1LPCDeviceParser
     } else if (result instanceof WXMDeviceType.WXMTTYBackendType) {
       final var backend = (WXMDeviceType.WXMTTYBackendType) result;
       this.builder.addBackends(backend);
+    } else if (result instanceof WXMDeviceSlot) {
+      this.builder.setDeviceSlot((WXMDeviceSlot) result);
     } else {
       throw new UnreachableCodeException();
-    }
-  }
-
-  @Override
-  public void onElementStart(
-    final BTElementParsingContextType context,
-    final Attributes attributes)
-    throws SAXParseException
-  {
-    try {
-      this.builder.setId(
-        WXMDeviceID.of(Integer.parseInt(attributes.getValue("id")))
-      );
-    } catch (final Exception e) {
-      throw context.parseException(e);
     }
   }
 

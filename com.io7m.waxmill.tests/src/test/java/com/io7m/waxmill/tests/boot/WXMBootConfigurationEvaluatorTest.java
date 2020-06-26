@@ -23,7 +23,7 @@ import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
@@ -63,6 +63,7 @@ import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Ve
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.NO_CACHE;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.READ_ONLY;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.SYNCHRONOUS;
+import static com.io7m.waxmill.tests.WXMDeviceIDTest.convert;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -127,32 +128,32 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelOpenBSD.builder()
-                .setBootDevice(WXMDeviceID.of(12))
+                .setBootDevice(convert("0:12:0"))
                 .setKernelPath(Paths.get("/bsd"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceVirtioBlockStorage.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
         .addDevices(
           WXMDeviceVirtioBlockStorage.builder()
-            .setId(WXMDeviceID.of(1))
+            .setDeviceSlot(convert("0:1:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
         .addDevices(
           WXMDeviceVirtioBlockStorage.builder()
-            .setId(WXMDeviceID.of(2))
+            .setDeviceSlot(convert("0:2:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
         .addDevices(
           WXMDeviceLPC.builder()
-            .setId(WXMDeviceID.of(3))
+            .setDeviceSlot(convert("0:3:0"))
             .addBackends(
               WXMTTYBackendStdio.builder()
                 .setDevice("com0")
@@ -193,14 +194,14 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelOpenBSD.builder()
-                .setBootDevice(WXMDeviceID.of(0))
+                .setBootDevice(convert("0:0:0"))
                 .setKernelPath(Paths.get("/bsd"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceAHCIDisk.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setBackend(
               WXMStorageBackendFile.builder()
                 .setFile(Path.of("/tmp/file"))
@@ -249,7 +250,7 @@ public final class WXMBootConfigurationEvaluatorTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096 %s",
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096 %s",
         machine.id()),
       lastExec.toString()
     );
@@ -268,14 +269,14 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelOpenBSD.builder()
-                .setBootDevice(WXMDeviceID.of(0))
+                .setBootDevice(convert("0:0:0"))
                 .setKernelPath(Paths.get("/bsd"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceVirtioBlockStorage.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
@@ -300,7 +301,7 @@ public final class WXMBootConfigurationEvaluatorTest
 
     final String expectedZFSDisk =
       this.vms.resolve(machine.id().toString())
-        .resolve("disk-0")
+        .resolve("disk-0_0_0")
         .toString();
 
     final var mapLines = evaluated.deviceMap();
@@ -321,7 +322,7 @@ public final class WXMBootConfigurationEvaluatorTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0,virtio-blk,%s/%s/disk-0 %s",
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,%s/%s/disk-0_0_0 %s",
         this.vms.toString(),
         machine.id(),
         machine.id()),
@@ -342,20 +343,20 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelOpenBSD.builder()
-                .setBootDevice(WXMDeviceID.of(1))
+                .setBootDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/bsd"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceHostBridge.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setVendor(WXM_AMD)
             .build()
         )
         .addDevices(
           WXMDeviceAHCIOpticalDisk.builder()
-            .setId(WXMDeviceID.of(1))
+            .setDeviceSlot(convert("0:1:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
@@ -380,7 +381,7 @@ public final class WXMBootConfigurationEvaluatorTest
 
     final String expectedZFSDisk =
       this.vms.resolve(machine.id().toString())
-        .resolve("disk-1")
+        .resolve("disk-0_1_0")
         .toString();
 
     final var mapLines = evaluated.deviceMap();
@@ -401,7 +402,7 @@ public final class WXMBootConfigurationEvaluatorTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0,amd_hostbridge -s 1,ahci-cd,%s/%s/disk-1 %s",
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,amd_hostbridge -s 0:1:0,ahci-cd,%s/%s/disk-0_1_0 %s",
         this.vms.toString(),
         machine.id(),
         machine.id()),
@@ -421,18 +422,18 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(WXMDeviceID.of(12))
+                .setKernelDevice(convert("0:12:0"))
                 .setKernelPath(Paths.get("/vmlinux"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(WXMDeviceID.of(0))
+                .setInitRDDevice(convert("0:0:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceVirtioBlockStorage.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
@@ -469,18 +470,18 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(WXMDeviceID.of(0))
+                .setKernelDevice(convert("0:0:0"))
                 .setKernelPath(Paths.get("/vmlinux"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(WXMDeviceID.of(12))
+                .setInitRDDevice(convert("0:12:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceVirtioBlockStorage.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
@@ -518,18 +519,18 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(WXMDeviceID.of(0))
+                .setKernelDevice(convert("0:0:0"))
                 .setKernelPath(Paths.get("/vmlinuz"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(WXMDeviceID.of(0))
+                .setInitRDDevice(convert("0:0:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceVirtioBlockStorage.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
@@ -554,7 +555,7 @@ public final class WXMBootConfigurationEvaluatorTest
 
     final String expectedZFSDisk =
       this.vms.resolve(machine.id().toString())
-        .resolve("disk-0")
+        .resolve("disk-0_0_0")
         .toString();
 
     final var mapLines = evaluated.deviceMap();
@@ -579,7 +580,7 @@ public final class WXMBootConfigurationEvaluatorTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0,virtio-blk,%s/%s/disk-0 %s",
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,%s/%s/disk-0_0_0 %s",
         this.vms.toString(),
         machine.id(),
         machine.id()),
@@ -600,24 +601,24 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(WXMDeviceID.of(1))
+                .setKernelDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/vmlinuz"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(WXMDeviceID.of(1))
+                .setInitRDDevice(convert("0:1:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceHostBridge.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setVendor(WXM_UNSPECIFIED)
             .build()
         )
         .addDevices(
           WXMDeviceAHCIOpticalDisk.builder()
-            .setId(WXMDeviceID.of(1))
+            .setDeviceSlot(convert("0:1:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
@@ -642,7 +643,7 @@ public final class WXMBootConfigurationEvaluatorTest
 
     final String expectedZFSDisk =
       this.vms.resolve(machine.id().toString())
-        .resolve("disk-1")
+        .resolve("disk-0_1_0")
         .toString();
 
     final var mapLines = evaluated.deviceMap();
@@ -667,7 +668,7 @@ public final class WXMBootConfigurationEvaluatorTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0,hostbridge -s 1,ahci-cd,%s/%s/disk-1 %s",
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-cd,%s/%s/disk-0_1_0 %s",
         this.vms.toString(),
         machine.id(),
         machine.id()),
@@ -688,24 +689,24 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(WXMDeviceID.of(1))
+                .setKernelDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/vmlinuz"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(WXMDeviceID.of(1))
+                .setInitRDDevice(convert("0:1:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceHostBridge.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setVendor(WXM_UNSPECIFIED)
             .build()
         )
         .addDevices(
           WXMDeviceAHCIDisk.builder()
-            .setId(WXMDeviceID.of(1))
+            .setDeviceSlot(convert("0:1:0"))
             .setBackend(
               WXMStorageBackendFile.builder()
                 .setFile(Path.of("/tmp/file"))
@@ -714,7 +715,7 @@ public final class WXMBootConfigurationEvaluatorTest
         )
         .addDevices(
           WXMDeviceVirtioNetwork.builder()
-            .setId(WXMDeviceID.of(2))
+            .setDeviceSlot(convert("0:2:0"))
             .setBackend(
               WXMTap.builder()
                 .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
@@ -762,7 +763,7 @@ public final class WXMBootConfigurationEvaluatorTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0,hostbridge -s 1,ahci-hd,/tmp/file -s 2,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
         machine.id()),
       lastExec.toString()
     );
@@ -781,24 +782,24 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(WXMDeviceID.of(1))
+                .setKernelDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/vmlinuz"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(WXMDeviceID.of(1))
+                .setInitRDDevice(convert("0:1:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceHostBridge.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setVendor(WXM_UNSPECIFIED)
             .build()
         )
         .addDevices(
           WXMDeviceAHCIDisk.builder()
-            .setId(WXMDeviceID.of(1))
+            .setDeviceSlot(convert("0:1:0"))
             .setBackend(
               WXMStorageBackendFile.builder()
                 .setFile(Path.of("/tmp/file"))
@@ -807,7 +808,7 @@ public final class WXMBootConfigurationEvaluatorTest
         )
         .addDevices(
           WXMDeviceVirtioNetwork.builder()
-            .setId(WXMDeviceID.of(2))
+            .setDeviceSlot(convert("0:2:0"))
             .setBackend(
               WXMVMNet.builder()
                 .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
@@ -855,7 +856,7 @@ public final class WXMBootConfigurationEvaluatorTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0,hostbridge -s 1,ahci-hd,/tmp/file -s 2,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
         machine.id()),
       lastExec.toString()
     );
@@ -874,24 +875,24 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(WXMDeviceID.of(1))
+                .setKernelDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/vmlinuz"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(WXMDeviceID.of(1))
+                .setInitRDDevice(convert("0:1:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceHostBridge.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setVendor(WXM_UNSPECIFIED)
             .build()
         )
         .addDevices(
           WXMDeviceAHCIDisk.builder()
-            .setId(WXMDeviceID.of(1))
+            .setDeviceSlot(convert("0:1:0"))
             .setBackend(
               WXMStorageBackendFile.builder()
                 .setFile(Path.of("/tmp/file"))
@@ -900,7 +901,7 @@ public final class WXMBootConfigurationEvaluatorTest
         )
         .addDevices(
           WXMDeviceLPC.builder()
-            .setId(WXMDeviceID.of(2))
+            .setDeviceSlot(convert("0:2:0"))
             .addBackends(
               WXMTTYBackendFile.builder()
                 .setDevice("bootrom")
@@ -959,7 +960,7 @@ public final class WXMBootConfigurationEvaluatorTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0,hostbridge -s 1,ahci-hd,/tmp/file -s 2,lpc -l bootrom,/tmp/rom -l com1,/dev/nmdm_%s_B -l com2,stdio %s",
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,lpc -l bootrom,/tmp/rom -l com1,/dev/nmdm_%s_B -l com2,stdio %s",
         machine.id(),
         machine.id()),
       lastExec.toString()
@@ -978,24 +979,24 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(WXMDeviceID.of(1))
+                .setKernelDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/vmlinux"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(WXMDeviceID.of(1))
+                .setInitRDDevice(convert("0:1:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
           WXMDeviceVirtioBlockStorage.builder()
-            .setId(WXMDeviceID.of(0))
+            .setDeviceSlot(convert("0:0:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
         .addDevices(
           WXMDeviceLPC.builder()
-            .setId(WXMDeviceID.of(1))
+            .setDeviceSlot(convert("0:1:0"))
             .addBackends(WXMTTYBackendStdio.builder()
                            .setDevice("com1")
                            .build())

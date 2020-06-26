@@ -20,7 +20,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.waxmill.machines.WXMCPUTopology;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMFlags;
 import com.io7m.waxmill.machines.WXMMachineName;
 import com.io7m.waxmill.machines.WXMMemory;
@@ -134,7 +134,12 @@ public final class WXMCommandVMDefine extends WXMCommandRoot
 
       final var hostBridge =
         WXMDeviceHostBridge.builder()
-          .setId(WXMDeviceID.of(0))
+          .setDeviceSlot(
+            WXMDeviceSlot.builder()
+              .setBusID(0)
+              .setSlotID(0)
+              .setFunctionID(0)
+              .build())
           .setVendor(WXM_UNSPECIFIED)
           .build();
 

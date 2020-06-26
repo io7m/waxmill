@@ -26,12 +26,17 @@
   </Memory>
 
   <Devices>
-    <HostBridge id="0"
-                vendor="AMD">
+    <HostBridge vendor="AMD">
+      <DeviceSlot bus="0"
+                  slot="0"
+                  function="0"/>
       <Comment>An AMD-branded host bridge.</Comment>
     </HostBridge>
 
-    <VirtioNetworkDevice id="1">
+    <VirtioNetworkDevice>
+      <DeviceSlot bus="0"
+                  slot="1"
+                  function="0"/>
       <Comment>A TAP-based network device.</Comment>
       <TAPDevice name="tap23"
                  address="d7:94:b5:60:0d:ac">
@@ -39,7 +44,10 @@
       </TAPDevice>
     </VirtioNetworkDevice>
 
-    <VirtioNetworkDevice id="2">
+    <VirtioNetworkDevice>
+      <DeviceSlot bus="0"
+                  slot="2"
+                  function="0"/>
       <Comment>A VMNet-based network device.</Comment>
       <VMNetDevice name="vmnet23"
                    address="d7:92:b5:60:0d:ac">
@@ -47,7 +55,10 @@
       </VMNetDevice>
     </VirtioNetworkDevice>
 
-    <AHCIDiskDevice id="3">
+    <AHCIDiskDevice>
+      <DeviceSlot bus="0"
+                  slot="3"
+                  function="0"/>
       <Comment>A disk device.</Comment>
       <StorageBackendFile path="/path/to/storage">
         <Comment>File-based storage.</Comment>
@@ -59,7 +70,10 @@
       </StorageBackendFile>
     </AHCIDiskDevice>
 
-    <AHCIOpticalDiskDevice id="4">
+    <AHCIOpticalDiskDevice>
+      <DeviceSlot bus="0"
+                  slot="4"
+                  function="0"/>
       <Comment>An optical disk device.</Comment>
       <StorageBackendFile path="/path/to/cd">
         <Comment>File-based storage.</Comment>
@@ -69,7 +83,10 @@
       </StorageBackendFile>
     </AHCIOpticalDiskDevice>
 
-    <LPCDevice id="5">
+    <LPCDevice>
+      <DeviceSlot bus="0"
+                  slot="5"
+                  function="0"/>
       <Comment>A TTY based on a filesystem socket.</Comment>
       <TTYBackendStdio device="com0"/>
       <TTYBackendFile device="com1"
@@ -81,17 +98,29 @@
   <BootConfigurations>
     <BootConfigurationGRUBBhyve name="install">
       <Comment>The installation configuration, booting from a CD.</Comment>
-      <GRUBBhyveKernelOpenBSD bootDevice="4"
-                              kernelPath="/6.6/amd64/bsd.rd"/>
+      <GRUBBhyveKernelOpenBSD>
+        <BSDBootDevice kernelPath="/6.6/amd64/bsd.rd">
+          <DeviceSlot bus="0"
+                      slot="4"
+                      function="0"/>
+        </BSDBootDevice>
+      </GRUBBhyveKernelOpenBSD>
     </BootConfigurationGRUBBhyve>
     <BootConfigurationGRUBBhyve name="run">
       <Comment>The normal configuration, booting from the disk.</Comment>
-      <GRUBBhyveKernelLinux initRDDevice="4"
-                            initRDPath="/initrd.img"
-                            kernelDevice="4"
-                            kernelPath="/vmlinuz">
+      <GRUBBhyveKernelLinux>
+        <LinuxKernelDevice kernelPath="/vmlinuz">
+          <DeviceSlot bus="0"
+                      slot="3"
+                      function="0"/>
+        </LinuxKernelDevice>
         <LinuxKernelArgument value="root=/dev/sda1"/>
         <LinuxKernelArgument value="init=/sbin/runit-init"/>
+        <LinuxInitRDDevice initRDPath="/initrd.img">
+          <DeviceSlot bus="0"
+                      slot="3"
+                      function="0"/>
+        </LinuxInitRDDevice>
       </GRUBBhyveKernelLinux>
     </BootConfigurationGRUBBhyve>
   </BootConfigurations>

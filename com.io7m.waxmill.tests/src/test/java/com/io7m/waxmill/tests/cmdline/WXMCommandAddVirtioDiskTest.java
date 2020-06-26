@@ -28,7 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -108,7 +107,9 @@ public final class WXMCommandAddVirtioDiskTest
         "--id",
         id.toString(),
         "--backend",
-        "file;/tmp/xyz"
+        "file;/tmp/xyz",
+        "--device-slot",
+        "0:1:0"
       }
     );
 
@@ -165,7 +166,9 @@ public final class WXMCommandAddVirtioDiskTest
         "--id",
         id.toString(),
         "--backend",
-        "zfs-volume"
+        "zfs-volume",
+        "--device-slot",
+        "0:1:0"
       }
     );
 
@@ -185,11 +188,16 @@ public final class WXMCommandAddVirtioDiskTest
 
     assertEquals(
       this.zfsDirectory.resolve(id.toString())
-        .resolve(String.format("disk-%d", Integer.valueOf(disk.id().value()))),
+        .resolve(String.format(
+          "disk-%d_%d_%d",
+          Integer.valueOf(disk.deviceSlot().busID()),
+          Integer.valueOf(disk.deviceSlot().slotID()),
+          Integer.valueOf(disk.deviceSlot().functionID())
+        )),
       WXMStorageBackends.determineZFSVolumePath(
         this.configuration.virtualMachineRuntimeDirectory(),
         id,
-        disk.id())
+        disk.deviceSlot())
     );
   }
 
@@ -215,7 +223,7 @@ public final class WXMCommandAddVirtioDiskTest
   }
 
   @Test
-  public void addVirtioDiskTooManyDevices()
+  public void addVirtioDiskAlreadyUsed()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -240,21 +248,21 @@ public final class WXMCommandAddVirtioDiskTest
       }
     );
 
-    for (int index = 0; index < 31; ++index) {
-      MainExitless.main(
-        new String[]{
-          "vm-add-virtio-disk",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--id",
-          id.toString(),
-          "--backend",
-          "file;/tmp/xyz",
-        }
-      );
-    }
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-disk",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--id",
+        id.toString(),
+        "--backend",
+        "file;/tmp/xyz",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
 
     assertThrows(IOException.class, () -> {
       MainExitless.main(
@@ -268,6 +276,8 @@ public final class WXMCommandAddVirtioDiskTest
           id.toString(),
           "--backend",
           "file;/tmp/xyz",
+          "--device-slot",
+          "0:1:0"
         }
       );
     });

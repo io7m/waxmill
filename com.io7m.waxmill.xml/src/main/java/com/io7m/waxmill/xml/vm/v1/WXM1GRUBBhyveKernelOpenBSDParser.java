@@ -16,15 +16,18 @@
 
 package com.io7m.waxmill.xml.vm.v1;
 
+import com.io7m.blackthorne.api.BTElementHandlerConstructorType;
 import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.blackthorne.api.BTQualifiedName;
+import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
 
 import java.nio.file.FileSystem;
+import java.util.Map;
 import java.util.Objects;
+
+import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
 public final class WXM1GRUBBhyveKernelOpenBSDParser
   implements BTElementHandlerType<Object, WXMGRUBKernelOpenBSD>
@@ -35,27 +38,36 @@ public final class WXM1GRUBBhyveKernelOpenBSDParser
   public WXM1GRUBBhyveKernelOpenBSDParser(
     final FileSystem inFileSystem)
   {
-    this.fileSystem = Objects.requireNonNull(inFileSystem, "inFileSystem");
-    this.builder = WXMGRUBKernelOpenBSD.builder();
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "inFileSystem");
+    this.builder =
+      WXMGRUBKernelOpenBSD.builder();
   }
 
   @Override
-  public void onElementStart(
-    final BTElementParsingContextType context,
-    final Attributes attributes)
-    throws SAXParseException
+  public Map<BTQualifiedName, BTElementHandlerConstructorType<?, ?>>
+  onChildHandlersRequested(
+    final BTElementParsingContextType context)
   {
-    try {
-      this.builder.setKernelPath(
-        this.fileSystem.getPath(attributes.getValue("kernelPath").trim())
-          .toAbsolutePath()
-      );
-      this.builder.setBootDevice(
-        WXMDeviceID.of(
-          Integer.parseInt(attributes.getValue("bootDevice").trim()))
-      );
-    } catch (final Exception e) {
-      throw context.parseException(e);
+    return Map.ofEntries(
+      Map.entry(
+        element("BSDBootDevice"),
+        c -> new WXM1BSDBootDeviceParser(this.fileSystem)
+      )
+    );
+  }
+
+  @Override
+  public void onChildValueProduced(
+    final BTElementParsingContextType context,
+    final Object result)
+  {
+    if (result instanceof WXM1BSDBootDevice) {
+      final var bootDevice = (WXM1BSDBootDevice) result;
+      this.builder.setBootDevice(bootDevice.deviceSlot());
+      this.builder.setKernelPath(bootDevice.kernelPath());
+    } else {
+      throw new UnreachableCodeException();
     }
   }
 

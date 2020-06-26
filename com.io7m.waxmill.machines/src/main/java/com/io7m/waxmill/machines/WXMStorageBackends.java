@@ -44,7 +44,7 @@ public final class WXMStorageBackends
   public static Path determineZFSVolumePath(
     final Path machineDirectory,
     final UUID machineId,
-    final WXMDeviceID deviceID)
+    final WXMDeviceSlot deviceID)
   {
     Objects.requireNonNull(machineDirectory, "machineDirectory");
     Objects.requireNonNull(machineId, "machineId");
@@ -52,6 +52,11 @@ public final class WXMStorageBackends
 
     return machineDirectory
       .resolve(machineId.toString())
-      .resolve(String.format("disk-%d", Integer.valueOf(deviceID.value())));
+      .resolve(String.format(
+        "disk-%d_%d_%d",
+        Integer.valueOf(deviceID.busID()),
+        Integer.valueOf(deviceID.slotID()),
+        Integer.valueOf(deviceID.functionID())
+      ));
   }
 }

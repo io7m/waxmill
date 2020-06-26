@@ -20,10 +20,11 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.client.api.WXMClientType;
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
-import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
@@ -71,6 +72,14 @@ public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
   private String comment = "";
 
   @Parameter(
+    names = "--device-slot",
+    description = "The slot to which the device will be attached.",
+    required = true,
+    converter = WXMDeviceSlotConverter.class
+  )
+  private WXMDeviceSlot deviceSlot;
+
+  @Parameter(
     names = "--open-option",
     description = "The options that will be used when opening the storage device.",
     required = false
@@ -104,11 +113,12 @@ public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
 
     try (var client = WXMServices.clients().open(this.configurationFile)) {
       final var machine = client.vmFind(this.id);
-      final var deviceId =
-        machine.findUnusedDeviceId()
-          .orElseThrow(() -> new WXMException(
-            "No slots left to add a device to the virtual machine"
-          ));
+      this.deviceSlot =
+        WXMDeviceSlots.checkDeviceSlotNotUsed(
+          WXMMachineMessages.create(),
+          machine,
+          this.deviceSlot
+        );
 
       switch (this.backend.kind()) {
         case WXM_STORAGE_FILE:
@@ -132,7 +142,7 @@ public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
 
       final WXMDeviceType disk =
         WXMDeviceVirtioBlockStorage.builder()
-          .setId(deviceId)
+          .setDeviceSlot(this.deviceSlot)
           .setBackend(this.backend)
           .setComment(Optional.ofNullable(this.comment).orElse(""))
           .build();
@@ -144,30 +154,29 @@ public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
           .build();
 
       client.vmUpdate(updatedMachine);
-      this.showCreated(client, machine, deviceId);
+      this.showCreated(client, machine);
     }
     return SUCCESS;
   }
 
   private void showCreated(
     final WXMClientType client,
-    final WXMVirtualMachine machine,
-    final WXMDeviceID deviceId)
+    final WXMVirtualMachine machine)
   {
     switch (this.backend.kind()) {
       case WXM_STORAGE_FILE: {
         LOG.info(
           "Added virtio disk file {} @ slot {}",
           ((WXMStorageBackendFile) this.backend).file(),
-          Integer.valueOf(deviceId.value())
+          this.deviceSlot
         );
         break;
       }
       case WXM_STORAGE_ZFS_VOLUME: {
         LOG.info(
           "Added virtio disk zfs volume {} @ slot {}",
-          showZFSPath(client, machine, deviceId),
-          Integer.valueOf(deviceId.value())
+          showZFSPath(client, machine, this.deviceSlot),
+          this.deviceSlot
         );
         break;
       }
@@ -180,7 +189,7 @@ public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
   private static String showZFSPath(
     final WXMClientType client,
     final WXMVirtualMachine machine,
-    final WXMDeviceID deviceId)
+    final WXMDeviceSlot deviceId)
   {
     return determineZFSVolumePath(
       client.configuration().virtualMachineRuntimeDirectory(),

@@ -28,7 +28,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.io7m.waxmill.machines.WXMDeviceIDType.VALID_DEVICE_IDS;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 
@@ -111,12 +110,12 @@ public interface WXMVirtualMachineType
 
   @Value.Derived
   @Value.Auxiliary
-  default Map<WXMDeviceID, WXMDeviceType> deviceMap()
+  default Map<WXMDeviceSlot, WXMDeviceType> deviceMap()
   {
     return this.devices()
       .stream()
       .collect(Collectors.toMap(
-        WXMDeviceType::id,
+        WXMDeviceType::deviceSlot,
         Function.identity()
       ));
   }
@@ -131,24 +130,6 @@ public interface WXMVirtualMachineType
         WXMBootConfigurationType::name,
         Function.identity()
       ));
-  }
-
-  /**
-   * @return An unused device ID, if one exists
-   */
-
-  default Optional<WXMDeviceID> findUnusedDeviceId()
-  {
-    final var devicesMap = this.deviceMap();
-    for (int deviceId = VALID_DEVICE_IDS.lower();
-         deviceId <= VALID_DEVICE_IDS.upper();
-         ++deviceId) {
-      final var possibleDeviceId = WXMDeviceID.of(deviceId);
-      if (!devicesMap.containsKey(possibleDeviceId)) {
-        return Optional.of(possibleDeviceId);
-      }
-    }
-    return Optional.empty();
   }
 
   /**

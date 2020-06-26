@@ -21,10 +21,7 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.machines.WXMDeviceID;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
 
 import java.nio.file.FileSystem;
 import java.util.Map;
@@ -55,6 +52,14 @@ public final class WXM1GRUBBhyveKernelLinuxParser
       Map.entry(
         element("LinuxKernelArgument"),
         c -> new WXM1LinuxKernelArgumentParser()
+      ),
+      Map.entry(
+        element("LinuxKernelDevice"),
+        c -> new WXM1LinuxKernelDeviceParser(this.fileSystem)
+      ),
+      Map.entry(
+        element("LinuxInitRDDevice"),
+        c -> new WXM1LinuxInitRDDeviceParser(this.fileSystem)
       )
     );
   }
@@ -66,36 +71,16 @@ public final class WXM1GRUBBhyveKernelLinuxParser
   {
     if (result instanceof String) {
       this.builder.addKernelArguments((String) result);
+    } else if (result instanceof WXM1LinuxInitRDDevice) {
+      final var device = (WXM1LinuxInitRDDevice) result;
+      this.builder.setInitRDDevice(device.deviceSlot());
+      this.builder.setInitRDPath(device.initRDPath());
+    } else if (result instanceof WXM1LinuxKernelDevice) {
+      final var device = (WXM1LinuxKernelDevice) result;
+      this.builder.setKernelDevice(device.deviceSlot());
+      this.builder.setKernelPath(device.kernelPath());
     } else {
       throw new UnreachableCodeException();
-    }
-  }
-
-  @Override
-  public void onElementStart(
-    final BTElementParsingContextType context,
-    final Attributes attributes)
-    throws SAXParseException
-  {
-    try {
-      this.builder.setInitRDPath(
-        this.fileSystem.getPath(attributes.getValue("initRDPath").trim())
-          .toAbsolutePath()
-      );
-      this.builder.setInitRDDevice(
-        WXMDeviceID.of(
-          Integer.parseInt(attributes.getValue("initRDDevice").trim()))
-      );
-      this.builder.setKernelPath(
-        this.fileSystem.getPath(attributes.getValue("kernelPath").trim())
-          .toAbsolutePath()
-      );
-      this.builder.setKernelDevice(
-        WXMDeviceID.of(
-          Integer.parseInt(attributes.getValue("kernelDevice").trim()))
-      );
-    } catch (final Exception e) {
-      throw context.parseException(e);
     }
   }
 

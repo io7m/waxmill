@@ -29,8 +29,9 @@ import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceSlotType;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
@@ -311,7 +312,7 @@ public final class WXMBootConfigurationEvaluator
     final var devicesSorted =
       this.machine.devices()
         .stream()
-        .sorted(Comparator.comparing(WXMDeviceType::id))
+        .sorted(Comparator.comparing(WXMDeviceType::deviceSlot))
         .collect(Collectors.toList());
 
     for (final var device : devicesSorted) {
@@ -366,8 +367,8 @@ public final class WXMBootConfigurationEvaluator
     command.addArguments("-s");
     command.addArguments(
       String.format(
-        "%d,%s",
-        Integer.valueOf(device.id().value()),
+        "%s,%s",
+        device.deviceSlot(),
         device.externalName())
     );
 
@@ -417,11 +418,10 @@ public final class WXMBootConfigurationEvaluator
     final WXMCommandExecution.Builder command,
     final WXMDeviceVirtioNetwork device)
   {
-    final var id = Integer.valueOf(device.id().value());
     command.addArguments("-s");
     command.addArguments(String.format(
-      "%d,%s,%s",
-      id,
+      "%s,%s,%s",
+      device.deviceSlot(),
       device.externalName(),
       configureBhyveNetworkBackend(device.backend())
     ));
@@ -463,11 +463,10 @@ public final class WXMBootConfigurationEvaluator
     final WXMCommandExecution.Builder command,
     final WXMDeviceAHCIOpticalDisk device)
   {
-    final var id = Integer.valueOf(device.id().value());
     command.addArguments("-s");
     command.addArguments(String.format(
-      "%d,%s,%s",
-      id,
+      "%s,%s,%s",
+      device.deviceSlot(),
       device.externalName(),
       this.configureBhyveDeviceStorageBackend(device, device.backend())
     ));
@@ -477,11 +476,10 @@ public final class WXMBootConfigurationEvaluator
     final WXMCommandExecution.Builder command,
     final WXMDeviceVirtioBlockStorage device)
   {
-    final var id = Integer.valueOf(device.id().value());
     command.addArguments("-s");
     command.addArguments(String.format(
-      "%d,%s,%s",
-      id,
+      "%s,%s,%s",
+      device.deviceSlot(),
       device.externalName(),
       this.configureBhyveDeviceStorageBackend(device, device.backend())
     ));
@@ -491,11 +489,10 @@ public final class WXMBootConfigurationEvaluator
     final WXMCommandExecution.Builder command,
     final WXMDeviceAHCIDisk device)
   {
-    final var id = Integer.valueOf(device.id().value());
     command.addArguments("-s");
     command.addArguments(String.format(
-      "%d,%s,%s",
-      id,
+      "%s,%s,%s",
+      device.deviceSlot(),
       device.externalName(),
       this.configureBhyveDeviceStorageBackend(device, device.backend())
     ));
@@ -524,7 +521,7 @@ public final class WXMBootConfigurationEvaluator
     return WXMStorageBackends.determineZFSVolumePath(
       this.clientConfiguration.virtualMachineRuntimeDirectory(),
       this.machine.id(),
-      device.id())
+      device.deviceSlot())
       .toString();
   }
 
@@ -557,15 +554,17 @@ public final class WXMBootConfigurationEvaluator
     final WXMCommandExecution.Builder command,
     final WXMDeviceHostBridge device)
   {
-    final var id = Integer.valueOf(device.id().value());
+    final var deviceSlot = device.deviceSlot();
     switch (device.vendor()) {
       case WXM_UNSPECIFIED:
         command.addArguments("-s");
-        command.addArguments(String.format("%d,%s", id, "hostbridge"));
+        command.addArguments(
+          String.format("%s,%s", deviceSlot, "hostbridge"));
         return;
       case WXM_AMD:
         command.addArguments("-s");
-        command.addArguments(String.format("%d,%s", id, "amd_hostbridge"));
+        command.addArguments(
+          String.format("%s,%s", deviceSlot, "amd_hostbridge"));
         return;
     }
     throw new UnreachableCodeException();
@@ -682,13 +681,13 @@ public final class WXMBootConfigurationEvaluator
   }
 
   private String errorNoSuchBootDevice(
-    final WXMDeviceID bootDevice)
+    final WXMDeviceSlot bootDevice)
   {
     return this.messages.format(
       "bootNoSuchDevice",
       this.machine.id(),
       this.bootName.value(),
-      Integer.valueOf(bootDevice.value()),
+      bootDevice,
       this.storageDeviceNames()
     );
   }
@@ -710,8 +709,8 @@ public final class WXMBootConfigurationEvaluator
         }
         throw new UnreachableCodeException();
       })
-      .map(WXMDeviceType::id)
-      .map(deviceID -> Integer.toString(deviceID.value()))
+      .map(WXMDeviceType::deviceSlot)
+      .map(WXMDeviceSlotType::toString)
       .collect(Collectors.toList());
   }
 
@@ -754,7 +753,7 @@ public final class WXMBootConfigurationEvaluator
     final var sortedDevices =
       this.machine.devices()
         .stream()
-        .sorted(Comparator.comparing(WXMDeviceType::id))
+        .sorted(Comparator.comparing(WXMDeviceType::deviceSlot))
         .collect(Collectors.toList());
 
     int hdIndex = 0;
@@ -844,7 +843,7 @@ public final class WXMBootConfigurationEvaluator
           WXMStorageBackends.determineZFSVolumePath(
             this.clientConfiguration.virtualMachineRuntimeDirectory(),
             this.machine.id(),
-            device.id()
+            device.deviceSlot()
           );
         return new WXMGRUBDeviceAndPath(index, device, path);
 

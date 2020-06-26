@@ -115,11 +115,11 @@ public abstract class WXMVirtualMachineParserContract
 
     final var hostBridge = (WXMDeviceHostBridge) devices.get(0);
     assertEquals(WXM_AMD, hostBridge.vendor());
-    assertEquals(0, hostBridge.id().value());
+    assertEquals("0:0:0", hostBridge.deviceSlot().toString());
     assertEquals("An AMD-branded host bridge.", hostBridge.comment());
 
     final var net0 = (WXMDeviceVirtioNetwork) devices.get(1);
-    assertEquals(1, net0.id().value());
+    assertEquals("0:1:0", net0.deviceSlot().toString());
     assertEquals("A TAP-based network device.", net0.comment());
     final var tap = (WXMTap) net0.backend();
     assertEquals("A TAP device.", tap.comment());
@@ -127,7 +127,7 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("tap23", tap.name().value());
 
     final var net1 = (WXMDeviceVirtioNetwork) devices.get(2);
-    assertEquals(2, net1.id().value());
+    assertEquals("0:2:0", net1.deviceSlot().toString());
     assertEquals("A VMNet-based network device.", net1.comment());
     final var vmnet = (WXMVMNet) net1.backend();
     assertEquals("A VMNet device.", vmnet.comment());
@@ -135,7 +135,7 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("vmnet23", vmnet.name().value());
 
     final var hd0 = (WXMDeviceAHCIDisk) devices.get(3);
-    assertEquals(3, hd0.id().value());
+    assertEquals("0:3:0", hd0.deviceSlot().toString());
     assertEquals("A disk device.", hd0.comment());
     final var block0 = (WXMStorageBackendFile) hd0.backend();
     assertEquals("File-based storage.", block0.comment());
@@ -149,7 +149,7 @@ public abstract class WXMVirtualMachineParserContract
     );
 
     final var hd1 = (WXMDeviceAHCIOpticalDisk) devices.get(4);
-    assertEquals(4, hd1.id().value());
+    assertEquals("0:4:0", hd1.deviceSlot().toString());
     assertEquals("An optical disk device.", hd1.comment());
     final var block1 = (WXMStorageBackendFile) hd1.backend();
     assertEquals("File-based storage.", block1.comment());
@@ -157,7 +157,7 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals(Optional.empty(), block1.sectorSizes());
 
     final var lpc = (WXMDeviceLPC) devices.get(5);
-    assertEquals(5, lpc.id().value());
+    assertEquals("0:5:0", lpc.deviceSlot().toString());
     assertEquals("A TTY based on a filesystem socket.", lpc.comment());
 
     final var stdio = (WXMTTYBackendStdio) lpc.backendMap().get("com0");
@@ -183,16 +183,16 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("The installation configuration, booting from a CD.", install.comment());
     final var installK = (WXMGRUBKernelOpenBSD) install.kernelInstructions();
     assertEquals("install", install.name().value());
-    assertEquals(4, installK.bootDevice().value());
+    assertEquals("0:4:0", installK.bootDevice().toString());
     assertEquals("/6.6/amd64/bsd.rd", installK.kernelPath().toString());
 
     final var run = (WXMBootConfigurationGRUBBhyve) boots.get(1);
     assertEquals("The normal configuration, booting from the disk.", run.comment());
     final var runK = (WXMGRUBKernelLinux) run.kernelInstructions();
     assertEquals("run", run.name().value());
-    assertEquals(4, runK.kernelDevice().value());
+    assertEquals("0:3:0", runK.kernelDevice().toString());
     assertEquals("/vmlinuz", runK.kernelPath().toString());
-    assertEquals(4, runK.initRDDevice().value());
+    assertEquals("0:3:0", runK.initRDDevice().toString());
     assertEquals("/initrd.img", runK.initRDPath().toString());
   }
 

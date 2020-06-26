@@ -16,36 +16,117 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.cmdline.internal.WXMDeviceSlotConverter;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.io7m.waxmill.machines.WXMDeviceIDType.VALID_DEVICE_IDS;
+import static com.io7m.waxmill.machines.WXMDeviceSlotType.VALID_BUS_IDS;
+import static com.io7m.waxmill.machines.WXMDeviceSlotType.VALID_FUNCTION_IDS;
+import static com.io7m.waxmill.machines.WXMDeviceSlotType.VALID_SLOT_IDS;
 
 public final class WXMDeviceIDTest
 {
+  public static WXMDeviceSlot convert(
+    final String value)
+  {
+    return new WXMDeviceSlotConverter().convert(value);
+  }
+
   @Test
   public void validValuesAreOK()
   {
-    for (int id = VALID_DEVICE_IDS.lower(); id <= VALID_DEVICE_IDS.upper(); ++id) {
-      WXMDeviceID.of(id);
-      Assertions.assertEquals(
-        0,
-        WXMDeviceID.of(id).compareTo(WXMDeviceID.of(id)));
+    for (var bus = VALID_BUS_IDS.lower(); bus <= VALID_BUS_IDS.upper(); ++bus) {
+      for (var slot = VALID_SLOT_IDS.lower(); slot <= VALID_SLOT_IDS.upper(); ++slot) {
+        for (var func = VALID_FUNCTION_IDS.lower(); func <= VALID_FUNCTION_IDS.upper(); ++func) {
+          final var ds =
+            WXMDeviceSlot.builder()
+              .setBusID(bus)
+              .setSlotID(slot)
+              .setFunctionID(func)
+              .build();
+
+          Assertions.assertEquals(0, ds.compareTo(ds));
+        }
+      }
     }
   }
 
   @Test
-  public void invalidValuesAreNotOK()
+  public void invalidSlotValuesAreNotOK()
   {
-    for (int id = -VALID_DEVICE_IDS.lower(); id < VALID_DEVICE_IDS.lower(); ++id) {
+    for (int id = -VALID_SLOT_IDS.lower(); id < VALID_SLOT_IDS.lower(); ++id) {
       final int finalId = id;
-      Assertions.assertThrows(Exception.class, () -> WXMDeviceID.of(finalId));
+      Assertions.assertThrows(Exception.class, () -> {
+        WXMDeviceSlot.builder()
+          .setBusID(0)
+          .setSlotID(finalId)
+          .setFunctionID(0)
+          .build();
+      });
     }
 
-    for (int id = VALID_DEVICE_IDS.upper() + 1; id < VALID_DEVICE_IDS.upper() + 100; ++id) {
+    for (int id = VALID_SLOT_IDS.upper() + 1; id < VALID_SLOT_IDS.upper() + 100; ++id) {
       final int finalId = id;
-      Assertions.assertThrows(Exception.class, () -> WXMDeviceID.of(finalId));
+      Assertions.assertThrows(Exception.class, () -> {
+        WXMDeviceSlot.builder()
+          .setBusID(0)
+          .setSlotID(finalId)
+          .setFunctionID(0)
+          .build();
+      });
+    }
+  }
+
+  @Test
+  public void invalidBusValuesAreNotOK()
+  {
+    for (int id = -VALID_BUS_IDS.lower(); id < VALID_BUS_IDS.lower(); ++id) {
+      final int finalId = id;
+      Assertions.assertThrows(Exception.class, () -> {
+        WXMDeviceSlot.builder()
+          .setBusID(finalId)
+          .setSlotID(0)
+          .setFunctionID(0)
+          .build();
+      });
+    }
+
+    for (int id = VALID_BUS_IDS.upper() + 1; id < VALID_BUS_IDS.upper() + 100; ++id) {
+      final int finalId = id;
+      Assertions.assertThrows(Exception.class, () -> {
+        WXMDeviceSlot.builder()
+          .setBusID(finalId)
+          .setSlotID(0)
+          .setFunctionID(0)
+          .build();
+      });
+    }
+  }
+
+  @Test
+  public void invalidFunctionValuesAreNotOK()
+  {
+    for (int id = -VALID_FUNCTION_IDS.lower(); id < VALID_FUNCTION_IDS.lower(); ++id) {
+      final int finalId = id;
+      Assertions.assertThrows(Exception.class, () -> {
+        WXMDeviceSlot.builder()
+          .setBusID(0)
+          .setSlotID(0)
+          .setFunctionID(finalId)
+          .build();
+      });
+    }
+
+    for (int id = VALID_FUNCTION_IDS.upper() + 1; id < VALID_FUNCTION_IDS.upper() + 100; ++id) {
+      final int finalId = id;
+      Assertions.assertThrows(Exception.class, () -> {
+        WXMDeviceSlot.builder()
+          .setBusID(0)
+          .setSlotID(0)
+          .setFunctionID(finalId)
+          .build();
+      });
     }
   }
 }

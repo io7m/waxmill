@@ -18,7 +18,6 @@ package com.io7m.waxmill.tests;
 
 import com.io7m.jaffirm.core.PreconditionViolationException;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
-import com.io7m.waxmill.machines.WXMDeviceID;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMMachineName;
@@ -31,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_UNSPECIFIED;
+import static com.io7m.waxmill.tests.WXMDeviceIDTest.convert;
 
 public final class WXMVirtualMachineTest
 {
@@ -44,18 +44,18 @@ public final class WXMVirtualMachineTest
           .setId(UUID.randomUUID())
           .addDevices(
             WXMDeviceHostBridge.builder()
-              .setId(WXMDeviceID.of(0))
+              .setDeviceSlot(convert("0:0:0"))
               .setVendor(WXM_UNSPECIFIED)
               .build())
           .addDevices(
             WXMDeviceVirtioBlockStorage.builder()
-              .setId(WXMDeviceID.of(0))
+              .setDeviceSlot(convert("0:0:0"))
               .setBackend(WXMStorageBackendZFSVolume.builder().build())
               .build())
           .build();
       });
 
-    Assertions.assertTrue(ex.getMessage().contains("Duplicate key WXMDeviceID"));
+    Assertions.assertTrue(ex.getMessage().contains("Duplicate key 0:0:0"));
   }
 
   @Test
@@ -68,7 +68,7 @@ public final class WXMVirtualMachineTest
           .setId(UUID.randomUUID())
           .addDevices(
             WXMDeviceLPC.builder()
-              .setId(WXMDeviceID.of(0))
+              .setDeviceSlot(convert("0:0:0"))
               .addBackends(
                 WXMTTYBackendStdio.builder()
                   .setDevice("com1")
@@ -76,7 +76,7 @@ public final class WXMVirtualMachineTest
               .build())
           .addDevices(
             WXMDeviceLPC.builder()
-              .setId(WXMDeviceID.of(1))
+              .setDeviceSlot(convert("0:1:0"))
               .addBackends(
                 WXMTTYBackendStdio.builder()
                   .setDevice("com1")
@@ -98,12 +98,12 @@ public final class WXMVirtualMachineTest
           .setId(UUID.randomUUID())
           .addDevices(
             WXMDeviceHostBridge.builder()
-              .setId(WXMDeviceID.of(0))
+              .setDeviceSlot(convert("0:0:0"))
               .setVendor(WXM_UNSPECIFIED)
               .build())
           .addDevices(
             WXMDeviceHostBridge.builder()
-              .setId(WXMDeviceID.of(1))
+              .setDeviceSlot(convert("0:1:0"))
               .setVendor(WXM_UNSPECIFIED)
               .build())
           .build();

@@ -22,9 +22,10 @@ import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.client.api.WXMClientType;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
-import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
@@ -72,6 +73,14 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
   private String comment = "";
 
   @Parameter(
+    names = "--device-slot",
+    description = "The slot to which the device will be attached.",
+    required = true,
+    converter = WXMDeviceSlotConverter.class
+  )
+  private WXMDeviceSlot deviceSlot;
+
+  @Parameter(
     names = "--open-option",
     description = "The options that will be used when opening the storage device.",
     required = false
@@ -112,11 +121,12 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
 
     try (var client = WXMServices.clients().open(this.configurationFile)) {
       final var machine = client.vmFind(this.id);
-      final var deviceId =
-        machine.findUnusedDeviceId()
-          .orElseThrow(() -> new WXMException(
-            "No slots left to add a device to the virtual machine"
-          ));
+      this.deviceSlot =
+        WXMDeviceSlots.checkDeviceSlotNotUsed(
+          WXMMachineMessages.create(),
+          machine,
+          this.deviceSlot
+        );
 
       switch (this.backend.kind()) {
         case WXM_STORAGE_FILE:
@@ -141,13 +151,13 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
       final WXMDeviceType disk;
       if (this.optical) {
         disk = WXMDeviceAHCIOpticalDisk.builder()
-          .setId(deviceId)
+          .setDeviceSlot(this.deviceSlot)
           .setBackend(this.backend)
           .setComment(Optional.ofNullable(this.comment).orElse(""))
           .build();
       } else {
         disk = WXMDeviceAHCIDisk.builder()
-          .setId(deviceId)
+          .setDeviceSlot(this.deviceSlot)
           .setBackend(this.backend)
           .setComment(Optional.ofNullable(this.comment).orElse(""))
           .build();
@@ -160,15 +170,14 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
           .build();
 
       client.vmUpdate(updatedMachine);
-      this.showCreated(client, machine, deviceId);
+      this.showCreated(client, machine);
     }
     return SUCCESS;
   }
 
   private void showCreated(
     final WXMClientType client,
-    final WXMVirtualMachine machine,
-    final WXMDeviceID deviceId)
+    final WXMVirtualMachine machine)
   {
     switch (this.backend.kind()) {
       case WXM_STORAGE_FILE: {
@@ -176,7 +185,7 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
           "Added {} disk file {} @ slot {}",
           this.optical ? "AHCI optical" : "AHCI",
           ((WXMStorageBackendFile) this.backend).file(),
-          Integer.valueOf(deviceId.value())
+          this.deviceSlot
         );
         break;
       }
@@ -184,8 +193,8 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
         LOG.info(
           "Added {} disk zfs volume {} @ slot {}",
           this.optical ? "AHCI optical" : "AHCI",
-          showZFSPath(client, machine, deviceId),
-          Integer.valueOf(deviceId.value())
+          showZFSPath(client, machine, this.deviceSlot),
+          this.deviceSlot
         );
         break;
       }
@@ -198,7 +207,7 @@ public final class WXMCommandVMAddAHCIDisk extends WXMCommandRoot
   private static String showZFSPath(
     final WXMClientType client,
     final WXMVirtualMachine machine,
-    final WXMDeviceID deviceId)
+    final WXMDeviceSlot deviceId)
   {
     return determineZFSVolumePath(
       client.configuration().virtualMachineRuntimeDirectory(),

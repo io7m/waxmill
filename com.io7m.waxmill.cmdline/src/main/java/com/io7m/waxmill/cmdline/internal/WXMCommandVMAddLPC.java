@@ -19,7 +19,9 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
-import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceSlots;
+import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
@@ -70,6 +72,14 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
   private String comment;
 
   @Parameter(
+    names = "--device-slot",
+    description = "The slot to which the device will be attached.",
+    required = true,
+    converter = WXMDeviceSlotConverter.class
+  )
+  private WXMDeviceSlot deviceSlot;
+
+  @Parameter(
     names = "--add-backend",
     description = "A specification of the device backend to add "
       + "(such as 'file;com1;/dev/nmdm54B', 'stdio;com2', 'nmdm;com1;')",
@@ -96,11 +106,12 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
 
     try (var client = WXMServices.clients().open(this.configurationFile)) {
       final var machine = client.vmFind(this.id);
-      final var deviceId =
-        machine.findUnusedDeviceId()
-          .orElseThrow(() -> new WXMException(
-            "No slots left to add a device to the virtual machine"
-          ));
+      this.deviceSlot =
+        WXMDeviceSlots.checkDeviceSlotNotUsed(
+          WXMMachineMessages.create(),
+          machine,
+          this.deviceSlot
+        );
 
       final Map<String, WXMTTYBackendType> backendMap = new HashMap<>(3);
       for (final WXMTTYBackendType backend : this.backends) {
@@ -113,7 +124,7 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
 
       final var lpc =
         WXMDeviceLPC.builder()
-          .setId(deviceId)
+          .setDeviceSlot(this.deviceSlot)
           .addAllBackends(backendMap.values())
           .build();
 
@@ -125,7 +136,7 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
 
       client.vmUpdate(updatedMachine);
 
-      LOG.info("Added lpc device @ slot {}", Integer.valueOf(lpc.id().value()));
+      LOG.info("Added lpc device @ slot {}", this.deviceSlot);
       for (final var entry : backendMap.entrySet()) {
         final var device = entry.getValue();
         switch (device.kind()) {

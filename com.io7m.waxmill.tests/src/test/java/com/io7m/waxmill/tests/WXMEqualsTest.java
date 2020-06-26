@@ -23,7 +23,7 @@ import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
@@ -97,22 +97,22 @@ public final class WXMEqualsTest
         Set.of("comment", "pinnedCPUs")),
       new WXMClassUnderTest(
         WXMDeviceAHCIDisk.class,
-        Set.of("id", "comment", "backend")),
+        Set.of("deviceSlot", "comment", "backend")),
       new WXMClassUnderTest(
         WXMDeviceAHCIOpticalDisk.class,
-        Set.of("id", "backend", "comment")),
+        Set.of("deviceSlot", "backend", "comment")),
       new WXMClassUnderTest(
         WXMDeviceHostBridge.class,
-        Set.of("id", "comment", "vendor")),
+        Set.of("deviceSlot", "comment", "vendor")),
       new WXMClassUnderTest(
-        WXMDeviceID.class,
+        WXMDeviceSlot.class,
         Set.of()),
       new WXMClassUnderTest(
         WXMDeviceLPC.class,
-        Set.of("id", "backends", "comment")),
+        Set.of("deviceSlot", "backends", "comment")),
       new WXMClassUnderTest(
         WXMDeviceVirtioNetwork.class,
-        Set.of("id", "backend", "comment")),
+        Set.of("deviceSlot", "backend", "comment")),
       new WXMClassUnderTest(
         WXMMACAddress.class,
         Set.of("value")),

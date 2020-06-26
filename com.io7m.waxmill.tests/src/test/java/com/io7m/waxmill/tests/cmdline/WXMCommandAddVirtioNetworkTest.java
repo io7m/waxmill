@@ -91,7 +91,7 @@ public final class WXMCommandAddVirtioNetworkTest
   }
 
   @Test
-  public void addVirtioNetworkTooManyDevices()
+  public void addVirtioNetworkAlreadyUsed()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -116,21 +116,21 @@ public final class WXMCommandAddVirtioNetworkTest
       }
     );
 
-    for (int index = 0; index < 31; ++index) {
-      MainExitless.main(
-        new String[]{
-          "vm-add-virtio-network-device",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--id",
-          id.toString(),
-          "--backend",
-          "tap;tap23;a3:26:9c:74:79:34"
-        }
-      );
-    }
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--id",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
 
     assertThrows(IOException.class, () -> {
       MainExitless.main(
@@ -143,7 +143,9 @@ public final class WXMCommandAddVirtioNetworkTest
           "--id",
           id.toString(),
           "--backend",
-          "tap;tap23;a3:26:9c:74:79:34"
+          "tap;tap23;a3:26:9c:74:79:34",
+          "--device-slot",
+          "0:1:0"
         }
       );
     });
@@ -185,7 +187,9 @@ public final class WXMCommandAddVirtioNetworkTest
         "--id",
         id.toString(),
         "--backend",
-        "tap;tap23;a3:26:9c:74:79:34"
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
       }
     );
 
@@ -243,7 +247,9 @@ public final class WXMCommandAddVirtioNetworkTest
         "--id",
         id.toString(),
         "--backend",
-        "vmnet;vmnet23;a3:26:9c:74:79:34"
+        "vmnet;vmnet23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
       }
     );
 

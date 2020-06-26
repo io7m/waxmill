@@ -88,7 +88,7 @@ public interface WXMBootConfigurationType
       return KERNEL_OPENBSD;
     }
 
-    WXMDeviceID bootDevice();
+    WXMDeviceSlot bootDevice();
 
     Path kernelPath();
 
@@ -117,13 +117,13 @@ public interface WXMBootConfigurationType
       return KERNEL_LINUX;
     }
 
-    WXMDeviceID kernelDevice();
+    WXMDeviceSlot kernelDevice();
 
     Path kernelPath();
 
     List<String> kernelArguments();
 
-    WXMDeviceID initRDDevice();
+    WXMDeviceSlot initRDDevice();
 
     Path initRDPath();
 

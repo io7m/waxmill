@@ -52,10 +52,10 @@ import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM
 public interface WXMDeviceType
 {
   /**
-   * @return The device ID
+   * @return The device slot
    */
 
-  WXMDeviceID id();
+  WXMDeviceSlot deviceSlot();
 
   /**
    * @return The device kind
@@ -123,7 +123,7 @@ public interface WXMDeviceType
   interface WXMDeviceHostBridgeType extends WXMDeviceType
   {
     @Override
-    WXMDeviceID id();
+    WXMDeviceSlot deviceSlot();
 
     Vendor vendor();
 
@@ -192,7 +192,7 @@ public interface WXMDeviceType
   interface WXMDeviceVirtioNetworkType extends WXMDeviceType
   {
     @Override
-    WXMDeviceID id();
+    WXMDeviceSlot deviceSlot();
 
     @Override
     default Kind kind()
@@ -385,7 +385,7 @@ public interface WXMDeviceType
   interface WXMDeviceVirtioBlockStorageType extends WXMDeviceType
   {
     @Override
-    WXMDeviceID id();
+    WXMDeviceSlot deviceSlot();
 
     @Override
     @Value.Default
@@ -414,7 +414,7 @@ public interface WXMDeviceType
   interface WXMDeviceAHCIDiskType extends WXMDeviceType
   {
     @Override
-    WXMDeviceID id();
+    WXMDeviceSlot deviceSlot();
 
     @Override
     @Value.Default
@@ -443,7 +443,7 @@ public interface WXMDeviceType
   interface WXMDeviceAHCIOpticalDiskType extends WXMDeviceType
   {
     @Override
-    WXMDeviceID id();
+    WXMDeviceSlot deviceSlot();
 
     @Override
     @Value.Default
@@ -567,7 +567,7 @@ public interface WXMDeviceType
   interface WXMDeviceLPCType extends WXMDeviceType
   {
     @Override
-    WXMDeviceID id();
+    WXMDeviceSlot deviceSlot();
 
     @Override
     @Value.Default

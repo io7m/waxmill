@@ -39,8 +39,9 @@
       <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIDisk"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceHostBridge"/>
-      <Class name="com.io7m.waxmill.machines.WXMDeviceID"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceLPC"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceSlot"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceSlotType"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceVirtioNetwork"/>
       <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootCommands"/>
       <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve"/>
@@ -190,17 +191,6 @@
   </Match>
 
   <Match>
-    <!-- That's not XML. -->
-    <And>
-      <Or>
-        <Class name="com.io7m.waxmill.cmdline.internal.WXMVirtioNetworkBackendConverter"/>
-        <Class name="com.io7m.waxmill.cmdline.internal.WXMTTYBackendConverter"/>
-      </Or>
-      <Bug pattern="CBX_CUSTOM_BUILT_XML"/>
-    </And>
-  </Match>
-
-  <Match>
     <!-- If an IOException actually happens, it's a bug and should not be caught. -->
     <Class name="com.io7m.waxmill.strings.api.WXMAbstractStrings"/>
     <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
@@ -217,6 +207,13 @@
   <Match>
     <!-- If an IOException actually happens, it's a bug and should not be caught. -->
     <Class name="com.io7m.waxmill.process.posix.internal.WXMProcessMessages"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    <Method name="create"/>
+  </Match>
+
+  <Match>
+    <!-- If an IOException actually happens, it's a bug and should not be caught. -->
+    <Class name="com.io7m.waxmill.machines.WXMMachineMessages"/>
     <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
     <Method name="create"/>
   </Match>
@@ -239,6 +236,16 @@
     <Class name="com.io7m.waxmill.cmdline.internal.WXMEnvironment"/>
     <Method name="configurationFile"/>
     <Bug pattern="AI_ANNOTATION_ISSUES_NEEDS_NULLABLE"/>
+  </Match>
+
+  <Match>
+    <Class name="com.io7m.waxmill.cmdline.internal.WXMDeviceSlotConverter"/>
+    <Method name="convert"/>
+    <Or>
+      <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+      <!-- False positive -->
+      <Bug pattern="LEST_LOST_EXCEPTION_STACK_TRACE"/>
+    </Or>
   </Match>
 
   <Match>

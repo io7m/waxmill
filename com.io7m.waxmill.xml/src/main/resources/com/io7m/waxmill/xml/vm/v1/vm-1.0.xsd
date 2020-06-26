@@ -59,15 +59,39 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="DeviceIdType">
+  <xsd:simpleType name="DeviceBusIDType">
     <xsd:annotation>
       <xsd:documentation xml:lang="en">
-        A device ID.
+        A PCI bus ID.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:integer">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="255"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DeviceSlotIDType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A PCI slot ID.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:integer">
       <xsd:minInclusive value="0"/>
       <xsd:maxInclusive value="31"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DeviceFunctionIDType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A PCI function ID.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:integer">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="7"/>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -167,14 +191,28 @@
     </xsd:key>
   </xsd:element>
 
+  <xsd:element name="DeviceSlot">
+    <xsd:complexType>
+      <xsd:attribute name="bus"
+                     type="wxm:DeviceBusIDType"
+                     use="required"/>
+      <xsd:attribute name="slot"
+                     type="wxm:DeviceSlotIDType"
+                     use="required"/>
+      <xsd:attribute name="function"
+                     type="wxm:DeviceFunctionIDType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:complexType name="DeviceType">
-    <xsd:sequence minOccurs="0"
-                  maxOccurs="1">
-      <xsd:element ref="wxm:Comment"/>
+    <xsd:sequence>
+      <xsd:element ref="wxm:DeviceSlot"/>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
     </xsd:sequence>
-    <xsd:attribute name="id"
-                   type="wxm:DeviceIdType"
-                   use="required"/>
   </xsd:complexType>
 
   <xsd:simpleType name="HostBridgeVendor">
@@ -422,8 +460,10 @@
     </xsd:complexType>
 
     <xsd:key name="DeviceIDKey">
-      <xsd:selector xpath="*"/>
-      <xsd:field xpath="@id"/>
+      <xsd:selector xpath="*/DeviceSlot"/>
+      <xsd:field xpath="@bus"/>
+      <xsd:field xpath="@slot"/>
+      <xsd:field xpath="@function"/>
     </xsd:key>
   </xsd:element>
 
@@ -490,7 +530,8 @@
 
   <xsd:element name="BootConfigurations">
     <xsd:complexType>
-      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:choice minOccurs="0"
+                  maxOccurs="unbounded">
         <xsd:element ref="wxm:BootConfigurationGRUBBhyve"/>
       </xsd:choice>
     </xsd:complexType>
@@ -519,36 +560,15 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="GRUBBhyveKernelOpenBSD">
+  <xsd:element name="LinuxKernelDevice">
     <xsd:complexType>
-      <xsd:attribute name="bootDevice"
-                     type="wxm:DeviceIdType"
-                     use="required"/>
-      <xsd:attribute name="kernelPath"
-                     type="xsd:anyURI"
-                     use="required"/>
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="GRUBBhyveKernelLinux">
-    <xsd:complexType>
-      <xsd:sequence minOccurs="0"
-                    maxOccurs="unbounded">
-        <xsd:element ref="wxm:LinuxKernelArgument"/>
-      </xsd:sequence>
-
-      <xsd:attribute name="kernelDevice"
-                     type="wxm:DeviceIdType"
-                     use="required"/>
-      <xsd:attribute name="kernelPath"
-                     type="xsd:anyURI"
-                     use="required"/>
-      <xsd:attribute name="initRDDevice"
-                     type="wxm:DeviceIdType"
-                     use="required"/>
-      <xsd:attribute name="initRDPath"
-                     type="xsd:anyURI"
-                     use="required"/>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="kernelPath"
+                         type="xsd:anyURI"
+                         use="required"/>
+        </xsd:extension>
+      </xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
 
@@ -557,6 +577,52 @@
       <xsd:attribute name="value"
                      type="xsd:string"
                      use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LinuxInitRDDevice">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="initRDPath"
+                         type="xsd:anyURI"
+                         use="required"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="BSDBootDevice">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="kernelPath"
+                         type="xsd:anyURI"
+                         use="required"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GRUBBhyveKernelOpenBSD">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxm:BSDBootDevice"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GRUBBhyveKernelLinux">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxm:LinuxKernelDevice"/>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="unbounded">
+
+          <xsd:element ref="wxm:LinuxKernelArgument"/>
+        </xsd:sequence>
+        <xsd:element ref="wxm:LinuxInitRDDevice"/>
+      </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
 

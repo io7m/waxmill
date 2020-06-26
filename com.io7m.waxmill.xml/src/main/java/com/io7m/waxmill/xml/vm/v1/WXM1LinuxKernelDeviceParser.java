@@ -21,23 +21,29 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
+import java.nio.file.FileSystem;
 import java.util.Map;
+import java.util.Objects;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
-public final class WXM1AHCIDiskDeviceParser
-  implements BTElementHandlerType<Object, WXMDeviceAHCIDisk>
+public final class WXM1LinuxKernelDeviceParser
+  implements BTElementHandlerType<Object, WXM1LinuxKernelDevice>
 {
-  private final WXMDeviceAHCIDisk.Builder builder;
+  private final FileSystem fileSystem;
+  private final WXM1LinuxKernelDevice.Builder builder;
 
-  public WXM1AHCIDiskDeviceParser()
+  public WXM1LinuxKernelDeviceParser(
+    final FileSystem inFileSystem)
   {
     this.builder =
-      WXMDeviceAHCIDisk.builder();
+      WXM1LinuxKernelDevice.builder();
+    this.fileSystem =
+      Objects.requireNonNull(inFileSystem, "fileSystem");
   }
 
   @Override
@@ -49,18 +55,6 @@ public final class WXM1AHCIDiskDeviceParser
       Map.entry(
         element("DeviceSlot"),
         c -> new WXM1DeviceSlotParser()
-      ),
-      Map.entry(
-        element("Comment"),
-        c -> new WXM1CommentParser()
-      ),
-      Map.entry(
-        element("StorageBackendFile"),
-        c -> new WXM1StorageBackendFileParser()
-      ),
-      Map.entry(
-        element("StorageBackendZFSVolume"),
-        c -> new WXM1StorageBackendZFSVolumeParser()
       )
     );
   }
@@ -70,11 +64,7 @@ public final class WXM1AHCIDiskDeviceParser
     final BTElementParsingContextType context,
     final Object result)
   {
-    if (result instanceof WXM1Comment) {
-      this.builder.setComment(((WXM1Comment) result).text());
-    } else if (result instanceof WXMStorageBackendType) {
-      this.builder.setBackend((WXMStorageBackendType) result);
-    } else if (result instanceof WXMDeviceSlot) {
+    if (result instanceof WXMDeviceSlot) {
       this.builder.setDeviceSlot((WXMDeviceSlot) result);
     } else {
       throw new UnreachableCodeException();
@@ -82,7 +72,22 @@ public final class WXM1AHCIDiskDeviceParser
   }
 
   @Override
-  public WXMDeviceAHCIDisk onElementFinished(
+  public void onElementStart(
+    final BTElementParsingContextType context,
+    final Attributes attributes)
+    throws SAXParseException
+  {
+    try {
+      this.builder.setKernelPath(
+        this.fileSystem.getPath(attributes.getValue("kernelPath"))
+      );
+    } catch (final Exception e) {
+      throw context.parseException(e);
+    }
+  }
+
+  @Override
+  public WXM1LinuxKernelDevice onElementFinished(
     final BTElementParsingContextType context)
   {
     return this.builder.build();

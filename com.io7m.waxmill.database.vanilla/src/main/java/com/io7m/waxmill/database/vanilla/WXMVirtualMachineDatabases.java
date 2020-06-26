@@ -21,6 +21,7 @@ import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseProviderType;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.database.vanilla.internal.WXMVirtualMachineDatabase;
+import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 
@@ -32,11 +33,15 @@ public final class WXMVirtualMachineDatabases
 {
   private final WXMVirtualMachineParserProviderType parsers;
   private final WXMVirtualMachineSerializerProviderType serializers;
+  private final WXMMachineMessages messages;
 
   public WXMVirtualMachineDatabases(
+    final WXMMachineMessages inMessages,
     final WXMVirtualMachineParserProviderType inParsers,
     final WXMVirtualMachineSerializerProviderType inSerializers)
   {
+    this.messages =
+      Objects.requireNonNull(inMessages, "inMessages");
     this.parsers =
       Objects.requireNonNull(inParsers, "inParsers");
     this.serializers =
@@ -46,6 +51,7 @@ public final class WXMVirtualMachineDatabases
   public WXMVirtualMachineDatabases()
   {
     this(
+      WXMMachineMessages.create(),
       requireService(WXMVirtualMachineParserProviderType.class),
       requireService(WXMVirtualMachineSerializerProviderType.class)
     );
@@ -70,6 +76,7 @@ public final class WXMVirtualMachineDatabases
   {
     Objects.requireNonNull(configuration, "configuration");
     return WXMVirtualMachineDatabase.open(
+      this.messages,
       this.parsers,
       this.serializers,
       configuration

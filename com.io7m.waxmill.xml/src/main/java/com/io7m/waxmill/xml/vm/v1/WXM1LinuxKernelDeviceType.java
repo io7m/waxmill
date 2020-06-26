@@ -14,54 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.machines;
+package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
-import com.io7m.jranges.RangeCheck;
-import com.io7m.jranges.RangeInclusiveI;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import org.immutables.value.Value;
 
-/**
- * A device ID.
- */
+import java.nio.file.Path;
 
 @Value.Immutable
 @ImmutablesStyleType
-public interface WXMDeviceIDType extends Comparable<WXMDeviceIDType>
+public interface WXM1LinuxKernelDeviceType
 {
-  /**
-   * The inclusive range of valid device IDs.
-   */
+  WXMDeviceSlot deviceSlot();
 
-  RangeInclusiveI VALID_DEVICE_IDS =
-    RangeInclusiveI.of(0, 31);
-
-  /**
-   * @return The raw device ID value
-   */
-
-  @Value.Parameter
-  int value();
-
-  /**
-   * Check preconditions for the type.
-   */
-
-  @Value.Check
-  default void checkPreconditions()
-  {
-    RangeCheck.checkIncludedInInteger(
-      this.value(),
-      "Device ID",
-      VALID_DEVICE_IDS,
-      "Valid device IDs"
-    );
-  }
-
-  @Override
-  default int compareTo(
-    final WXMDeviceIDType other)
-  {
-    return Integer.compare(this.value(), other.value());
-  }
+  Path kernelPath();
 }

@@ -18,6 +18,7 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.machines.WXMVirtualMachineSets;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import java.util.List;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+
 @Parameters(commandDescription = "Import virtual machine descriptions.")
 public final class WXMCommandVMImport extends WXMCommandRoot
 {
@@ -72,11 +74,16 @@ public final class WXMCommandVMImport extends WXMCommandRoot
       for (final var path : this.files) {
         machineSets.add(parsers.parse(path));
       }
-      final var set = WXMVirtualMachineSets.merge(machineSets);
+      final var set =
+        WXMVirtualMachineSets.merge(
+          WXMMachineMessages.create(),
+          machineSets
+        );
       client.vmDefineAll(set);
 
-      LOG.info("imported {} virtual machines",
-               Integer.valueOf(set.machines().size()));
+      LOG.info(
+        "imported {} virtual machines",
+        Integer.valueOf(set.machines().size()));
     }
     return SUCCESS;
   }

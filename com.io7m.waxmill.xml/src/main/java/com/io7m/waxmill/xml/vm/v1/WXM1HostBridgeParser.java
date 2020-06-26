@@ -22,7 +22,7 @@ import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
@@ -49,6 +49,10 @@ public final class WXM1HostBridgeParser
   {
     return Map.ofEntries(
       Map.entry(
+        element("DeviceSlot"),
+        c -> new WXM1DeviceSlotParser()
+      ),
+      Map.entry(
         element("Comment"), c -> new WXM1CommentParser()
       )
     );
@@ -61,6 +65,8 @@ public final class WXM1HostBridgeParser
   {
     if (result instanceof WXM1Comment) {
       this.builder.setComment(((WXM1Comment) result).text());
+    } else if (result instanceof WXMDeviceSlot) {
+      this.builder.setDeviceSlot((WXMDeviceSlot) result);
     } else {
       throw new UnreachableCodeException();
     }
@@ -75,9 +81,6 @@ public final class WXM1HostBridgeParser
     try {
       this.builder.setVendor(
         Vendor.ofExternalString(attributes.getValue("vendor"))
-      );
-      this.builder.setId(
-        WXMDeviceID.of(Integer.parseInt(attributes.getValue("id")))
       );
     } catch (final Exception e) {
       throw context.parseException(e);

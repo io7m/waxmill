@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.boot.internal;
 
-import com.io7m.waxmill.machines.WXMDeviceID;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,21 +40,21 @@ public final class WXMGRUBDeviceMap
   }
 
   public Optional<Integer> searchForCD(
-    final WXMDeviceID deviceID)
+    final WXMDeviceSlot deviceID)
   {
     return this.cds.values()
       .stream()
-      .filter(dp -> Objects.equals(dp.device().id(), deviceID))
+      .filter(dp -> Objects.equals(dp.device().deviceSlot(), deviceID))
       .map(dp -> Integer.valueOf(dp.index()))
       .findFirst();
   }
 
   public Optional<Integer> searchForHD(
-    final WXMDeviceID deviceID)
+    final WXMDeviceSlot deviceID)
   {
     return this.disks.values()
       .stream()
-      .filter(dp -> Objects.equals(dp.device().id(), deviceID))
+      .filter(dp -> Objects.equals(dp.device().deviceSlot(), deviceID))
       .map(dp -> Integer.valueOf(dp.index()))
       .findFirst();
   }

@@ -16,18 +16,20 @@
 
 package com.io7m.waxmill.database.vanilla.internal;
 
+import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
+import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.machines.WXMException;
 import com.io7m.waxmill.machines.WXMExceptionDuplicate;
 import com.io7m.waxmill.machines.WXMExceptions;
+import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.machines.WXMVirtualMachineSets;
-import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
-import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.Files;
@@ -52,13 +54,17 @@ public final class WXMVirtualMachineDatabase
   private final Path lockFile;
   private final WXMVirtualMachineParserProviderType parsers;
   private final WXMVirtualMachineSerializerProviderType serializers;
+  private final WXMMachineMessages machineMessages;
 
   private WXMVirtualMachineDatabase(
+    final WXMMachineMessages inMachineMessages,
     final WXMVirtualMachineParserProviderType inParsers,
     final WXMVirtualMachineSerializerProviderType inSerializers,
     final WXMDatabaseConfiguration inConfiguration,
     final Path inLockFile)
   {
+    this.machineMessages =
+      Objects.requireNonNull(inMachineMessages, "inMachineMessages");
     this.parsers =
       Objects.requireNonNull(inParsers, "inParsers");
     this.serializers =
@@ -70,11 +76,13 @@ public final class WXMVirtualMachineDatabase
   }
 
   public static WXMVirtualMachineDatabaseType open(
+    final WXMMachineMessages inMachineMessages,
     final WXMVirtualMachineParserProviderType inParsers,
     final WXMVirtualMachineSerializerProviderType inSerializers,
     final WXMDatabaseConfiguration configuration)
     throws WXMException
   {
+    Objects.requireNonNull(inMachineMessages, "inMachineMessages");
     Objects.requireNonNull(inParsers, "inParsers");
     Objects.requireNonNull(inSerializers, "inSerializers");
     Objects.requireNonNull(configuration, "configuration");
@@ -86,6 +94,7 @@ public final class WXMVirtualMachineDatabase
       final var lockFile = databaseDirectory.resolve("lock");
       Files.write(lockFile, "lock".getBytes(UTF_8), CREATE);
       return new WXMVirtualMachineDatabase(
+        inMachineMessages,
         inParsers,
         inSerializers,
         configuration,
@@ -147,10 +156,10 @@ public final class WXMVirtualMachineDatabase
         final var machineId = entry.getKey();
         final var existing = this.vmGet(machineId);
         if (existing.isPresent()) {
-          throw new WXMExceptionDuplicate(
-            String.format(
-              "A virtual machine already exists with ID %s", machineId
-            )
+          throw this.errorMachineAlreadyExists(
+            machineId,
+            entry.getValue(),
+            existing.get()
           );
         }
       }
@@ -162,6 +171,22 @@ public final class WXMVirtualMachineDatabase
 
       exceptions.throwIfRequired();
     }
+  }
+
+  private WXMExceptionDuplicate errorMachineAlreadyExists(
+    final UUID machineId,
+    final WXMVirtualMachine machineA,
+    final WXMVirtualMachine machineB)
+  {
+    return new WXMExceptionDuplicate(
+      this.machineMessages.format(
+        "errorMachineAlreadyExists",
+        machineId,
+        machineA,
+        machineA.configurationFile().map(URI::toString).orElse("<unspecified>"),
+        machineB,
+        machineB.configurationFile().map(URI::toString).orElse("<unspecified>")
+      ));
   }
 
   private void serializeChecked(
@@ -241,7 +266,7 @@ public final class WXMVirtualMachineDatabase
     }
 
     exceptions.throwIfRequired();
-    return WXMVirtualMachineSets.merge(sets);
+    return WXMVirtualMachineSets.merge(this.machineMessages, sets);
   }
 
   @Override

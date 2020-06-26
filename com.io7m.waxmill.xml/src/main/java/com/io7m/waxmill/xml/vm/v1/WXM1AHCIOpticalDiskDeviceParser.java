@@ -22,9 +22,7 @@ import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
-import com.io7m.waxmill.machines.WXMDeviceID;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 
 import java.util.Map;
 
@@ -49,6 +47,10 @@ public final class WXM1AHCIOpticalDiskDeviceParser
   {
     return Map.ofEntries(
       Map.entry(
+        element("DeviceSlot"),
+        c -> new WXM1DeviceSlotParser()
+      ),
+      Map.entry(
         element("Comment"),
         c -> new WXM1CommentParser()
       ),
@@ -68,23 +70,10 @@ public final class WXM1AHCIOpticalDiskDeviceParser
       this.builder.setComment(((WXM1Comment) result).text());
     } else if (result instanceof WXMStorageBackendType) {
       this.builder.setBackend((WXMStorageBackendType) result);
+    } else if (result instanceof WXMDeviceSlot) {
+      this.builder.setDeviceSlot((WXMDeviceSlot) result);
     } else {
       throw new UnreachableCodeException();
-    }
-  }
-
-  @Override
-  public void onElementStart(
-    final BTElementParsingContextType context,
-    final Attributes attributes)
-    throws SAXParseException
-  {
-    try {
-      this.builder.setId(
-        WXMDeviceID.of(Integer.parseInt(attributes.getValue("id")))
-      );
-    } catch (final Exception e) {
-      throw context.parseException(e);
     }
   }
 

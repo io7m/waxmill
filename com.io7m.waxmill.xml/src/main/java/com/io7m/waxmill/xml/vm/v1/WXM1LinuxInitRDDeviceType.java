@@ -14,21 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * FreeBSD BHyve Manager (Virtual machine domain model).
- */
+package com.io7m.waxmill.xml.vm.v1;
 
-module com.io7m.waxmill.machines
+import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
+import org.immutables.value.Value;
+
+import java.nio.file.Path;
+
+@Value.Immutable
+@ImmutablesStyleType
+public interface WXM1LinuxInitRDDeviceType
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  WXMDeviceSlot deviceSlot();
 
-  requires com.io7m.jaffirm.core;
-  requires com.io7m.jranges.core;
-  requires com.io7m.junreachable.core;
-  requires com.io7m.waxmill.strings.api;
-
-  exports com.io7m.waxmill.machines;
+  Path initRDPath();
 }

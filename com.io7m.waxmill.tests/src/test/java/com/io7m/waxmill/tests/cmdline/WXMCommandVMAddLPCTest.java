@@ -96,7 +96,7 @@ public final class WXMCommandVMAddLPCTest
   }
 
   @Test
-  public void addLPCTooManyDevices()
+  public void addLPCAlreadyUsed()
     throws IOException
   {
     final var id = UUID.randomUUID();
@@ -121,21 +121,21 @@ public final class WXMCommandVMAddLPCTest
       }
     );
 
-    for (int index = 0; index < 31; ++index) {
-      MainExitless.main(
-        new String[]{
-          "vm-add-ahci-disk",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--id",
-          id.toString(),
-          "--backend",
-          "file;/tmp/xyz"
-        }
-      );
-    }
+    MainExitless.main(
+      new String[]{
+        "vm-add-ahci-disk",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--id",
+        id.toString(),
+        "--backend",
+        "file;/tmp/xyz",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
 
     assertThrows(IOException.class, () -> {
       MainExitless.main(
@@ -148,7 +148,9 @@ public final class WXMCommandVMAddLPCTest
           "--id",
           id.toString(),
           "--add-backend",
-          "stdio;com1"
+          "stdio;com1",
+          "--device-slot",
+          "0:1:0"
         }
       );
     });
@@ -237,7 +239,9 @@ public final class WXMCommandVMAddLPCTest
         "--add-backend",
         "stdio;com1",
         "--add-backend",
-        "file;com2;/tmp/xyz"
+        "file;com2;/tmp/xyz",
+        "--device-slot",
+        "0:1:0"
       }
     );
 
@@ -299,7 +303,9 @@ public final class WXMCommandVMAddLPCTest
         "--add-backend",
         "stdio;com1",
         "--add-backend",
-        "stdio;com2"
+        "stdio;com2",
+        "--device-slot",
+        "0:1:0"
       }
     );
 
@@ -359,7 +365,9 @@ public final class WXMCommandVMAddLPCTest
         "--id",
         id.toString(),
         "--add-backend",
-        "nmdm;com1"
+        "nmdm;com1",
+        "--device-slot",
+        "0:1:0"
       }
     );
 

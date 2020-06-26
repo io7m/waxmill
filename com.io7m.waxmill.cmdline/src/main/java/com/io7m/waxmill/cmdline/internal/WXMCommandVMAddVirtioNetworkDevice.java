@@ -18,9 +18,11 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
-import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
@@ -63,6 +65,14 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMCommandRoot
   private String comment;
 
   @Parameter(
+    names = "--device-slot",
+    description = "The slot to which the device will be attached.",
+    required = true,
+    converter = WXMDeviceSlotConverter.class
+  )
+  private WXMDeviceSlot deviceSlot;
+
+  @Parameter(
     names = "--backend",
     description = "A specification of the device backend to add "
       + "(such as 'tap;tap23;ad:5f:90:d7:f7:4b' or 'vmnet;vmnet42;f8:e1:e1:79:c9:7e')",
@@ -89,15 +99,16 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMCommandRoot
 
     try (var client = WXMServices.clients().open(this.configurationFile)) {
       final var machine = client.vmFind(this.id);
-      final var deviceId =
-        machine.findUnusedDeviceId()
-          .orElseThrow(() -> new WXMException(
-            "No slots left to add a device to the virtual machine"
-          ));
+      this.deviceSlot =
+        WXMDeviceSlots.checkDeviceSlotNotUsed(
+          WXMMachineMessages.create(),
+          machine,
+          this.deviceSlot
+        );
 
       final var virtio =
         WXMDeviceVirtioNetwork.builder()
-          .setId(deviceId)
+          .setDeviceSlot(this.deviceSlot)
           .setBackend(this.backend)
           .build();
 
@@ -109,7 +120,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMCommandRoot
 
       client.vmUpdate(updatedMachine);
 
-      LOG.info("Added virtio device @ slot {}", Integer.valueOf(virtio.id().value()));
+      LOG.info("Added virtio device @ slot {}", this.deviceSlot);
       switch (this.backend.kind()) {
         case WXM_TAP:
           final var tap = (WXMTap) this.backend;
