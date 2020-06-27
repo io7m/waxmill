@@ -20,8 +20,6 @@ import com.beust.jcommander.IStringConverter;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Paths;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
@@ -33,11 +31,7 @@ public final class WXMStorageBackendConverter
 
   public WXMStorageBackendConverter()
   {
-    try {
-      this.messages = WXMMessages.create();
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    this.messages = WXMMessages.create();
   }
 
   @Override

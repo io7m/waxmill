@@ -19,8 +19,6 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.IStringConverter;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -34,11 +32,7 @@ public final class WXMDeviceSlotConverter
 
   public WXMDeviceSlotConverter()
   {
-    try {
-      this.messages = WXMMessages.create();
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    this.messages = WXMMessages.create();
   }
 
   @Override

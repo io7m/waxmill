@@ -16,46 +16,40 @@
 
 package com.io7m.waxmill.cmdline.internal;
 
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.io7m.claypot.core.CLPCommandContextType;
 
 import java.nio.file.Path;
 
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 @Parameters(commandDescription = "List the available virtual machines.")
-public final class WXMCommandVMList extends WXMCommandRoot
+public final class WXMCommandVMList extends WXMAbstractCommandWithConfiguration
 {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(WXMCommandVMList.class);
+  /**
+   * Construct a command.
+   *
+   * @param inContext The command context
+   */
 
-  @Parameter(
-    names = "--configuration",
-    description = "The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)",
-    required = false
-  )
-  private Path configurationFile = WXMEnvironment.configurationFile();
-
-  public WXMCommandVMList()
+  public WXMCommandVMList(
+    final CLPCommandContextType inContext)
   {
-
+    super(inContext);
   }
 
   @Override
-  public Status execute()
+  public String name()
+  {
+    return "vm-list";
+  }
+
+  @Override
+  protected Status executeActualWithConfiguration(
+    final Path configurationPath)
     throws Exception
   {
-    if (super.execute() == FAILURE) {
-      return FAILURE;
-    }
-    if (!checkConfigurationPath(LOG, this.configurationFile)) {
-      return FAILURE;
-    }
-    try (var client = WXMServices.clients().open(this.configurationFile)) {
+    try (var client = WXMServices.clients().open(configurationPath)) {
       final var machineSet = client.vmList();
       if (machineSet.machines().isEmpty()) {
         return SUCCESS;

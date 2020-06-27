@@ -18,6 +18,7 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceSlots;
@@ -37,24 +38,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
+import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 
 @Parameters(commandDescription = "Add an LPC device to a virtual machine.")
-public final class WXMCommandVMAddLPC extends WXMCommandRoot
+public final class WXMCommandVMAddLPC extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMAddLPC.class);
-
-  @Parameter(
-    names = "--configuration",
-    description = "The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)",
-    required = false
-  )
-  private Path configurationFile = WXMEnvironment.configurationFile();
 
   @Parameter(
     names = "--id",
@@ -69,7 +62,7 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
     description = "A comment describing the new device",
     required = false
   )
-  private String comment;
+  private String comment = "";
 
   @Parameter(
     names = "--device-slot",
@@ -88,23 +81,30 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
   )
   private List<WXMTTYBackendType> backends = List.of();
 
-  public WXMCommandVMAddLPC()
-  {
+  /**
+   * Construct a command.
+   *
+   * @param inContext The command context
+   */
 
+  public WXMCommandVMAddLPC(
+    final CLPCommandContextType inContext)
+  {
+    super(inContext);
   }
 
   @Override
-  public Status execute()
+  public String name()
+  {
+    return "vm-add-lpc-device";
+  }
+
+  @Override
+  protected Status executeActualWithConfiguration(
+    final Path configurationPath)
     throws Exception
   {
-    if (super.execute() == FAILURE) {
-      return FAILURE;
-    }
-    if (!checkConfigurationPath(LOG, this.configurationFile)) {
-      return FAILURE;
-    }
-
-    try (var client = WXMServices.clients().open(this.configurationFile)) {
+    try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
       this.deviceSlot =
         WXMDeviceSlots.checkDeviceSlotNotUsed(
@@ -126,6 +126,7 @@ public final class WXMCommandVMAddLPC extends WXMCommandRoot
         WXMDeviceLPC.builder()
           .setDeviceSlot(this.deviceSlot)
           .addAllBackends(backendMap.values())
+          .setComment(this.comment)
           .build();
 
       final var updatedMachine =

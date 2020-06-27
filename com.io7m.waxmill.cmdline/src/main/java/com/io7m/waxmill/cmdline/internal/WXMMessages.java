@@ -19,6 +19,7 @@ package com.io7m.waxmill.cmdline.internal;
 import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ResourceBundle;
 
 public final class WXMMessages extends WXMAbstractStrings
@@ -30,11 +31,12 @@ public final class WXMMessages extends WXMAbstractStrings
   }
 
   public static WXMMessages create()
-    throws IOException
   {
     try (var stream = WXMMessages.class.getResourceAsStream(
       "/com/io7m/waxmill/cmdline/internal/Messages.xml")) {
       return new WXMMessages(ofXML(stream));
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
     }
   }
 

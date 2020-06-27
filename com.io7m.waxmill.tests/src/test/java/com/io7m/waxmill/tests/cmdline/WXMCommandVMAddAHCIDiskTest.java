@@ -342,4 +342,94 @@ public final class WXMCommandVMAddAHCIDiskTest
       );
     });
   }
+
+  @Test
+  public void addAHCIDiskMalformedSlot0()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--id",
+        id.toString()
+      }
+    );
+
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-add-ahci-disk",
+          "--verbose",
+          "trace",
+          "--configuration",
+          this.configFile.toString(),
+          "--id",
+          id.toString(),
+          "--backend",
+          "file;/tmp/xyz",
+          "--device-slot",
+          "z:x"
+        }
+      );
+    });
+  }
+
+  @Test
+  public void addAHCIDiskMalformedSlot1()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--id",
+        id.toString()
+      }
+    );
+
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-add-ahci-disk",
+          "--verbose",
+          "trace",
+          "--configuration",
+          this.configFile.toString(),
+          "--id",
+          id.toString(),
+          "--backend",
+          "file;/tmp/xyz",
+          "--device-slot",
+          "999999:9999999:999999"
+        }
+      );
+    });
+  }
 }

@@ -23,10 +23,8 @@ import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVMNetDeviceName;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType;
+
 public final class WXMVirtioNetworkBackendConverter
   implements IStringConverter<WXMVirtioNetworkBackendType>
 {
@@ -34,11 +32,7 @@ public final class WXMVirtioNetworkBackendConverter
 
   public WXMVirtioNetworkBackendConverter()
   {
-    try {
-      this.messages = WXMMessages.create();
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    this.messages = WXMMessages.create();
   }
 
   @Override

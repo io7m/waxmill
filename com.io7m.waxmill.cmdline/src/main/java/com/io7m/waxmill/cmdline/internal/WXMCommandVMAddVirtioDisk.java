@@ -18,6 +18,7 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.client.api.WXMClientType;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
@@ -36,25 +37,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMStorageBackends.determineZFSVolumePath;
 
 @Parameters(commandDescription = "Add a virtio disk to a virtual machine.")
-public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
+public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMAddVirtioDisk.class);
-
-  @Parameter(
-    names = "--configuration",
-    description = "The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)",
-    required = false
-  )
-  private Path configurationFile = WXMEnvironment.configurationFile();
 
   @Parameter(
     names = "--id",
@@ -95,23 +87,70 @@ public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
   )
   private WXMStorageBackendType backend;
 
-  public WXMCommandVMAddVirtioDisk()
-  {
+  /**
+   * Construct a command.
+   *
+   * @param inContext The command context
+   */
 
+  public WXMCommandVMAddVirtioDisk(
+    final CLPCommandContextType inContext)
+  {
+    super(inContext);
+  }
+
+
+  @Override
+  public String name()
+  {
+    return "vm-add-virtio-disk";
+  }
+
+  private void showCreated(
+    final WXMClientType client,
+    final WXMVirtualMachine machine)
+  {
+    switch (this.backend.kind()) {
+      case WXM_STORAGE_FILE: {
+        LOG.info(
+          "Added virtio disk file {} @ slot {}",
+          ((WXMStorageBackendFile) this.backend).file(),
+          this.deviceSlot
+        );
+        break;
+      }
+      case WXM_STORAGE_ZFS_VOLUME: {
+        LOG.info(
+          "Added virtio disk zfs volume {} @ slot {}",
+          showZFSPath(client, machine, this.deviceSlot),
+          this.deviceSlot
+        );
+        break;
+      }
+      case WXM_SCSI: {
+        break;
+      }
+    }
+  }
+
+  private static String showZFSPath(
+    final WXMClientType client,
+    final WXMVirtualMachine machine,
+    final WXMDeviceSlot deviceId)
+  {
+    return determineZFSVolumePath(
+      client.configuration().virtualMachineRuntimeDirectory(),
+      machine.id(),
+      deviceId
+    ).toString();
   }
 
   @Override
-  public Status execute()
+  protected Status executeActualWithConfiguration(
+    final Path configurationPath)
     throws Exception
   {
-    if (super.execute() == FAILURE) {
-      return FAILURE;
-    }
-    if (!checkConfigurationPath(LOG, this.configurationFile)) {
-      return FAILURE;
-    }
-
-    try (var client = WXMServices.clients().open(this.configurationFile)) {
+    try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
       this.deviceSlot =
         WXMDeviceSlots.checkDeviceSlotNotUsed(
@@ -157,44 +196,5 @@ public final class WXMCommandVMAddVirtioDisk extends WXMCommandRoot
       this.showCreated(client, machine);
     }
     return SUCCESS;
-  }
-
-  private void showCreated(
-    final WXMClientType client,
-    final WXMVirtualMachine machine)
-  {
-    switch (this.backend.kind()) {
-      case WXM_STORAGE_FILE: {
-        LOG.info(
-          "Added virtio disk file {} @ slot {}",
-          ((WXMStorageBackendFile) this.backend).file(),
-          this.deviceSlot
-        );
-        break;
-      }
-      case WXM_STORAGE_ZFS_VOLUME: {
-        LOG.info(
-          "Added virtio disk zfs volume {} @ slot {}",
-          showZFSPath(client, machine, this.deviceSlot),
-          this.deviceSlot
-        );
-        break;
-      }
-      case WXM_SCSI: {
-        break;
-      }
-    }
-  }
-
-  private static String showZFSPath(
-    final WXMClientType client,
-    final WXMVirtualMachine machine,
-    final WXMDeviceSlot deviceId)
-  {
-    return determineZFSVolumePath(
-      client.configuration().virtualMachineRuntimeDirectory(),
-      machine.id(),
-      deviceId
-    ).toString();
   }
 }

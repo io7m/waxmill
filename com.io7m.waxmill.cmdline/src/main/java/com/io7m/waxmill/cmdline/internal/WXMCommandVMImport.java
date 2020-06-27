@@ -18,6 +18,7 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.machines.WXMVirtualMachineSets;
@@ -28,22 +29,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 @Parameters(commandDescription = "Import virtual machine descriptions.")
-public final class WXMCommandVMImport extends WXMCommandRoot
+public final class WXMCommandVMImport extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMImport.class);
-
-  @Parameter(
-    names = "--configuration",
-    description = "The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)",
-    required = false
-  )
-  private Path configurationFile = WXMEnvironment.configurationFile();
 
   @Parameter(
     names = "--file",
@@ -52,24 +44,31 @@ public final class WXMCommandVMImport extends WXMCommandRoot
   )
   private List<Path> files = List.of();
 
-  public WXMCommandVMImport()
-  {
+  /**
+   * Construct a command.
+   *
+   * @param inContext The command context
+   */
 
+  public WXMCommandVMImport(
+    final CLPCommandContextType inContext)
+  {
+    super(inContext);
   }
 
   @Override
-  public Status execute()
+  public String name()
+  {
+    return "vm-import";
+  }
+
+  @Override
+  protected Status executeActualWithConfiguration(
+    final Path configurationPath)
     throws Exception
   {
-    if (super.execute() == FAILURE) {
-      return FAILURE;
-    }
-    if (!checkConfigurationPath(LOG, this.configurationFile)) {
-      return FAILURE;
-    }
-
     final var parsers = WXMServices.vmParsers();
-    try (var client = WXMServices.clients().open(this.configurationFile)) {
+    try (var client = WXMServices.clients().open(configurationPath)) {
       final var machineSets = new ArrayList<WXMVirtualMachineSet>();
       for (final var path : this.files) {
         machineSets.add(parsers.parse(path));

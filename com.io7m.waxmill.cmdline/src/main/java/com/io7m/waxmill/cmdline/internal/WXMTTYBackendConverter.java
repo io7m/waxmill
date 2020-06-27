@@ -21,12 +21,11 @@ import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Locale;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
+
 public final class WXMTTYBackendConverter
   implements IStringConverter<WXMTTYBackendType>
 {
@@ -34,11 +33,7 @@ public final class WXMTTYBackendConverter
 
   public WXMTTYBackendConverter()
   {
-    try {
-      this.messages = WXMMessages.create();
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    this.messages = WXMMessages.create();
   }
 
   @Override

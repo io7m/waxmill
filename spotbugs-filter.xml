@@ -102,7 +102,7 @@
 
   <Match>
     <And>
-      <Class name="com.io7m.waxmill.cmdline.Main" />
+      <Class name="com.io7m.waxmill.cmdline.Main"/>
       <Or>
         <Bug pattern="UVA_USE_VAR_ARGS"/>
       </Or>
@@ -236,6 +236,12 @@
     <Class name="com.io7m.waxmill.cmdline.internal.WXMEnvironment"/>
     <Method name="configurationFile"/>
     <Bug pattern="AI_ANNOTATION_ISSUES_NEEDS_NULLABLE"/>
+  </Match>
+
+  <Match>
+    <Class name="com.io7m.waxmill.cmdline.internal.WXMMessages"/>
+    <Method name="create"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
   </Match>
 
   <Match>

@@ -18,6 +18,7 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMCPUTopology;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
@@ -33,22 +34,14 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_UNSPECIFIED;
+
 @Parameters(commandDescription = "Define a new virtual machine.")
-public final class WXMCommandVMDefine extends WXMCommandRoot
+public final class WXMCommandVMDefine extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMDefine.class);
-
-  @Parameter(
-    names = "--configuration",
-    description = "The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)",
-    required = false
-  )
-  private Path configurationFile = WXMEnvironment.configurationFile();
 
   @Parameter(
     names = "--id",
@@ -93,28 +86,35 @@ public final class WXMCommandVMDefine extends WXMCommandRoot
   )
   private String comment;
 
-  public WXMCommandVMDefine()
-  {
+  /**
+   * Construct a command.
+   *
+   * @param inContext The command context
+   */
 
+  public WXMCommandVMDefine(
+    final CLPCommandContextType inContext)
+  {
+    super(inContext);
   }
 
   @Override
-  public Status execute()
+  public String name()
+  {
+    return "vm-define";
+  }
+
+  @Override
+  protected Status executeActualWithConfiguration(
+    final Path configurationPath)
     throws Exception
   {
-    if (super.execute() == FAILURE) {
-      return FAILURE;
-    }
-    if (!checkConfigurationPath(LOG, this.configurationFile)) {
-      return FAILURE;
-    }
-
     if (this.id == null) {
       this.id = UUID.randomUUID();
     }
 
     final var machineName = WXMMachineName.of(this.name);
-    try (var client = WXMServices.clients().open(this.configurationFile)) {
+    try (var client = WXMServices.clients().open(configurationPath)) {
       final var cpuTopology =
         WXMCPUTopology.builder()
           .setSockets(1)

@@ -24,6 +24,7 @@ module com.io7m.waxmill.cmdline
   requires static org.osgi.annotation.versioning;
 
   requires ch.qos.logback.classic;
+  requires com.io7m.claypot.core;
   requires com.io7m.junreachable.core;
   requires com.io7m.waxmill.client.api;
   requires com.io7m.waxmill.machines;

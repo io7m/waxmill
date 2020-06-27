@@ -16,46 +16,49 @@
 
 package com.io7m.waxmill.cmdline.internal;
 
-import com.beust.jcommander.Parameters;
+import com.beust.jcommander.Parameter;
 import com.io7m.claypot.core.CLPAbstractCommand;
 import com.io7m.claypot.core.CLPCommandContextType;
-import com.io7m.waxmill.client.api.WXMApplicationVersion;
 
-import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
+import java.nio.file.Path;
 
-@Parameters(commandDescription = "Show the application version.")
-public final class WXMCommandVersion extends CLPAbstractCommand
+import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
+import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+
+public abstract class WXMAbstractCommandWithConfiguration
+  extends CLPAbstractCommand
 {
+  @Parameter(
+    names = "--configuration",
+    description = "The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)",
+    required = false
+  )
+  private Path configurationFile = WXMEnvironment.configurationFile();
+
+  protected abstract Status executeActualWithConfiguration(
+    Path configurationPath)
+    throws Exception;
+
+  @Override
+  protected final Status executeActual()
+    throws Exception
+  {
+    if (!checkConfigurationPath(this.logger(), this.configurationFile)) {
+      return FAILURE;
+    }
+
+    return this.executeActualWithConfiguration(this.configurationFile);
+  }
+
   /**
    * Construct a command.
    *
    * @param inContext The command context
    */
 
-  public WXMCommandVersion(
+  public WXMAbstractCommandWithConfiguration(
     final CLPCommandContextType inContext)
   {
     super(inContext);
-  }
-
-  @Override
-  protected Status executeActual()
-    throws Exception
-  {
-    final WXMApplicationVersion version =
-      WXMServices.findApplicationVersion();
-
-    System.out.printf(
-      "%s %s%n",
-      version.applicationName(),
-      version.applicationVersion()
-    );
-    return SUCCESS;
-  }
-
-  @Override
-  public String name()
-  {
-    return "version";
   }
 }

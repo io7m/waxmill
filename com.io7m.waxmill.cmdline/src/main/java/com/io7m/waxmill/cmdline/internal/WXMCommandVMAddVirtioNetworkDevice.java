@@ -18,6 +18,7 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
@@ -32,22 +33,13 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.FAILURE;
-import static com.io7m.waxmill.cmdline.internal.WXMCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
+import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 @Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
-public final class WXMCommandVMAddVirtioNetworkDevice extends WXMCommandRoot
+public final class WXMCommandVMAddVirtioNetworkDevice extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMAddVirtioNetworkDevice.class);
-
-  @Parameter(
-    names = "--configuration",
-    description = "The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)",
-    required = false
-  )
-  private Path configurationFile = WXMEnvironment.configurationFile();
 
   @Parameter(
     names = "--id",
@@ -62,7 +54,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMCommandRoot
     description = "A comment describing the new device",
     required = false
   )
-  private String comment;
+  private String comment = "";
 
   @Parameter(
     names = "--device-slot",
@@ -81,23 +73,30 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMCommandRoot
   )
   private WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType backend;
 
-  public WXMCommandVMAddVirtioNetworkDevice()
-  {
+  /**
+   * Construct a command.
+   *
+   * @param inContext The command context
+   */
 
+  public WXMCommandVMAddVirtioNetworkDevice(
+    final CLPCommandContextType inContext)
+  {
+    super(inContext);
   }
 
   @Override
-  public Status execute()
+  public String name()
+  {
+    return "vm-add-virtio-network-device";
+  }
+
+  @Override
+  protected Status executeActualWithConfiguration(
+    final Path configurationPath)
     throws Exception
   {
-    if (super.execute() == FAILURE) {
-      return FAILURE;
-    }
-    if (!checkConfigurationPath(LOG, this.configurationFile)) {
-      return FAILURE;
-    }
-
-    try (var client = WXMServices.clients().open(this.configurationFile)) {
+    try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
       this.deviceSlot =
         WXMDeviceSlots.checkDeviceSlotNotUsed(
@@ -110,6 +109,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMCommandRoot
         WXMDeviceVirtioNetwork.builder()
           .setDeviceSlot(this.deviceSlot)
           .setBackend(this.backend)
+          .setComment(this.comment)
           .build();
 
       final var updatedMachine =
