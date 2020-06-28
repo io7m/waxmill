@@ -32,7 +32,7 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
-@Parameters(commandDescription = "Add/replace boot configurations to a virtual machine.")
+@Parameters(commandDescription = "Add/replace boot configurations in a virtual machine.")
 public final class WXMCommandVMUpdateBootConfigurations
   extends WXMAbstractCommandWithConfiguration
 {
