@@ -28,13 +28,46 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
+/**
+ * The type of serializer providers.
+ *
+ * @param <T> The type of serialized values
+ */
+
 public interface WXMSerializerProviderType<T>
 {
+  /**
+   * Create a new serializer.
+   *
+   * @param uri    The URI of the output
+   * @param stream The output stream
+   * @param value  The value to serialize
+   *
+   * @return A new serializer
+   *
+   * @throws IOException On I/O errors
+   */
+
   WXMSerializerType create(
     URI uri,
     OutputStream stream,
     T value)
     throws IOException;
+
+  /**
+   * A convenience method to serialize data to a file. The output is written
+   * to the given temporary file and then atomically renamed to the given
+   * output path. This prevents any external processes from seeing half-written
+   * data. The given paths should both refer to the same underlying filesystem,
+   * as operating systems typically have this restriction when atomically
+   * renaming files.
+   *
+   * @param output    The output path
+   * @param outputTmp The temporary output path
+   * @param value     The value to serialize
+   *
+   * @throws IOException On I/O errors
+   */
 
   default void serialize(
     final Path output,
@@ -46,7 +79,10 @@ public interface WXMSerializerProviderType<T>
     Objects.requireNonNull(outputTmp, "outputTmp");
     Objects.requireNonNull(value, "value");
 
-    try (var stream = Files.newOutputStream(outputTmp, CREATE, TRUNCATE_EXISTING)) {
+    try (var stream = Files.newOutputStream(
+      outputTmp,
+      CREATE,
+      TRUNCATE_EXISTING)) {
       try (var serializer = this.create(outputTmp.toUri(), stream, value)) {
         serializer.execute();
       }

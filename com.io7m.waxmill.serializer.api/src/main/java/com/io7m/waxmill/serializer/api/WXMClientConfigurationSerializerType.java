@@ -16,6 +16,10 @@
 
 package com.io7m.waxmill.serializer.api;
 
+/**
+ * A client configuration serializer.
+ */
+
 public interface WXMClientConfigurationSerializerType extends WXMSerializerType
 {
 

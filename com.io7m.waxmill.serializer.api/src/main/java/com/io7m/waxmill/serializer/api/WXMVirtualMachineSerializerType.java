@@ -16,6 +16,10 @@
 
 package com.io7m.waxmill.serializer.api;
 
+/**
+ * A virtual machine serializer.
+ */
+
 public interface WXMVirtualMachineSerializerType extends WXMSerializerType
 {
 

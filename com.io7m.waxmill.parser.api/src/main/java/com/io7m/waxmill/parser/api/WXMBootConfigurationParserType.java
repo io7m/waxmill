@@ -21,6 +21,10 @@ import com.io7m.waxmill.machines.WXMBootConfigurationType;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A boot configuration parser.
+ */
+
 public interface WXMBootConfigurationParserType
   extends WXMParserType<List<WXMBootConfigurationType>>
 {

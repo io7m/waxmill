@@ -20,6 +20,10 @@ import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 
 import java.util.Optional;
 
+/**
+ * A virtual machine parser.
+ */
+
 public interface WXMVirtualMachineParserType
   extends WXMParserType<WXMVirtualMachineSet>
 {

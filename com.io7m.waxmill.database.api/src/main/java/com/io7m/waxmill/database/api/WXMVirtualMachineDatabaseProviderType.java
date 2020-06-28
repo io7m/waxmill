@@ -18,8 +18,12 @@ package com.io7m.waxmill.database.api;
 
 import com.io7m.waxmill.exceptions.WXMException;
 
-public interface WXMVirtualMachineDatabaseProviderType extends
-  WXMDatabaseProviderType
+/**
+ * A provider of virtual machine databases.
+ */
+
+public interface WXMVirtualMachineDatabaseProviderType
+  extends WXMDatabaseProviderType
 {
   @Override
   WXMVirtualMachineDatabaseType open(

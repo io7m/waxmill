@@ -24,6 +24,10 @@ import org.immutables.value.Value;
 import java.net.URI;
 import java.util.Optional;
 
+/**
+ * The type of parse errors.
+ */
+
 @ImmutablesStyleType
 @Value.Immutable
 public interface WXMParseErrorType extends LexicalType<URI>
@@ -31,15 +35,40 @@ public interface WXMParseErrorType extends LexicalType<URI>
   @Override
   LexicalPosition<URI> lexical();
 
+  /**
+   * @return The severity of the error
+   */
+
   Severity severity();
+
+  /**
+   * @return The parse error message
+   */
 
   String message();
 
+  /**
+   * @return The exception raised, if any
+   */
+
   Optional<Exception> exception();
+
+  /**
+   * The severity of errors.
+   */
 
   enum Severity
   {
+    /**
+     * The error is a warning.
+     */
+
     WARNING,
+
+    /**
+     * The error is an error.
+     */
+
     ERROR
   }
 }

@@ -19,8 +19,18 @@ package com.io7m.waxmill.serializer.api;
 import java.io.Closeable;
 import java.io.IOException;
 
+/**
+ * The type of serializers.
+ */
+
 public interface WXMSerializerType extends Closeable
 {
+  /**
+   * Execute the serializer.
+   *
+   * @throws IOException On I/O errors
+   */
+
   void execute()
     throws IOException;
 }

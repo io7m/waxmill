@@ -18,8 +18,22 @@ package com.io7m.waxmill.database.api;
 
 import com.io7m.waxmill.exceptions.WXMException;
 
+/**
+ * A provider of databases.
+ */
+
 public interface WXMDatabaseProviderType
 {
+  /**
+   * Open (or create) a database.
+   *
+   * @param configuration The database configuration
+   *
+   * @return The database
+   *
+   * @throws WXMException On errors
+   */
+
   WXMDatabaseType open(
     WXMDatabaseConfiguration configuration)
     throws WXMException;

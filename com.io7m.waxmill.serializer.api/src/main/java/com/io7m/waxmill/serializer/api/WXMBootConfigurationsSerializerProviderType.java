@@ -20,6 +20,10 @@ import com.io7m.waxmill.machines.WXMBootConfigurationType;
 
 import java.util.List;
 
+/**
+ * A provider of boot configuration serializers.
+ */
+
 public interface WXMBootConfigurationsSerializerProviderType
   extends WXMSerializerProviderType<List<WXMBootConfigurationType>>
 {

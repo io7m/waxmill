@@ -16,6 +16,10 @@
 
 package com.io7m.waxmill.serializer.api;
 
+/**
+ * A boot configuration serializer.
+ */
+
 public interface WXMBootConfigurationsSerializerType extends WXMSerializerType
 {
 

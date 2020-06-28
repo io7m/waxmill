@@ -30,8 +30,27 @@ import java.util.function.Consumer;
 
 import static com.io7m.waxmill.parser.api.WXMParseErrorType.Severity.ERROR;
 
+/**
+ * The type of parser providers.
+ *
+ * @param <T> The type of input values
+ */
+
 public interface WXMParserProviderType<T>
 {
+  /**
+   * Create a new parser.
+   *
+   * @param fileSystem The filesystem used to create new paths, if necessary
+   * @param uri        The source URI
+   * @param stream     The source stream
+   * @param errors     A receiver of parse errors
+   *
+   * @return A new parser
+   *
+   * @throws IOException On I/O errors
+   */
+
   WXMParserType<T> create(
     FileSystem fileSystem,
     URI uri,

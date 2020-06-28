@@ -31,6 +31,10 @@ import java.util.stream.Collectors;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 
+/**
+ * A virtual machine.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXMVirtualMachineType
@@ -108,6 +112,10 @@ public interface WXMVirtualMachineType
 
   Optional<URI> configurationFile();
 
+  /**
+   * @return The set of attached devices, ordered by device slot
+   */
+
   @Value.Derived
   @Value.Auxiliary
   default Map<WXMDeviceSlot, WXMDeviceType> deviceMap()
@@ -119,6 +127,10 @@ public interface WXMVirtualMachineType
         Function.identity()
       ));
   }
+
+  /**
+   * @return The set of boot configurations, ordered by name
+   */
 
   @Value.Derived
   @Value.Auxiliary

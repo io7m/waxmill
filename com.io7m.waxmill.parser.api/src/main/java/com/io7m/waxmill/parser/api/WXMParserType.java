@@ -19,7 +19,20 @@ package com.io7m.waxmill.parser.api;
 import java.io.Closeable;
 import java.util.Optional;
 
+/**
+ * The type of parsers.
+ *
+ * @param <T> The type of parsed values
+ */
+
 public interface WXMParserType<T> extends Closeable
 {
+  /**
+   * Attempt to parse a value. The method returns a non-empty value if no
+   * errors occurred and a valid value was parsed.
+   *
+   * @return The parsed value, if any
+   */
+
   Optional<T> parse();
 }

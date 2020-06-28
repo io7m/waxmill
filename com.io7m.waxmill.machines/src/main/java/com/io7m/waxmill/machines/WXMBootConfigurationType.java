@@ -34,20 +34,50 @@ import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelIn
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType.Kind.KERNEL_OPENBSD;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 
+/**
+ * A boot configuration.
+ */
+
 public interface WXMBootConfigurationType
 {
+  /**
+   * @return The kind of boot configuration
+   */
+
   Kind kind();
 
+  /**
+   * The unique-within-a-virtual-machine name of the boot configuration.
+   *
+   * @return The name of the boot configuration
+   */
+
   WXMBootConfigurationName name();
+
+  /**
+   * @return A comment
+   */
 
   default String comment()
   {
     return "";
   }
 
+  /**
+   * @return The set of devices required by the boot configuration
+   */
+
   Set<WXMDeviceSlot> requiredDevices();
 
+  /**
+   * @return The disks attached to the virtual machine on boot
+   */
+
   List<WXMBootDiskAttachment> diskAttachments();
+
+  /**
+   * @return The disk attachments by device slot
+   */
 
   @Value.Derived
   @Value.Auxiliary
@@ -61,19 +91,43 @@ public interface WXMBootConfigurationType
       ));
   }
 
+  /**
+   * The kind of boot configurations.
+   */
+
   enum Kind
   {
+    /**
+     * The boot configuration uses grub-bhyve.
+     */
+
     GRUB_BHYVE
   }
+
+  /**
+   * A disk attachment.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMBootDiskAttachmentType
   {
+    /**
+     * @return The disk device slot to which the storage will be attached
+     */
+
     WXMDeviceSlot device();
+
+    /**
+     * @return The storage backend
+     */
 
     WXMStorageBackendType backend();
   }
+
+  /**
+   * A boot configuration that uses grub-bhyve.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -95,6 +149,10 @@ public interface WXMBootConfigurationType
     @Override
     WXMBootConfigurationName name();
 
+    /**
+     * @return The underlying kernel instructions
+     */
+
     WXMGRUBKernelInstructionsType kernelInstructions();
 
     @Override
@@ -104,18 +162,47 @@ public interface WXMBootConfigurationType
     }
   }
 
+  /**
+   * Operating system specific GRUB boot instructions.
+   */
+
   interface WXMGRUBKernelInstructionsType
   {
+    /**
+     * @return The kind of underlying kernel
+     */
+
     Kind kind();
+
+    /**
+     * The kind of kernels.
+     */
 
     enum Kind
     {
+      /**
+       * The kernel is OpenBSD.
+       */
+
       KERNEL_OPENBSD,
+
+      /**
+       * The kernel is Linux.
+       */
+
       KERNEL_LINUX
     }
 
+    /**
+     * @return The slots required to have assigned storage
+     */
+
     Set<WXMDeviceSlot> requiredDevices();
   }
+
+  /**
+   * OpenBSD kernel instructions.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -127,7 +214,15 @@ public interface WXMBootConfigurationType
       return KERNEL_OPENBSD;
     }
 
+    /**
+     * @return The device from which booting will occur
+     */
+
     WXMDeviceSlot bootDevice();
+
+    /**
+     * @return The path to the kernel on the guest filesystem
+     */
 
     Path kernelPath();
 
@@ -152,6 +247,10 @@ public interface WXMBootConfigurationType
     }
   }
 
+  /**
+   * Linux kernel instructions.
+   */
+
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMGRUBKernelLinuxType extends WXMGRUBKernelInstructionsType
@@ -162,13 +261,33 @@ public interface WXMBootConfigurationType
       return KERNEL_LINUX;
     }
 
+    /**
+     * @return The device that contains the kernel
+     */
+
     WXMDeviceSlot kernelDevice();
+
+    /**
+     * @return The path to the kernel on the guest filesystem
+     */
 
     Path kernelPath();
 
+    /**
+     * @return The arguments for the kernel
+     */
+
     List<String> kernelArguments();
 
+    /**
+     * @return The device that contains the initial ramdisk
+     */
+
     WXMDeviceSlot initRDDevice();
+
+    /**
+     * @return The path to the initial ramdisk on the guest filesystem
+     */
 
     Path initRDPath();
 
@@ -201,23 +320,59 @@ public interface WXMBootConfigurationType
     }
   }
 
+  /**
+   * The type of evaluated boot configurations.
+   */
+
   interface WXMEvaluatedBootConfigurationType
   {
+    /**
+     * @return The kind of underlying kernel
+     */
+
     Kind kind();
+
+    /**
+     * @return The files required to exist by the boot configuration
+     */
 
     List<Path> requiredPaths();
 
+    /**
+     * @return The set of commands required to bring up the virtual machine
+     */
+
     WXMEvaluatedBootCommands commands();
   }
+
+  /**
+   * A set of boot commands.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMEvaluatedBootCommandsType
   {
+    /**
+     * @return A list of commands executed in declaration order to configure the virtual machine
+     */
+
     List<WXMCommandExecution> configurationCommands();
+
+    /**
+     * The final execution to bring up the virtual machine. This is typically
+     * executed using the operating system's equivalent of {@code execve()} and
+     * will therefore replace the current process.
+     *
+     * @return The final execution used to bring up the virtual machine
+     */
 
     Optional<WXMCommandExecution> lastExecution();
   }
+
+  /**
+   * A set of evaluated commands used to boot with grub-bhyve.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -236,11 +391,27 @@ public interface WXMBootConfigurationType
     @Override
     WXMEvaluatedBootCommands commands();
 
+    /**
+     * @return A file that will contain a GRUB device map
+     */
+
     Path deviceMapFile();
+
+    /**
+     * @return The lines that will be written to the GRUB device map
+     */
 
     List<String> deviceMap();
 
+    /**
+     * @return A file that will contain a GRUB configuration
+     */
+
     Path grubConfigurationFile();
+
+    /**
+     * @return The lines that will be written to the GRUB configuration file
+     */
 
     List<String> grubConfiguration();
   }

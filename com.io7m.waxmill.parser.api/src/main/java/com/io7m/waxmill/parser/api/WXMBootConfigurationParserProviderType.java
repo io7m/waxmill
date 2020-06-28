@@ -25,6 +25,10 @@ import java.nio.file.FileSystem;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * A provider of boot configuration parsers.
+ */
+
 public interface WXMBootConfigurationParserProviderType
   extends WXMParserProviderType<List<WXMBootConfigurationType>>
 {

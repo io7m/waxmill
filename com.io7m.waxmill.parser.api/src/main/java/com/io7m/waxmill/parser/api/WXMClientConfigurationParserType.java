@@ -20,6 +20,10 @@ import com.io7m.waxmill.client.api.WXMClientConfiguration;
 
 import java.util.Optional;
 
+/**
+ * A client configuration parser.
+ */
+
 public interface WXMClientConfigurationParserType
   extends WXMParserType<WXMClientConfiguration>
 {

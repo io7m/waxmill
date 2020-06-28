@@ -24,6 +24,10 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.util.function.Consumer;
 
+/**
+ * A provider of virtual machine parsers.
+ */
+
 public interface WXMVirtualMachineParserProviderType
   extends WXMParserProviderType<WXMVirtualMachineSet>
 {

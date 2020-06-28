@@ -18,6 +18,10 @@ package com.io7m.waxmill.serializer.api;
 
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 
+/**
+ * A provider of virtual machine serializers.
+ */
+
 public interface WXMVirtualMachineSerializerProviderType
   extends WXMSerializerProviderType<WXMVirtualMachineSet>
 {

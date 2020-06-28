@@ -18,6 +18,10 @@ package com.io7m.waxmill.database.api;
 
 import com.io7m.waxmill.exceptions.WXMException;
 
+/**
+ * The base type of databases.
+ */
+
 public interface WXMDatabaseType extends AutoCloseable
 {
   @Override

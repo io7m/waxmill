@@ -24,6 +24,10 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.util.function.Consumer;
 
+/**
+ * A provider of client configuration parsers.
+ */
+
 public interface WXMClientConfigurationParserProviderType
   extends WXMParserProviderType<WXMClientConfiguration>
 {

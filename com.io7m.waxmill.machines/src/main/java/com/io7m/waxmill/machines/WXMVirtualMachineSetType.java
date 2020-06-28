@@ -22,9 +22,17 @@ import org.immutables.value.Value;
 import java.util.SortedMap;
 import java.util.UUID;
 
+/**
+ * A set of virtual machines.
+ */
+
 @ImmutablesStyleType
 @Value.Immutable
 public interface WXMVirtualMachineSetType
 {
+  /**
+   * @return The virtual machines, by ID
+   */
+
   SortedMap<UUID, WXMVirtualMachine> machines();
 }
