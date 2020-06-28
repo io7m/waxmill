@@ -32,8 +32,6 @@ import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
-import com.io7m.waxmill.machines.WXMDeviceSlot;
-import com.io7m.waxmill.machines.WXMDeviceSlotType;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
@@ -125,10 +123,9 @@ public final class WXMBootConfigurationEvaluator
     }
   }
 
-  private ArrayList<String> generateGRUBConfigLinesLinux(
+  private static ArrayList<String> generateGRUBConfigLinesLinux(
     final WXMGRUBDeviceMap deviceMap,
     final WXMGRUBKernelLinux linux)
-    throws WXMExceptionNonexistent
   {
     final var kernelDevice =
       linux.kernelDevice();
@@ -137,12 +134,6 @@ public final class WXMBootConfigurationEvaluator
     final var kernelCD =
       deviceMap.searchForCD(kernelDevice);
 
-    if (kernelHD.isEmpty() && kernelCD.isEmpty()) {
-      throw new WXMExceptionNonexistent(
-        this.errorNoSuchBootDevice(kernelDevice)
-      );
-    }
-
     final var initRDDevice =
       linux.initRDDevice();
     final var initRDHD =
@@ -150,12 +141,14 @@ public final class WXMBootConfigurationEvaluator
     final var initRDCD =
       deviceMap.searchForCD(initRDDevice);
 
-    if (initRDHD.isEmpty() && initRDCD.isEmpty()) {
-      throw new WXMExceptionNonexistent(
-        this.errorNoSuchBootDevice(initRDDevice)
-      );
-    }
-
+    Invariants.checkInvariant(
+      kernelHD.isPresent() || kernelCD.isPresent(),
+      "Kernel device must be present"
+    );
+    Invariants.checkInvariant(
+      initRDHD.isPresent() || initRDCD.isPresent(),
+      "InitRD device must be present"
+    );
     Invariants.checkInvariant(
       kernelHD.isPresent() != kernelCD.isPresent(),
       "A device ID must map to exactly one device"
@@ -213,10 +206,9 @@ public final class WXMBootConfigurationEvaluator
     return configLines;
   }
 
-  private ArrayList<String> generateGRUBConfigLinesOpenBSD(
+  private static ArrayList<String> generateGRUBConfigLinesOpenBSD(
     final WXMGRUBDeviceMap deviceMap,
     final WXMGRUBKernelOpenBSD openBSD)
-    throws WXMExceptionNonexistent
   {
     final var bootDevice =
       openBSD.bootDevice();
@@ -225,12 +217,10 @@ public final class WXMBootConfigurationEvaluator
     final var bootCD =
       deviceMap.searchForCD(bootDevice);
 
-    if (bootHD.isEmpty() && bootCD.isEmpty()) {
-      throw new WXMExceptionNonexistent(
-        this.errorNoSuchBootDevice(bootDevice)
-      );
-    }
-
+    Invariants.checkInvariant(
+      bootHD.isPresent() != bootCD.isPresent(),
+      "A device ID must map to exactly one device"
+    );
     Invariants.checkInvariant(
       bootHD.isPresent() != bootCD.isPresent(),
       "A device ID must map to exactly one device"
@@ -611,12 +601,11 @@ public final class WXMBootConfigurationEvaluator
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationOpenBSD(
     final WXMGRUBDeviceMap deviceMap,
     final WXMGRUBKernelOpenBSD openBSD)
-    throws WXMException
   {
     Objects.requireNonNull(openBSD, "openBSD");
 
     final var configLines =
-      this.generateGRUBConfigLinesOpenBSD(deviceMap, openBSD);
+      generateGRUBConfigLinesOpenBSD(deviceMap, openBSD);
 
     return WXMEvaluatedBootConfigurationGRUBBhyve.builder()
       .setCommands(this.generateGRUBBhyveCommands())
@@ -649,12 +638,11 @@ public final class WXMBootConfigurationEvaluator
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationLinux(
     final WXMGRUBDeviceMap deviceMap,
     final WXMGRUBKernelLinux linux)
-    throws WXMExceptionNonexistent
   {
     Objects.requireNonNull(linux, "linux");
 
     final var configLines =
-      this.generateGRUBConfigLinesLinux(deviceMap, linux);
+      generateGRUBConfigLinesLinux(deviceMap, linux);
 
     return WXMEvaluatedBootConfigurationGRUBBhyve.builder()
       .setCommands(this.generateGRUBBhyveCommands())
@@ -704,40 +692,6 @@ public final class WXMBootConfigurationEvaluator
     );
   }
 
-  private String errorNoSuchBootDevice(
-    final WXMDeviceSlot bootDevice)
-  {
-    return this.messages.format(
-      "bootNoSuchDevice",
-      this.machine.id(),
-      this.bootName.value(),
-      bootDevice,
-      this.storageDeviceNames()
-    );
-  }
-
-  private List<String> storageDeviceNames()
-  {
-    return this.machine.devices()
-      .stream()
-      .filter(device -> {
-        switch (device.kind()) {
-          case WXM_HOSTBRIDGE:
-          case WXM_VIRTIO_NETWORK:
-          case WXM_LPC:
-            return false;
-          case WXM_VIRTIO_BLOCK:
-          case WXM_AHCI_HD:
-          case WXM_AHCI_CD:
-            return true;
-        }
-        throw new UnreachableCodeException();
-      })
-      .map(WXMDeviceType::deviceSlot)
-      .map(WXMDeviceSlotType::toString)
-      .collect(Collectors.toList());
-  }
-
   private List<String> bootConfigurationNames()
   {
     return this.machine.bootConfigurationMap()
@@ -749,7 +703,6 @@ public final class WXMBootConfigurationEvaluator
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfiguration(
     final WXMBootConfigurationGRUBBhyve configuration)
-    throws WXMException
   {
     final var deviceMap =
       this.makeGRUBDeviceMap();

@@ -85,7 +85,7 @@ public final class WXMVirtualMachineTest
           .build();
       });
 
-    Assertions.assertTrue(ex.getMessage().contains("At most 1 LPC"));
+    Assertions.assertTrue(ex.getMessage().contains("At most one LPC"));
   }
 
   @Test
@@ -109,6 +109,6 @@ public final class WXMVirtualMachineTest
           .build();
       });
 
-    Assertions.assertTrue(ex.getMessage().contains("At most 1 host bridge"));
+    Assertions.assertTrue(ex.getMessage().contains("At most one host bridge"));
   }
 }

@@ -76,6 +76,26 @@ public interface WXMDeviceType
   String comment();
 
   /**
+   * @return {@code true} if this device is a storage device
+   */
+
+  default boolean isStorageDevice()
+  {
+    switch (this.kind()) {
+      case WXM_HOSTBRIDGE:
+      case WXM_VIRTIO_NETWORK:
+      case WXM_LPC:
+        return false;
+      case WXM_VIRTIO_BLOCK:
+      case WXM_AHCI_HD:
+      case WXM_AHCI_CD:
+        return true;
+    }
+
+    throw new UnreachableCodeException();
+  }
+
+  /**
    * The device kind
    */
 

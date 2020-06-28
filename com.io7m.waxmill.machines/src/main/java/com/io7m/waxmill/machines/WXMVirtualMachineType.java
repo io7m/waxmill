@@ -149,9 +149,16 @@ public interface WXMVirtualMachineType
     for (final var bootConfiguration : this.bootConfigurations()) {
       final var requiredDevices = bootConfiguration.requiredDevices();
       for (final var requiredDevice : requiredDevices) {
+        final var device = this.deviceMap().get(requiredDevice);
         Preconditions.checkPreconditionV(
-          this.deviceMap().containsKey(requiredDevice),
-          "Device %s required by boot configuration %s must exist",
+          device != null,
+          "Device %s required by boot configuration \"%s\" must exist",
+          requiredDevice,
+          bootConfiguration.name().value()
+        );
+        Preconditions.checkPreconditionV(
+          device.isStorageDevice(),
+          "Device %s required by boot configuration \"%s\" must be a storage device",
           requiredDevice,
           bootConfiguration.name().value()
         );
@@ -170,7 +177,7 @@ public interface WXMVirtualMachineType
     Preconditions.checkPreconditionI(
       lpcCount,
       lpcCount <= 1,
-      count -> "At most 1 LPC device can be added to a virtual machine"
+      count -> "At most one LPC device can be added to a virtual machine"
     );
   }
 
@@ -185,7 +192,7 @@ public interface WXMVirtualMachineType
     Preconditions.checkPreconditionI(
       hbCount,
       hbCount <= 1,
-      count -> "At most 1 host bridge device can be added to a virtual machine"
+      count -> "At most one host bridge device can be added to a virtual machine"
     );
   }
 }

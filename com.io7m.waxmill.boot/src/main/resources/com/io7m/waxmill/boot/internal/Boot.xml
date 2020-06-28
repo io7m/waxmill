@@ -10,14 +10,6 @@
 ]]>
   </entry>
 
-  <entry key="bootNoSuchDevice"><![CDATA[The boot instructions specify a nonexistent or inappropriate boot device ID.
-  Machine:                   {0}
-  Boot configuration:        {1}
-  Device:                    {2}
-  Available storage devices: {3}
-]]>
-  </entry>
-
   <entry key="bootCommandFailed"><![CDATA[Executing an external command failed.
   Machine:    {0}
   Command:    {1}
