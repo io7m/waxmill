@@ -23,6 +23,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddLPC;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioNetworkDevice;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDefine;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteBootConfigurations;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMExport;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMImport;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMList;
@@ -57,15 +58,16 @@ public final class Main implements Runnable
         .setLogger(LOG)
         .setProgramName("waxmill")
         .addCommands(WXMCommandVMAddAHCIDisk::new)
-        .addCommands(WXMCommandVMUpdateBootConfigurations::new)
         .addCommands(WXMCommandVMAddLPC::new)
         .addCommands(WXMCommandVMAddVirtioDisk::new)
         .addCommands(WXMCommandVMAddVirtioNetworkDevice::new)
         .addCommands(WXMCommandVMDefine::new)
+        .addCommands(WXMCommandVMDeleteBootConfigurations::new)
         .addCommands(WXMCommandVMExport::new)
         .addCommands(WXMCommandVMImport::new)
         .addCommands(WXMCommandVMList::new)
         .addCommands(WXMCommandVMRun::new)
+        .addCommands(WXMCommandVMUpdateBootConfigurations::new)
         .addCommands(WXMCommandVersion::new)
         .setDocumentationURI(URI.create("https://www.io7m.com/software/waxmill/documentation/"))
         .build();

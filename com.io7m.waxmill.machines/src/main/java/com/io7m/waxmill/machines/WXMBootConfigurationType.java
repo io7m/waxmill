@@ -23,6 +23,7 @@ import org.immutables.value.Value;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.Kind.GRUB_BHYVE;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType.Kind.KERNEL_LINUX;
@@ -38,6 +39,8 @@ public interface WXMBootConfigurationType
   {
     return "";
   }
+
+  Set<WXMDeviceSlot> requiredDevices();
 
   enum Kind
   {
@@ -65,6 +68,12 @@ public interface WXMBootConfigurationType
     WXMBootConfigurationName name();
 
     WXMGRUBKernelInstructionsType kernelInstructions();
+
+    @Override
+    default Set<WXMDeviceSlot> requiredDevices()
+    {
+      return this.kernelInstructions().requiredDevices();
+    }
   }
 
   interface WXMGRUBKernelInstructionsType
@@ -76,6 +85,8 @@ public interface WXMBootConfigurationType
       KERNEL_OPENBSD,
       KERNEL_LINUX
     }
+
+    Set<WXMDeviceSlot> requiredDevices();
   }
 
   @ImmutablesStyleType
@@ -91,6 +102,12 @@ public interface WXMBootConfigurationType
     WXMDeviceSlot bootDevice();
 
     Path kernelPath();
+
+    @Override
+    default Set<WXMDeviceSlot> requiredDevices()
+    {
+      return Set.of(this.bootDevice());
+    }
 
     /**
      * Check preconditions for the type.
@@ -126,6 +143,12 @@ public interface WXMBootConfigurationType
     WXMDeviceSlot initRDDevice();
 
     Path initRDPath();
+
+    @Override
+    default Set<WXMDeviceSlot> requiredDevices()
+    {
+      return Set.of(this.kernelDevice(), this.initRDDevice());
+    }
 
     /**
      * Check preconditions for the type.

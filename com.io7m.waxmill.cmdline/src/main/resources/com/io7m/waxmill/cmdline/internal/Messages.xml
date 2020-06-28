@@ -91,6 +91,7 @@ Received:
   {1}
 ]]></entry>
 
+  <entry key="errorBootConfigurationNonexistent">No boot configuration exists with the given name: {0}</entry>
   <entry key="errorBootConfigurationAlreadyExists">A boot configuration already exists with the given name: {0}</entry>
   <entry key="errorDeviceNamesUnique">Backend device names must be unique: {0}</entry>
 
@@ -106,6 +107,7 @@ Received:
   <entry key="infoBackendTAP">Backend tap {0} {1}</entry>
   <entry key="infoBackendVMNet">Backend vmnet {0} {1}</entry>
   <entry key="infoBootConfigurationAdded">Added new boot configuration: {0}</entry>
+  <entry key="infoBootConfigurationRemoved">Deleted boot configuration: {0}</entry>
   <entry key="infoBootConfigurationUpdated">Updated boot configuration: {0}</entry>
   <entry key="infoBootConfigurationsParsed">Parsed {0} boot configurations</entry>
   <entry key="infoImportedMachines">Imported {0} virtual machines</entry>
