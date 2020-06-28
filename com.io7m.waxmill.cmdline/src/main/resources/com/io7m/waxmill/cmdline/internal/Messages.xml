@@ -94,6 +94,13 @@ Received:
   <entry key="errorBootConfigurationNonexistent">No boot configuration exists with the given name: {0}</entry>
   <entry key="errorBootConfigurationAlreadyExists">A boot configuration already exists with the given name: {0}</entry>
   <entry key="errorDeviceNamesUnique">Backend device names must be unique: {0}</entry>
+  <entry key="errorDeviceUsedByBootConfigurations"><![CDATA[One or more boot configurations are using the device.
+  Device:              {0}
+  Boot configurations: {1}
+
+Please either remove the boot configurations, or modify them such that they
+are no longer using the specified device.]]></entry>
+  <entry key="errorDeviceNonexistent">Device does not exist: {0}</entry>
 
   <entry key="infoAddedDiskFile">Added {0} disk file {1} @ slot {2}</entry>
   <entry key="infoAddedDiskZFS">Added {0} disk zfs volume {1} @ slot {2}</entry>
@@ -110,6 +117,7 @@ Received:
   <entry key="infoBootConfigurationRemoved">Deleted boot configuration: {0}</entry>
   <entry key="infoBootConfigurationUpdated">Updated boot configuration: {0}</entry>
   <entry key="infoBootConfigurationsParsed">Parsed {0} boot configurations</entry>
+  <entry key="infoDeviceDeleted">Deleted device {0}</entry>
   <entry key="infoImportedMachines">Imported {0} virtual machines</entry>
 
   <entry key="test">Test: {0}</entry>

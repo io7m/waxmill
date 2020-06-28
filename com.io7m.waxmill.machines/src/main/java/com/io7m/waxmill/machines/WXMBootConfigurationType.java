@@ -21,6 +21,7 @@ import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -147,7 +148,10 @@ public interface WXMBootConfigurationType
     @Override
     default Set<WXMDeviceSlot> requiredDevices()
     {
-      return Set.of(this.kernelDevice(), this.initRDDevice());
+      final var devices = new HashSet<WXMDeviceSlot>();
+      devices.add(this.kernelDevice());
+      devices.add(this.initRDDevice());
+      return Set.copyOf(devices);
     }
 
     /**

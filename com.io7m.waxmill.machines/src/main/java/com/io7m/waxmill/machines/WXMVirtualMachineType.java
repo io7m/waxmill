@@ -141,6 +141,22 @@ public interface WXMVirtualMachineType
   {
     this.checkAtMostOneLPC();
     this.checkAtMostOneHostBridge();
+    this.checkBootConfigurationsReferences();
+  }
+
+  private void checkBootConfigurationsReferences()
+  {
+    for (final var bootConfiguration : this.bootConfigurations()) {
+      final var requiredDevices = bootConfiguration.requiredDevices();
+      for (final var requiredDevice : requiredDevices) {
+        Preconditions.checkPreconditionV(
+          this.deviceMap().containsKey(requiredDevice),
+          "Device %s required by boot configuration %s must exist",
+          requiredDevice,
+          bootConfiguration.name().value()
+        );
+      }
+    }
   }
 
   private void checkAtMostOneLPC()

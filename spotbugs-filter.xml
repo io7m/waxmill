@@ -271,6 +271,7 @@
     <Or>
       <Method name="checkAtMostOneHostBridge"/>
       <Method name="checkAtMostOneLPC"/>
+      <Method name="checkBootConfigurationsReferences"/>
     </Or>
     <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
   </Match>

@@ -26,6 +26,7 @@ import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
@@ -127,7 +128,7 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelOpenBSD.builder()
-                .setBootDevice(convert("0:12:0"))
+                .setBootDevice(convert("0:3:0"))
                 .setKernelPath(Paths.get("/bsd"))
                 .build())
             .build()
@@ -421,7 +422,7 @@ public final class WXMBootConfigurationEvaluatorTest
             .setName(WXMBootConfigurationName.of("install"))
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
-                .setKernelDevice(convert("0:12:0"))
+                .setKernelDevice(convert("0:0:0"))
                 .setKernelPath(Paths.get("/vmlinux"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
@@ -431,8 +432,14 @@ public final class WXMBootConfigurationEvaluatorTest
             .build()
         )
         .addDevices(
-          WXMDeviceVirtioBlockStorage.builder()
+          WXMDeviceHostBridge.builder()
             .setDeviceSlot(convert("0:0:0"))
+            .setVendor(WXM_UNSPECIFIED)
+            .build()
+        )
+        .addDevices(
+          WXMDeviceVirtioBlockStorage.builder()
+            .setDeviceSlot(convert("0:1:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
@@ -473,14 +480,20 @@ public final class WXMBootConfigurationEvaluatorTest
                 .setKernelPath(Paths.get("/vmlinux"))
                 .addKernelArguments("root=/dev/sda1")
                 .addKernelArguments("init=/sbin/runit-init")
-                .setInitRDDevice(convert("0:12:0"))
+                .setInitRDDevice(convert("0:0:0"))
                 .setInitRDPath(Paths.get("/initrd.img"))
                 .build())
             .build()
         )
         .addDevices(
-          WXMDeviceVirtioBlockStorage.builder()
+          WXMDeviceHostBridge.builder()
             .setDeviceSlot(convert("0:0:0"))
+            .setVendor(WXM_UNSPECIFIED)
+            .build()
+        )
+        .addDevices(
+          WXMDeviceVirtioBlockStorage.builder()
+            .setDeviceSlot(convert("0:1:0"))
             .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
