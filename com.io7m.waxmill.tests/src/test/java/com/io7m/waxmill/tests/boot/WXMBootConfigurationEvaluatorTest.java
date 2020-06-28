@@ -20,13 +20,14 @@ import com.io7m.waxmill.boot.WXMBootConfigurationEvaluator;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
+import com.io7m.waxmill.exceptions.WXMExceptionUnsatisfiedRequirement;
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
+import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
-import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
@@ -276,6 +277,12 @@ public final class WXMBootConfigurationEvaluatorTest
         .addBootConfigurations(
           WXMBootConfigurationGRUBBhyve.builder()
             .setName(WXMBootConfigurationName.of("install"))
+            .addDiskAttachments(
+              WXMBootDiskAttachment.builder()
+                .setDevice(convert("0:1:0"))
+                .setBackend(WXMStorageBackendZFSVolume.builder().build())
+                .build()
+            )
             .setKernelInstructions(
               WXMGRUBKernelOpenBSD.builder()
                 .setBootDevice(convert("0:1:0"))
@@ -292,7 +299,6 @@ public final class WXMBootConfigurationEvaluatorTest
         .addDevices(
           WXMDeviceAHCIOpticalDisk.builder()
             .setDeviceSlot(convert("0:1:0"))
-            .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
         .build();
@@ -342,6 +348,145 @@ public final class WXMBootConfigurationEvaluatorTest
         machine.id(),
         machine.id()),
       lastExec.toString()
+    );
+  }
+
+  @Test
+  public void openbsdSimpleCDUnused()
+    throws WXMException
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .addBootConfigurations(
+          WXMBootConfigurationGRUBBhyve.builder()
+            .setName(WXMBootConfigurationName.of("install"))
+            .addDiskAttachments(
+              WXMBootDiskAttachment.builder()
+                .setDevice(convert("0:1:0"))
+                .setBackend(WXMStorageBackendZFSVolume.builder().build())
+                .build()
+            )
+            .setKernelInstructions(
+              WXMGRUBKernelOpenBSD.builder()
+                .setBootDevice(convert("0:1:0"))
+                .setKernelPath(Paths.get("/bsd"))
+                .build())
+            .build()
+        )
+        .addDevices(
+          WXMDeviceHostBridge.builder()
+            .setDeviceSlot(convert("0:0:0"))
+            .setVendor(WXM_AMD)
+            .build()
+        )
+        .addDevices(
+          WXMDeviceAHCIOpticalDisk.builder()
+            .setDeviceSlot(convert("0:1:0"))
+            .build()
+        )
+        .addDevices(
+          WXMDeviceAHCIOpticalDisk.builder()
+            .setDeviceSlot(convert("0:2:0"))
+            .build()
+        )
+        .build();
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(this.vms)
+        .build();
+
+    final var evaluator =
+      new WXMBootConfigurationEvaluator(
+        clientConfiguration,
+        machine,
+        WXMBootConfigurationName.of("install")
+      );
+
+    final var evaluated =
+      (WXMEvaluatedBootConfigurationGRUBBhyve) evaluator.evaluate();
+    LOG.debug("evaluated: {}", evaluated);
+
+    final String expectedZFSDisk =
+      this.vms.resolve(machine.id().toString())
+        .resolve("disk-0_1_0")
+        .toString();
+
+    final var mapLines = evaluated.deviceMap();
+    assertTrue(mapLines.get(0).contains(expectedZFSDisk));
+    assertEquals(1, mapLines.size());
+
+    final var grub = evaluated.grubConfiguration();
+    assertEquals("kopenbsd -h com0 (cd0)/bsd", grub.get(0));
+    assertEquals("boot", grub.get(1));
+    assertEquals(2, grub.size());
+
+    final var commands = evaluated.commands();
+    final var configs = commands.configurationCommands();
+    final var cmd0 = configs.get(0);
+    assertEquals("/usr/local/sbin/grub-bhyve", cmd0.executable().toString());
+    assertEquals(1, configs.size());
+
+    final var lastExec = commands.lastExecution().orElseThrow();
+    assertEquals(
+      String.format(
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,amd_hostbridge -s 0:1:0,ahci-cd,%s/%s/disk-0_1_0 %s",
+        this.vms.toString(),
+        machine.id(),
+        machine.id()),
+      lastExec.toString()
+    );
+  }
+
+  @Test
+  public void openbsdSimpleCDMissingAttachment()
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .addBootConfigurations(
+          WXMBootConfigurationGRUBBhyve.builder()
+            .setName(WXMBootConfigurationName.of("install"))
+            .setKernelInstructions(
+              WXMGRUBKernelOpenBSD.builder()
+                .setBootDevice(convert("0:1:0"))
+                .setKernelPath(Paths.get("/bsd"))
+                .build())
+            .build()
+        )
+        .addDevices(
+          WXMDeviceHostBridge.builder()
+            .setDeviceSlot(convert("0:0:0"))
+            .setVendor(WXM_AMD)
+            .build()
+        )
+        .addDevices(
+          WXMDeviceAHCIOpticalDisk.builder()
+            .setDeviceSlot(convert("0:1:0"))
+            .build()
+        )
+        .build();
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(this.vms)
+        .build();
+
+    final var evaluator =
+      new WXMBootConfigurationEvaluator(
+        clientConfiguration,
+        machine,
+        WXMBootConfigurationName.of("install")
+      );
+
+    assertThrowsLogged(
+      WXMExceptionUnsatisfiedRequirement.class,
+      evaluator::evaluate
     );
   }
 
@@ -438,6 +583,12 @@ public final class WXMBootConfigurationEvaluatorTest
         .addBootConfigurations(
           WXMBootConfigurationGRUBBhyve.builder()
             .setName(WXMBootConfigurationName.of("install"))
+            .addDiskAttachments(
+              WXMBootDiskAttachment.builder()
+                .setDevice(convert("0:1:0"))
+                .setBackend(WXMStorageBackendZFSVolume.builder().build())
+                .build()
+            )
             .setKernelInstructions(
               WXMGRUBKernelLinux.builder()
                 .setKernelDevice(convert("0:1:0"))
@@ -458,7 +609,6 @@ public final class WXMBootConfigurationEvaluatorTest
         .addDevices(
           WXMDeviceAHCIOpticalDisk.builder()
             .setDeviceSlot(convert("0:1:0"))
-            .setBackend(WXMStorageBackendZFSVolume.builder().build())
             .build()
         )
         .build();

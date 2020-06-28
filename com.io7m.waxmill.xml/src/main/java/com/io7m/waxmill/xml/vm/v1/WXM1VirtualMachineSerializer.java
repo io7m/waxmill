@@ -16,7 +16,6 @@
 
 package com.io7m.waxmill.xml.vm.v1;
 
-import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.machines.WXMCPUTopology;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
@@ -29,9 +28,6 @@ import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMFlags;
 import com.io7m.waxmill.machines.WXMMemory;
 import com.io7m.waxmill.machines.WXMPinCPU;
-import com.io7m.waxmill.machines.WXMSectorSizes;
-import com.io7m.waxmill.machines.WXMStorageBackendFile;
-import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
@@ -55,10 +51,7 @@ import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class WXM1VirtualMachineSerializer implements WXMSerializerType
@@ -153,7 +146,9 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
           this.serializeDeviceVirtioNetwork((WXMDeviceVirtioNetwork) device);
           break;
         case WXM_VIRTIO_BLOCK:
-          this.serializeDeviceVirtioBlockStorage((WXMDeviceVirtioBlockStorage) device);
+          this.serializeDeviceVirtioBlockStorage(
+            (WXMDeviceVirtioBlockStorage) device
+          );
           break;
         case WXM_AHCI_HD:
           this.serializeDeviceAHCIDisk((WXMDeviceAHCIDisk) device);
@@ -242,20 +237,6 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
     this.writer.writeStartElement(namespaceURI, "AHCIOpticalDiskDevice");
     WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
-
-    final var backend = device.backend();
-    switch (backend.kind()) {
-      case WXM_STORAGE_FILE:
-        this.serializeStorageBackendFile((WXMStorageBackendFile) backend);
-        break;
-      case WXM_STORAGE_ZFS_VOLUME:
-        this.serializeStorageBackendZFSVolume((WXMStorageBackendZFSVolume) backend);
-        break;
-      case WXM_SCSI:
-        this.serializeSCSI(backend);
-        break;
-    }
-
     this.writer.writeEndElement();
   }
 
@@ -268,80 +249,9 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
     WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
 
-    final var backend = device.backend();
-    switch (backend.kind()) {
-      case WXM_STORAGE_FILE:
-        this.serializeStorageBackendFile((WXMStorageBackendFile) backend);
-        break;
-      case WXM_STORAGE_ZFS_VOLUME:
-        this.serializeStorageBackendZFSVolume((WXMStorageBackendZFSVolume) backend);
-        break;
-      case WXM_SCSI:
-        this.serializeSCSI(backend);
-        break;
-    }
+    WXM1StorageBackends.serializeStorageBackend(device.backend(), this.writer);
 
     this.writer.writeEndElement();
-  }
-
-  private void serializeStorageBackendZFSVolume(
-    final WXMStorageBackendZFSVolume backend)
-    throws XMLStreamException
-  {
-    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
-    this.writer.writeStartElement(namespaceURI, "StorageBackendZFSVolume");
-    WXM1Comments.serializeComment(backend.comment(), this.writer);
-    this.writer.writeEndElement();
-  }
-
-  private void serializeSCSI(
-    final Object backend)
-  {
-    Objects.requireNonNull(backend, "backend");
-    throw new UnimplementedCodeException();
-  }
-
-  private void serializeStorageBackendFile(
-    final WXMStorageBackendFile backend)
-    throws XMLStreamException
-  {
-    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
-    this.writer.writeStartElement(namespaceURI, "StorageBackendFile");
-    this.writer.writeAttribute("path", backend.file().toString());
-    WXM1Comments.serializeComment(backend.comment(), this.writer);
-    this.serializeOpenOptions(backend.options());
-    this.serializeSectorSizes(backend.sectorSizes());
-    this.writer.writeEndElement();
-  }
-
-  private void serializeSectorSizes(
-    final Optional<WXMSectorSizes> sectorSizesOpt)
-    throws XMLStreamException
-  {
-    if (sectorSizesOpt.isPresent()) {
-      final var sectorSizes = sectorSizesOpt.get();
-      final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
-      this.writer.writeStartElement(namespaceURI, "SectorSizes");
-      this.writer.writeAttribute("logical", sectorSizes.logical().toString());
-      this.writer.writeAttribute("physical", sectorSizes.physical().toString());
-      this.writer.writeEndElement();
-    }
-  }
-
-  private void serializeOpenOptions(
-    final Set<WXMOpenOption> options)
-    throws XMLStreamException
-  {
-    if (!options.isEmpty()) {
-      final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
-      this.writer.writeStartElement(namespaceURI, "OpenOptions");
-      for (final var option : options) {
-        this.writer.writeStartElement(namespaceURI, "OpenOption");
-        this.writer.writeAttribute("value", option.name());
-        this.writer.writeEndElement();
-      }
-      this.writer.writeEndElement();
-    }
   }
 
   private void serializeDeviceVirtioNetwork(
@@ -374,20 +284,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
     this.writer.writeStartElement(namespaceURI, "VirtioBlockStorageDevice");
     WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
-
-    final var backend = device.backend();
-    switch (backend.kind()) {
-      case WXM_STORAGE_FILE:
-        this.serializeStorageBackendFile((WXMStorageBackendFile) backend);
-        break;
-      case WXM_STORAGE_ZFS_VOLUME:
-        this.serializeStorageBackendZFSVolume((WXMStorageBackendZFSVolume) backend);
-        break;
-      case WXM_SCSI:
-        this.serializeSCSI(backend);
-        break;
-    }
-
+    WXM1StorageBackends.serializeStorageBackend(device.backend(), this.writer);
     this.writer.writeEndElement();
   }
 

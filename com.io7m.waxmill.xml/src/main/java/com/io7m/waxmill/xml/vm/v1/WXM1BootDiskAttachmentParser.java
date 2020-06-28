@@ -21,22 +21,22 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceType;
 
 import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
-public final class WXM1AHCIOpticalDiskDeviceParser
-  implements BTElementHandlerType<Object, WXMDeviceAHCIOpticalDisk>
+public final class WXM1BootDiskAttachmentParser
+  implements BTElementHandlerType<Object, WXMBootDiskAttachment>
 {
-  private final WXMDeviceAHCIOpticalDisk.Builder builder;
+  private final WXMBootDiskAttachment.Builder builder;
 
-  public WXM1AHCIOpticalDiskDeviceParser()
+  public WXM1BootDiskAttachmentParser()
   {
-    this.builder =
-      WXMDeviceAHCIOpticalDisk.builder();
+    this.builder = WXMBootDiskAttachment.builder();
   }
 
   @Override
@@ -50,8 +50,12 @@ public final class WXM1AHCIOpticalDiskDeviceParser
         c -> new WXM1DeviceSlotParser()
       ),
       Map.entry(
-        element("Comment"),
-        c -> new WXM1CommentParser()
+        element("StorageBackendFile"),
+        c -> new WXM1StorageBackendFileParser()
+      ),
+      Map.entry(
+        element("StorageBackendZFSVolume"),
+        c -> new WXM1StorageBackendZFSVolumeParser()
       )
     );
   }
@@ -61,17 +65,17 @@ public final class WXM1AHCIOpticalDiskDeviceParser
     final BTElementParsingContextType context,
     final Object result)
   {
-    if (result instanceof WXM1Comment) {
-      this.builder.setComment(((WXM1Comment) result).text());
+    if (result instanceof WXMDeviceType.WXMStorageBackendType) {
+      this.builder.setBackend((WXMDeviceType.WXMStorageBackendType) result);
     } else if (result instanceof WXMDeviceSlot) {
-      this.builder.setDeviceSlot((WXMDeviceSlot) result);
+      this.builder.setDevice((WXMDeviceSlot) result);
     } else {
       throw new UnreachableCodeException();
     }
   }
 
   @Override
-  public WXMDeviceAHCIOpticalDisk onElementFinished(
+  public WXMBootDiskAttachment onElementFinished(
     final BTElementParsingContextType context)
   {
     return this.builder.build();

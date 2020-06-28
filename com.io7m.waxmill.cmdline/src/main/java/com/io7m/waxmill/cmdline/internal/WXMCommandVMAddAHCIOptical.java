@@ -19,35 +19,27 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
-import com.io7m.junreachable.UnimplementedCodeException;
-import com.io7m.waxmill.client.api.WXMClientType;
-import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
+import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMMachineMessages;
-import com.io7m.waxmill.machines.WXMStorageBackendFile;
-import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
-import static com.io7m.waxmill.machines.WXMStorageBackends.determineZFSVolumePath;
 
-@Parameters(commandDescription = "Add an AHCI disk to a virtual machine.")
-public final class WXMCommandVMAddAHCIDisk extends
+@Parameters(commandDescription = "Add an AHCI optical drive to a virtual machine.")
+public final class WXMCommandVMAddAHCIOptical extends
   WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMCommandVMAddAHCIDisk.class);
+    LoggerFactory.getLogger(WXMCommandVMAddAHCIOptical.class);
 
   @Parameter(
     names = "--machine",
@@ -72,28 +64,13 @@ public final class WXMCommandVMAddAHCIDisk extends
   )
   private WXMDeviceSlot deviceSlot;
 
-  @Parameter(
-    names = "--open-option",
-    description = "The options that will be used when opening the storage device.",
-    required = false
-  )
-  private List<WXMOpenOption> openOptions = List.of();
-
-  @Parameter(
-    names = "--backend",
-    description = "A specification of the AHCI storage device backend to add",
-    required = true,
-    converter = WXMStorageBackendConverter.class
-  )
-  private WXMStorageBackendType backend;
-
   /**
    * Construct a command.
    *
    * @param inContext The command context
    */
 
-  public WXMCommandVMAddAHCIDisk(
+  public WXMCommandVMAddAHCIOptical(
     final CLPCommandContextType inContext)
   {
     super(LOG, inContext);
@@ -102,54 +79,7 @@ public final class WXMCommandVMAddAHCIDisk extends
   @Override
   public String name()
   {
-    return "vm-add-ahci-disk";
-  }
-
-  @Override
-  public String extendedHelp()
-  {
-    return this.messages().format("storageBackendSpec");
-  }
-
-  private void showCreated(
-    final WXMClientType client,
-    final WXMVirtualMachine machine)
-  {
-    switch (this.backend.kind()) {
-      case WXM_STORAGE_FILE: {
-        this.info(
-          "infoAddedDiskFile",
-          "AHCI",
-          ((WXMStorageBackendFile) this.backend).file(),
-          this.deviceSlot
-        );
-        break;
-      }
-      case WXM_STORAGE_ZFS_VOLUME: {
-        this.info(
-          "infoAddedDiskZFS",
-          "AHCI",
-          showZFSPath(client, machine, this.deviceSlot),
-          this.deviceSlot
-        );
-        break;
-      }
-      case WXM_SCSI: {
-        break;
-      }
-    }
-  }
-
-  private static String showZFSPath(
-    final WXMClientType client,
-    final WXMVirtualMachine machine,
-    final WXMDeviceSlot deviceId)
-  {
-    return determineZFSVolumePath(
-      client.configuration().virtualMachineRuntimeDirectory(),
-      machine.id(),
-      deviceId
-    ).toString();
+    return "vm-add-ahci-optical";
   }
 
   @Override
@@ -166,30 +96,9 @@ public final class WXMCommandVMAddAHCIDisk extends
           this.deviceSlot
         );
 
-      switch (this.backend.kind()) {
-        case WXM_STORAGE_FILE:
-          this.backend =
-            WXMStorageBackendFile.builder()
-              .from(this.backend)
-              .setOptions(this.openOptions)
-              .setComment(this.comment)
-              .build();
-          break;
-        case WXM_STORAGE_ZFS_VOLUME:
-          this.backend =
-            WXMStorageBackendZFSVolume.builder()
-              .from(this.backend)
-              .setComment(this.comment)
-              .build();
-          break;
-        case WXM_SCSI:
-          throw new UnimplementedCodeException();
-      }
-
       final WXMDeviceType disk =
-        WXMDeviceAHCIDisk.builder()
+        WXMDeviceAHCIOpticalDisk.builder()
           .setDeviceSlot(this.deviceSlot)
-          .setBackend(this.backend)
           .setComment(Optional.ofNullable(this.comment).orElse(""))
           .build();
 
@@ -200,7 +109,6 @@ public final class WXMCommandVMAddAHCIDisk extends
           .build();
 
       client.vmUpdate(updatedMachine);
-      this.showCreated(client, machine);
     }
     return SUCCESS;
   }

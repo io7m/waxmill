@@ -23,12 +23,16 @@ import org.immutables.value.Value;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.Kind.GRUB_BHYVE;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType.Kind.KERNEL_LINUX;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType.Kind.KERNEL_OPENBSD;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 
 public interface WXMBootConfigurationType
 {
@@ -43,9 +47,32 @@ public interface WXMBootConfigurationType
 
   Set<WXMDeviceSlot> requiredDevices();
 
+  List<WXMBootDiskAttachment> diskAttachments();
+
+  @Value.Derived
+  @Value.Auxiliary
+  default Map<WXMDeviceSlot, WXMBootDiskAttachment> diskAttachmentMap()
+  {
+    return this.diskAttachments()
+      .stream()
+      .collect(Collectors.toMap(
+        WXMBootDiskAttachment::device,
+        Function.identity()
+      ));
+  }
+
   enum Kind
   {
     GRUB_BHYVE
+  }
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMBootDiskAttachmentType
+  {
+    WXMDeviceSlot device();
+
+    WXMStorageBackendType backend();
   }
 
   @ImmutablesStyleType

@@ -23,4 +23,10 @@
 ]]>
   </entry>
 
+  <entry key="bootDeviceMissingAttachment"><![CDATA[One or more disks are missing an attachment.
+  Machine:  {0}
+  Device:   {1}
+]]>
+  </entry>
+
 </properties>

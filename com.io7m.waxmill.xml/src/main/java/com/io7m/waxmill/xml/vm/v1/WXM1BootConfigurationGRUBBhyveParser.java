@@ -23,10 +23,12 @@ import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
+import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 import java.nio.file.FileSystem;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -58,6 +60,10 @@ public final class WXM1BootConfigurationGRUBBhyveParser
         c -> new WXM1CommentParser()
       ),
       Map.entry(
+        element("BootDiskAttachments"),
+        c -> new WXM1BootDiskAttachmentsParser()
+      ),
+      Map.entry(
         element("GRUBBhyveKernelOpenBSD"),
         c -> new WXM1GRUBBhyveKernelOpenBSDParser(this.fileSystem)
       ),
@@ -75,6 +81,9 @@ public final class WXM1BootConfigurationGRUBBhyveParser
   {
     if (result instanceof WXMGRUBKernelInstructionsType) {
       this.builder.setKernelInstructions((WXMGRUBKernelInstructionsType) result);
+    } else if (result instanceof List) {
+      this.builder.setDiskAttachments(
+        (Iterable<? extends WXMBootDiskAttachment>) result);
     } else if (result instanceof WXM1Comment) {
       this.builder.setComment(((WXM1Comment) result).text());
     } else {

@@ -151,10 +151,6 @@ public abstract class WXMVirtualMachineParserContract
     final var hd1 = (WXMDeviceAHCIOpticalDisk) devices.get(4);
     assertEquals("0:4:0", hd1.deviceSlot().toString());
     assertEquals("An optical disk device.", hd1.comment());
-    final var block1 = (WXMStorageBackendFile) hd1.backend();
-    assertEquals("File-based storage.", block1.comment());
-    assertEquals(Set.of(READ_ONLY), block1.options());
-    assertEquals(Optional.empty(), block1.sectorSizes());
 
     final var lpc = (WXMDeviceLPC) devices.get(5);
     assertEquals("0:5:0", lpc.deviceSlot().toString());

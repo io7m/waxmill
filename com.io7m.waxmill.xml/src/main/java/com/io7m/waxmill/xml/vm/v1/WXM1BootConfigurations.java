@@ -18,6 +18,7 @@ package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationType;
+import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
@@ -76,6 +77,7 @@ public final class WXM1BootConfigurations
     writer.writeStartElement(namespaceURI, "BootConfigurationGRUBBhyve");
     writer.writeAttribute("name", configuration.name().value());
     WXM1Comments.serializeComment(configuration.comment(), writer);
+    serializeBootDiskAttachments(configuration.diskAttachments(), writer);
 
     final var instructions = configuration.kernelInstructions();
     switch (instructions.kind()) {
@@ -87,6 +89,33 @@ public final class WXM1BootConfigurations
         break;
     }
 
+    writer.writeEndElement();
+  }
+
+  private static void serializeBootDiskAttachments(
+    final List<WXMBootDiskAttachment> diskAttachments,
+    final XMLStreamWriter writer)
+    throws XMLStreamException
+  {
+    if (!diskAttachments.isEmpty()) {
+      final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+      writer.writeStartElement(namespaceURI, "BootDiskAttachments");
+      for (final var attachment : diskAttachments) {
+        serializeBootDiskAttachment(attachment, writer);
+      }
+      writer.writeEndElement();
+    }
+  }
+
+  private static void serializeBootDiskAttachment(
+    final WXMBootDiskAttachment attachment,
+    final XMLStreamWriter writer)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    writer.writeStartElement(namespaceURI, "BootDiskAttachment");
+    WXM1DeviceSlots.serializeDeviceSlot(attachment.device(), writer);
+    WXM1StorageBackends.serializeStorageBackend(attachment.backend(), writer);
     writer.writeEndElement();
   }
 

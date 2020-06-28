@@ -378,12 +378,7 @@
   <xsd:element name="AHCIOpticalDiskDevice">
     <xsd:complexType>
       <xsd:complexContent>
-        <xsd:extension base="wxm:DeviceType">
-          <xsd:choice>
-            <xsd:element ref="wxm:StorageBackendFile"/>
-            <xsd:element ref="wxm:StorageBackendZFSVolume"/>
-          </xsd:choice>
-        </xsd:extension>
+        <xsd:extension base="wxm:DeviceType"/>
       </xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
@@ -537,10 +532,36 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="BootDiskAttachment">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxm:DeviceSlot"/>
+        <xsd:choice>
+          <xsd:element ref="wxm:StorageBackendFile"/>
+          <xsd:element ref="wxm:StorageBackendZFSVolume"/>
+        </xsd:choice>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="BootDiskAttachments">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+        <xsd:element ref="wxm:BootDiskAttachment"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:complexType name="BootConfigurationType">
-    <xsd:sequence minOccurs="0"
-                  maxOccurs="1">
-      <xsd:element ref="wxm:Comment"/>
+    <xsd:sequence>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:BootDiskAttachments"/>
+      </xsd:sequence>
     </xsd:sequence>
     <xsd:attribute name="name"
                    type="wxm:BootConfigurationNameType"

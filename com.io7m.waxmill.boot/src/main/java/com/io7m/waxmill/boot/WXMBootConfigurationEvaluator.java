@@ -17,21 +17,24 @@
 package com.io7m.waxmill.boot;
 
 import com.io7m.jaffirm.core.Invariants;
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.boot.internal.WXMBootMessages;
-import com.io7m.waxmill.boot.internal.WXMGRUBDeviceAndPath;
 import com.io7m.waxmill.boot.internal.WXMGRUBDeviceMap;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
+import com.io7m.waxmill.machines.WXMBootConfigurationType;
+import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
@@ -52,9 +55,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationType;
@@ -218,6 +221,10 @@ public final class WXMBootConfigurationEvaluator
       deviceMap.searchForCD(bootDevice);
 
     Invariants.checkInvariant(
+      bootHD.isPresent() || bootCD.isPresent(),
+      "Boot device must be present"
+    );
+    Invariants.checkInvariant(
       bootHD.isPresent() != bootCD.isPresent(),
       "A device ID must map to exactly one device"
     );
@@ -253,12 +260,104 @@ public final class WXMBootConfigurationEvaluator
     return configLines;
   }
 
-  private WXMEvaluatedBootCommands generateGRUBBhyveCommands()
+  private static void configureBhyveDeviceVirtioNetwork(
+    final WXMCommandExecution.Builder command,
+    final WXMDeviceVirtioNetwork device)
+  {
+    command.addArguments("-s");
+    command.addArguments(String.format(
+      "%s,%s,%s",
+      device.deviceSlot(),
+      device.externalName(),
+      configureBhyveNetworkBackend(device.backend())
+    ));
+  }
+
+  private static String configureBhyveNetworkBackend(
+    final WXMVirtioNetworkBackendType backend)
+  {
+    switch (backend.kind()) {
+      case WXM_TAP:
+        return configureBhyveNetworkTAP((WXMTap) backend);
+      case WXM_VMNET:
+        return configureBhyveNetworkVMNet((WXMVMNet) backend);
+    }
+    throw new UnreachableCodeException();
+  }
+
+  private static String configureBhyveNetworkVMNet(
+    final WXMVMNet backend)
+  {
+    return String.format(
+      "%s,mac=%s",
+      backend.name().value(),
+      backend.address().value()
+    );
+  }
+
+  private static String configureBhyveNetworkTAP(
+    final WXMTap backend)
+  {
+    return String.format(
+      "%s,mac=%s",
+      backend.name().value(),
+      backend.address().value()
+    );
+  }
+
+  private static String configureBhyveStorageFile(
+    final WXMStorageBackendFile backend)
+  {
+    final var builder = new StringBuilder(backend.file().toString());
+    final var options = backend.options();
+    if (!options.isEmpty()) {
+      builder.append(
+        options.stream()
+          .map(WXMOpenOption::externalName)
+          .collect(Collectors.joining(",", ",", ""))
+      );
+    }
+
+    backend.sectorSizes().ifPresent(sizes -> {
+      if (!options.isEmpty()) {
+        builder.append(',');
+      }
+      builder.append("sectorsize=");
+      builder.append(sizes.logical());
+      builder.append('/');
+      builder.append(sizes.physical());
+    });
+    return builder.toString();
+  }
+
+  private static void configureBhyveDeviceHostBridge(
+    final WXMCommandExecution.Builder command,
+    final WXMDeviceHostBridge device)
+  {
+    final var deviceSlot = device.deviceSlot();
+    switch (device.vendor()) {
+      case WXM_UNSPECIFIED:
+        command.addArguments("-s");
+        command.addArguments(
+          String.format("%s,%s", deviceSlot, "hostbridge"));
+        return;
+      case WXM_AMD:
+        command.addArguments("-s");
+        command.addArguments(
+          String.format("%s,%s", deviceSlot, "amd_hostbridge"));
+        return;
+    }
+    throw new UnreachableCodeException();
+  }
+
+  private WXMEvaluatedBootCommands generateGRUBBhyveCommands(
+    final WXMBootConfigurationType bootConfiguration,
+    final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments)
   {
     final WXMCommandExecution grubBhyveCommand =
       this.generateGRUBBhyveCommand();
     final WXMCommandExecution bhyve =
-      this.generateBhyveCommand();
+      this.generateBhyveCommand(bootConfiguration, attachments);
 
     return WXMEvaluatedBootCommands.builder()
       .addConfigurationCommands(grubBhyveCommand)
@@ -289,7 +388,9 @@ public final class WXMBootConfigurationEvaluator
       .build();
   }
 
-  private WXMCommandExecution generateBhyveCommand()
+  private WXMCommandExecution generateBhyveCommand(
+    final WXMBootConfigurationType bootConfiguration,
+    final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments)
   {
     final var commandBuilder =
       WXMCommandExecution.builder()
@@ -306,7 +407,12 @@ public final class WXMBootConfigurationEvaluator
         .collect(Collectors.toList());
 
     for (final var device : devicesSorted) {
-      this.configureBhyveDevice(commandBuilder, device);
+      this.configureBhyveDevice(
+        bootConfiguration,
+        attachments,
+        commandBuilder,
+        device
+      );
     }
 
     commandBuilder.addArguments(this.machine.id().toString());
@@ -314,9 +420,13 @@ public final class WXMBootConfigurationEvaluator
   }
 
   private void configureBhyveDevice(
+    final WXMBootConfigurationType bootConfiguration,
+    final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments,
     final WXMCommandExecution.Builder command,
     final WXMDeviceType device)
   {
+    final var deviceSlot = device.deviceSlot();
+
     switch (device.kind()) {
       case WXM_HOSTBRIDGE: {
         configureBhyveDeviceHostBridge(command, (WXMDeviceHostBridge) device);
@@ -333,12 +443,23 @@ public final class WXMBootConfigurationEvaluator
         return;
       }
       case WXM_AHCI_HD: {
-        this.configureBhyveDeviceAHCIHD(command, (WXMDeviceAHCIDisk) device);
+        this.configureBhyveDeviceAHCIHD(
+          command, (WXMDeviceAHCIDisk) device);
         return;
       }
       case WXM_AHCI_CD: {
+        final var attachment = attachments.get(deviceSlot);
+        if (attachment == null) {
+          Preconditions.checkPrecondition(
+            !bootConfiguration.requiredDevices().contains(deviceSlot),
+            "Required device must have an attachment"
+          );
+          return;
+        }
+
         this.configureBhyveDeviceAHCICD(
           command,
+          attachment,
           (WXMDeviceAHCIOpticalDisk) device);
         return;
       }
@@ -404,61 +525,24 @@ public final class WXMBootConfigurationEvaluator
     }
   }
 
-  private static void configureBhyveDeviceVirtioNetwork(
-    final WXMCommandExecution.Builder command,
-    final WXMDeviceVirtioNetwork device)
-  {
-    command.addArguments("-s");
-    command.addArguments(String.format(
-      "%s,%s,%s",
-      device.deviceSlot(),
-      device.externalName(),
-      configureBhyveNetworkBackend(device.backend())
-    ));
-  }
-
-  private static String configureBhyveNetworkBackend(
-    final WXMVirtioNetworkBackendType backend)
-  {
-    switch (backend.kind()) {
-      case WXM_TAP:
-        return configureBhyveNetworkTAP((WXMTap) backend);
-      case WXM_VMNET:
-        return configureBhyveNetworkVMNet((WXMVMNet) backend);
-    }
-    throw new UnreachableCodeException();
-  }
-
-  private static String configureBhyveNetworkVMNet(
-    final WXMVMNet backend)
-  {
-    return String.format(
-      "%s,mac=%s",
-      backend.name().value(),
-      backend.address().value()
-    );
-  }
-
-  private static String configureBhyveNetworkTAP(
-    final WXMTap backend)
-  {
-    return String.format(
-      "%s,mac=%s",
-      backend.name().value(),
-      backend.address().value()
-    );
-  }
-
   private void configureBhyveDeviceAHCICD(
     final WXMCommandExecution.Builder command,
+    final WXMBootDiskAttachment attachment,
     final WXMDeviceAHCIOpticalDisk device)
   {
+    final var deviceSlot = device.deviceSlot();
+
+    Preconditions.checkPrecondition(
+      Objects.equals(attachment.device(), deviceSlot),
+      "Attachment device must match"
+    );
+
     command.addArguments("-s");
     command.addArguments(String.format(
       "%s,%s,%s",
-      device.deviceSlot(),
+      deviceSlot,
       device.externalName(),
-      this.configureBhyveDeviceStorageBackend(device, device.backend())
+      this.configureBhyveDeviceStorageBackend(device, attachment.backend())
     ));
   }
 
@@ -496,8 +580,7 @@ public final class WXMBootConfigurationEvaluator
       case WXM_STORAGE_FILE:
         return configureBhyveStorageFile((WXMStorageBackendFile) backend);
       case WXM_STORAGE_ZFS_VOLUME:
-        return this.configureBhyveStorageZFS(
-          device);
+        return this.configureBhyveStorageZFS(device);
       case WXM_SCSI:
         throw new UnimplementedCodeException();
     }
@@ -513,51 +596,6 @@ public final class WXMBootConfigurationEvaluator
       this.machine.id(),
       device.deviceSlot())
       .toString();
-  }
-
-  private static String configureBhyveStorageFile(
-    final WXMStorageBackendFile backend)
-  {
-    final var builder = new StringBuilder(backend.file().toString());
-    final var options = backend.options();
-    if (!options.isEmpty()) {
-      builder.append(
-        options.stream()
-          .map(WXMOpenOption::externalName)
-          .collect(Collectors.joining(",", ",", ""))
-      );
-    }
-
-    backend.sectorSizes().ifPresent(sizes -> {
-      if (!options.isEmpty()) {
-        builder.append(',');
-      }
-      builder.append("sectorsize=");
-      builder.append(sizes.logical());
-      builder.append('/');
-      builder.append(sizes.physical());
-    });
-    return builder.toString();
-  }
-
-  private static void configureBhyveDeviceHostBridge(
-    final WXMCommandExecution.Builder command,
-    final WXMDeviceHostBridge device)
-  {
-    final var deviceSlot = device.deviceSlot();
-    switch (device.vendor()) {
-      case WXM_UNSPECIFIED:
-        command.addArguments("-s");
-        command.addArguments(
-          String.format("%s,%s", deviceSlot, "hostbridge"));
-        return;
-      case WXM_AMD:
-        command.addArguments("-s");
-        command.addArguments(
-          String.format("%s,%s", deviceSlot, "amd_hostbridge"));
-        return;
-    }
-    throw new UnreachableCodeException();
   }
 
   private void configureBhyveMemory(
@@ -599,6 +637,7 @@ public final class WXMBootConfigurationEvaluator
   }
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationOpenBSD(
+    final WXMBootConfigurationType bootConfiguration,
     final WXMGRUBDeviceMap deviceMap,
     final WXMGRUBKernelOpenBSD openBSD)
   {
@@ -608,7 +647,9 @@ public final class WXMBootConfigurationEvaluator
       generateGRUBConfigLinesOpenBSD(deviceMap, openBSD);
 
     return WXMEvaluatedBootConfigurationGRUBBhyve.builder()
-      .setCommands(this.generateGRUBBhyveCommands())
+      .setCommands(this.generateGRUBBhyveCommands(
+        bootConfiguration,
+        deviceMap.attachments()))
       .setRequiredPaths(deviceMap.paths())
       .setDeviceMap(deviceMap.serialize())
       .setDeviceMapFile(this.grubDeviceMapPath())
@@ -636,6 +677,7 @@ public final class WXMBootConfigurationEvaluator
   }
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationLinux(
+    final WXMBootConfigurationType bootConfiguration,
     final WXMGRUBDeviceMap deviceMap,
     final WXMGRUBKernelLinux linux)
   {
@@ -643,9 +685,14 @@ public final class WXMBootConfigurationEvaluator
 
     final var configLines =
       generateGRUBConfigLinesLinux(deviceMap, linux);
+    final WXMEvaluatedBootCommands commands =
+      this.generateGRUBBhyveCommands(
+        bootConfiguration,
+        deviceMap.attachments()
+      );
 
     return WXMEvaluatedBootConfigurationGRUBBhyve.builder()
-      .setCommands(this.generateGRUBBhyveCommands())
+      .setCommands(commands)
       .setRequiredPaths(deviceMap.paths())
       .setDeviceMap(deviceMap.serialize())
       .setDeviceMapFile(this.grubDeviceMapPath())
@@ -703,130 +750,34 @@ public final class WXMBootConfigurationEvaluator
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfiguration(
     final WXMBootConfigurationGRUBBhyve configuration)
+    throws WXMException
   {
     final var deviceMap =
-      this.makeGRUBDeviceMap();
+      WXMGRUBDeviceMap.create(
+        this.messages,
+        this.clientConfiguration,
+        configuration,
+        this.machine
+      );
+
     final var kernel =
       configuration.kernelInstructions();
 
     switch (kernel.kind()) {
       case KERNEL_OPENBSD:
         return this.evaluateGRUBConfigurationOpenBSD(
+          configuration,
           deviceMap,
           (WXMGRUBKernelOpenBSD) kernel
         );
       case KERNEL_LINUX:
         return this.evaluateGRUBConfigurationLinux(
+          configuration,
           deviceMap,
           (WXMGRUBKernelLinux) kernel
         );
     }
 
-    throw new UnreachableCodeException();
-  }
-
-  private WXMGRUBDeviceMap makeGRUBDeviceMap()
-  {
-    final var sortedDevices =
-      this.machine.devices()
-        .stream()
-        .sorted(Comparator.comparing(WXMDeviceType::deviceSlot))
-        .collect(Collectors.toList());
-
-    int hdIndex = 0;
-    int cdIndex = 0;
-
-    final var hds =
-      new TreeMap<Integer, WXMGRUBDeviceAndPath>();
-    final var cds =
-      new TreeMap<Integer, WXMGRUBDeviceAndPath>();
-
-    for (final var device : sortedDevices) {
-      switch (device.kind()) {
-        case WXM_HOSTBRIDGE:
-        case WXM_VIRTIO_NETWORK:
-        case WXM_LPC:
-          break;
-        case WXM_VIRTIO_BLOCK:
-        case WXM_AHCI_HD:
-          hds.put(
-            Integer.valueOf(hdIndex),
-            this.makeGRUBDeviceMapPath(hdIndex, device));
-          ++hdIndex;
-          break;
-        case WXM_AHCI_CD:
-          cds.put(
-            Integer.valueOf(cdIndex),
-            this.makeGRUBDeviceMapPath(cdIndex, device));
-          ++cdIndex;
-          break;
-      }
-    }
-
-    return new WXMGRUBDeviceMap(hds, cds);
-  }
-
-  private WXMGRUBDeviceAndPath makeGRUBDeviceMapPath(
-    final int index,
-    final WXMDeviceType device)
-  {
-    switch (device.kind()) {
-      case WXM_HOSTBRIDGE:
-      case WXM_VIRTIO_NETWORK:
-      case WXM_LPC:
-        throw new UnreachableCodeException();
-
-      case WXM_VIRTIO_BLOCK: {
-        final var storage = (WXMDeviceVirtioBlockStorage) device;
-        return this.makeGRUBDeviceMapPathStorageBackend(
-          index,
-          device,
-          storage.backend()
-        );
-      }
-      case WXM_AHCI_HD: {
-        final var storage = (WXMDeviceAHCIDisk) device;
-        return this.makeGRUBDeviceMapPathStorageBackend(
-          index,
-          device,
-          storage.backend()
-        );
-      }
-      case WXM_AHCI_CD: {
-        final var storage = (WXMDeviceAHCIOpticalDisk) device;
-        return this.makeGRUBDeviceMapPathStorageBackend(
-          index,
-          device,
-          storage.backend()
-        );
-      }
-    }
-
-    throw new UnreachableCodeException();
-  }
-
-  private WXMGRUBDeviceAndPath makeGRUBDeviceMapPathStorageBackend(
-    final int index,
-    final WXMDeviceType device,
-    final WXMStorageBackendType backend)
-  {
-    switch (backend.kind()) {
-      case WXM_STORAGE_FILE:
-        final var file = (WXMStorageBackendFile) backend;
-        return new WXMGRUBDeviceAndPath(index, device, file.file());
-
-      case WXM_STORAGE_ZFS_VOLUME:
-        final Path path =
-          WXMStorageBackends.determineZFSVolumePath(
-            this.clientConfiguration.virtualMachineRuntimeDirectory(),
-            this.machine.id(),
-            device.deviceSlot()
-          );
-        return new WXMGRUBDeviceAndPath(index, device, path);
-
-      case WXM_SCSI:
-        throw new UnimplementedCodeException();
-    }
     throw new UnreachableCodeException();
   }
 

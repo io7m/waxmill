@@ -37,7 +37,7 @@ import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMCommandVMAddAHCIDiskTest
+public final class WXMCommandVMAddAHCIOpticalTest
 {
   private Path directory;
   private Path configFile;
@@ -99,15 +99,13 @@ public final class WXMCommandVMAddAHCIDiskTest
 
     MainExitless.main(
       new String[]{
-        "vm-add-ahci-disk",
+        "vm-add-ahci-optical",
         "--verbose",
         "trace",
         "--configuration",
         this.configFile.toString(),
         "--machine",
         id.toString(),
-        "--backend",
-        "file;/tmp/xyz",
         "--device-slot",
         "0:1:0"
       }
@@ -123,15 +121,11 @@ public final class WXMCommandVMAddAHCIDiskTest
         .next();
 
     final var disk =
-      (WXMDeviceAHCIDisk) machine.devices().get(1);
-    final var storage =
-      (WXMStorageBackendFile) disk.backend();
-
-    assertEquals("/tmp/xyz", storage.file().toString());
+      (WXMDeviceAHCIOpticalDisk) machine.devices().get(1);
   }
 
   @Test
-  public void addAHCIDiskZFSVolumeOK()
+  public void addAHCIDiskOpticalOK()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -158,15 +152,13 @@ public final class WXMCommandVMAddAHCIDiskTest
 
     MainExitless.main(
       new String[]{
-        "vm-add-ahci-disk",
+        "vm-add-ahci-optical",
         "--verbose",
         "trace",
         "--configuration",
         this.configFile.toString(),
         "--machine",
         id.toString(),
-        "--backend",
-        "zfs-volume",
         "--device-slot",
         "0:1:0"
       }
@@ -182,23 +174,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         .next();
 
     final var disk =
-      (WXMDeviceAHCIDisk) machine.devices().get(1);
-    final var storage =
-      (WXMStorageBackendZFSVolume) disk.backend();
-
-    assertEquals(
-      this.zfsDirectory.resolve(id.toString())
-        .resolve(String.format(
-          "disk-%d_%d_%d",
-          Integer.valueOf(disk.deviceSlot().busID()),
-          Integer.valueOf(disk.deviceSlot().slotID()),
-          Integer.valueOf(disk.deviceSlot().functionID())
-        )),
-      WXMStorageBackends.determineZFSVolumePath(
-        this.configuration.virtualMachineRuntimeDirectory(),
-        id,
-        disk.deviceSlot())
-    );
+      (WXMDeviceAHCIOpticalDisk) machine.devices().get(1);
   }
 
   @Test
@@ -208,15 +184,13 @@ public final class WXMCommandVMAddAHCIDiskTest
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
-          "vm-add-ahci-disk",
+          "vm-add-ahci-optical",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--backend",
-          "file;/tmp/xyz",
         }
       );
     });
@@ -250,15 +224,13 @@ public final class WXMCommandVMAddAHCIDiskTest
 
     MainExitless.main(
       new String[]{
-        "vm-add-ahci-disk",
+        "vm-add-ahci-optical",
         "--verbose",
         "trace",
         "--configuration",
         this.configFile.toString(),
         "--machine",
         id.toString(),
-        "--backend",
-        "file;/tmp/xyz",
         "--device-slot",
         "0:1:0"
       }
@@ -267,15 +239,13 @@ public final class WXMCommandVMAddAHCIDiskTest
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-add-ahci-disk",
+          "vm-add-ahci-optical",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--backend",
-          "file;/tmp/xyz",
           "--device-slot",
           "0:1:0"
         }
@@ -312,15 +282,13 @@ public final class WXMCommandVMAddAHCIDiskTest
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-add-ahci-disk",
+          "vm-add-ahci-optical",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--backend",
-          "file;/tmp/xyz",
           "--device-slot",
           "z:x"
         }
@@ -357,15 +325,13 @@ public final class WXMCommandVMAddAHCIDiskTest
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-add-ahci-disk",
+          "vm-add-ahci-optical",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--backend",
-          "file;/tmp/xyz",
           "--device-slot",
           "999999:9999999:999999"
         }

@@ -483,8 +483,6 @@ public interface WXMDeviceType
     {
       return "ahci-cd";
     }
-
-    WXMStorageBackendType backend();
   }
 
   interface WXMTTYBackendType

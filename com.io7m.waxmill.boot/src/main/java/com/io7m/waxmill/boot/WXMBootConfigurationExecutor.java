@@ -134,12 +134,6 @@ public final class WXMBootConfigurationExecutor
     }
   }
 
-  enum WithComment
-  {
-    WITH_COMMENT,
-    WITHOUT_COMMENT
-  }
-
   private static void writeFileLinesAtomically(
     final Path file,
     final WithComment withComment,
@@ -314,5 +308,11 @@ public final class WXMBootConfigurationExecutor
       "[WXMBootConfigurationExecutor 0x%s]",
       Long.toUnsignedString(System.identityHashCode(this), 16)
     );
+  }
+
+  enum WithComment
+  {
+    WITH_COMMENT,
+    WITHOUT_COMMENT
   }
 }

@@ -67,7 +67,7 @@ public final class WXMEqualsTest
         Set.of("configurationCommands", "lastExecution")),
       new WXMClassUnderTest(
         WXMBootConfigurationGRUBBhyve.class,
-        Set.of("comment", "name", "kernelInstructions")),
+        Set.of("comment", "diskAttachments", "name", "kernelInstructions")),
       new WXMClassUnderTest(
         WXMBootConfigurationName.class,
         Set.of("value")),
@@ -111,7 +111,7 @@ public final class WXMEqualsTest
         Set.of("deviceSlot", "comment", "backend")),
       new WXMClassUnderTest(
         WXMDeviceAHCIOpticalDisk.class,
-        Set.of("deviceSlot", "backend", "comment")),
+        Set.of("deviceSlot", "comment")),
       new WXMClassUnderTest(
         WXMDeviceHostBridge.class,
         Set.of("deviceSlot", "comment", "vendor")),

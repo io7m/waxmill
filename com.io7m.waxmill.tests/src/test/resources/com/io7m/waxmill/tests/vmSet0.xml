@@ -75,12 +75,6 @@
                     slot="4"
                     function="0"/>
         <Comment>An optical disk device.</Comment>
-        <StorageBackendFile path="/path/to/cd">
-          <Comment>File-based storage.</Comment>
-          <OpenOptions>
-            <OpenOption value="READ_ONLY"/>
-          </OpenOptions>
-        </StorageBackendFile>
       </AHCIOpticalDiskDevice>
 
       <LPCDevice>
@@ -98,6 +92,14 @@
     <BootConfigurations>
       <BootConfigurationGRUBBhyve name="install">
         <Comment>The installation configuration, booting from a CD.</Comment>
+        <BootDiskAttachments>
+          <BootDiskAttachment>
+            <DeviceSlot bus="0"
+                        slot="4"
+                        function="0"/>
+            <StorageBackendFile path="/tmp/openbsd-6.6-amd64.iso"/>
+          </BootDiskAttachment>
+        </BootDiskAttachments>
         <GRUBBhyveKernelOpenBSD>
           <BSDBootDevice kernelPath="/6.6/amd64/bsd.rd">
             <DeviceSlot bus="0"

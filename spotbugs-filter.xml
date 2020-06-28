@@ -256,6 +256,12 @@
   </Match>
 
   <Match>
+    <!-- Necessary until we get sealed types. -->
+    <Class name="com.io7m.waxmill.xml.vm.v1.WXM1StorageBackends"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+  </Match>
+
+  <Match>
     <Class name="com.io7m.waxmill.cmdline.internal.WXMDeviceSlotConverter"/>
     <Method name="convert"/>
     <Or>

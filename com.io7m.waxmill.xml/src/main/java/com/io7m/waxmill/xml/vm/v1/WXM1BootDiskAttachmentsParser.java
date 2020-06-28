@@ -21,22 +21,22 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
-import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
-public final class WXM1AHCIOpticalDiskDeviceParser
-  implements BTElementHandlerType<Object, WXMDeviceAHCIOpticalDisk>
+public final class WXM1BootDiskAttachmentsParser
+  implements BTElementHandlerType<Object, List<WXMBootDiskAttachment>>
 {
-  private final WXMDeviceAHCIOpticalDisk.Builder builder;
+  private final List<WXMBootDiskAttachment> attachments;
 
-  public WXM1AHCIOpticalDiskDeviceParser()
+  public WXM1BootDiskAttachmentsParser()
   {
-    this.builder =
-      WXMDeviceAHCIOpticalDisk.builder();
+    this.attachments = new ArrayList<>();
   }
 
   @Override
@@ -46,12 +46,8 @@ public final class WXM1AHCIOpticalDiskDeviceParser
   {
     return Map.ofEntries(
       Map.entry(
-        element("DeviceSlot"),
-        c -> new WXM1DeviceSlotParser()
-      ),
-      Map.entry(
-        element("Comment"),
-        c -> new WXM1CommentParser()
+        element("BootDiskAttachment"),
+        c -> new WXM1BootDiskAttachmentParser()
       )
     );
   }
@@ -61,19 +57,17 @@ public final class WXM1AHCIOpticalDiskDeviceParser
     final BTElementParsingContextType context,
     final Object result)
   {
-    if (result instanceof WXM1Comment) {
-      this.builder.setComment(((WXM1Comment) result).text());
-    } else if (result instanceof WXMDeviceSlot) {
-      this.builder.setDeviceSlot((WXMDeviceSlot) result);
+    if (result instanceof WXMBootDiskAttachment) {
+      this.attachments.add((WXMBootDiskAttachment) result);
     } else {
       throw new UnreachableCodeException();
     }
   }
 
   @Override
-  public WXMDeviceAHCIOpticalDisk onElementFinished(
+  public List<WXMBootDiskAttachment> onElementFinished(
     final BTElementParsingContextType context)
   {
-    return this.builder.build();
+    return List.copyOf(this.attachments);
   }
 }
