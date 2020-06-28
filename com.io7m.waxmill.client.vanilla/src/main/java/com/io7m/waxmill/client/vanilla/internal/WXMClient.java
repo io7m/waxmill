@@ -136,6 +136,14 @@ public final class WXMClient implements WXMClientType
   }
 
   @Override
+  public void vmDelete(final UUID id)
+    throws WXMException
+  {
+    Objects.requireNonNull(id, "id");
+    this.database.vmDelete(id);
+  }
+
+  @Override
   public void vmUpdate(
     final WXMVirtualMachine machine)
     throws WXMException

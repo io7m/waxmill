@@ -25,6 +25,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddLPC;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioNetworkDevice;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDefine;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMDelete;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteBootConfigurations;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteDevice;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMExport;
@@ -67,6 +68,7 @@ public final class Main implements Runnable
         .addCommands(WXMCommandVMAddVirtioDisk::new)
         .addCommands(WXMCommandVMAddVirtioNetworkDevice::new)
         .addCommands(WXMCommandVMDefine::new)
+        .addCommands(WXMCommandVMDelete::new)
         .addCommands(WXMCommandVMDeleteBootConfigurations::new)
         .addCommands(WXMCommandVMDeleteDevice::new)
         .addCommands(WXMCommandVMExport::new)

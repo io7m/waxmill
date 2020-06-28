@@ -21,6 +21,7 @@ import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.database.vanilla.WXMVirtualMachineDatabases;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMCPUTopology;
 import com.io7m.waxmill.machines.WXMFlags;
 import com.io7m.waxmill.machines.WXMMachineName;
@@ -43,6 +44,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMVirtualMachineDatabasesTest
@@ -167,5 +169,24 @@ public final class WXMVirtualMachineDatabasesTest
         .orElseThrow()
         .withConfigurationFile(Optional.empty())
     );
+  }
+
+  @Test
+  public void deleteExisting()
+    throws WXMException
+  {
+    this.database.vmDefine(this.virtualMachine0);
+    this.database.vmGet(this.virtualMachine0.id()).orElseThrow();
+    this.database.vmDelete(this.virtualMachine0.id());
+
+    assertFalse(this.database.vmGet(this.virtualMachine0.id()).isPresent());
+  }
+
+  @Test
+  public void deleteNonexistent()
+  {
+    assertThrows(WXMExceptionNonexistent.class, () -> {
+      this.database.vmDelete(this.virtualMachine0.id());
+    });
   }
 }

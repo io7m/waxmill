@@ -35,4 +35,18 @@ public class WXMExceptionNonexistent extends WXMException
   {
     super(Objects.requireNonNull(message, "message"));
   }
+
+  /**
+   * Construct an exception.
+   *
+   * @param cause   The cause
+   * @param message The message
+   */
+
+  public WXMExceptionNonexistent(
+    final String message,
+    final Throwable cause)
+  {
+    super(message, cause);
+  }
 }

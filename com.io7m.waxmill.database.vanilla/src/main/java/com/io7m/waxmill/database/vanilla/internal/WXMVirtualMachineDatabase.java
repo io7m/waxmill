@@ -20,6 +20,7 @@ import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.exceptions.WXMExceptions;
 import com.io7m.waxmill.locks.WXMFileLock;
 import com.io7m.waxmill.machines.WXMMachineMessages;
@@ -32,6 +33,7 @@ import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -265,6 +267,30 @@ public final class WXMVirtualMachineDatabase
 
     exceptions.throwIfRequired();
     return WXMVirtualMachineSets.merge(this.machineMessages, sets);
+  }
+
+  @Override
+  public void vmDelete(final UUID id)
+    throws WXMException
+  {
+    Objects.requireNonNull(id, "id");
+
+    final var file =
+      this.configuration.databaseDirectory()
+        .resolve(id + ".wvmx");
+
+    try (var ignored = this.acquireWriteLock()) {
+      try {
+        Files.delete(file);
+      } catch (final NoSuchFileException e) {
+        throw new WXMExceptionNonexistent(
+          this.machineMessages.format("errorMachineNonexistent", id),
+          e
+        );
+      } catch (final IOException e) {
+        throw new WXMException(e);
+      }
+    }
   }
 
   @Override

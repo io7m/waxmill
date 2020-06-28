@@ -18,6 +18,7 @@ package com.io7m.waxmill.database.api;
 
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.machines.WXMVirtualMachineSets;
@@ -86,6 +87,24 @@ public interface WXMVirtualMachineDatabaseType extends WXMDatabaseType
     WXMVirtualMachine machine)
     throws WXMException;
 
+  /**
+   * @return The available virtual machines
+   *
+   * @throws WXMException On errors
+   */
+
   WXMVirtualMachineSet vmList()
+    throws WXMException;
+
+  /**
+   * Delete a virtual machine.
+   *
+   * @param id The virtual machine ID
+   *
+   * @throws WXMExceptionNonexistent If the virtual machine does not exist
+   * @throws WXMException            On errors
+   */
+
+  void vmDelete(UUID id)
     throws WXMException;
 }

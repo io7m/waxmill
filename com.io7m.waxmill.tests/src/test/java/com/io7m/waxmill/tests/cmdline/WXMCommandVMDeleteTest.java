@@ -26,8 +26,12 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
-public final class WXMCommandHelpTest
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public final class WXMCommandVMDeleteTest
 {
   private Path directory;
   private Path configFile;
@@ -51,6 +55,9 @@ public final class WXMCommandHelpTest
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
         .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
+        .setZfsExecutable(Paths.get("/bin/echo"))
+        .setGrubBhyveExecutable(Paths.get("/bin/echo"))
+        .setBhyveExecutable(Paths.get("/bin/echo"))
         .build();
 
     new WXMClientConfigurationSerializers()
@@ -62,121 +69,87 @@ public final class WXMCommandHelpTest
   }
 
   @Test
-  public void helpOK()
-    throws IOException
+  public void runTooFewArguments()
   {
-    MainExitless.main(
-      new String[]{
-        "help"
-      }
-    );
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-delete"
+        }
+      );
+    });
   }
 
   @Test
-  public void helpHelpOK()
+  public void deleteOK()
     throws IOException
   {
+    final var id = UUID.randomUUID();
+
     MainExitless.main(
       new String[]{
-        "help",
-        "help"
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2"
       }
     );
+
+    MainExitless.main(
+      new String[]{
+        "vm-delete",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString()
+      }
+    );
+
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-export",
+          "--verbose",
+          "trace",
+          "--configuration",
+          this.configFile.toString(),
+          "--machine",
+          id.toString()
+        }
+      );
+    });
   }
 
   @Test
-  public void helpVMListOK()
-    throws IOException
+  public void deleteNonexistent()
   {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-list"
-      }
-    );
-  }
+    final var id = UUID.randomUUID();
 
-  @Test
-  public void helpVMAddVirtioDiskOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-virtio-disk"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddVirtioNetworkDeviceOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-virtio-network-device"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddAHCIDiskOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-ahci-disk"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddLPCOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-lpc-device"
-      }
-    );
-  }
-
-  @Test
-  public void helpSchemaOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "schema"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMRunOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-run"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMDeleteOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-delete"
-      }
-    );
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-delete",
+          "--verbose",
+          "trace",
+          "--configuration",
+          this.configFile.toString(),
+          "--machine",
+          id.toString()
+        }
+      );
+    });
   }
 }

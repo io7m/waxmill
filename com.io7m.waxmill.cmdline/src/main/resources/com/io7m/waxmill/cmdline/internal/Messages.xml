@@ -123,7 +123,7 @@ are no longer using the specified device.]]></entry>
 
   <entry key="test">Test: {0}</entry>
 
-  <entry key="runHelp"><![CDATA[
+  <entry key="vmRunHelp"><![CDATA[
 The "vm-run" command starts a virtual machine. The command, internally, uses execve()[0] to
 replace the waxmill process with that of the Bhyve virtual machine. The virtual machine
 stays running in the foreground. The command is intended to be used to start virtual
@@ -140,6 +140,12 @@ formats used by the waxmill tools. The command can dump the text of specific sch
 when passed the identifier of a schema.
 
 [0] https://www.w3.org/TR/xmlschema11-1/
+]]></entry>
+
+  <entry key="vmDeleteHelp"><![CDATA[
+The "vm-delete" command deletes the configuration for a virtual machine. It will not
+stop any running instance of the given virtual machine, nor will it delete the underlying
+resources such as ZFS volumes.
 ]]></entry>
 
 </properties>

@@ -137,4 +137,15 @@ public interface WXMClientType extends AutoCloseable
     WXMBootConfigurationName bootConfigurationName,
     WXMDryRun dryRun)
     throws WXMException;
+
+  /**
+   * Delete the configuration for a virtual machine.
+   *
+   * @param id The machine ID
+   *
+   * @throws WXMException On errors
+   */
+
+  void vmDelete(UUID id)
+    throws WXMException;
 }
