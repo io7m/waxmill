@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Document xmlns="urn:com.io7m.structural:7:0"
+          xmlns:dc="http://purl.org/dc/elements/1.1/"
+          xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Metadata>
+    <dc:title>waxmill ${project.version}</dc:title>
+    <dc:identifier>402d2620-c5c9-4330-bc01-5430645815d6</dc:identifier>
+    <dc:description>User documentation for the ${project.groupId} package.</dc:description>
+  </Metadata>
+
+  <xi:include href="cmdline.xml"/>
+  <xi:include href="api.xml"/>
+</Document>
