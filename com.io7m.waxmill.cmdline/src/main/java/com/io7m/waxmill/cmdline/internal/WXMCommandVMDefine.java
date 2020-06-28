@@ -95,7 +95,7 @@ public final class WXMCommandVMDefine extends WXMAbstractCommandWithConfiguratio
   public WXMCommandVMDefine(
     final CLPCommandContextType inContext)
   {
-    super(inContext);
+    super(LOG, inContext);
   }
 
   @Override

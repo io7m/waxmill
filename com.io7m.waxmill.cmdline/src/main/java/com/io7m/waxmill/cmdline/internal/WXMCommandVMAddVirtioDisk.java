@@ -80,8 +80,7 @@ public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfi
 
   @Parameter(
     names = "--backend",
-    description = "A specification of the device backend to add "
-      + "(such as 'file:/tmp/xyz' or 'zfs-volume')",
+    description = "A specification of the storage device backend to add",
     required = true,
     converter = WXMStorageBackendConverter.class
   )
@@ -96,14 +95,19 @@ public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfi
   public WXMCommandVMAddVirtioDisk(
     final CLPCommandContextType inContext)
   {
-    super(inContext);
+    super(LOG, inContext);
   }
-
 
   @Override
   public String name()
   {
     return "vm-add-virtio-disk";
+  }
+
+  @Override
+  public String extendedHelp()
+  {
+    return this.messages().format("storageBackendSpec");
   }
 
   private void showCreated(
@@ -112,16 +116,16 @@ public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfi
   {
     switch (this.backend.kind()) {
       case WXM_STORAGE_FILE: {
-        LOG.info(
-          "Added virtio disk file {} @ slot {}",
+        this.info(
+          "infoAddedVirtioDiskFile",
           ((WXMStorageBackendFile) this.backend).file(),
           this.deviceSlot
         );
         break;
       }
       case WXM_STORAGE_ZFS_VOLUME: {
-        LOG.info(
-          "Added virtio disk zfs volume {} @ slot {}",
+        this.info(
+          "infoAddedVirtioDiskZFS",
           showZFSPath(client, machine, this.deviceSlot),
           this.deviceSlot
         );

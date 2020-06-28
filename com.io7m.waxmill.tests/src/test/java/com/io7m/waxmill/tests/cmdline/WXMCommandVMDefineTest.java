@@ -18,7 +18,7 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
-import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import com.io7m.waxmill.xml.WXMVirtualMachineParsers;

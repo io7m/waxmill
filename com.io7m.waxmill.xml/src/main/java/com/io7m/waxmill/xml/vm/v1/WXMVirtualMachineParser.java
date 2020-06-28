@@ -18,13 +18,13 @@ package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.blackthorne.api.BTContentHandler;
 import com.io7m.blackthorne.api.BTParseError;
-import com.io7m.blackthorne.api.BTParseErrorType;
 import com.io7m.jlexing.core.LexicalPosition;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.parser.api.WXMParseError;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserType;
+import com.io7m.waxmill.xml.utilities.WXMParserUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -41,9 +41,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-import static com.io7m.waxmill.parser.api.WXMParseErrorType.Severity;
 import static com.io7m.waxmill.parser.api.WXMParseErrorType.Severity.ERROR;
-import static com.io7m.waxmill.parser.api.WXMParseErrorType.Severity.WARNING;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
 public final class WXMVirtualMachineParser
@@ -75,29 +73,6 @@ public final class WXMVirtualMachineParser
       Objects.requireNonNull(inStream, "inStream");
     this.reader =
       Objects.requireNonNull(inReader, "reader");
-  }
-
-  private static String safeMessage(
-    final Exception e)
-  {
-    final var message = e.getMessage();
-    if (message == null) {
-      return e.getClass().getCanonicalName();
-    }
-    return message;
-  }
-
-  private static Severity mapSeverity(
-    final BTParseErrorType.Severity severity)
-  {
-    switch (severity) {
-      case WARNING:
-        return WARNING;
-      case ERROR:
-        return ERROR;
-      default:
-        throw new UnreachableCodeException();
-    }
   }
 
   @Override
@@ -158,13 +133,13 @@ public final class WXMVirtualMachineParser
           e.getColumnNumber(),
           Optional.of(this.source)
         );
-      this.publishError(
+      WXMParserUtilities.publishError(
         WXMParseError.builder()
           .setException(e)
           .setLexical(position)
-          .setMessage(safeMessage(e))
+          .setMessage(WXMParserUtilities.safeMessage(e))
           .setSeverity(ERROR)
-          .build()
+          .build(), this.errors, LOG
       );
       return Optional.empty();
     } catch (final Exception e) {
@@ -176,66 +151,25 @@ public final class WXMVirtualMachineParser
           -1,
           Optional.of(this.source)
         );
-      this.publishError(
+      WXMParserUtilities.publishError(
         WXMParseError.builder()
           .setException(e)
           .setLexical(position)
-          .setMessage(safeMessage(e))
+          .setMessage(WXMParserUtilities.safeMessage(e))
           .setSeverity(ERROR)
-          .build()
+          .build(), this.errors, LOG
       );
       return Optional.empty();
-    }
-  }
-
-  private void publishError(
-    final WXMParseError error)
-  {
-    try {
-      final var lexical =
-        error.lexical();
-      final var errorSource =
-        lexical.file()
-          .map(URI::toString)
-          .orElse("");
-
-      switch (error.severity()) {
-        case WARNING:
-          LOG.warn(
-            "{}:{}:{}: {}",
-            errorSource,
-            Integer.valueOf(lexical.line()),
-            Integer.valueOf(lexical.column()),
-            error.message()
-          );
-          break;
-        case ERROR:
-          LOG.error(
-            "{}:{}:{}: {}",
-            errorSource,
-            Integer.valueOf(lexical.line()),
-            Integer.valueOf(lexical.column()),
-            error.message()
-          );
-          break;
-      }
-
-      this.errors.accept(Objects.requireNonNull(error, "error"));
-    } catch (final Exception e) {
-      LOG.error("ignored exception raised by error consumer: ", e);
     }
   }
 
   private void onError(
     final BTParseError btError)
   {
-    this.publishError(
-      WXMParseError.builder()
-        .setLexical(btError.lexical())
-        .setMessage(btError.message())
-        .setException(btError.exception())
-        .setSeverity(mapSeverity(btError.severity()))
-        .build()
+    WXMParserUtilities.publishError(
+      WXMParserUtilities.mapBlackthorneError(btError),
+      this.errors,
+      LOG
     );
   }
 

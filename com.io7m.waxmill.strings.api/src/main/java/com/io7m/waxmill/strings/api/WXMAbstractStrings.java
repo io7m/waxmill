@@ -53,6 +53,17 @@ public abstract class WXMAbstractStrings implements WXMStringsType
     }
   }
 
+  protected static ResourceBundle ofXMLResource(
+    final Class<?> clazz,
+    final String resource)
+  {
+    try (var stream = clazz.getResourceAsStream(resource)) {
+      return ofXML(stream);
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
   @Override
   public final ResourceBundle resources()
   {

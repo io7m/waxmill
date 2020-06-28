@@ -16,6 +16,8 @@
 
 package com.io7m.waxmill.machines;
 
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+
 import java.util.Objects;
 
 /**

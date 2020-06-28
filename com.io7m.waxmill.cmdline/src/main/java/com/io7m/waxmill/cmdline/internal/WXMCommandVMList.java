@@ -18,6 +18,8 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
@@ -26,6 +28,9 @@ import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 @Parameters(commandDescription = "List the available virtual machines.")
 public final class WXMCommandVMList extends WXMAbstractCommandWithConfiguration
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(WXMCommandVMList.class);
+
   /**
    * Construct a command.
    *
@@ -35,7 +40,7 @@ public final class WXMCommandVMList extends WXMAbstractCommandWithConfiguration
   public WXMCommandVMList(
     final CLPCommandContextType inContext)
   {
-    super(inContext);
+    super(LOG, inContext);
   }
 
   @Override

@@ -151,6 +151,8 @@ public interface WXMBootConfigurationType
   {
     Kind kind();
 
+    List<Path> requiredPaths();
+
     WXMEvaluatedBootCommands commands();
   }
 
@@ -175,9 +177,16 @@ public interface WXMBootConfigurationType
     }
 
     @Override
+    List<Path> requiredPaths();
+
+    @Override
     WXMEvaluatedBootCommands commands();
 
+    Path deviceMapFile();
+
     List<String> deviceMap();
+
+    Path grubConfigurationFile();
 
     List<String> grubConfiguration();
   }

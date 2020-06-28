@@ -14,10 +14,12 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+import com.io7m.waxmill.parser.api.WXMBootConfigurationParserProviderType;
 import com.io7m.waxmill.parser.api.WXMClientConfigurationParserProviderType;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
 import com.io7m.waxmill.serializer.api.WXMClientConfigurationSerializerProviderType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
+import com.io7m.waxmill.xml.WXMBootConfigurationParsers;
 import com.io7m.waxmill.xml.WXMClientConfigurationParsers;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import com.io7m.waxmill.xml.WXMVirtualMachineParsers;
@@ -39,11 +41,11 @@ module com.io7m.waxmill.xml
   requires com.io7m.junreachable.core;
   requires com.io7m.jxe.core;
   requires com.io7m.waxmill.client.api;
+  requires com.io7m.waxmill.machines;
   requires com.io7m.waxmill.parser.api;
   requires com.io7m.waxmill.serializer.api;
   requires java.xml;
   requires org.slf4j;
-  requires com.io7m.waxmill.machines;
 
   provides WXMClientConfigurationParserProviderType
     with WXMClientConfigurationParsers;
@@ -53,6 +55,8 @@ module com.io7m.waxmill.xml
     with WXMVirtualMachineParsers;
   provides WXMVirtualMachineSerializerProviderType
     with WXMVirtualMachineSerializers;
+  provides WXMBootConfigurationParserProviderType
+    with WXMBootConfigurationParsers;
 
   exports com.io7m.waxmill.xml;
 }

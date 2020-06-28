@@ -18,8 +18,6 @@ package com.io7m.waxmill.process.posix.internal;
 
 import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ResourceBundle;
 
 public final class WXMProcessMessages extends WXMAbstractStrings
@@ -32,14 +30,11 @@ public final class WXMProcessMessages extends WXMAbstractStrings
 
   public static WXMProcessMessages create()
   {
-    try {
-      try (var stream = WXMProcessMessages.class.getResourceAsStream(
-        "/com/io7m/waxmill/boot/internal/Boot.xml")) {
-        return new WXMProcessMessages(ofXML(stream));
-      }
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    return new WXMProcessMessages(
+      ofXMLResource(
+        WXMProcessMessages.class,
+        "/com/io7m/waxmill/process/posix/internal/Processes.xml")
+    );
   }
 
   @Override

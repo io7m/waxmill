@@ -192,6 +192,8 @@ public final class WXMCommandVMAddLPCTest
           this.configFile.toString(),
           "--id",
           id.toString(),
+          "--device-slot",
+          "0:1:0",
           "--add-backend",
           "stdio;com1",
           "--add-backend",

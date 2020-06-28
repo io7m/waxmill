@@ -19,6 +19,7 @@ package com.io7m.waxmill.cmdline.internal;
 import com.io7m.waxmill.client.api.WXMApplicationVersion;
 import com.io7m.waxmill.client.api.WXMApplicationVersions;
 import com.io7m.waxmill.client.api.WXMClientProviderType;
+import com.io7m.waxmill.parser.api.WXMBootConfigurationParserProviderType;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 
@@ -46,6 +47,11 @@ final class WXMServices
   public static WXMVirtualMachineParserProviderType vmParsers()
   {
     return findService(WXMVirtualMachineParserProviderType.class);
+  }
+
+  public static WXMBootConfigurationParserProviderType bootConfigurationParsers()
+  {
+    return findService(WXMBootConfigurationParserProviderType.class);
   }
 
   private static <T> T findService(

@@ -18,8 +18,6 @@ package com.io7m.waxmill.boot.internal;
 
 import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ResourceBundle;
 
 public final class WXMBootMessages extends WXMAbstractStrings
@@ -32,14 +30,11 @@ public final class WXMBootMessages extends WXMAbstractStrings
 
   public static WXMBootMessages create()
   {
-    try {
-      try (var stream = WXMBootMessages.class.getResourceAsStream(
-        "/com/io7m/waxmill/boot/internal/Boot.xml")) {
-        return new WXMBootMessages(ofXML(stream));
-      }
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    return new WXMBootMessages(
+      ofXMLResource(
+        WXMBootMessages.class,
+        "/com/io7m/waxmill/boot/internal/Boot.xml")
+    );
   }
 
   @Override

@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.client.api;
 
-import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.exceptions.WXMException;
 
 import java.nio.file.Path;
 

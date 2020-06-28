@@ -16,10 +16,12 @@
 
 package com.io7m.waxmill.client.api;
 
-import com.io7m.waxmill.machines.WXMException;
+import com.io7m.waxmill.exceptions.WXMException;
+import com.io7m.waxmill.machines.WXMBootConfigurationName;
+import com.io7m.waxmill.machines.WXMDryRun;
+import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.machines.WXMVirtualMachineSets;
-import com.io7m.waxmill.machines.WXMVirtualMachine;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -117,4 +119,22 @@ public interface WXMClientType extends AutoCloseable
   {
     this.vmDefineAll(WXMVirtualMachineSets.one(machine));
   }
+
+  /**
+   * Start a virtual machine. If the startup succeeds, this method never
+   * returns and the current process is replaced with that of the running
+   * virtual machine.
+   *
+   * @param machine               The virtual machine
+   * @param bootConfigurationName The boot configuration used
+   * @param dryRun                Whether or not the operation is a dry run
+   *
+   * @throws WXMException On errors
+   */
+
+  void vmRun(
+    WXMVirtualMachine machine,
+    WXMBootConfigurationName bootConfigurationName,
+    WXMDryRun dryRun)
+    throws WXMException;
 }

@@ -90,8 +90,9 @@
     <And>
       <!-- jxe removes the XXE -->
       <Or>
-        <Class name="com.io7m.waxmill.xml.vm.v1.WXMVirtualMachineParser"/>
         <Class name="com.io7m.waxmill.xml.config.v1.WXMClientConfigurationParser"/>
+        <Class name="com.io7m.waxmill.xml.vm.v1.WXMBootConfigurationParser"/>
+        <Class name="com.io7m.waxmill.xml.vm.v1.WXMVirtualMachineParser"/>
       </Or>
       <Or>
         <Bug pattern="XXE_XMLREADER"/>
@@ -112,8 +113,11 @@
   <Match>
     <And>
       <!-- The purpose of the root command is to configure logging. -->
-      <Class name="com.io7m.waxmill.cmdline.internal.WXMCommandRoot"/>
-      <Bug pattern="LO_SUSPECT_LOG_CLASS"/>
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMAbstractCommandWithConfiguration"/>
+      <Or>
+        <Bug pattern="LO_SUSPECT_LOG_CLASS"/>
+        <Bug pattern="LO_SUSPECT_LOG_PARAMETER"/>
+      </Or>
     </And>
   </Match>
 
@@ -195,6 +199,13 @@
     <Class name="com.io7m.waxmill.strings.api.WXMAbstractStrings"/>
     <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
     <Method name="ofXML"/>
+  </Match>
+
+  <Match>
+    <!-- If an IOException actually happens, it's a bug and should not be caught. -->
+    <Class name="com.io7m.waxmill.strings.api.WXMAbstractStrings"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    <Method name="ofXMLResource"/>
   </Match>
 
   <Match>

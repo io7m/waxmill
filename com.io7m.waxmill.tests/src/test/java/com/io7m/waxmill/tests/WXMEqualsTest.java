@@ -23,8 +23,8 @@ import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
-import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
@@ -73,10 +73,21 @@ public final class WXMEqualsTest
         Set.of("value")),
       new WXMClassUnderTest(
         WXMEvaluatedBootConfigurationGRUBBhyve.class,
-        Set.of("deviceMap", "grubConfiguration", "commands")),
+        Set.of(
+          "requiredPaths",
+          "deviceMap",
+          "deviceMapFile",
+          "grubConfiguration",
+          "grubConfigurationFile",
+          "commands")),
       new WXMClassUnderTest(
         WXMGRUBKernelLinux.class,
-        Set.of("kernelDevice", "kernelPath", "initRDDevice", "initRDPath", "kernelArguments")),
+        Set.of(
+          "kernelDevice",
+          "kernelPath",
+          "initRDDevice",
+          "initRDPath",
+          "kernelArguments")),
       new WXMClassUnderTest(
         WXMGRUBKernelOpenBSD.class,
         Set.of("bootDevice", "kernelPath")),

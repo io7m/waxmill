@@ -23,22 +23,22 @@ import com.io7m.waxmill.boot.internal.WXMBootMessages;
 import com.io7m.waxmill.boot.internal.WXMGRUBDeviceAndPath;
 import com.io7m.waxmill.boot.internal.WXMGRUBDeviceMap;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
+import com.io7m.waxmill.exceptions.WXMException;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
-import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceSlotType;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
-import com.io7m.waxmill.machines.WXMException;
-import com.io7m.waxmill.machines.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
@@ -283,7 +283,7 @@ public final class WXMBootConfigurationEvaluator
     final var basePath =
       this.clientConfiguration.virtualMachineRuntimeDirectoryFor(machineId);
     final var deviceMapPath =
-      basePath.resolve("grub-device.map");
+      this.grubDeviceMapPath();
 
     final var memoryMB =
       this.machine.memory()
@@ -620,9 +620,30 @@ public final class WXMBootConfigurationEvaluator
 
     return WXMEvaluatedBootConfigurationGRUBBhyve.builder()
       .setCommands(this.generateGRUBBhyveCommands())
+      .setRequiredPaths(deviceMap.paths())
       .setDeviceMap(deviceMap.serialize())
+      .setDeviceMapFile(this.grubDeviceMapPath())
       .setGrubConfiguration(configLines)
+      .setGrubConfigurationFile(this.grubConfigPath())
       .build();
+  }
+
+  private Path grubDeviceMapPath()
+  {
+    final var machineId =
+      this.machine.id();
+    final var basePath =
+      this.clientConfiguration.virtualMachineRuntimeDirectoryFor(machineId);
+    return basePath.resolve("grub-device.map");
+  }
+
+  private Path grubConfigPath()
+  {
+    final var machineId =
+      this.machine.id();
+    final var basePath =
+      this.clientConfiguration.virtualMachineRuntimeDirectoryFor(machineId);
+    return basePath.resolve("grub.cfg");
   }
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationLinux(
@@ -637,8 +658,11 @@ public final class WXMBootConfigurationEvaluator
 
     return WXMEvaluatedBootConfigurationGRUBBhyve.builder()
       .setCommands(this.generateGRUBBhyveCommands())
+      .setRequiredPaths(deviceMap.paths())
       .setDeviceMap(deviceMap.serialize())
+      .setDeviceMapFile(this.grubDeviceMapPath())
       .setGrubConfiguration(configLines)
+      .setGrubConfigurationFile(this.grubConfigPath())
       .build();
   }
 

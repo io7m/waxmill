@@ -14,6 +14,11 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseProviderType;
+import com.io7m.waxmill.database.vanilla.WXMVirtualMachineDatabases;
+import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
+import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
+
 /**
  * FreeBSD BHyve Manager (Database vanilla implementation)
  */
@@ -25,9 +30,17 @@ module com.io7m.waxmill.database.vanilla
 
   requires com.io7m.waxmill.client.api;
   requires com.io7m.waxmill.database.api;
+  requires com.io7m.waxmill.exceptions;
+  requires com.io7m.waxmill.locks;
   requires com.io7m.waxmill.machines;
   requires com.io7m.waxmill.parser.api;
   requires com.io7m.waxmill.serializer.api;
+
+  uses WXMVirtualMachineParserProviderType;
+  uses WXMVirtualMachineSerializerProviderType;
+
+  provides WXMVirtualMachineDatabaseProviderType
+    with WXMVirtualMachineDatabases;
 
   exports com.io7m.waxmill.database.vanilla;
 }

@@ -71,4 +71,76 @@ public final class WXMCommandHelpTest
       }
     );
   }
+
+  @Test
+  public void helpHelpOK()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "help",
+        "help"
+      }
+    );
+  }
+
+  @Test
+  public void helpVMListOK()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "help",
+        "vm-list"
+      }
+    );
+  }
+
+  @Test
+  public void helpVMAddVirtioDiskOK()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "help",
+        "vm-add-virtio-disk"
+      }
+    );
+  }
+
+  @Test
+  public void helpVMAddVirtioNetworkDeviceOK()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "help",
+        "vm-add-virtio-network-device"
+      }
+    );
+  }
+
+  @Test
+  public void helpVMAddAHCIDiskOK()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "help",
+        "vm-add-ahci-disk"
+      }
+    );
+  }
+
+  @Test
+  public void helpVMAddLPCOK()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "help",
+        "vm-add-lpc-device"
+      }
+    );
+  }
 }

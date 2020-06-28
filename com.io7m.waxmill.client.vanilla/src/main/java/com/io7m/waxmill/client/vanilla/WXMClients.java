@@ -19,11 +19,12 @@ package com.io7m.waxmill.client.vanilla;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.client.api.WXMClientProviderType;
 import com.io7m.waxmill.client.api.WXMClientType;
-import com.io7m.waxmill.machines.WXMException;
 import com.io7m.waxmill.client.vanilla.internal.WXMClient;
 import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseProviderType;
+import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.parser.api.WXMClientConfigurationParserProviderType;
+import com.io7m.waxmill.process.api.WXMProcessesType;
 import com.io7m.waxmill.serializer.api.WXMClientConfigurationSerializerProviderType;
 
 import java.nio.file.Path;
@@ -34,11 +35,13 @@ public final class WXMClients implements WXMClientProviderType
 {
   private final WXMClientConfigurationParserProviderType clientConfigurationParsers;
   private final WXMVirtualMachineDatabaseProviderType databases;
+  private final WXMProcessesType processes;
 
   public WXMClients(
     final WXMClientConfigurationParserProviderType inClientConfigurationParsers,
     final WXMClientConfigurationSerializerProviderType inClientConfigurationSerializers,
-    final WXMVirtualMachineDatabaseProviderType inDatabases)
+    final WXMVirtualMachineDatabaseProviderType inDatabases,
+    final WXMProcessesType inProcesses)
   {
     this.clientConfigurationParsers =
       Objects.requireNonNull(
@@ -48,9 +51,9 @@ public final class WXMClients implements WXMClientProviderType
       inClientConfigurationSerializers,
       "inClientConfigurationSerializers");
     this.databases =
-      Objects.requireNonNull(
-        inDatabases,
-        "inDatabases");
+      Objects.requireNonNull(inDatabases, "inDatabases");
+    this.processes =
+      Objects.requireNonNull(inProcesses, "inProcesses");
   }
 
   public WXMClients()
@@ -58,7 +61,8 @@ public final class WXMClients implements WXMClientProviderType
     this(
       findService(WXMClientConfigurationParserProviderType.class),
       findService(WXMClientConfigurationSerializerProviderType.class),
-      findService(WXMVirtualMachineDatabaseProviderType.class)
+      findService(WXMVirtualMachineDatabaseProviderType.class),
+      findService(WXMProcessesType.class)
     );
   }
 
@@ -101,7 +105,8 @@ public final class WXMClients implements WXMClientProviderType
 
     return new WXMClient(
       configuration,
-      this.databases.open(databaseConfiguration)
+      this.databases.open(databaseConfiguration),
+      this.processes
     );
   }
 

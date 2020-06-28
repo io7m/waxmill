@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.machines;
+package com.io7m.waxmill.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;

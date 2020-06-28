@@ -21,7 +21,7 @@ import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceSlots;
-import com.io7m.waxmill.machines.WXMDeviceType;
+import com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMTap;
@@ -36,7 +36,8 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 @Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
-public final class WXMCommandVMAddVirtioNetworkDevice extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMAddVirtioNetworkDevice
+  extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMAddVirtioNetworkDevice.class);
@@ -66,12 +67,11 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMAbstractCommand
 
   @Parameter(
     names = "--backend",
-    description = "A specification of the device backend to add "
-      + "(such as 'tap;tap23;ad:5f:90:d7:f7:4b' or 'vmnet;vmnet42;f8:e1:e1:79:c9:7e')",
+    description = "A specification of the Virtio network device backend to add",
     required = true,
     converter = WXMVirtioNetworkBackendConverter.class
   )
-  private WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType backend;
+  private WXMVirtioNetworkBackendType backend;
 
   /**
    * Construct a command.
@@ -82,13 +82,19 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMAbstractCommand
   public WXMCommandVMAddVirtioNetworkDevice(
     final CLPCommandContextType inContext)
   {
-    super(inContext);
+    super(LOG, inContext);
   }
 
   @Override
   public String name()
   {
     return "vm-add-virtio-network-device";
+  }
+
+  @Override
+  public String extendedHelp()
+  {
+    return this.messages().format("virtioNetworkBackendSpec");
   }
 
   @Override
@@ -120,20 +126,20 @@ public final class WXMCommandVMAddVirtioNetworkDevice extends WXMAbstractCommand
 
       client.vmUpdate(updatedMachine);
 
-      LOG.info("Added virtio device @ slot {}", this.deviceSlot);
+      this.info("infoAddedVirtioNet", this.deviceSlot);
       switch (this.backend.kind()) {
         case WXM_TAP:
           final var tap = (WXMTap) this.backend;
-          LOG.info(
-            "Backend tap {} {}",
+          this.info(
+            "infoBackendTAP",
             tap.name().value(),
             tap.address().value()
           );
           break;
         case WXM_VMNET:
           final var vmnet = (WXMVMNet) this.backend;
-          LOG.info(
-            "Backend vmnet {} {}",
+          this.info(
+            "infoBackendVMNet",
             vmnet.name().value(),
             vmnet.address().value()
           );

@@ -18,9 +18,10 @@ package com.io7m.waxmill.database.vanilla.internal;
 
 import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
-import com.io7m.waxmill.machines.WXMException;
-import com.io7m.waxmill.machines.WXMExceptionDuplicate;
-import com.io7m.waxmill.machines.WXMExceptions;
+import com.io7m.waxmill.exceptions.WXMException;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMExceptions;
+import com.io7m.waxmill.locks.WXMFileLock;
 import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
@@ -30,8 +31,6 @@ import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -45,7 +44,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.WRITE;
 
 public final class WXMVirtualMachineDatabase
   implements WXMVirtualMachineDatabaseType
@@ -111,11 +109,11 @@ public final class WXMVirtualMachineDatabase
     return path.toString().toUpperCase(Locale.ROOT).endsWith(".WVMX");
   }
 
-  private DatabaseWriteLock acquireWriteLock()
+  private WXMFileLock acquireWriteLock()
     throws WXMException
   {
     try {
-      return DatabaseWriteLock.acquire(this.lockFile);
+      return WXMFileLock.acquire(this.lockFile);
     } catch (final IOException e) {
       throw new WXMException(e);
     }
@@ -182,9 +180,9 @@ public final class WXMVirtualMachineDatabase
       this.machineMessages.format(
         "errorMachineAlreadyExists",
         machineId,
-        machineA,
+        machineA.name().value(),
         machineA.configurationFile().map(URI::toString).orElse("<unspecified>"),
-        machineB,
+        machineB.name().value(),
         machineB.configurationFile().map(URI::toString).orElse("<unspecified>")
       ));
   }
@@ -282,71 +280,5 @@ public final class WXMVirtualMachineDatabase
       "[WXMVirtualMachineDatabase 0x%s]",
       Long.toUnsignedString(System.identityHashCode(this), 16)
     );
-  }
-
-  private static final class DatabaseWriteLock implements AutoCloseable
-  {
-    private final FileChannel channel;
-    private final FileLock lock;
-
-    private DatabaseWriteLock(
-      final FileChannel inChannel,
-      final FileLock inLock)
-    {
-      this.channel =
-        Objects.requireNonNull(inChannel, "channel");
-      this.lock =
-        Objects.requireNonNull(inLock, "lock");
-    }
-
-    public static DatabaseWriteLock acquire(
-      final Path lockFile)
-      throws IOException
-    {
-      final var channel = FileChannel.open(lockFile, CREATE, WRITE);
-      try {
-        final var lock = channel.lock();
-        return new DatabaseWriteLock(channel, lock);
-      } catch (final IOException e) {
-        try {
-          channel.close();
-        } catch (final IOException ex) {
-          e.addSuppressed(ex);
-        }
-        throw e;
-      }
-    }
-
-    @Override
-    public void close()
-      throws WXMException
-    {
-      final var exceptions = new WXMExceptions();
-
-      try {
-        this.lock.close();
-      } catch (final IOException e) {
-        exceptions.add(e);
-      }
-
-      try {
-        this.channel.close();
-      } catch (final IOException e) {
-        exceptions.add(e);
-      }
-
-      exceptions.throwIfRequired();
-    }
-
-    @Override
-    public String toString()
-    {
-      return String.format(
-        "[DatabaseWriteLock 0x%s]",
-        Long.toUnsignedString(
-          System.identityHashCode(this),
-          16)
-      );
-    }
   }
 }

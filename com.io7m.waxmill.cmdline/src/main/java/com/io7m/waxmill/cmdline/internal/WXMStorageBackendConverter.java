@@ -68,8 +68,12 @@ public final class WXMStorageBackendConverter
   private IllegalArgumentException syntaxError(
     final String value)
   {
-    throw new IllegalArgumentException(
-      this.messages.format("errorInvalidStorageBackend", value)
+    return new IllegalArgumentException(
+      this.messages.format(
+        "errorInvalidStorageBackend",
+        this.messages.format("storageBackendSpec"),
+        value
+      )
     );
   }
 

@@ -14,25 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.machines;
+package com.io7m.waxmill.serializer.api;
 
-import java.util.Objects;
-
-/**
- * An exception caused by some sort of duplicate value.
- */
-
-public class WXMExceptionDuplicate extends WXMException
+public interface WXMBootConfigurationsSerializerType extends WXMSerializerType
 {
-  /**
-   * Construct an exception.
-   *
-   * @param message The message
-   */
 
-  public WXMExceptionDuplicate(
-    final String message)
-  {
-    super(Objects.requireNonNull(message, "message"));
-  }
 }

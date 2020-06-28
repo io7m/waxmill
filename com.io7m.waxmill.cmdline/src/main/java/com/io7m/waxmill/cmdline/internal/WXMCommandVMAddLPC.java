@@ -74,8 +74,7 @@ public final class WXMCommandVMAddLPC extends WXMAbstractCommandWithConfiguratio
 
   @Parameter(
     names = "--add-backend",
-    description = "A specification of the device backend to add "
-      + "(such as 'file;com1;/dev/nmdm54B', 'stdio;com2', 'nmdm;com1;')",
+    description = "A specification of the TTY device backend to add",
     required = true,
     converter = WXMTTYBackendConverter.class
   )
@@ -90,13 +89,19 @@ public final class WXMCommandVMAddLPC extends WXMAbstractCommandWithConfiguratio
   public WXMCommandVMAddLPC(
     final CLPCommandContextType inContext)
   {
-    super(inContext);
+    super(LOG, inContext);
   }
 
   @Override
   public String name()
   {
     return "vm-add-lpc-device";
+  }
+
+  @Override
+  public String extendedHelp()
+  {
+    return this.messages().format("ttyBackendSpec");
   }
 
   @Override
@@ -117,7 +122,7 @@ public final class WXMCommandVMAddLPC extends WXMAbstractCommandWithConfiguratio
       for (final WXMTTYBackendType backend : this.backends) {
         final var device = backend.device();
         if (backendMap.put(device, backend) != null) {
-          LOG.error("Backend device names must be unique: {}", device);
+          this.error("errorDeviceNamesUnique", device);
           return FAILURE;
         }
       }
@@ -137,27 +142,27 @@ public final class WXMCommandVMAddLPC extends WXMAbstractCommandWithConfiguratio
 
       client.vmUpdate(updatedMachine);
 
-      LOG.info("Added lpc device @ slot {}", this.deviceSlot);
+      this.info("infoAddedLPC", this.deviceSlot);
       for (final var entry : backendMap.entrySet()) {
         final var device = entry.getValue();
         switch (device.kind()) {
           case WXM_FILE:
             final var fileDeviceBackend = (WXMTTYBackendFile) device;
-            LOG.info(
-              "Backend file {} {}",
+            this.info(
+              "infoBackendFile",
               fileDeviceBackend.device(),
               fileDeviceBackend.path());
             break;
           case WXM_NMDM:
             final var nmdmBackend = (WXMTTYBackendNMDM) device;
-            LOG.info(
-              "Backend nmdm {} {}",
+            this.info(
+              "infoBackendNMDM",
               nmdmBackend.device(),
               WXMTTYBackends.nmdmPath(FileSystems.getDefault(), machine.id(), NMDM_GUEST));
             break;
           case WXM_STDIO:
             final var stdioBackend = (WXMTTYBackendStdio) device;
-            LOG.info("Backend stdio {}", stdioBackend.device());
+            this.info("infoBackendStdio", stdioBackend.device());
             break;
         }
       }

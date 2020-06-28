@@ -14,31 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.machines;
+/**
+ * FreeBSD BHyve Manager (File lock support)
+ */
 
-import java.util.Objects;
+@Export
+@Version("1.0.0")
+package com.io7m.waxmill.locks;
 
-public class WXMException extends Exception
-{
-  public WXMException(
-    final String message)
-  {
-    super(Objects.requireNonNull(message, "message"));
-  }
-
-  public WXMException(
-    final String message,
-    final Throwable cause)
-  {
-    super(
-      Objects.requireNonNull(message, "message"),
-      Objects.requireNonNull(cause, "cause")
-    );
-  }
-
-  public WXMException(
-    final Throwable cause)
-  {
-    super(Objects.requireNonNull(cause, "cause"));
-  }
-}
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

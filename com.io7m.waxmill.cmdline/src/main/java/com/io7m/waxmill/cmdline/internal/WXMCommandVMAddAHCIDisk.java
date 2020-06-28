@@ -44,7 +44,8 @@ import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMStorageBackends.determineZFSVolumePath;
 
 @Parameters(commandDescription = "Add an AHCI disk to a virtual machine.")
-public final class WXMCommandVMAddAHCIDisk extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMAddAHCIDisk extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMAddAHCIDisk.class);
@@ -88,8 +89,7 @@ public final class WXMCommandVMAddAHCIDisk extends WXMAbstractCommandWithConfigu
 
   @Parameter(
     names = "--backend",
-    description = "A specification of the device backend to add "
-      + "(such as 'file:/tmp/xyz' or 'zfs-volume')",
+    description = "A specification of the AHCI storage device backend to add",
     required = true,
     converter = WXMStorageBackendConverter.class
   )
@@ -104,7 +104,7 @@ public final class WXMCommandVMAddAHCIDisk extends WXMAbstractCommandWithConfigu
   public WXMCommandVMAddAHCIDisk(
     final CLPCommandContextType inContext)
   {
-    super(inContext);
+    super(LOG, inContext);
   }
 
   @Override
@@ -113,14 +113,20 @@ public final class WXMCommandVMAddAHCIDisk extends WXMAbstractCommandWithConfigu
     return "vm-add-ahci-disk";
   }
 
+  @Override
+  public String extendedHelp()
+  {
+    return this.messages().format("storageBackendSpec");
+  }
+
   private void showCreated(
     final WXMClientType client,
     final WXMVirtualMachine machine)
   {
     switch (this.backend.kind()) {
       case WXM_STORAGE_FILE: {
-        LOG.info(
-          "Added {} disk file {} @ slot {}",
+        this.info(
+          "infoAddedDiskFile",
           this.optical ? "AHCI optical" : "AHCI",
           ((WXMStorageBackendFile) this.backend).file(),
           this.deviceSlot
@@ -128,8 +134,8 @@ public final class WXMCommandVMAddAHCIDisk extends WXMAbstractCommandWithConfigu
         break;
       }
       case WXM_STORAGE_ZFS_VOLUME: {
-        LOG.info(
-          "Added {} disk zfs volume {} @ slot {}",
+        this.info(
+          "infoAddedDiskZFS",
           this.optical ? "AHCI optical" : "AHCI",
           showZFSPath(client, machine, this.deviceSlot),
           this.deviceSlot

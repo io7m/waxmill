@@ -14,25 +14,25 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.machines;
+package com.io7m.waxmill.parser.api;
 
-import java.util.Objects;
+import com.io7m.waxmill.machines.WXMBootConfigurationType;
 
-/**
- * An exception caused by some sort of nonexistent value.
- */
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.util.List;
+import java.util.function.Consumer;
 
-public class WXMExceptionNonexistent extends WXMException
+public interface WXMBootConfigurationParserProviderType
+  extends WXMParserProviderType<List<WXMBootConfigurationType>>
 {
-  /**
-   * Construct an exception.
-   *
-   * @param message The message
-   */
-
-  public WXMExceptionNonexistent(
-    final String message)
-  {
-    super(Objects.requireNonNull(message, "message"));
-  }
+  @Override
+  WXMBootConfigurationParserType create(
+    FileSystem fileSystem,
+    URI uri,
+    InputStream stream,
+    Consumer<WXMParseError> errors)
+    throws IOException;
 }

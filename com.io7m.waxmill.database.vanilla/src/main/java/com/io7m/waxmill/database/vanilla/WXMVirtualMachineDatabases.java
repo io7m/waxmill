@@ -16,11 +16,11 @@
 
 package com.io7m.waxmill.database.vanilla;
 
-import com.io7m.waxmill.machines.WXMException;
 import com.io7m.waxmill.database.api.WXMDatabaseConfiguration;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseProviderType;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.database.vanilla.internal.WXMVirtualMachineDatabase;
+import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;

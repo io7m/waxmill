@@ -18,6 +18,7 @@ package com.io7m.waxmill.boot.internal;
 
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -73,6 +74,22 @@ public final class WXMGRUBDeviceMap
       lines.add(String.format("(cd%d) %s", entry.getKey(), cd.path()));
     }
     return List.copyOf(lines);
+  }
+
+  public Iterable<Path> paths()
+  {
+    final var paths =
+      new ArrayList<Path>(this.disks.size() + this.cds.size());
+
+    for (final var entry : this.disks.entrySet()) {
+      final var hd = entry.getValue();
+      paths.add(hd.path());
+    }
+    for (final var entry : this.cds.entrySet()) {
+      final var cd = entry.getValue();
+      paths.add(cd.path());
+    }
+    return List.copyOf(paths);
   }
 
   @Override

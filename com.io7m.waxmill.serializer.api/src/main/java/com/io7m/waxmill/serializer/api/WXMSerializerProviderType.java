@@ -25,7 +25,8 @@ import java.util.Objects;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 public interface WXMSerializerProviderType<T>
 {
@@ -45,7 +46,7 @@ public interface WXMSerializerProviderType<T>
     Objects.requireNonNull(outputTmp, "outputTmp");
     Objects.requireNonNull(value, "value");
 
-    try (var stream = Files.newOutputStream(outputTmp, CREATE_NEW)) {
+    try (var stream = Files.newOutputStream(outputTmp, CREATE, TRUNCATE_EXISTING)) {
       try (var serializer = this.create(outputTmp.toUri(), stream, value)) {
         serializer.execute();
       }

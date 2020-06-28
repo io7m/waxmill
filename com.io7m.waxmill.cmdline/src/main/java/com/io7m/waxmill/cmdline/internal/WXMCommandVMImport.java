@@ -53,7 +53,7 @@ public final class WXMCommandVMImport extends WXMAbstractCommandWithConfiguratio
   public WXMCommandVMImport(
     final CLPCommandContextType inContext)
   {
-    super(inContext);
+    super(LOG, inContext);
   }
 
   @Override
@@ -80,9 +80,8 @@ public final class WXMCommandVMImport extends WXMAbstractCommandWithConfiguratio
         );
       client.vmDefineAll(set);
 
-      LOG.info(
-        "imported {} virtual machines",
-        Integer.valueOf(set.machines().size()));
+      this.info("infoImportedMachines",
+                Integer.valueOf(set.machines().size()));
     }
     return SUCCESS;
   }

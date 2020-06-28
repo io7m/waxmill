@@ -15,8 +15,10 @@
  */
 
 import com.io7m.waxmill.client.api.WXMClientProviderType;
+import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseProviderType;
 import com.io7m.waxmill.parser.api.WXMClientConfigurationParserProviderType;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
+import com.io7m.waxmill.process.api.WXMProcessesType;
 import com.io7m.waxmill.serializer.api.WXMClientConfigurationSerializerProviderType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 
@@ -29,14 +31,19 @@ module com.io7m.waxmill.client.vanilla
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
+  requires com.io7m.waxmill.boot;
   requires com.io7m.waxmill.client.api;
-  requires com.io7m.waxmill.parser.api;
-  requires com.io7m.waxmill.serializer.api;
   requires com.io7m.waxmill.database.api;
+  requires com.io7m.waxmill.exceptions;
   requires com.io7m.waxmill.machines;
+  requires com.io7m.waxmill.parser.api;
+  requires com.io7m.waxmill.process.api;
+  requires com.io7m.waxmill.serializer.api;
 
   uses WXMClientConfigurationParserProviderType;
   uses WXMClientConfigurationSerializerProviderType;
+  uses WXMProcessesType;
+  uses WXMVirtualMachineDatabaseProviderType;
   uses WXMVirtualMachineParserProviderType;
   uses WXMVirtualMachineSerializerProviderType;
 

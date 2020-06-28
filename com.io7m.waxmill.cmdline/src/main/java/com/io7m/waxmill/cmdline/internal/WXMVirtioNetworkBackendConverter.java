@@ -69,8 +69,12 @@ public final class WXMVirtioNetworkBackendConverter
   private IllegalArgumentException syntaxError(
     final String value)
   {
-    throw new IllegalArgumentException(
-      this.messages.format("errorInvalidVirtioNetworkBackend", value)
+    return new IllegalArgumentException(
+      this.messages.format(
+        "errorInvalidVirtioNetworkBackend",
+        this.messages.format("virtioNetworkBackendSpec"),
+        value
+      )
     );
   }
 

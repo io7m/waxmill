@@ -28,6 +28,7 @@ module com.io7m.waxmill.parser.api
   requires com.io7m.jlexing.core;
   requires com.io7m.waxmill.machines;
   requires com.io7m.waxmill.client.api;
+  requires com.io7m.waxmill.exceptions;
 
   exports com.io7m.waxmill.parser.api;
 }

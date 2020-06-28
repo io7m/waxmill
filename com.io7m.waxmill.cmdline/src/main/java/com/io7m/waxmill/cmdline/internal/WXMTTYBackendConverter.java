@@ -122,7 +122,11 @@ public final class WXMTTYBackendConverter
     final String value)
   {
     return new IllegalArgumentException(
-      this.messages.format("errorInvalidTTYBackend", value)
+      this.messages.format(
+        "errorInvalidTTYBackend",
+        this.messages.format("ttyBackendSpec"),
+        value
+      )
     );
   }
 

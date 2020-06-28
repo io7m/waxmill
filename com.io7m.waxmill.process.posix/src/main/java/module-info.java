@@ -14,6 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+import com.io7m.waxmill.process.api.WXMProcessesType;
+import com.io7m.waxmill.process.posix.WXMProcessesPOSIXService;
+
 /**
  * FreeBSD BHyve Manager (Process JNA POSIX implementation)
  */
@@ -27,6 +30,8 @@ module com.io7m.waxmill.process.posix
   requires com.io7m.waxmill.strings.api;
   requires com.sun.jna;
   requires org.slf4j;
+
+  provides WXMProcessesType with WXMProcessesPOSIXService;
 
   exports com.io7m.waxmill.process.posix;
 }

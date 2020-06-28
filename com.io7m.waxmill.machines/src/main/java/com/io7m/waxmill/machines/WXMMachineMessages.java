@@ -18,8 +18,6 @@ package com.io7m.waxmill.machines;
 
 import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ResourceBundle;
 
 public final class WXMMachineMessages extends WXMAbstractStrings
@@ -32,12 +30,11 @@ public final class WXMMachineMessages extends WXMAbstractStrings
 
   public static WXMMachineMessages create()
   {
-    try (var stream = WXMMachineMessages.class.getResourceAsStream(
-      "/com/io7m/waxmill/machines/internal/Machines.xml")) {
-      return new WXMMachineMessages(ofXML(stream));
-    } catch (final IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    return new WXMMachineMessages(
+      ofXMLResource(
+        WXMMachineMessages.class,
+        "/com/io7m/waxmill/machines/internal/Machines.xml")
+    );
   }
 
   @Override

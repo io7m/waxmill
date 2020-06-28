@@ -55,7 +55,7 @@ public final class WXMCommandVMExport extends WXMAbstractCommandWithConfiguratio
   public WXMCommandVMExport(
     final CLPCommandContextType inContext)
   {
-    super(inContext);
+    super(LOG, inContext);
   }
 
   @Override

@@ -14,6 +14,11 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+import com.io7m.waxmill.client.api.WXMClientProviderType;
+import com.io7m.waxmill.parser.api.WXMBootConfigurationParserProviderType;
+import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
+import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
+
 /**
  * FreeBSD BHyve Manager (Command-line).
  */
@@ -37,9 +42,10 @@ module com.io7m.waxmill.cmdline
 
   opens com.io7m.waxmill.cmdline.internal to jcommander;
 
-  uses com.io7m.waxmill.client.api.WXMClientProviderType;
-  uses com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
-  uses com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
+  uses WXMBootConfigurationParserProviderType;
+  uses WXMClientProviderType;
+  uses WXMVirtualMachineParserProviderType;
+  uses WXMVirtualMachineSerializerProviderType;
 
   exports com.io7m.waxmill.cmdline;
 }

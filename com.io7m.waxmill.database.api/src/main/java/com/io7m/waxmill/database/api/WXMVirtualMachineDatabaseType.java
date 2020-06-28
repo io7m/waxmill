@@ -16,8 +16,8 @@
 
 package com.io7m.waxmill.database.api;
 
-import com.io7m.waxmill.machines.WXMException;
-import com.io7m.waxmill.machines.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMException;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.machines.WXMVirtualMachineSets;

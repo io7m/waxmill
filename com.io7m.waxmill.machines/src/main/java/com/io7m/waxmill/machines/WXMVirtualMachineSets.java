@@ -16,6 +16,9 @@
 
 package com.io7m.waxmill.machines;
 
+import com.io7m.waxmill.exceptions.WXMException;
+import com.io7m.waxmill.exceptions.WXMExceptions;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.Objects;

@@ -26,10 +26,13 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMDefine;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMExport;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMImport;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMList;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMRun;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -54,6 +57,7 @@ public final class Main implements Runnable
         .setLogger(LOG)
         .setProgramName("waxmill")
         .addCommands(WXMCommandVMAddAHCIDisk::new)
+        .addCommands(WXMCommandVMUpdateBootConfigurations::new)
         .addCommands(WXMCommandVMAddLPC::new)
         .addCommands(WXMCommandVMAddVirtioDisk::new)
         .addCommands(WXMCommandVMAddVirtioNetworkDevice::new)
@@ -61,7 +65,9 @@ public final class Main implements Runnable
         .addCommands(WXMCommandVMExport::new)
         .addCommands(WXMCommandVMImport::new)
         .addCommands(WXMCommandVMList::new)
+        .addCommands(WXMCommandVMRun::new)
         .addCommands(WXMCommandVersion::new)
+        .setDocumentationURI(URI.create("https://www.io7m.com/software/waxmill/documentation/"))
         .build();
 
     this.claypot = Claypot.create(configuration);

@@ -59,6 +59,11 @@
       <artifactId>com.io7m.waxmill.parser.api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.waxmill.process.posix</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.io7m.claypot</groupId>
@@ -111,6 +116,7 @@
           <ignoredUnusedDeclaredDependencies>
             <ignoredUnusedDeclaredDependency>com.io7m.waxmill:com.io7m.waxmill.client.vanilla:*</ignoredUnusedDeclaredDependency>
             <ignoredUnusedDeclaredDependency>com.io7m.waxmill:com.io7m.waxmill.database.vanilla:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>com.io7m.waxmill:com.io7m.waxmill.process.posix:*</ignoredUnusedDeclaredDependency>
             <ignoredUnusedDeclaredDependency>com.io7m.waxmill:com.io7m.waxmill.xml:*</ignoredUnusedDeclaredDependency>
           </ignoredUnusedDeclaredDependencies>
         </configuration>

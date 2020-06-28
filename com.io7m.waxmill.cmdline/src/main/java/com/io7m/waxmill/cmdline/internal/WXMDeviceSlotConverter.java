@@ -60,14 +60,20 @@ public final class WXMDeviceSlotConverter
     final String value)
   {
     return exceptionOpt.map(
-      ex -> new IllegalArgumentException(this.errorSyntaxMessage(value), ex))
-      .orElseGet(() -> new IllegalArgumentException(this.errorSyntaxMessage(value)));
+      ex -> new IllegalArgumentException(
+        this.errorSyntaxMessage(value), ex))
+      .orElseGet(() -> new IllegalArgumentException(
+        this.errorSyntaxMessage(value)));
   }
 
   private String errorSyntaxMessage(
     final String value)
   {
-    return this.messages.format("errorInvalidDeviceSlot", value);
+    return this.messages.format(
+      "errorInvalidDeviceSlot",
+      this.messages.format("deviceSlotSpec"),
+      value
+    );
   }
 
   @Override
