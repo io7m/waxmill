@@ -94,7 +94,7 @@ public final class WXMCommandVMRunTest
           "trace",
           "--boot-configuration",
           "run",
-          "--id",
+          "--machine",
           UUID.randomUUID().toString(),
           "--configuration",
           this.configFile.toString()

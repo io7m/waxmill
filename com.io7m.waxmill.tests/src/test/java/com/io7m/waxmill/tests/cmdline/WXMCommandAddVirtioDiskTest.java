@@ -92,7 +92,7 @@ public final class WXMCommandAddVirtioDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -104,7 +104,7 @@ public final class WXMCommandAddVirtioDiskTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -151,7 +151,7 @@ public final class WXMCommandAddVirtioDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -163,7 +163,7 @@ public final class WXMCommandAddVirtioDiskTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "zfs-volume",
@@ -213,7 +213,7 @@ public final class WXMCommandAddVirtioDiskTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--backend",
           "file;/tmp/xyz",
@@ -243,7 +243,7 @@ public final class WXMCommandAddVirtioDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -255,7 +255,7 @@ public final class WXMCommandAddVirtioDiskTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -272,7 +272,7 @@ public final class WXMCommandAddVirtioDiskTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--backend",
           "file;/tmp/xyz",

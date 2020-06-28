@@ -49,7 +49,7 @@ public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfi
     LoggerFactory.getLogger(WXMCommandVMAddVirtioDisk.class);
 
   @Parameter(
-    names = "--id",
+    names = "--machine",
     description = "The ID of the virtual machine",
     required = true,
     converter = WXMUUIDConverter.class

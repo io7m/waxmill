@@ -96,7 +96,7 @@ public final class WXMCommandDeleteDeviceTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -108,7 +108,7 @@ public final class WXMCommandDeleteDeviceTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -133,7 +133,7 @@ public final class WXMCommandDeleteDeviceTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--device-slot",
         "0:1:0",
@@ -176,7 +176,7 @@ public final class WXMCommandDeleteDeviceTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -189,7 +189,7 @@ public final class WXMCommandDeleteDeviceTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--device-slot",
           "0:1:0",
@@ -240,7 +240,7 @@ public final class WXMCommandDeleteDeviceTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -252,7 +252,7 @@ public final class WXMCommandDeleteDeviceTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -294,7 +294,7 @@ public final class WXMCommandDeleteDeviceTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--file",
         this.directory.resolve("boot.xml").toString()
@@ -309,7 +309,7 @@ public final class WXMCommandDeleteDeviceTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--device-slot",
           "0:1:0"

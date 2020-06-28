@@ -41,7 +41,7 @@ public final class WXMCommandVMDeleteBootConfigurations
     LoggerFactory.getLogger(WXMCommandVMDeleteBootConfigurations.class);
 
   @Parameter(
-    names = "--id",
+    names = "--machine",
     description = "The ID of the virtual machine",
     required = true,
     converter = WXMUUIDConverter.class

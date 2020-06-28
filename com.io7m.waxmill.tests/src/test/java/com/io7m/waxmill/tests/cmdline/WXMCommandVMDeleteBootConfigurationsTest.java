@@ -96,7 +96,7 @@ public final class WXMCommandVMDeleteBootConfigurationsTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -108,7 +108,7 @@ public final class WXMCommandVMDeleteBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -150,7 +150,7 @@ public final class WXMCommandVMDeleteBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--file",
         this.directory.resolve("boot.xml").toString()
@@ -164,7 +164,7 @@ public final class WXMCommandVMDeleteBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--name",
         "install"
@@ -204,7 +204,7 @@ public final class WXMCommandVMDeleteBootConfigurationsTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -217,7 +217,7 @@ public final class WXMCommandVMDeleteBootConfigurationsTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--name",
           "anything"

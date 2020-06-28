@@ -40,7 +40,7 @@ public final class WXMCommandVMExport extends WXMAbstractCommandWithConfiguratio
     LoggerFactory.getLogger(WXMCommandVMExport.class);
 
   @Parameter(
-    names = "--id",
+    names = "--machine",
     description = "The ID(s) of the virtual machine",
     converter = WXMUUIDConverter.class
   )

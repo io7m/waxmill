@@ -92,7 +92,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -104,7 +104,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -151,7 +151,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -163,7 +163,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "zfs-volume",
@@ -222,7 +222,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -234,7 +234,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--optical",
         "--backend",
@@ -273,7 +273,7 @@ public final class WXMCommandVMAddAHCIDiskTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--backend",
           "file;/tmp/xyz",
@@ -303,7 +303,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -315,7 +315,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -332,7 +332,7 @@ public final class WXMCommandVMAddAHCIDiskTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--backend",
           "file;/tmp/xyz",
@@ -364,7 +364,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -377,7 +377,7 @@ public final class WXMCommandVMAddAHCIDiskTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--backend",
           "file;/tmp/xyz",
@@ -409,7 +409,7 @@ public final class WXMCommandVMAddAHCIDiskTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -422,7 +422,7 @@ public final class WXMCommandVMAddAHCIDiskTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--backend",
           "file;/tmp/xyz",

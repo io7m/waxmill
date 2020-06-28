@@ -96,7 +96,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -108,7 +108,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -150,7 +150,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--file",
         this.directory.resolve("boot.xml").toString()
@@ -193,7 +193,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -205,7 +205,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -247,7 +247,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--file",
         this.directory.resolve("boot.xml").toString()
@@ -262,7 +262,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--file",
           this.directory.resolve("boot.xml").toString()
@@ -292,7 +292,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -304,7 +304,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "file;/tmp/xyz",
@@ -343,7 +343,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--file",
         this.directory.resolve("boot.xml").toString()
@@ -366,7 +366,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--file",
         this.directory.resolve("boot.xml").toString(),

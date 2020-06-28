@@ -81,7 +81,7 @@ public final class WXMCommandAddVirtioNetworkTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--backend",
           "tap;tap23;a3:26:9c:74:79:34"
@@ -111,7 +111,7 @@ public final class WXMCommandAddVirtioNetworkTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -123,7 +123,7 @@ public final class WXMCommandAddVirtioNetworkTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "tap;tap23;a3:26:9c:74:79:34",
@@ -140,7 +140,7 @@ public final class WXMCommandAddVirtioNetworkTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           id.toString(),
           "--backend",
           "tap;tap23;a3:26:9c:74:79:34",
@@ -172,7 +172,7 @@ public final class WXMCommandAddVirtioNetworkTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -184,7 +184,7 @@ public final class WXMCommandAddVirtioNetworkTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "tap;tap23;a3:26:9c:74:79:34",
@@ -232,7 +232,7 @@ public final class WXMCommandAddVirtioNetworkTest
         "128",
         "--cpu-count",
         "2",
-        "--id",
+        "--machine",
         id.toString()
       }
     );
@@ -244,7 +244,7 @@ public final class WXMCommandAddVirtioNetworkTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         id.toString(),
         "--backend",
         "vmnet;vmnet23;a3:26:9c:74:79:34",

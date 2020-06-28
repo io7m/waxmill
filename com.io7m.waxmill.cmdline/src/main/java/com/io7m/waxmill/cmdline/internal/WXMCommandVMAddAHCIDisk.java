@@ -51,7 +51,7 @@ public final class WXMCommandVMAddAHCIDisk extends
     LoggerFactory.getLogger(WXMCommandVMAddAHCIDisk.class);
 
   @Parameter(
-    names = "--id",
+    names = "--machine",
     description = "The ID of the virtual machine",
     required = true,
     converter = WXMUUIDConverter.class

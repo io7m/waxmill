@@ -40,7 +40,7 @@ public final class WXMCommandVMUpdateBootConfigurations
     LoggerFactory.getLogger(WXMCommandVMUpdateBootConfigurations.class);
 
   @Parameter(
-    names = "--id",
+    names = "--machine",
     description = "The ID of the virtual machine",
     required = true,
     converter = WXMUUIDConverter.class

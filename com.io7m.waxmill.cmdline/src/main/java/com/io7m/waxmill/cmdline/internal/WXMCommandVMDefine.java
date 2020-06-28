@@ -44,7 +44,7 @@ public final class WXMCommandVMDefine extends WXMAbstractCommandWithConfiguratio
     LoggerFactory.getLogger(WXMCommandVMDefine.class);
 
   @Parameter(
-    names = "--id",
+    names = "--machine",
     description = "The ID of the new virtual machine",
     required = false,
     converter = WXMUUIDConverter.class

@@ -113,7 +113,7 @@ public final class WXMCommandVMExportTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--id",
+        "--machine",
         "1a438a53-2fcd-498f-8cc2-0ff0456e3dc4"
       }
     );
@@ -130,7 +130,7 @@ public final class WXMCommandVMExportTest
           "trace",
           "--configuration",
           this.configFile.toString(),
-          "--id",
+          "--machine",
           "1a438a53-2fcd-498f-8cc2-0ff0456e3dc4"
         }
       );

@@ -43,7 +43,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
     LoggerFactory.getLogger(WXMCommandVMAddVirtioNetworkDevice.class);
 
   @Parameter(
-    names = "--id",
+    names = "--machine",
     description = "The ID of the virtual machine",
     required = true,
     converter = WXMUUIDConverter.class
