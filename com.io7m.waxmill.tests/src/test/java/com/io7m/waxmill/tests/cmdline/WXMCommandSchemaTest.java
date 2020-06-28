@@ -20,6 +20,7 @@ import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
+import com.io7m.waxmill.xml.WXMSchemas;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class WXMCommandHelpTest
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public final class WXMCommandSchemaTest
 {
   private Path directory;
   private Path configFile;
@@ -62,97 +65,53 @@ public final class WXMCommandHelpTest
   }
 
   @Test
-  public void helpOK()
+  public void listOK()
     throws IOException
   {
     MainExitless.main(
       new String[]{
-        "help"
-      }
-    );
-  }
-
-  @Test
-  public void helpHelpOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "help"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMListOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-list"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddVirtioDiskOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-virtio-disk"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddVirtioNetworkDeviceOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-virtio-network-device"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddAHCIDiskOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-ahci-disk"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddLPCOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-lpc-device"
-      }
-    );
-  }
-
-  @Test
-  public void helpSchemaOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
         "schema"
       }
     );
+  }
+
+  @Test
+  public void specificOK0()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "schema",
+        "--id",
+        WXMSchemas.configSchemaV1p0NamespaceText()
+      }
+    );
+  }
+
+  @Test
+  public void specificOK1()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "schema",
+        "--id",
+        WXMSchemas.vmSchemaV1p0NamespaceText()
+      }
+    );
+  }
+
+  @Test
+  public void missing0()
+  {
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "schema",
+          "--id",
+          "nonexistent"
+        }
+      );
+    });
   }
 }

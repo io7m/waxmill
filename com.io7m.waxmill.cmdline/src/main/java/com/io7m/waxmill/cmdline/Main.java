@@ -18,6 +18,7 @@ package com.io7m.waxmill.cmdline;
 
 import com.io7m.claypot.core.CLPApplicationConfiguration;
 import com.io7m.claypot.core.Claypot;
+import com.io7m.waxmill.cmdline.internal.WXMCommandSchema;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddLPC;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioDisk;
@@ -58,6 +59,7 @@ public final class Main implements Runnable
       CLPApplicationConfiguration.builder()
         .setLogger(LOG)
         .setProgramName("waxmill")
+        .addCommands(WXMCommandSchema::new)
         .addCommands(WXMCommandVMAddAHCIDisk::new)
         .addCommands(WXMCommandVMAddLPC::new)
         .addCommands(WXMCommandVMAddVirtioDisk::new)

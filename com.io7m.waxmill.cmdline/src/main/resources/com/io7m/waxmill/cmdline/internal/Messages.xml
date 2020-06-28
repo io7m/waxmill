@@ -101,6 +101,7 @@ Received:
 Please either remove the boot configurations, or modify them such that they
 are no longer using the specified device.]]></entry>
   <entry key="errorDeviceNonexistent">Device does not exist: {0}</entry>
+  <entry key="errorSchemaNonexistent">No such schema: {0}</entry>
 
   <entry key="infoAddedDiskFile">Added {0} disk file {1} @ slot {2}</entry>
   <entry key="infoAddedDiskZFS">Added {0} disk zfs volume {1} @ slot {2}</entry>
@@ -131,6 +132,14 @@ machines under process supervision systems such as daemontools[1] or runit[2].
 [0] https://www.freebsd.org/cgi/man.cgi?query=execve&sektion=2
 [1] https://cr.yp.to/daemontools.html
 [2] http://smarden.org/runit/
+]]></entry>
+
+  <entry key="schemaHelp"><![CDATA[
+The "schema" command lists the available XSD[0] schemas available for the various XML
+formats used by the waxmill tools. The command can dump the text of specific schemas
+when passed the identifier of a schema.
+
+[0] https://www.w3.org/TR/xmlschema11-1/
 ]]></entry>
 
 </properties>
