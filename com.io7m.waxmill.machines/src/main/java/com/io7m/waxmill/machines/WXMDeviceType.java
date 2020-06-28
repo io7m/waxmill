@@ -613,6 +613,13 @@ public interface WXMDeviceType
         !this.backends().isEmpty(),
         "At least one LPC TTY backend must be provided."
       );
+
+      final var busID = this.deviceSlot().busID();
+      Preconditions.checkPreconditionI(
+        busID,
+        busID == 0,
+        bus -> "LPC devices may only be configured on bus 0"
+      );
     }
   }
 }

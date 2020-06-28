@@ -395,4 +395,49 @@ public final class WXMCommandVMAddLPCTest
       String.format("/dev/nmdm_%s_B", machine.id()),
       nmdmPath(FileSystems.getDefault(), machine.id(), NMDM_HOST).toString());
   }
+
+  @Test
+  public void addLPCBusNotZero()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--id",
+        id.toString()
+      }
+    );
+
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-add-lpc-device",
+          "--verbose",
+          "trace",
+          "--configuration",
+          this.configFile.toString(),
+          "--id",
+          id.toString(),
+          "--add-backend",
+          "nmdm;com1",
+          "--device-slot",
+          "1:1:0"
+        }
+      );
+    });
+  }
 }
