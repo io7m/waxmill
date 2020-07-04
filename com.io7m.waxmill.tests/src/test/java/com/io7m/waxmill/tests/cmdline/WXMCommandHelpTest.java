@@ -179,4 +179,28 @@ public final class WXMCommandHelpTest
       }
     );
   }
+
+  @Test
+  public void helpVMConsoleOK()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "help",
+        "vm-console"
+      }
+    );
+  }
+
+  @Test
+  public void helpVMListWithNameOK()
+    throws IOException
+  {
+    MainExitless.main(
+      new String[]{
+        "help",
+        "vm-list-with-name"
+      }
+    );
+  }
 }
