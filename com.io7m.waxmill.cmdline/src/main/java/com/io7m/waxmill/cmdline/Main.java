@@ -17,7 +17,9 @@
 package com.io7m.waxmill.cmdline;
 
 import com.io7m.claypot.core.CLPApplicationConfiguration;
+import com.io7m.claypot.core.CLPCommandConstructorType;
 import com.io7m.claypot.core.Claypot;
+import com.io7m.claypot.core.ClaypotType;
 import com.io7m.waxmill.cmdline.internal.WXMCommandSchema;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIOptical;
@@ -40,7 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Main command line entry point.
@@ -51,7 +55,8 @@ public final class Main implements Runnable
   private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
   private final String[] args;
-  private final Claypot claypot;
+  private final ClaypotType claypot;
+  private final List<CLPCommandConstructorType> commands;
 
   public Main(
     final String[] inArgs)
@@ -59,29 +64,35 @@ public final class Main implements Runnable
     this.args =
       Objects.requireNonNull(inArgs, "Command line arguments");
 
+    this.commands =
+      List.of(
+        WXMCommandSchema::new,
+        WXMCommandVMAddAHCIDisk::new,
+        WXMCommandVMAddAHCIOptical::new,
+        WXMCommandVMAddLPC::new,
+        WXMCommandVMAddVirtioDisk::new,
+        WXMCommandVMAddVirtioNetworkDevice::new,
+        WXMCommandVMConsole::new,
+        WXMCommandVMDefine::new,
+        WXMCommandVMDelete::new,
+        WXMCommandVMDeleteBootConfigurations::new,
+        WXMCommandVMDeleteDevice::new,
+        WXMCommandVMExport::new,
+        WXMCommandVMImport::new,
+        WXMCommandVMList::new,
+        WXMCommandVMListWithName::new,
+        WXMCommandVMRun::new,
+        WXMCommandVMUpdateBootConfigurations::new,
+        WXMCommandVersion::new
+      );
+
     final var configuration =
       CLPApplicationConfiguration.builder()
         .setLogger(LOG)
         .setProgramName("waxmill")
-        .addCommands(WXMCommandSchema::new)
-        .addCommands(WXMCommandVMAddAHCIDisk::new)
-        .addCommands(WXMCommandVMAddAHCIOptical::new)
-        .addCommands(WXMCommandVMAddLPC::new)
-        .addCommands(WXMCommandVMAddVirtioDisk::new)
-        .addCommands(WXMCommandVMAddVirtioNetworkDevice::new)
-        .addCommands(WXMCommandVMConsole::new)
-        .addCommands(WXMCommandVMDefine::new)
-        .addCommands(WXMCommandVMDelete::new)
-        .addCommands(WXMCommandVMDeleteBootConfigurations::new)
-        .addCommands(WXMCommandVMDeleteDevice::new)
-        .addCommands(WXMCommandVMExport::new)
-        .addCommands(WXMCommandVMImport::new)
-        .addCommands(WXMCommandVMList::new)
-        .addCommands(WXMCommandVMListWithName::new)
-        .addCommands(WXMCommandVMRun::new)
-        .addCommands(WXMCommandVMUpdateBootConfigurations::new)
-        .addCommands(WXMCommandVersion::new)
-        .setDocumentationURI(URI.create("https://www.io7m.com/software/waxmill/documentation/"))
+        .setCommands(this.commands)
+        .setDocumentationURI(URI.create(
+          "https://www.io7m.com/software/waxmill/documentation/"))
         .build();
 
     this.claypot = Claypot.create(configuration);
@@ -113,6 +124,17 @@ public final class Main implements Runnable
   public void run()
   {
     this.claypot.execute(this.args);
+  }
+
+  /**
+   * @return The names of the available commands
+   */
+
+  public Stream<String> commandNames()
+  {
+    return this.claypot.commands()
+      .keySet()
+      .stream();
   }
 
   @Override

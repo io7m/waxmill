@@ -16,7 +16,10 @@
 
 package com.io7m.waxmill.cmdline;
 
+import com.io7m.claypot.core.CLPCommandType;
+
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Main command line entry point that does not call {@code exit()}.

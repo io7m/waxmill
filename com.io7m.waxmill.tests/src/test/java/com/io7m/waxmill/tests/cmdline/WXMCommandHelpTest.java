@@ -17,15 +17,19 @@
 package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
+import com.io7m.waxmill.cmdline.Main;
 import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public final class WXMCommandHelpTest
 {
@@ -84,123 +88,21 @@ public final class WXMCommandHelpTest
     );
   }
 
-  @Test
-  public void helpVMListOK()
-    throws IOException
+  @TestFactory
+  public Stream<DynamicTest> helpVMHelpOK()
   {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-list"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddVirtioDiskOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-virtio-disk"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddVirtioNetworkDeviceOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-virtio-network-device"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddAHCIDiskOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-ahci-disk"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMAddLPCOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-add-lpc-device"
-      }
-    );
-  }
-
-  @Test
-  public void helpSchemaOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "schema"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMRunOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-run"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMDeleteOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-delete"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMConsoleOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-console"
-      }
-    );
-  }
-
-  @Test
-  public void helpVMListWithNameOK()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "help",
-        "vm-list-with-name"
-      }
-    );
+    return new Main(new String[]{})
+      .commandNames()
+      .map(name -> DynamicTest.dynamicTest(
+        String.format("help %s", name),
+        () -> {
+          MainExitless.main(
+            new String[]{
+              "help",
+              name
+            }
+          );
+        }
+      ));
   }
 }
