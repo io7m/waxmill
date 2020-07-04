@@ -14,18 +14,49 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.xml.vm.v1;
+package com.io7m.waxmill.machines;
 
-import com.io7m.immutables.styles.ImmutablesStyleType;
-import org.immutables.value.Value;
+import com.io7m.junreachable.UnreachableCodeException;
 
-import java.util.List;
+/**
+ * Options used when opening files.
+ */
 
-import com.io7m.waxmill.machines.WXMOpenOption;
-
-@Value.Immutable
-@ImmutablesStyleType
-public interface WXM1OpenOptionsType
+public enum WXMOpenOption
 {
-  List<WXMOpenOption> openOptions();
+  /**
+   * Do not use caching (O_DIRECT).
+   */
+
+  NO_CACHE,
+
+  /**
+   * Writes to the file are synchronous (O_SYNC).
+   */
+
+  SYNCHRONOUS,
+
+  /**
+   * The file is opened read-only.
+   */
+
+  READ_ONLY;
+
+  /**
+   * @return The external name of the option as it would appear on a BHyve
+   * command line
+   */
+
+  public String externalName()
+  {
+    switch (this) {
+      case NO_CACHE:
+        return "nocache";
+      case SYNCHRONOUS:
+        return "direct";
+      case READ_ONLY:
+        return "ro";
+    }
+    throw new UnreachableCodeException();
+  }
 }

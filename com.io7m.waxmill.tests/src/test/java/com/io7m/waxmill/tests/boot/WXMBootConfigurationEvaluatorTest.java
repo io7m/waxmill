@@ -61,9 +61,9 @@ import java.util.UUID;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_AMD;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_UNSPECIFIED;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.NO_CACHE;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.READ_ONLY;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption.SYNCHRONOUS;
+import static com.io7m.waxmill.machines.WXMOpenOption.NO_CACHE;
+import static com.io7m.waxmill.machines.WXMOpenOption.READ_ONLY;
+import static com.io7m.waxmill.machines.WXMOpenOption.SYNCHRONOUS;
 import static com.io7m.waxmill.tests.WXMDeviceIDTest.convert;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

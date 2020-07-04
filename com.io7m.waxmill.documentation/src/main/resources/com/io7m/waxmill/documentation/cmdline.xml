@@ -26,6 +26,9 @@
       <Term type="constant">trace</Term>
       level effectively causes everything to be logged, and will produce large volumes of debugging output.
     </Paragraph>
+    <FormalItem title="Log Levels">
+      <xi:include href="verbosity.xml"/>
+    </FormalItem>
     <Paragraph>
       The <Term type="package">waxmill</Term> command-line tool uses <LinkExternal target="https://jcommander.org/">
       jcommander
@@ -43,5 +46,16 @@
       a non-zero exit code on failure.
     </Paragraph>
   </Section>
+
+  <xi:include href="cmdline-help.xml" />
+  <xi:include href="cmdline-schema.xml" />
+  <xi:include href="cmdline-version.xml" />
+  <xi:include href="cmdline-vm-add-ahci-disk.xml" />
+  <xi:include href="cmdline-vm-add-ahci-optical.xml" />
+  <xi:include href="cmdline-vm-add-lpc.xml" />
+  <xi:include href="cmdline-vm-add-virtio-disk.xml" />
+  <xi:include href="cmdline-vm-add-virtio-network-device.xml" />
+  <xi:include href="cmdline-vm-console.xml" />
+  <xi:include href="cmdline-vm-run.xml" />
 
 </Section>

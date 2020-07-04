@@ -4,6 +4,12 @@
             xmlns:wxmc="urn:com.io7m.waxmill.config:1:0"
             targetNamespace="urn:com.io7m.waxmill.config:1:0">
 
+  <xsd:annotation>
+    <xsd:documentation>
+      A schema describing the format of Waxmill configuration files.
+    </xsd:documentation>
+  </xsd:annotation>
+
   <xsd:simpleType name="PathType">
     <xsd:annotation>
       <xsd:documentation>

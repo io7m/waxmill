@@ -1,0 +1,42 @@
+$ waxmill help help
+INFO com.io7m.waxmill.cmdline.Main: Usage: help [options] command
+
+  Options:
+    --verbose
+      Set the minimum logging verbosity level.
+      Default: info
+      Possible Values: [trace, debug, info, warn, error]
+
+  The "help" command, executed without arguments, shows the names of all
+  commands including the names and types of all of their parameters.
+
+  The "help" command can also be passed the name of a command. Commands
+  may include extended help messages such as the one you are reading
+  right now.
+
+  Example: waxmill help help
+
+$ ./waxmill help vm-console
+INFO com.io7m.waxmill.cmdline.Main: Usage: vm-console [options]
+
+  Options:
+    --configuration
+      The path to the configuration file (environment variable:
+      $WAXMILL_CONFIGURATION_FILE)
+    --dry-run
+      Show the commands that would be executed, but do not execute them.
+      Default: false
+  * --machine
+      The ID of the virtual machine
+    --verbose
+      Set the minimum logging verbosity level.
+      Default: info
+      Possible Values: [trace, debug, info, warn, error]
+
+  The "vm-console" command attempts to connect to the primary console
+  for the given virtual machine. In practice, this means executing the
+  "cu"[0] program on the device node that represents the console for
+  the VM. The command will fail with a diagnostic error message if the
+  virtual machine has no console, or has multiple consoles.
+
+  [0] https://www.freebsd.org/cgi/man.cgi?query=cu&sektion=1

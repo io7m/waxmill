@@ -95,8 +95,9 @@ Received:
   Machine:           {0}
   Possible consoles: {1}
 
-It may be that the machine has no console devices, or it may be that it has multiple console
-devices and no single device is more suitable than any other.]]></entry>
+It may be that the machine has no console devices, or it may be that
+it has multiple console devices and no single device is more suitable
+than any other.]]></entry>
 
   <entry key="errorNoMachinesWithName"><![CDATA[No virtual machines exist with the given name.
   Name:  {0}]]></entry>
@@ -134,10 +135,12 @@ are no longer using the specified device.]]></entry>
   <entry key="test">Test: {0}</entry>
 
   <entry key="vmRunHelp"><![CDATA[
-The "vm-run" command starts a virtual machine. The command, internally, uses execve()[0] to
-replace the waxmill process with that of the Bhyve virtual machine. The virtual machine
-stays running in the foreground. The command is intended to be used to start virtual
-machines under process supervision systems such as daemontools[1] or runit[2].
+The "vm-run" command starts a virtual machine. The command, internally,
+uses execve()[0] to replace the waxmill process with that of the
+Bhyve virtual machine. The virtual machine stays running in the
+foreground. The command is intended to be used to start virtual
+machines under process supervision systems such as daemontools[1]
+or runit[2].
 
 [0] https://www.freebsd.org/cgi/man.cgi?query=execve&sektion=2
 [1] https://cr.yp.to/daemontools.html
@@ -145,30 +148,71 @@ machines under process supervision systems such as daemontools[1] or runit[2].
 ]]></entry>
 
   <entry key="schemaHelp"><![CDATA[
-The "schema" command lists the available XSD[0] schemas available for the various XML
-formats used by the waxmill tools. The command can dump the text of specific schemas
-when passed the identifier of a schema.
+The "schema" command lists the available XSD[0] schemas available for
+the various XML formats used by the waxmill tools. The command can dump
+the text of specific schemas when passed the identifier of a schema.
 
 [0] https://www.w3.org/TR/xmlschema11-1/
 ]]></entry>
 
   <entry key="vmDeleteHelp"><![CDATA[
-The "vm-delete" command deletes the configuration for a virtual machine. It will not
-stop any running instance of the given virtual machine, nor will it delete the underlying
-resources such as ZFS volumes.
+The "vm-delete" command deletes the configuration for a virtual
+machine. It will not stop any running instance of the given virtual
+machine, nor will it delete the underlying resources such as ZFS
+volumes.
 ]]></entry>
 
   <entry key="vmListWithNameHelp"><![CDATA[
-The "vm-list-with-name" command lists the identifiers of all of the virtual machines that
-have a given name. The command raises an error if no virtual machines have the given name.]]></entry>
+The "vm-list-with-name" command lists the identifiers of all of the
+virtual machines that have a given name. The command raises an error
+if no virtual machines have the given name.]]></entry>
 
   <entry key="vmConsole"><![CDATA[
-The "vm-console" command attempts to connect to the primary console for the given virtual
-machine. In practice, this means executing the "cu"[0] program on the device node that represents
-the console for the VM. The command will fail with a diagnostic error message if the virtual
-machine has no console, or has multiple consoles.
+The "vm-console" command attempts to connect to the primary console
+for the given virtual machine. In practice, this means executing the
+"cu"[0] program on the device node that represents the console for
+the VM. The command will fail with a diagnostic error message if the
+virtual machine has no console, or has multiple consoles.
 
 [0] https://www.freebsd.org/cgi/man.cgi?query=cu&sektion=1
+]]></entry>
+
+  <entry key="vmAddLPCDeviceHelp"><![CDATA[
+The vm-add-lpc-device command adds an LPC device to a virtual
+machine. The BHyve documentation describes such devices as "LPC
+PCI-ISA bridges with COM1 and COM2 16550 serial ports and a boot
+ROM". In practice, LPC devices are used to provide console access
+to virtual machines, and UEFI[0] firmware to virtual machines that are
+booting from UEFI.
+
+[0] https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface
+]]></entry>
+
+  <entry key="vmAddAHCIDiskHelp"><![CDATA[
+The vm-add-ahci-disk command adds a disk to a virtual machine. The disk
+is an emulation of an AHCI[0] controller attached to a SATA hard-drive
+and, as such, requires a driver in the guest operating system that is
+capable of supporting AHCI.
+
+[0] https://en.wikipedia.org/wiki/Advanced_Host_Controller_Interface
+]]></entry>
+
+  <entry key="vmAddVirtioDiskHelp"><![CDATA[
+The vm-add-virtio-disk command adds a disk to a virtual machine.
+The disk is a Virtio[0] block storage device and, as such, requires
+a driver in the guest operating system that is capable of supporting
+Virtio.
+
+[0] https://wiki.libvirt.org/page/Virtio
+]]></entry>
+
+  <entry key="vmAddVirtioNetworkDeviceHelp"><![CDATA[
+The vm-add-virtio-network-device command adds a network device to a
+virtual machine. The disk is a Virtio[0] network device and, as such,
+requires a driver in the guest operating system that is capable of
+supporting Virtio.
+
+[0] https://wiki.libvirt.org/page/Virtio
 ]]></entry>
 
 </properties>

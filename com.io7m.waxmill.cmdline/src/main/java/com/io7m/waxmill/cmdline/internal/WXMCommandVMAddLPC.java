@@ -101,7 +101,11 @@ public final class WXMCommandVMAddLPC extends WXMAbstractCommandWithConfiguratio
   @Override
   public String extendedHelp()
   {
-    return this.messages().format("ttyBackendSpec");
+    final var messages = this.messages();
+    return String.join("", List.of(
+      messages.format("vmAddLPCDeviceHelp"),
+      messages.format("ttyBackendSpec")
+    ));
   }
 
   @Override

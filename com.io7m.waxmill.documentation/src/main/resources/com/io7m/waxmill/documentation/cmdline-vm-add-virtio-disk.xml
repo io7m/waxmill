@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:7:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="vm-add-virtio-disk">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">vm-add-virtio-disk</Term>
+      - Add a Virtio disk to a virtual machine
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="command">vm-add-virtio-disk</Term> command adds a disk to a virtual machine. The disk is a
+      <LinkExternal target="https://wiki.libvirt.org/page/Virtio">Virtio</LinkExternal> block storage device and,
+      as such, requires a driver in the guest operating system that is capable of supporting Virtio.
+    </Paragraph>
+    <FormalItem title="Parameters" type="parametersTable">
+      <Table type="parametersTable">
+        <Columns>
+          <Column>Parameter</Column>
+          <Column>Type</Column>
+          <Column>Required</Column>
+          <Column>Description</Column>
+        </Columns>
+        <Row>
+          <Cell>
+            <Term type="parameter">--backend</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Storage Backend</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>A specification of the Virtio storage device backend to add</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--comment</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">String</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>A comment describing the new disk</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--configuration</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Path</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--device-slot</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Device Slot</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>The slot to which the device will be attached.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--machine</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">UUID</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>The ID of the virtual machine</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--open-option</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">OpenOption</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The options that will be used when opening the storage device.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--verbose</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Log Level</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Set the minimum logging verbosity level.</Cell>
+        </Row>
+      </Table>
+    </FormalItem>
+
+    <FormalItem title="Device Slot Syntax">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="device-slot-syntax.txt"/>
+      </Verbatim>
+    </FormalItem>
+
+    <FormalItem title="Open Options">
+      <xi:include href="open-options.xml"/>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Example">
+    <FormalItem title="Example">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="cmdline-vm-add-virtio-disk-output.txt"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

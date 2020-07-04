@@ -1,0 +1,28 @@
+(Formatted for legibility)
+
+$ waxmill vm-run \
+  --machine 538a90e4-d50d-4511-8643-ae418279bac4 \
+  --boot-configuration install \
+  --dry-run
+
+/usr/local/sbin/grub-bhyve \
+  --device-map=/zroot/storage/vm/538a90e4-d50d-4511-8643-ae418279bac4/grub-device.map \
+  --root=host \
+  --directory=/zroot/storage/vm/538a90e4-d50d-4511-8643-ae418279bac4 \
+  --memory=250M \
+  538a90e4-d50d-4511-8643-ae418279bac4
+
+/usr/sbin/bhyve \
+  /home/rm/git/com.github/io7m/waxmill/bhyve \
+  -P \
+  -A \
+  -H \
+  -c cpus=1,sockets=1,cores=1,threads=1 \
+  -m 250M \
+  -s 0:0:0,hostbridge \
+  -s 0:1:0,ahci-hd,/zroot/storage/vm/538a90e4-d50d-4511-8643-ae418279bac4/disk-0_1_0 \
+  -s 0:2:0,ahci-cd,/tmp/openbsd-6.6-amd64.iso \
+  -s 0:3:0,lpc \
+  -l com1,/dev/nmdm_538a90e4-d50d-4511-8643-ae418279bac4_B \
+  -s 0:4:0,virtio-net,tap23,mac=a3:26:9c:74:79:34 \
+  538a90e4-d50d-4511-8643-ae418279bac4

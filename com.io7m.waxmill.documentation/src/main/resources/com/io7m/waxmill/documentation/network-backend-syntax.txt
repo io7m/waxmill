@@ -1,0 +1,13 @@
+  "tap" ";" <tapDevice> ";" <macAddress>
+| "vmnet" ";" <vmnetDevice> ";" <macAddress>
+
+Where:
+  <tapDevice>   = "tap[0-9]'{'1,13'}'"
+  <vmnetDevice> = "vmnet[0-9]'{'1,11'}'"
+  <macAddress>  = "[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}'"
+
+Examples:
+  tap;tap23;d9:63:c0:d9:09:e8
+  tap;tap0000000000001;d9:63:c0:d9:09:e8
+  vmnet;vmnet23;d9:63:c0:d9:09:e8
+  vmnet;vmnet00000000001;d9:63:c0:d9:09:e8

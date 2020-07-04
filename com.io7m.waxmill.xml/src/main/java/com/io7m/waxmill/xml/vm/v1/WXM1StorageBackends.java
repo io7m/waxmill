@@ -18,6 +18,7 @@ package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.machines.WXMDeviceType;
+import com.io7m.waxmill.machines.WXMOpenOption;
 import com.io7m.waxmill.machines.WXMSectorSizes;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
@@ -104,7 +105,7 @@ public final class WXM1StorageBackends
   }
 
   private static void serializeOpenOptions(
-    final Set<WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption> options,
+    final Set<WXMOpenOption> options,
     final XMLStreamWriter writer)
     throws XMLStreamException
   {

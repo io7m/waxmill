@@ -4,6 +4,12 @@
             xmlns:wxm="urn:com.io7m.waxmill.vm:1:0"
             targetNamespace="urn:com.io7m.waxmill.vm:1:0">
 
+  <xsd:annotation>
+    <xsd:documentation>
+      A schema describing the format of Waxmill virtual machine configurations.
+    </xsd:documentation>
+  </xsd:annotation>
+
   <xsd:simpleType name="UuidType">
     <xsd:annotation>
       <xsd:documentation xml:lang="en">
