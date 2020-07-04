@@ -16,6 +16,7 @@
 
 package com.io7m.waxmill.client.vanilla.internal;
 
+import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.boot.WXMBootConfigurationEvaluator;
 import com.io7m.waxmill.boot.WXMBootConfigurationExecutor;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
@@ -23,20 +24,33 @@ import com.io7m.waxmill.client.api.WXMClientType;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
+import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDryRun;
+import com.io7m.waxmill.machines.WXMTTYBackendFile;
+import com.io7m.waxmill.machines.WXMTTYBackends;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
+import com.io7m.waxmill.process.api.WXMProcessDescription;
 import com.io7m.waxmill.process.api.WXMProcessesType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMLPCTTYNames.WXM_COM1;
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
+import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
 
 public final class WXMClient implements WXMClientType
 {
+  private static final Logger LOG = LoggerFactory.getLogger(WXMClient.class);
+
   private final WXMClientConfiguration configuration;
   private final WXMVirtualMachineDatabaseType database;
   private final WXMProcessesType processes;
@@ -141,6 +155,92 @@ public final class WXMClient implements WXMClientType
   {
     Objects.requireNonNull(id, "id");
     this.database.vmDelete(id);
+  }
+
+  @Override
+  public Optional<WXMDeviceType> vmConsoleGet(
+    final WXMVirtualMachine machine)
+  {
+    Objects.requireNonNull(machine, "machine");
+
+    final var consoleDevices =
+      machine.devices()
+        .stream()
+        .filter(dev -> dev.kind() == WXM_LPC)
+        .map(WXMDeviceLPC.class::cast)
+        .filter(lpc -> lpc.backendMap().containsKey(WXM_COM1.deviceName()))
+        .collect(Collectors.toList());
+
+    final var deviceCount = consoleDevices.size();
+    LOG.debug(
+      "found {} console devices in machine {}",
+      Integer.valueOf(deviceCount),
+      machine.id()
+    );
+
+    if (deviceCount == 1) {
+      return Optional.of(consoleDevices.get(0));
+    }
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<WXMProcessDescription> vmConsole(
+    final WXMVirtualMachine machine)
+  {
+    Objects.requireNonNull(machine, "machine");
+
+    return this.vmConsoleGet(machine)
+      .map(WXMDeviceLPC.class::cast)
+      .flatMap(device -> this.handleLPCConsole(machine, device));
+  }
+
+  private Optional<WXMProcessDescription> handleLPCConsole(
+    final WXMVirtualMachine machine,
+    final WXMDeviceLPC device)
+  {
+    final var com1 = WXM_COM1.deviceName();
+    final var tty = device.backendMap().get(com1);
+    Objects.requireNonNull(tty, "tty");
+
+    switch (tty.kind()) {
+      case WXM_FILE: {
+        final var ttyFile = (WXMTTYBackendFile) tty;
+        return Optional.of(
+          WXMProcessDescription.builder()
+            .setExecutable(this.configuration.cuExecutable())
+            .addArguments("-l")
+            .addArguments(ttyFile.path().toString())
+            .build()
+        );
+      }
+
+      case WXM_NMDM:
+        final var fileSystem =
+          this.configuration.virtualMachineRuntimeDirectory()
+            .getFileSystem();
+
+        final var path =
+          WXMTTYBackends.nmdmPath(
+            fileSystem,
+            machine.id(),
+            NMDM_HOST
+          );
+
+        return Optional.of(
+          WXMProcessDescription.builder()
+            .setExecutable(this.configuration.cuExecutable())
+            .addArguments("-l")
+            .addArguments(path.toString())
+            .build()
+        );
+
+      case WXM_STDIO:
+        LOG.debug("cannot use a stdio-based console");
+        return Optional.empty();
+    }
+
+    throw new UnreachableCodeException();
   }
 
   @Override

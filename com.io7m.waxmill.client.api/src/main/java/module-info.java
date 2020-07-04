@@ -28,8 +28,9 @@ module com.io7m.waxmill.client.api
   requires com.io7m.jaffirm.core;
   requires com.io7m.jranges.core;
   requires com.io7m.junreachable.core;
-  requires com.io7m.waxmill.machines;
   requires com.io7m.waxmill.exceptions;
+  requires com.io7m.waxmill.machines;
+  requires com.io7m.waxmill.process.api;
 
   exports com.io7m.waxmill.client.api;
 }

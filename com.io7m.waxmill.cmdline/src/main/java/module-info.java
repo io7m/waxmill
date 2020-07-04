@@ -35,6 +35,7 @@ module com.io7m.waxmill.cmdline
   requires com.io7m.waxmill.client.api;
   requires com.io7m.waxmill.machines;
   requires com.io7m.waxmill.parser.api;
+  requires com.io7m.waxmill.process.api;
   requires com.io7m.waxmill.serializer.api;
   requires com.io7m.waxmill.strings.api;
   requires com.io7m.waxmill.xml;

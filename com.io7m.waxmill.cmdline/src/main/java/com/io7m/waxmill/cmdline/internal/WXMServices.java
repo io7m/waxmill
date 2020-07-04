@@ -21,6 +21,7 @@ import com.io7m.waxmill.client.api.WXMApplicationVersions;
 import com.io7m.waxmill.client.api.WXMClientProviderType;
 import com.io7m.waxmill.parser.api.WXMBootConfigurationParserProviderType;
 import com.io7m.waxmill.parser.api.WXMVirtualMachineParserProviderType;
+import com.io7m.waxmill.process.api.WXMProcessesType;
 import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 
 import java.io.IOException;
@@ -52,6 +53,11 @@ final class WXMServices
   public static WXMBootConfigurationParserProviderType bootConfigurationParsers()
   {
     return findService(WXMBootConfigurationParserProviderType.class);
+  }
+
+  public static WXMProcessesType processes()
+  {
+    return findService(WXMProcessesType.class);
   }
 
   private static <T> T findService(

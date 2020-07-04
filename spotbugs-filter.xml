@@ -282,4 +282,11 @@
     <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
   </Match>
 
+  <Match>
+    <!-- False positive: throwing UnreachableCodeException! -->
+    <Class name="com.io7m.waxmill.cmdline.internal.WXMCommandVMConsole"/>
+    <Method name="executeActualWithConfiguration"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_HAS_CHECKED"/>
+  </Match>
+
 </FindBugsFilter>

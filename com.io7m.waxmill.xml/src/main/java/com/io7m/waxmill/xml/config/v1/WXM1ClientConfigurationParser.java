@@ -100,6 +100,10 @@ public final class WXM1ClientConfigurationParser
           this.builder.setZfsExecutable(path.path());
           break;
         }
+        case "CuExecutable": {
+          this.builder.setCuExecutable(path.path());
+          break;
+        }
         default:
           throw context.parseException(
             new IllegalArgumentException(String.format(

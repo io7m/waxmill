@@ -47,6 +47,13 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:enumeration>
+      <xsd:enumeration value="CuExecutable">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the cu executable. On FreeBSD, this is /usr/bin/cu by default.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 

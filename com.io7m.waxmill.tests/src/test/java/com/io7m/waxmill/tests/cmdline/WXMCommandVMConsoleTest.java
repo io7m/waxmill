@@ -18,28 +18,20 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
-import com.io7m.waxmill.machines.WXMCPUTopology;
-import com.io7m.waxmill.machines.WXMFlags;
-import com.io7m.waxmill.machines.WXMMachineName;
-import com.io7m.waxmill.machines.WXMMemory;
-import com.io7m.waxmill.machines.WXMVirtualMachine;
-import com.io7m.waxmill.machines.WXMVirtualMachineSets;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
-import com.io7m.waxmill.xml.WXMVirtualMachineSerializers;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMCommandVMListTest
+public final class WXMCommandVMConsoleTest
 {
   private Path directory;
   private Path configFile;
@@ -63,6 +55,9 @@ public final class WXMCommandVMListTest
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
         .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
+        .setZfsExecutable(Paths.get("/bin/echo"))
+        .setGrubBhyveExecutable(Paths.get("/bin/echo"))
+        .setBhyveExecutable(Paths.get("/bin/echo"))
         .build();
 
     new WXMClientConfigurationSerializers()
@@ -74,24 +69,19 @@ public final class WXMCommandVMListTest
   }
 
   @Test
-  public void listNoConfiguration()
+  public void runTooFewArguments()
   {
-    Assumptions.assumeFalse(
-      System.getenv("WAXMILL_CONFIGURATION_FILE") == null,
-      "WAXMILL_CONFIGURATION_FILE environment variable must be undefined"
-    );
-
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-list"
+          "vm-console"
         }
       );
     });
   }
 
   @Test
-  public void listConfigurationFileMissing()
+  public void runConfigurationFileMissing()
     throws IOException
   {
     Files.deleteIfExists(this.configFile);
@@ -99,9 +89,11 @@ public final class WXMCommandVMListTest
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-list",
+          "vm-console",
           "--verbose",
           "trace",
+          "--machine",
+          UUID.randomUUID().toString(),
           "--configuration",
           this.configFile.toString()
         }
@@ -110,49 +102,94 @@ public final class WXMCommandVMListTest
   }
 
   @Test
-  public void listIsEmpty()
-    throws IOException
-  {
-    MainExitless.main(
-      new String[]{
-        "vm-list",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString()
-      }
-    );
-  }
-
-  @Test
-  public void listNotEmpty()
+  public void runNoConsoleDevice()
     throws IOException
   {
     final var id = UUID.randomUUID();
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2"
+      }
+    );
 
-    new WXMVirtualMachineSerializers()
-      .serialize(
-        this.vmDirectory.resolve(id + ".wvmx"),
-        this.vmDirectory.resolve(id + ".wvmx.tmp"),
-        WXMVirtualMachineSets.one(
-          WXMVirtualMachine.builder()
-            .setId(id)
-            .setName(WXMMachineName.of("abcd"))
-            .setCpuTopology(WXMCPUTopology.builder().build())
-            .setMemory(WXMMemory.builder()
-                         .setMegabytes(BigInteger.TEN)
-                         .setGigabytes(BigInteger.ONE)
-                         .build())
-            .setFlags(WXMFlags.builder().build())
-            .build()
-        )
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-console",
+          "--verbose",
+          "trace",
+          "--machine",
+          id.toString(),
+          "--configuration",
+          this.configFile.toString()
+        }
       );
+    });
+  }
+
+  @Test
+  public void runNoConsoleDeviceDryRun()
+    throws IOException
+  {
+    final var id = UUID.randomUUID();
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2"
+      }
+    );
 
     MainExitless.main(
       new String[]{
-        "vm-list",
+        "vm-add-lpc-device",
         "--verbose",
         "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--add-backend",
+        "file;com1;/tmp/xyz",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-console",
+        "--verbose",
+        "trace",
+        "--dry-run",
+        "--machine",
+        id.toString(),
         "--configuration",
         this.configFile.toString()
       }

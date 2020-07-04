@@ -24,6 +24,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIOptical;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddLPC;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioNetworkDevice;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMConsole;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDefine;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDelete;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteBootConfigurations;
@@ -67,6 +68,7 @@ public final class Main implements Runnable
         .addCommands(WXMCommandVMAddLPC::new)
         .addCommands(WXMCommandVMAddVirtioDisk::new)
         .addCommands(WXMCommandVMAddVirtioNetworkDevice::new)
+        .addCommands(WXMCommandVMConsole::new)
         .addCommands(WXMCommandVMDefine::new)
         .addCommands(WXMCommandVMDelete::new)
         .addCommands(WXMCommandVMDeleteBootConfigurations::new)

@@ -18,10 +18,12 @@ package com.io7m.waxmill.client.api;
 
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
+import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDryRun;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.machines.WXMVirtualMachineSets;
+import com.io7m.waxmill.process.api.WXMProcessDescription;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -148,4 +150,31 @@ public interface WXMClientType extends AutoCloseable
 
   void vmDelete(UUID id)
     throws WXMException;
+
+  /**
+   * Return the primary console device of the given virtual machine. The method
+   * will return nothing if the machine has no console device, or if the
+   * machine has more than one potential console.
+   *
+   * @param machine The virtual machine
+   *
+   * @return A process execution
+   */
+
+  Optional<WXMDeviceType> vmConsoleGet(
+    WXMVirtualMachine machine);
+
+  /**
+   * Return a process description that, when executed, will give access to
+   * the primary console of the given virtual machine. The method will return
+   * nothing if the machine has no console device, or if the machine has more
+   * than one potential console.
+   *
+   * @param machine The virtual machine
+   *
+   * @return A process execution
+   */
+
+  Optional<WXMProcessDescription> vmConsole(
+    WXMVirtualMachine machine);
 }

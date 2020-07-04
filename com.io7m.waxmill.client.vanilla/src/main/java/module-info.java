@@ -31,6 +31,7 @@ module com.io7m.waxmill.client.vanilla
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
+  requires com.io7m.junreachable.core;
   requires com.io7m.waxmill.boot;
   requires com.io7m.waxmill.client.api;
   requires com.io7m.waxmill.database.api;
@@ -39,6 +40,7 @@ module com.io7m.waxmill.client.vanilla
   requires com.io7m.waxmill.parser.api;
   requires com.io7m.waxmill.process.api;
   requires com.io7m.waxmill.serializer.api;
+  requires org.slf4j;
 
   uses WXMClientConfigurationParserProviderType;
   uses WXMClientConfigurationSerializerProviderType;

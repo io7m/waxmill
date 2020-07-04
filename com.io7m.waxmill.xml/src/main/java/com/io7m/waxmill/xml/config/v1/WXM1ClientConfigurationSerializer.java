@@ -104,6 +104,10 @@ public final class WXM1ClientConfigurationSerializer
       "ZFSExecutable",
       this.clientConfiguration.zfsExecutable()
     );
+    this.serializePath(
+      "CuExecutable",
+      this.clientConfiguration.cuExecutable()
+    );
     this.writer.writeEndElement();
   }
 

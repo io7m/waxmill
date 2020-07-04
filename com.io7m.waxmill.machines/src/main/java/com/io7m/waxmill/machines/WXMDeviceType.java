@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -89,6 +90,26 @@ public interface WXMDeviceType
       case WXM_VIRTIO_BLOCK:
       case WXM_AHCI_HD:
       case WXM_AHCI_CD:
+        return true;
+    }
+
+    throw new UnreachableCodeException();
+  }
+
+  /**
+   * @return {@code true} if this device is a console/tty device
+   */
+
+  default boolean isConsoleDevice()
+  {
+    switch (this.kind()) {
+      case WXM_HOSTBRIDGE:
+      case WXM_VIRTIO_NETWORK:
+      case WXM_VIRTIO_BLOCK:
+      case WXM_AHCI_HD:
+      case WXM_AHCI_CD:
+        return false;
+      case WXM_LPC:
         return true;
     }
 
@@ -577,6 +598,27 @@ public interface WXMDeviceType
     default String comment()
     {
       return "";
+    }
+  }
+
+  enum WXMLPCTTYNames
+  {
+    WXM_COM1("com1"),
+    WXM_COM2("com2"),
+    WXM_BOOTROM("bootrom");
+
+    private final String deviceName;
+
+    public String deviceName()
+    {
+      return this.deviceName;
+    }
+
+    WXMLPCTTYNames(
+      final String inDeviceName)
+    {
+      this.deviceName =
+        Objects.requireNonNull(inDeviceName, "deviceName");
     }
   }
 

@@ -86,6 +86,18 @@ public interface WXMClientConfigurationType
   }
 
   /**
+   * @return The "cu" executable path, such as {@code /usr/bin/cu}
+   */
+
+  @Value.Default
+  default Path cuExecutable()
+  {
+    return this.virtualMachineConfigurationDirectory()
+      .getFileSystem()
+      .getPath("/usr/bin/cu");
+  }
+
+  /**
    * Derive a runtime directory for a specific virtual machine.
    *
    * @param machineId The machine ID

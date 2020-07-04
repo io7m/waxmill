@@ -91,6 +91,13 @@ Received:
   {1}
 ]]></entry>
 
+  <entry key="errorNoSingleConsole"><![CDATA[No single unambiguous console device is available.
+  Machine:           {0}
+  Possible consoles: {1}
+
+It may be that the machine has no console devices, or it may be that it has multiple console
+devices and no single device is more suitable than any other.]]></entry>
+
   <entry key="errorBootConfigurationNonexistent">No boot configuration exists with the given name: {0}</entry>
   <entry key="errorBootConfigurationAlreadyExists">A boot configuration already exists with the given name: {0}</entry>
   <entry key="errorDeviceNamesUnique">Backend device names must be unique: {0}</entry>

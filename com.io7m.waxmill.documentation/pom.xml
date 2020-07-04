@@ -30,7 +30,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.waxmill.database.vanilla</artifactId>
+      <artifactId>com.io7m.waxmill.client.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -40,12 +40,32 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.waxmill.machines</artifactId>
+      <artifactId>com.io7m.waxmill.cmdline</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.waxmill.client.api</artifactId>
+      <artifactId>com.io7m.waxmill.database.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.waxmill.database.vanilla</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.waxmill.exceptions</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.waxmill.locks</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.waxmill.machines</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -55,12 +75,22 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.waxmill.cmdline</artifactId>
+      <artifactId>com.io7m.waxmill.process.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.waxmill.process.posix</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.waxmill.serializer.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.waxmill.strings.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -284,5 +314,5 @@
       </plugin>
     </plugins>
   </build>
-  
+
 </project>
