@@ -98,6 +98,9 @@ Received:
 It may be that the machine has no console devices, or it may be that it has multiple console
 devices and no single device is more suitable than any other.]]></entry>
 
+  <entry key="errorNoMachinesWithName"><![CDATA[No virtual machines exist with the given name.
+  Name:  {0}]]></entry>
+
   <entry key="errorBootConfigurationNonexistent">No boot configuration exists with the given name: {0}</entry>
   <entry key="errorBootConfigurationAlreadyExists">A boot configuration already exists with the given name: {0}</entry>
   <entry key="errorDeviceNamesUnique">Backend device names must be unique: {0}</entry>

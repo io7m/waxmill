@@ -19,39 +19,30 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
-import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.machines.WXMDeviceType;
+import com.io7m.waxmill.machines.WXMMachineName;
+import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
-@Parameters(commandDescription = "Connect to the console of a virtual machine")
-public final class WXMCommandVMConsole
-  extends WXMAbstractCommandWithConfiguration
+@Parameters(commandDescription = "List the virtual machines with the given name.")
+public final class WXMCommandVMListWithName extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMCommandVMConsole.class);
+    LoggerFactory.getLogger(WXMCommandVMListWithName.class);
 
   @Parameter(
-    names = "--machine",
-    description = "The ID of the virtual machine",
+    names = "--name",
+    description = "The name of the virtual machine",
     required = true,
-    converter = WXMUUIDConverter.class
+    converter = WXMMachineNameConverter.class
   )
-  private UUID id;
-
-  @Parameter(
-    names = "--dry-run",
-    description = "Show the commands that would be executed, but do not execute them.",
-    required = false
-  )
-  private boolean dryRun;
+  private WXMMachineName name;
 
   /**
    * Construct a command.
@@ -59,7 +50,7 @@ public final class WXMCommandVMConsole
    * @param inContext The command context
    */
 
-  public WXMCommandVMConsole(
+  public WXMCommandVMListWithName(
     final CLPCommandContextType inContext)
   {
     super(LOG, inContext);
@@ -68,7 +59,7 @@ public final class WXMCommandVMConsole
   @Override
   public String name()
   {
-    return "vm-console";
+    return "vm-list-with-name";
   }
 
   @Override
@@ -76,36 +67,31 @@ public final class WXMCommandVMConsole
     final Path configurationPath)
     throws Exception
   {
-    final var processes = WXMServices.processes();
-
+    var found = false;
     try (var client = WXMServices.clients().open(configurationPath)) {
-      final var machine = client.vmFind(this.id);
-      final var processOpt = client.vmConsole(machine);
-
-      if (processOpt.isEmpty()) {
-        this.error(
-          "errorNoSingleConsole",
-          this.id,
-          machine.devices()
-            .stream()
-            .filter(WXMDeviceType::isConsoleDevice)
-            .collect(Collectors.toList())
-        );
-        return FAILURE;
-      }
-
-      final var process = processOpt.get();
-      if (this.dryRun) {
-        System.out.printf(
-          "%s %s%n",
-          process.executable(),
-          String.join(" ", process.arguments())
-        );
-        return SUCCESS;
-      }
-
-      processes.processReplaceCurrent(process);
-      throw new UnreachableCodeException();
+      final var machineSet = client.vmList();
+      found = this.showMachines(machineSet);
     }
+
+    if (!found) {
+      this.error("errorNoMachinesWithName", this.name.value());
+      return FAILURE;
+    }
+    return SUCCESS;
+  }
+
+  private boolean showMachines(
+    final WXMVirtualMachineSet machineSet)
+  {
+    var found = false;
+    for (final var entry : machineSet.machines().entrySet()) {
+      final var id = entry.getKey();
+      final var machine = entry.getValue();
+      if (Objects.equals(machine.name(), this.name)) {
+        System.out.printf("%s%n", id);
+        found = true;
+      }
+    }
+    return found;
   }
 }
