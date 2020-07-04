@@ -63,6 +63,12 @@ public final class WXMCommandVMListWithName extends WXMAbstractCommandWithConfig
   }
 
   @Override
+  public String extendedHelp()
+  {
+    return this.messages().format("vmListWithNameHelp");
+  }
+
+  @Override
   protected Status executeActualWithConfiguration(
     final Path configurationPath)
     throws Exception

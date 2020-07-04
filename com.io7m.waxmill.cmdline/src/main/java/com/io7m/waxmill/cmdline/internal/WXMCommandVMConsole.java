@@ -53,6 +53,12 @@ public final class WXMCommandVMConsole
   )
   private boolean dryRun;
 
+  @Override
+  public String extendedHelp()
+  {
+    return this.messages().format("vmConsole");
+  }
+
   /**
    * Construct a command.
    *
