@@ -11,6 +11,8 @@
     <dc:description>User documentation for the ${project.groupId} package.</dc:description>
   </Metadata>
 
+  <xi:include href="orientation.xml"/>
+  <xi:include href="usage.xml"/>
   <xi:include href="cmdline.xml"/>
   <xi:include href="api.xml"/>
 

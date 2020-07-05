@@ -1,0 +1,5 @@
+(Formatted for legibility)
+
+$ waxmill vm-realize \
+  --machine 538a90e4-d50d-4511-8643-ae418279bac4 \
+  --dry-run

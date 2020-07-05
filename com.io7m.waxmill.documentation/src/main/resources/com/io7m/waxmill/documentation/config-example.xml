@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration xmlns="urn:com.io7m.waxmill.config:1:0">
+  <Paths>
+    <Path type="ZFSExecutable"
+          value="/sbin/zfs"/>
+    <Path type="GRUBBhyveExecutable"
+          value="/usr/local/sbin/grub-bhyve"/>
+    <Path type="BhyveExecutable"
+          value="/usr/sbin/bhyve"/>
+    <Path type="CuExecutable"
+          value="/usr/bin/cu"/>
+    <Path type="VirtualMachineConfigurationDirectory"
+          value="/etc/waxmill/vm"/>
+    <Path type="VirtualMachineRuntimeDirectory"
+          value="/storage/vm"/>
+  </Paths>
+</Configuration>

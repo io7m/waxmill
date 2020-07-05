@@ -64,6 +64,7 @@
   <xi:include href="cmdline-vm-import.xml" />
   <xi:include href="cmdline-vm-list-with-name.xml" />
   <xi:include href="cmdline-vm-list.xml" />
+  <xi:include href="cmdline-vm-realize.xml" />
   <xi:include href="cmdline-vm-run.xml" />
   <xi:include href="cmdline-vm-update-boot-configurations.xml" />
 

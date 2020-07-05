@@ -21,10 +21,17 @@
 
 .command,
 .constant,
+.expression,
 .package,
-.parameter
+.parameter,
+.function
 {
   font-family: monospace;
+}
+
+.term
+{
+  font-style: italic;
 }
 
 .parameterType {
