@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
+         id="892c105a-d17f-4bf8-a278-fa887fbc4642"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          title="vm-add-ahci-optical">
 

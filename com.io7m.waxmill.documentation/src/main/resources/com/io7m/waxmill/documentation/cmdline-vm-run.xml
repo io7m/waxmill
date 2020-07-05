@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
+         id="60ee3ff2-b938-45da-a1c2-e9bf3bd02d73"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          title="vm-run">
 

@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
-         id="faebdfac-68e0-49af-a0ca-dbede6a2c335"
+         id="a90f13cf-e648-4076-8ebc-02134e37bea4"
          xmlns:xi="http://www.w3.org/2001/XInclude"
-         title="vm-add-virtio-disk">
+         title="vm-delete-boot-configurations">
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="command">vm-add-virtio-disk</Term>
-      - Add a Virtio disk to a virtual machine
+      <Term type="command">vm-delete-boot-configurations</Term>
+      - Delete boot configurations for a virtual machine
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="command">vm-add-virtio-disk</Term> command adds a disk to a virtual machine. The disk is a
-      <LinkExternal target="https://wiki.libvirt.org/page/Virtio">Virtio</LinkExternal> block storage device and,
-      as such, requires a driver in the guest operating system that is capable of supporting Virtio.
+      The <Term type="command">vm-delete-boot-configurations</Term> removes boot configurations from a given
+      virtual machine.
     </Paragraph>
-    <FormalItem title="Parameters" type="parametersTable">
+
+    <FormalItem title="Parameters"
+                type="parametersTable">
       <Table type="parametersTable">
         <Columns>
           <Column>Parameter</Column>
@@ -26,30 +27,6 @@
           <Column>Required</Column>
           <Column>Description</Column>
         </Columns>
-        <Row>
-          <Cell>
-            <Term type="parameter">--backend</Term>
-          </Cell>
-          <Cell>
-            <Term type="parameterType">Storage Backend</Term>
-          </Cell>
-          <Cell>
-            <Term type="constant">true</Term>
-          </Cell>
-          <Cell>A specification of the Virtio storage device backend to add</Cell>
-        </Row>
-        <Row>
-          <Cell>
-            <Term type="parameter">--comment</Term>
-          </Cell>
-          <Cell>
-            <Term type="parameterType">String</Term>
-          </Cell>
-          <Cell>
-            <Term type="constant">false</Term>
-          </Cell>
-          <Cell>A comment describing the new disk</Cell>
-        </Row>
         <Row>
           <Cell>
             <Term type="parameter">--configuration</Term>
@@ -64,15 +41,15 @@
         </Row>
         <Row>
           <Cell>
-            <Term type="parameter">--device-slot</Term>
+            <Term type="parameter">--file</Term>
           </Cell>
           <Cell>
-            <Term type="parameterType">Device Slot</Term>
+            <Term type="parameterType">Path</Term>
           </Cell>
           <Cell>
             <Term type="constant">true</Term>
           </Cell>
-          <Cell>The slot to which the device will be attached.</Cell>
+          <Cell>A file containing boot configurations</Cell>
         </Row>
         <Row>
           <Cell>
@@ -88,15 +65,15 @@
         </Row>
         <Row>
           <Cell>
-            <Term type="parameter">--open-option</Term>
+            <Term type="parameter">--name</Term>
           </Cell>
           <Cell>
-            <Term type="parameterType">OpenOption</Term>
+            <Term type="parameterType">Boot Configuration</Term>
           </Cell>
           <Cell>
             <Term type="constant">false</Term>
           </Cell>
-          <Cell>The options that will be used when opening the storage device.</Cell>
+          <Cell>The names of boot configurations</Cell>
         </Row>
         <Row>
           <Cell>
@@ -112,24 +89,13 @@
         </Row>
       </Table>
     </FormalItem>
-
-    <FormalItem title="Device Slot Syntax">
-      <Verbatim>
-        <xi:include parse="text"
-                    href="device-slot-syntax.txt"/>
-      </Verbatim>
-    </FormalItem>
-
-    <FormalItem title="Open Options">
-      <xi:include href="open-options.xml"/>
-    </FormalItem>
   </Subsection>
 
   <Subsection title="Example">
     <FormalItem title="Example">
       <Verbatim>
         <xi:include parse="text"
-                    href="cmdline-vm-add-virtio-disk-output.txt"/>
+                    href="cmdline-vm-delete-boot-configurations-output.txt"/>
       </Verbatim>
     </FormalItem>
   </Subsection>

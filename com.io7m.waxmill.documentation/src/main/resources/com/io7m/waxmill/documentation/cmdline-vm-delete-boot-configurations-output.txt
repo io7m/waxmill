@@ -1,0 +1,5 @@
+$ waxmill vm-delete-boot-configurations --machine 538a90e4-d50d-4511-8643-ae418279bac4 --name nonexistent
+ERROR com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteBootConfigurations: No boot configuration exists with the given name: nonexistent
+
+$ waxmill vm-delete-boot-configurations --machine 538a90e4-d50d-4511-8643-ae418279bac4 --name install
+INFO com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteBootConfigurations: Deleted boot configuration: install

@@ -92,7 +92,7 @@ public final class WXMCommandVMDeleteBootConfigurations
 
       for (final var name : this.configurationNames) {
         if (!currentConfigurations.containsKey(name)) {
-          this.error("errorBootConfigurationNonexistent", name);
+          this.error("errorBootConfigurationNonexistent", name.value());
           failed = true;
           continue;
         }

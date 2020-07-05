@@ -47,7 +47,7 @@ public final class WXMDocumentationGeneration
     final var command =
       new Main(args)
         .commands()
-        .get("vm-add-virtio-network-device");
+        .get("vm-define");
 
     final var fields = new TreeSet<ParameterField>();
     collectFields(command, command.getClass(), fields);

@@ -1,0 +1,18 @@
+$ waxmill vm-list
+# ID                                     Name
+800a2dad-3367-4a98-879a-0fac219f55f4     com.io7m.example2
+538a90e4-d50d-4511-8643-ae418279bac4     com.io7m.example
+6730354e-bcba-4636-ab07-ad853c375f7d     com.io7m.example3
+
+$ waxmill vm-delete --machine 6730354e-bcba-4636-ab07-ad853c375f7d
+
+$ waxmill vm-list
+# ID                                     Name
+800a2dad-3367-4a98-879a-0fac219f55f4     com.io7m.example2
+538a90e4-d50d-4511-8643-ae418279bac4     com.io7m.example
+
+$ waxmill vm-delete --machine 6730354e-bcba-4636-ab07-ad853c375f7d
+ERROR com.io7m.waxmill.cmdline.Main: com.io7m.waxmill.exceptions.WXMExceptionNonexistent: The specified machine does not exist.
+  Machine: 6730354e-bcba-4636-ab07-ad853c375f7d
+
+ERROR com.io7m.waxmill.cmdline.Main: Caused by: java.nio.file.NoSuchFileException: /etc/waxmill/vm/6730354e-bcba-4636-ab07-ad853c375f7d.wvmx

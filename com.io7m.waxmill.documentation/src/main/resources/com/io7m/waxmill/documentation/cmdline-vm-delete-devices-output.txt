@@ -1,0 +1,10 @@
+$ waxmill vm-delete-devices --machine 538a90e4-d50d-4511-8643-ae418279bac4 --device-slot 0:10:0
+ERROR com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteDevice: Device does not exist: 0:10:0
+
+$ waxmill vm-delete-devices --machine 538a90e4-d50d-4511-8643-ae418279bac4 --device-slot 0:3:0
+INFO com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteDevice: Deleted device 0:3:0
+
+$ waxmill vm-delete-devices --machine 538a90e4-d50d-4511-8643-ae418279bac4 --device-slot 0:2:0
+ERROR com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteDevice: One or more boot configurations are using the device.
+  Device:              0:2:0
+  Boot configurations: [run]

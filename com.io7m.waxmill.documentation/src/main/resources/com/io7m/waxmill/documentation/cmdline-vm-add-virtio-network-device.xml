@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
+         id="82039dec-47cf-4bb9-a5ae-c88bc12753c3"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          title="vm-add-virtio-network-device">
 

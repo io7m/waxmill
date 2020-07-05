@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
+         id="8e9f4316-a90c-46f4-b06d-7f213d0dd997"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          title="vm-add-ahci-disk">
 

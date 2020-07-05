@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
-         id="22388d06-bf5a-4d35-ae75-80303a670ea3"
+         id="f60ab9eb-e81b-4a96-a90f-67647cdcfcbe"
          xmlns:xi="http://www.w3.org/2001/XInclude"
-         title="vm-add-lpc-device">
+         title="vm-delete-devices">
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="command">vm-add-lpc-device</Term>
-      - Add an LPC device to a virtual machine
+      <Term type="command">vm-delete-devices</Term>
+      - Delete devices from a virtual machine
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="command">vm-add-lpc-device</Term> command adds an LPC device to a virtual machine. The BHyve
-      documentation describes such devices as <Term type="quote">"LPC PCI-ISA bridges with COM1 and COM2 16550 serial
-      ports and a boot ROM"</Term>. In practice, LPC devices are used to provide console access to virtual machines, and
-      <LinkExternal target="https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface">UEFI</LinkExternal>
-      firmware to virtual machines that are booting from UEFI.
+      The <Term type="command">vm-delete-devices</Term> removes devices from a given virtual machine. If any of the
+      specified devices are referenced by a boot configuration on the virtual machine, the boot configuration must first
+      either be deleted, or modified such that it no longer refers to the device.
     </Paragraph>
 
     <FormalItem title="Parameters"
@@ -30,30 +28,6 @@
           <Column>Required</Column>
           <Column>Description</Column>
         </Columns>
-        <Row>
-          <Cell>
-            <Term type="parameter">--add-backend</Term>
-          </Cell>
-          <Cell>
-            <Term type="parameterType">TTY Backend</Term>
-          </Cell>
-          <Cell>
-            <Term type="constant">true</Term>
-          </Cell>
-          <Cell>A specification of the TTY device backend to add</Cell>
-        </Row>
-        <Row>
-          <Cell>
-            <Term type="parameter">--comment</Term>
-          </Cell>
-          <Cell>
-            <Term type="parameterType">String</Term>
-          </Cell>
-          <Cell>
-            <Term type="constant">false</Term>
-          </Cell>
-          <Cell>A comment describing the new device</Cell>
-        </Row>
         <Row>
           <Cell>
             <Term type="parameter">--configuration</Term>
@@ -74,9 +48,9 @@
             <Term type="parameterType">Device Slot</Term>
           </Cell>
           <Cell>
-            <Term type="constant">true</Term>
+            <Term type="constant">false</Term>
           </Cell>
-          <Cell>The slot to which the device will be attached.</Cell>
+          <Cell>The devices to remove</Cell>
         </Row>
         <Row>
           <Cell>
@@ -104,27 +78,13 @@
         </Row>
       </Table>
     </FormalItem>
-
-    <FormalItem title="Device Slot Syntax">
-      <Verbatim>
-        <xi:include parse="text"
-                    href="device-slot-syntax.txt"/>
-      </Verbatim>
-    </FormalItem>
-
-    <FormalItem title="TTY Backend Syntax">
-      <Verbatim>
-        <xi:include parse="text"
-                    href="lpc-syntax.txt"/>
-      </Verbatim>
-    </FormalItem>
   </Subsection>
 
   <Subsection title="Example">
     <FormalItem title="Example">
       <Verbatim>
         <xi:include parse="text"
-                    href="cmdline-vm-add-lpc-output.txt"/>
+                    href="cmdline-vm-delete-devices-output.txt"/>
       </Verbatim>
     </FormalItem>
   </Subsection>

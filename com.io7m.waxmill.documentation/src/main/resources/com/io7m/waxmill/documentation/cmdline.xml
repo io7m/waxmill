@@ -56,6 +56,15 @@
   <xi:include href="cmdline-vm-add-virtio-disk.xml" />
   <xi:include href="cmdline-vm-add-virtio-network-device.xml" />
   <xi:include href="cmdline-vm-console.xml" />
+  <xi:include href="cmdline-vm-define.xml" />
+  <xi:include href="cmdline-vm-delete-boot-configurations.xml" />
+  <xi:include href="cmdline-vm-delete-devices.xml"/>
+  <xi:include href="cmdline-vm-delete.xml" />
+  <xi:include href="cmdline-vm-export.xml" />
+  <xi:include href="cmdline-vm-import.xml" />
+  <xi:include href="cmdline-vm-list-with-name.xml" />
+  <xi:include href="cmdline-vm-list.xml" />
   <xi:include href="cmdline-vm-run.xml" />
+  <xi:include href="cmdline-vm-update-boot-configurations.xml" />
 
 </Section>
