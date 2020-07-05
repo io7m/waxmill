@@ -20,7 +20,7 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import org.xml.sax.Attributes;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
+import com.io7m.waxmill.machines.WXMOpenOption;
 
 public final class WXM1OpenOptionParser
   implements BTElementHandlerType<Object, WXMOpenOption>

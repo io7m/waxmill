@@ -1,147 +1,42 @@
-Usage: brooklime [options] [command] [command options]
+INFO com.io7m.waxmill.cmdline.Main: Usage: waxmill [options] [command] [command options]
+
   Options:
     --verbose
-      Set the minimum logging verbosity level
+      Set the minimum logging verbosity level.
       Default: info
       Possible Values: [trace, debug, info, warn, error]
+
+  Use the "help" command to examine specific commands:
+
+    $ waxmill help help.
+
+  Command-line arguments can be placed one per line into a file, and the file
+  can be referenced using the @ symbol:
+
+    $ echo help > file.txt
+    $ echo help >> file.txt
+    $ cex @file.txt
+
   Commands:
-    close      Close an existing staging repository
-      Usage: close [options]
-        Options:
-          --baseURI
-            The Nexus URI
-            Default: https://oss.sonatype.org:443/
-        * --password
-            The Nexus password
-        * --repository
-            The staging repository ID
-        * --stagingProfileId
-            The Nexus staging profile id
-        * --user
-            The Nexus user name
-          --verbose
-            Set the minimum logging verbosity level
-            Default: info
-            Possible Values: [trace, debug, info, warn, error]
+    help                              Show detailed help messages for commands.
+    schema                            Export schemas.
+    version                           Show the application version.
+    vm-add-ahci-disk                  Add an AHCI disk to a virtual machine.
+    vm-add-ahci-optical               Add an AHCI optical drive to a virtual machine.
+    vm-add-lpc-device                 Add an LPC device to a virtual machine.
+    vm-add-virtio-disk                Add a virtio disk to a virtual machine.
+    vm-add-virtio-network-device      Add a virtio network device to a virtual machine.
+    vm-console                        Connect to the console of a virtual machine
+    vm-define                         Define a new virtual machine.
+    vm-delete                         Delete a virtual machine.
+    vm-delete-boot-configurations     Delete boot configurations from a virtual machine.
+    vm-delete-devices                 Delete devices from virtual machines.
+    vm-export                         Export virtual machine descriptions.
+    vm-import                         Import virtual machine descriptions.
+    vm-list                           List the available virtual machines.
+    vm-list-with-name                 List the virtual machines with the given name.
+    vm-run                            Run a virtual machine.
+    vm-update-boot-configurations     Add/replace boot configurations in a virtual machine.
 
-    create      Create a staging repository
-      Usage: create [options]
-        Options:
-          --baseURI
-            The Nexus URI
-            Default: https://oss.sonatype.org:443/
-        * --description
-            The staging repository description
-        * --password
-            The Nexus password
-        * --stagingProfileId
-            The Nexus staging profile id
-        * --user
-            The Nexus user name
-          --verbose
-            Set the minimum logging verbosity level
-            Default: info
-            Possible Values: [trace, debug, info, warn, error]
-
-    drop      Drop an existing staging repository
-      Usage: drop [options]
-        Options:
-          --baseURI
-            The Nexus URI
-            Default: https://oss.sonatype.org:443/
-        * --password
-            The Nexus password
-        * --repository
-            The staging repository ID
-        * --stagingProfileId
-            The Nexus staging profile id
-        * --user
-            The Nexus user name
-          --verbose
-            Set the minimum logging verbosity level
-            Default: info
-            Possible Values: [trace, debug, info, warn, error]
-
-    list      List the current staging repositories
-      Usage: list [options]
-        Options:
-          --baseURI
-            The Nexus URI
-            Default: https://oss.sonatype.org:443/
-        * --password
-            The Nexus password
-        * --stagingProfileId
-            The Nexus staging profile id
-        * --user
-            The Nexus user name
-          --verbose
-            Set the minimum logging verbosity level
-            Default: info
-            Possible Values: [trace, debug, info, warn, error]
-
-    release      Release an existing staging repository
-      Usage: release [options]
-        Options:
-          --baseURI
-            The Nexus URI
-            Default: https://oss.sonatype.org:443/
-        * --password
-            The Nexus password
-        * --repository
-            The staging repository ID
-        * --stagingProfileId
-            The Nexus staging profile id
-        * --user
-            The Nexus user name
-          --verbose
-            Set the minimum logging verbosity level
-            Default: info
-            Possible Values: [trace, debug, info, warn, error]
-
-    show      Show an existing staging repository
-      Usage: show [options]
-        Options:
-          --baseURI
-            The Nexus URI
-            Default: https://oss.sonatype.org:443/
-        * --password
-            The Nexus password
-        * --repository
-            The staging repository ID
-        * --stagingProfileId
-            The Nexus staging profile id
-        * --user
-            The Nexus user name
-          --verbose
-            Set the minimum logging verbosity level
-            Default: info
-            Possible Values: [trace, debug, info, warn, error]
-
-    upload      Upload files to an existing staging repository
-      Usage: upload [options]
-        Options:
-          --baseURI
-            The Nexus URI
-            Default: https://oss.sonatype.org:443/
-        * --directory
-            The directory containing files to be uploaded
-        * --password
-            The Nexus password
-        * --repository
-            The staging repository ID
-        * --stagingProfileId
-            The Nexus staging profile id
-        * --user
-            The Nexus user name
-          --verbose
-            Set the minimum logging verbosity level
-            Default: info
-            Possible Values: [trace, debug, info, warn, error]
-
-    version      Show the application version
-      Usage: version [options]
-        Options:
-          --verbose
-            Set the minimum logging verbosity level
-            Default: info
-            Possible Values: [trace, debug, info, warn, error]
+  Documentation:
+    https://www.io7m.com/software/waxmill/documentation/

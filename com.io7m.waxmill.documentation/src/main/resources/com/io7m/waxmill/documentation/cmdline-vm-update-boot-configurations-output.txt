@@ -1,0 +1,26 @@
+$ cat boot.xml
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<BootConfigurations xmlns="urn:com.io7m.waxmill.vm:1:0">
+  <BootConfigurationGRUBBhyve name="install">
+    <GRUBBhyveKernelOpenBSD>
+      <BSDBootDevice kernelPath="/bsd.rd">
+        <DeviceSlot bus="0"
+                    slot="4"
+                    function="0"/>
+      </BSDBootDevice>
+    </GRUBBhyveKernelOpenBSD>
+  </BootConfigurationGRUBBhyve>
+</BootConfigurations>
+
+$ waxmill vm-update-boot-configurations --machine 538a90e4-d50d-4511-8643-ae418279bac4 --file boot.xml
+INFO com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations: Parsed 1 boot configurations
+INFO com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations: Added new boot configuration: install
+
+$ waxmill vm-update-boot-configurations --machine 538a90e4-d50d-4511-8643-ae418279bac4 --file boot.xml
+INFO com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations: Parsed 1 boot configurations
+ERROR com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations: A boot configuration already exists with the given name: install
+
+$ waxmill vm-update-boot-configurations --machine 538a90e4-d50d-4511-8643-ae418279bac4 --file boot.xml --update
+INFO com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations: Parsed 1 boot configurations
+INFO com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations: Updated boot configuration: install

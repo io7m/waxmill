@@ -1,0 +1,11 @@
+  "stdio" ";" <port>
+| "file" ";" <port> ";" <path>
+| "nmdm" ";" <port>
+
+Where:
+  <port> = "com1" | "com2" | "bootrom"
+
+Examples:
+  stdio;com1
+  file;bootrom;/tmp/xyz
+  nmdm;com2

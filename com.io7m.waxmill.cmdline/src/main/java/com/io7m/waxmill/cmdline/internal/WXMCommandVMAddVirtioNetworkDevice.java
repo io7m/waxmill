@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
@@ -94,7 +95,11 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   @Override
   public String extendedHelp()
   {
-    return this.messages().format("virtioNetworkBackendSpec");
+    final var messages = this.messages();
+    return String.join("", List.of(
+      messages.format("vmAddVirtioNetworkDeviceHelp"),
+      messages.format("virtioNetworkBackendSpec")
+    ));
   }
 
   @Override

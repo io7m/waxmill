@@ -38,7 +38,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendFileType.WXMOpenOption;
+
+import com.io7m.waxmill.machines.WXMOpenOption;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMStorageBackends.determineZFSVolumePath;
 
@@ -107,7 +108,11 @@ public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfi
   @Override
   public String extendedHelp()
   {
-    return this.messages().format("storageBackendSpec");
+    final var messages = this.messages();
+    return String.join("", List.of(
+      messages.format("vmAddVirtioDiskHelp"),
+      messages.format("storageBackendSpec")
+    ));
   }
 
   private void showCreated(

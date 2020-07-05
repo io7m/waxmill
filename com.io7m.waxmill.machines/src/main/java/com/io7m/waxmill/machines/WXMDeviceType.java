@@ -382,25 +382,6 @@ public interface WXMDeviceType
       );
     }
 
-    enum WXMOpenOption
-    {
-      NO_CACHE,
-      SYNCHRONOUS,
-      READ_ONLY;
-
-      public String externalName()
-      {
-        switch (this) {
-          case NO_CACHE:
-            return "nocache";
-          case SYNCHRONOUS:
-            return "direct";
-          case READ_ONLY:
-            return "ro";
-        }
-        throw new UnreachableCodeException();
-      }
-    }
   }
 
   @ImmutablesStyleType

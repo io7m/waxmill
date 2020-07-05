@@ -1,0 +1,44 @@
+$ waxmill vm-export --machine 538a90e4-d50d-4511-8643-ae418279bac4
+<?xml version="1.0" encoding="UTF-8"?>
+<wxm:VirtualMachines xmlns:wxm="urn:com.io7m.waxmill.vm:1:0">
+    <wxm:VirtualMachine id="538a90e4-d50d-4511-8643-ae418279bac4" name="com.io7m.example">
+        <wxm:CPUTopology sockets="1" threads="1" cores="1"/>
+        <wxm:Memory gigabytes="0" megabytes="250"/>
+        <wxm:Devices>
+            <wxm:HostBridge vendor="UNSPECIFIED">
+                <wxm:DeviceSlot bus="0" slot="0" function="0"/>
+            </wxm:HostBridge>
+            <wxm:AHCIDiskDevice>
+                <wxm:DeviceSlot bus="0" slot="1" function="0"/>
+                <wxm:StorageBackendZFSVolume/>
+            </wxm:AHCIDiskDevice>
+            <wxm:AHCIOpticalDiskDevice>
+                <wxm:DeviceSlot bus="0" slot="2" function="0"/>
+            </wxm:AHCIOpticalDiskDevice>
+            <wxm:VirtioNetworkDevice>
+                <wxm:DeviceSlot bus="0" slot="4" function="0"/>
+                <wxm:TAPDevice name="tap23" address="a3:26:9c:74:79:34"/>
+            </wxm:VirtioNetworkDevice>
+        </wxm:Devices>
+        <wxm:BootConfigurations>
+            <wxm:BootConfigurationGRUBBhyve name="run">
+                <wxm:GRUBBhyveKernelOpenBSD>
+                    <wxm:BSDBootDevice kernelPath="/bsd">
+                        <wxm:DeviceSlot bus="0" slot="2" function="0"/>
+                    </wxm:BSDBootDevice>
+                </wxm:GRUBBhyveKernelOpenBSD>
+            </wxm:BootConfigurationGRUBBhyve>
+        </wxm:BootConfigurations>
+        <wxm:Flags>
+            <wxm:Flag name="DisableMPTableGeneration" enabled="false"/>
+            <wxm:Flag name="ForceVirtualIOPCIToUseMSI" enabled="false"/>
+            <wxm:Flag name="GenerateACPITables" enabled="true"/>
+            <wxm:Flag name="GuestAPICIsX2APIC" enabled="false"/>
+            <wxm:Flag name="IncludeGuestMemoryInCoreFiles" enabled="false"/>
+            <wxm:Flag name="RealTimeClockIsUTC" enabled="false"/>
+            <wxm:Flag name="WireGuestMemory" enabled="false"/>
+            <wxm:Flag name="ExitCPUOnPAUSE" enabled="true"/>
+            <wxm:Flag name="YieldCPUOnHLT" enabled="true"/>
+        </wxm:Flags>
+    </wxm:VirtualMachine>
+</wxm:VirtualMachines>

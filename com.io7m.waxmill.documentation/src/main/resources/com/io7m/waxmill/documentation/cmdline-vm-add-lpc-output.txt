@@ -1,0 +1,14 @@
+$ waxmill vm-add-lpc-device \
+  --machine de17174a-1b3c-4ebc-80af-cb239aa18cbd \
+  --device-slot 0:4:0 \
+  --add-backend stdio;com1
+
+$ waxmill vm-add-lpc-device \
+  --machine de17174a-1b3c-4ebc-80af-cb239aa18cbd \
+  --device-slot 0:4:0 \
+  --add-backend file;bootrom;/usr/local/share/uefi-firmware/BHYVE_UEFI.fd
+
+$ waxmill vm-add-lpc-device \
+  --machine de17174a-1b3c-4ebc-80af-cb239aa18cbd \
+  --device-slot 0:4:0 \
+  --add-backend nmdm;com1

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:7:0"
+         id="a90f13cf-e648-4076-8ebc-02134e37bea4"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="vm-delete-boot-configurations">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">vm-delete-boot-configurations</Term>
+      - Delete boot configurations for a virtual machine
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="command">vm-delete-boot-configurations</Term> removes boot configurations from a given
+      virtual machine.
+    </Paragraph>
+
+    <FormalItem title="Parameters"
+                type="parametersTable">
+      <Table type="parametersTable">
+        <Columns>
+          <Column>Parameter</Column>
+          <Column>Type</Column>
+          <Column>Required</Column>
+          <Column>Description</Column>
+        </Columns>
+        <Row>
+          <Cell>
+            <Term type="parameter">--configuration</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Path</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--file</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Path</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>A file containing boot configurations</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--machine</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">UUID</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>The ID of the virtual machine</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--name</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boot Configuration</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The names of boot configurations</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--verbose</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Log Level</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Set the minimum logging verbosity level.</Cell>
+        </Row>
+      </Table>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Example">
+    <FormalItem title="Example">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="cmdline-vm-delete-boot-configurations-output.txt"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

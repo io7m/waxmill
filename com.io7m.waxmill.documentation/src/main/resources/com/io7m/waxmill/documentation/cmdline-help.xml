@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:7:0"
+         id="feb8ffe8-d7f2-4288-8169-bce9f34a825c"
+         title="help"
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">help</Term>
+      - Show help on any command
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="command">help</Term> command shows extended help information for other commands.
+    </Paragraph>
+    <FormalItem title="Parameters">
+      <Table type="parametersTable">
+        <Columns>
+          <Column>Parameter</Column>
+          <Column>Type</Column>
+          <Column>Required</Column>
+          <Column>Description</Column>
+        </Columns>
+        <Row>
+          <Cell>
+            <Term type="parameter">--verbose</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Log Level</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Set the minimum logging verbosity level.</Cell>
+        </Row>
+      </Table>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Example">
+    <FormalItem title="Example">
+      <Verbatim>
+        <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                    parse="text"
+                    href="cmdline-help-output.txt"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

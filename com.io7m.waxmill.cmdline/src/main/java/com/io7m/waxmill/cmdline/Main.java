@@ -18,6 +18,7 @@ package com.io7m.waxmill.cmdline;
 
 import com.io7m.claypot.core.CLPApplicationConfiguration;
 import com.io7m.claypot.core.CLPCommandConstructorType;
+import com.io7m.claypot.core.CLPCommandType;
 import com.io7m.claypot.core.Claypot;
 import com.io7m.claypot.core.ClaypotType;
 import com.io7m.waxmill.cmdline.internal.WXMCommandSchema;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+import java.util.SortedMap;
 import java.util.stream.Stream;
 
 /**
@@ -56,7 +58,6 @@ public final class Main implements Runnable
 
   private final String[] args;
   private final ClaypotType claypot;
-  private final List<CLPCommandConstructorType> commands;
 
   public Main(
     final String[] inArgs)
@@ -64,7 +65,7 @@ public final class Main implements Runnable
     this.args =
       Objects.requireNonNull(inArgs, "Command line arguments");
 
-    this.commands =
+    final List<CLPCommandConstructorType> commands =
       List.of(
         WXMCommandSchema::new,
         WXMCommandVMAddAHCIDisk::new,
@@ -90,7 +91,7 @@ public final class Main implements Runnable
       CLPApplicationConfiguration.builder()
         .setLogger(LOG)
         .setProgramName("waxmill")
-        .setCommands(this.commands)
+        .setCommands(commands)
         .setDocumentationURI(URI.create(
           "https://www.io7m.com/software/waxmill/documentation/"))
         .build();
@@ -132,9 +133,18 @@ public final class Main implements Runnable
 
   public Stream<String> commandNames()
   {
-    return this.claypot.commands()
+    return this.commands()
       .keySet()
       .stream();
+  }
+
+  /**
+   * @return The available commands
+   */
+
+  public SortedMap<String, CLPCommandType> commands()
+  {
+    return this.claypot.commands();
   }
 
   @Override

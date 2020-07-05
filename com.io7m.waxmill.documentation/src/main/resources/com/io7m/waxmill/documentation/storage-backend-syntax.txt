@@ -1,0 +1,6 @@
+  "file" ";" <path>
+| "zfs-volume"
+
+Examples:
+  file;/tmp/xyz
+  zfs-volume

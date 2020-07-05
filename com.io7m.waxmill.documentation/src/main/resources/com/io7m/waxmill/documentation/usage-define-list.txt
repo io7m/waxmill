@@ -1,0 +1,13 @@
+$ waxmill vm-define \
+  --name 'com.io7m.example4' \
+  --cpu-count 4 \
+  --comment 'An example machine' \
+  --memory-gigabytes 1 \
+  --memory-megabytes 512
+
+$ waxmill vm-list
+# ID                                     Name
+800a2dad-3367-4a98-879a-0fac219f55f4     com.io7m.example2
+a866f9e4-f6c1-4ecf-ad49-000925eefa0a     com.io7m.example4
+538a90e4-d50d-4511-8643-ae418279bac4     com.io7m.example
+7c2bcb79-f20c-47fa-812b-8994f17f97b2     com.io7m.example5

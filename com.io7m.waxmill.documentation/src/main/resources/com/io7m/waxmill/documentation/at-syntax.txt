@@ -1,0 +1,25 @@
+$ waxmill vm-list
+# ID                                     Name
+538a90e4-d50d-4511-8643-ae418279bac4     com.io7m.example
+
+$ waxmill vm-define --name com.io7m.example2
+
+$ waxmill vm-list
+# ID                                     Name
+800a2dad-3367-4a98-879a-0fac219f55f4     com.io7m.example2
+538a90e4-d50d-4511-8643-ae418279bac4     com.io7m.example
+
+$ (cat <<EOF
+vm-define
+--name
+com.io7m.example3
+EOF
+) > args.txt
+
+$ waxmill @args.txt
+
+$ waxmill vm-list
+# ID                                     Name
+800a2dad-3367-4a98-879a-0fac219f55f4     com.io7m.example2
+538a90e4-d50d-4511-8643-ae418279bac4     com.io7m.example
+6730354e-bcba-4636-ab07-ad853c375f7d     com.io7m.example3

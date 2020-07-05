@@ -1,0 +1,30 @@
+$ waxmill schema
+urn:com.io7m.waxmill.config:1:0
+urn:com.io7m.waxmill.vm:1:0
+
+$ waxmill schema --id urn:com.io7m.waxmill.config:1:0
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:wxmc="urn:com.io7m.waxmill.config:1:0"
+            targetNamespace="urn:com.io7m.waxmill.config:1:0">
+
+  <xsd:annotation>
+    <xsd:documentation>
+      A schema describing the format of Waxmill configuration files.
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:simpleType name="PathType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The type of configuration paths.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="BhyveExecutable">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the bhyve executable. On FreeBSD, this is /usr/sbin/bhyve by default.
+...
