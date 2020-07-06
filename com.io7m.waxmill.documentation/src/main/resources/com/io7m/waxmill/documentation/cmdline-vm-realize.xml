@@ -14,7 +14,11 @@
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="command">vm-realize</Term> command realizes a virtual machine.
+      The <Term type="command">vm-realize</Term> command
+      <Link target="783bc43e-190a-462e-883b-1b74d71b94e4">realizes</Link> a virtual machine. Realizing a virtual
+      machine may be unnecessary if you have already manually created all of the resources (such as ZFS volumes)
+      that the machine needs to run. The <Link target="60ee3ff2-b938-45da-a1c2-e9bf3bd02d73">vm-run</Link> command
+      will validate that all of the required resources exist when attempting to start a virtual machine.
     </Paragraph>
 
     <FormalItem title="Parameters"

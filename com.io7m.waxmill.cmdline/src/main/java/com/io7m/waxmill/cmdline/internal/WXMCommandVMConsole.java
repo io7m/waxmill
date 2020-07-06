@@ -53,12 +53,6 @@ public final class WXMCommandVMConsole
   )
   private boolean dryRun;
 
-  @Override
-  public String extendedHelp()
-  {
-    return this.messages().format("vmConsole");
-  }
-
   /**
    * Construct a command.
    *
@@ -69,6 +63,12 @@ public final class WXMCommandVMConsole
     final CLPCommandContextType inContext)
   {
     super(LOG, inContext);
+  }
+
+  @Override
+  public String extendedHelp()
+  {
+    return this.messages().format("vmConsole");
   }
 
   @Override

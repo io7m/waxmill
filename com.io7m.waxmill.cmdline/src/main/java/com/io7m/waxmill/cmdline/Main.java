@@ -36,6 +36,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMExport;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMImport;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMList;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMListWithName;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMRealize;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMRun;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVersion;
@@ -82,6 +83,7 @@ public final class Main implements Runnable
         WXMCommandVMImport::new,
         WXMCommandVMList::new,
         WXMCommandVMListWithName::new,
+        WXMCommandVMRealize::new,
         WXMCommandVMRun::new,
         WXMCommandVMUpdateBootConfigurations::new,
         WXMCommandVersion::new

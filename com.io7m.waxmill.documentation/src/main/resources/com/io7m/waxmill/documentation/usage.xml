@@ -157,9 +157,8 @@
       The <Term type="package">Waxmill</Term> package can optionally automatically manage storage devices backed by
       <LinkExternal target="https://en.wikipedia.org/wiki/ZFS">ZFS volumes</LinkExternal>
       if requested. If, on a virtual machine with ID <Term type="expression">X</Term>, a storage device that is
-      specified to use a <Term type="constant">
-      zfs-volume
-    </Term> backend is attached to slot <Term type="expression">a:b:c</Term>, the
+      specified to use a <Term type="constant">zfs-volume</Term> backend is attached to slot
+      <Term type="expression">a:b:c</Term>, the
       <Term type="package">Waxmill</Term>
       package will automatically create a ZFS volume at <Term type="expression">/storage/vm/X/disk-a:b:c</Term> (where
       <Term type="expression">/storage/vm</Term>
@@ -179,11 +178,9 @@
       machine configuration directory
     </Term> and then creating any resources that are needed at run-time such
       as <LinkExternal target="https://docs.oracle.com/cd/E18752_01/html/819-5461/gaypf.html">ZFS volumes</LinkExternal>.
-      The
-      <Link target="f2ab38c7-6641-4339-9453-201ebb41a97b">vm-realize</Link>
-      is used to
-      <Term type="term">realize</Term>
-      virtual machines:
+      The <Link target="f2ab38c7-6641-4339-9453-201ebb41a97b">vm-realize</Link> command is used to<Term type="term">
+      realize
+    </Term> virtual machines:
     </Paragraph>
 
     <FormalItem title="Realizing A Virtual Machine">

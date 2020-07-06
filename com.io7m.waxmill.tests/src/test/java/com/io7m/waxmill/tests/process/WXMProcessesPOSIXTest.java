@@ -78,4 +78,20 @@ public final class WXMProcessesPOSIXTest
     Assertions.assertTrue(text.length() > 5);
     Assertions.assertEquals(0, process.exitValue());
   }
+
+  @Test
+  public void testExecuteLsAndWait()
+    throws IOException
+  {
+    final var processes = WXMProcessesPOSIX.create();
+
+    processes.processStartAndWait(
+      WXMProcessDescription.builder()
+        .setExecutable(Paths.get("/bin/ls"))
+        .addArguments("-a")
+        .addArguments("-l")
+        .addArguments("-F")
+        .build()
+    );
+  }
 }

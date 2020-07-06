@@ -3,10 +3,18 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <properties>
+
   <entry key="errorCannotExecute"><![CDATA[Unable to execute a process.
   Executable: {0}
   Arguments:  {1}
   Error:      {2}
   Error code: {3}
 ]]></entry>
+
+  <entry key="errorCommandFailed"><![CDATA[The external process exited with a non-zero error code.
+  Executable: {0}
+  Arguments:  {1}
+  Error code: {2}
+]]></entry>
+
 </properties>

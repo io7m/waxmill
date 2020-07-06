@@ -38,8 +38,8 @@ public interface WXMProcessesType
     throws IOException;
 
   /**
-   * Replace the current process with the process described by the given description. This
-   * creates a new process upon which the caller can wait, extract data from streams, etc.
+   * Start a process described by the given description. This creates a new
+   * process upon which the caller can wait, extract data from streams, etc.
    *
    * @param description The description
    *
@@ -49,5 +49,21 @@ public interface WXMProcessesType
    */
 
   Process processStart(WXMProcessDescription description)
+    throws IOException;
+
+  /**
+   * Start a process described by the given description. This creates a new
+   * process upon which the caller can wait, extract data from streams, etc.
+   * This method is equivalent to calling {@link #processStart(WXMProcessDescription)},
+   * waiting indefinitely for the process to exit, and throwing an
+   * {@link IOException} if the process returns a non-zero exit code.
+   *
+   * @param description The description
+   *
+   * @throws IOException If the process cannot be started, or if the process
+   *                     exits with a non-zero error code
+   */
+
+  void processStartAndWait(WXMProcessDescription description)
     throws IOException;
 }

@@ -31,7 +31,8 @@ import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 @Parameters(commandDescription = "List the virtual machines with the given name.")
-public final class WXMCommandVMListWithName extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMListWithName extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMListWithName.class);

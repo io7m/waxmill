@@ -16,12 +16,17 @@
 
 package com.io7m.waxmill.tests;
 
+import com.io7m.jaffirm.core.PreconditionViolationException;
 import com.io7m.waxmill.cmdline.internal.WXMStorageBackendConverter;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMStorageBackendConverterTest
@@ -42,6 +47,32 @@ public final class WXMStorageBackendConverterTest
     final var result =
       (WXMStorageBackendZFSVolume) new WXMStorageBackendConverter()
         .convert("zfs-volume");
+  }
+
+  @Test
+  public void zfsVolumeSizeIsOK()
+  {
+    final var result =
+      (WXMStorageBackendZFSVolume) new WXMStorageBackendConverter()
+        .convert("zfs-volume;128000000");
+
+    assertEquals(new BigInteger("128000000"), result.expectedSize().get());
+  }
+
+  @Test
+  public void zfsVolumeSizeIsNotOK0()
+  {
+    assertThrows(PreconditionViolationException.class, () -> {
+      new WXMStorageBackendConverter().convert("zfs-volume;100000000");
+    });
+  }
+
+  @Test
+  public void zfsVolumeSizeIsNotOK1()
+  {
+    assertThrows(NumberFormatException.class, () -> {
+      new WXMStorageBackendConverter().convert("zfs-volume;z");
+    });
   }
 
   @Test

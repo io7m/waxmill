@@ -570,6 +570,10 @@
           <xsd:element ref="wxm:Comment"/>
         </xsd:sequence>
       </xsd:sequence>
+
+      <xsd:attribute type="xsd:nonNegativeInteger"
+                     name="expectedSize"
+                     use="optional"/>
     </xsd:complexType>
   </xsd:element>
 

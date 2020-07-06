@@ -38,7 +38,8 @@ import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_UNSPECIFIED;
 
 @Parameters(commandDescription = "Define a new virtual machine.")
-public final class WXMCommandVMDefine extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMDefine extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMDefine.class);
