@@ -94,8 +94,9 @@ public final class WXMCommandVMUpdateBootConfigurations
       final var machine = client.vmFind(this.id);
       final var bootConfigurations = parsers.parse(this.file);
 
-      this.info("infoBootConfigurationsParsed",
-                Integer.valueOf(bootConfigurations.size()));
+      this.info(
+        "infoBootConfigurationsParsed",
+        Integer.valueOf(bootConfigurations.size()));
 
       final var machineBuilder =
         WXMVirtualMachine.builder()

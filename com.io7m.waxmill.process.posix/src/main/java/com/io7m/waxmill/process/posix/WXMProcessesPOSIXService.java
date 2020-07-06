@@ -51,6 +51,14 @@ public final class WXMProcessesPOSIXService implements WXMProcessesType
   }
 
   @Override
+  public void processStartAndWait(
+    final WXMProcessDescription description)
+    throws IOException
+  {
+    this.delegate.processStartAndWait(description);
+  }
+
+  @Override
   public String toString()
   {
     return String.format(

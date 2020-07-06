@@ -32,7 +32,8 @@ import java.util.List;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 @Parameters(commandDescription = "Import virtual machine descriptions.")
-public final class WXMCommandVMImport extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMImport extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMImport.class);
@@ -80,8 +81,9 @@ public final class WXMCommandVMImport extends WXMAbstractCommandWithConfiguratio
         );
       client.vmDefineAll(set);
 
-      this.info("infoImportedMachines",
-                Integer.valueOf(set.machines().size()));
+      this.info(
+        "infoImportedMachines",
+        Integer.valueOf(set.machines().size()));
     }
     return SUCCESS;
   }

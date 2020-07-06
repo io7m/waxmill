@@ -20,6 +20,7 @@ import com.beust.jcommander.IStringConverter;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 
+import java.math.BigInteger;
 import java.nio.file.Paths;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
@@ -57,8 +58,11 @@ public final class WXMStorageBackendConverter
           .build();
       }
       case "zfs-volume": {
-        return WXMStorageBackendZFSVolume.builder()
-          .build();
+        final var builder = WXMStorageBackendZFSVolume.builder();
+        if (segments.length >= 2) {
+          builder.setExpectedSize(new BigInteger(segments[1]));
+        }
+        return builder.build();
       }
       default:
         throw this.syntaxError(value);

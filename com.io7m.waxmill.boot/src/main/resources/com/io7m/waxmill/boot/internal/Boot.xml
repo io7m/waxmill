@@ -10,13 +10,6 @@
 ]]>
   </entry>
 
-  <entry key="bootCommandFailed"><![CDATA[Executing an external command failed.
-  Machine:    {0}
-  Command:    {1}
-  Exit code:  {2}
-]]>
-  </entry>
-
   <entry key="bootRequiredPathsMissing"><![CDATA[One or more required files are missing.
   Machine:  {0}
   Files:    {1}

@@ -33,6 +33,7 @@ import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
 import com.io7m.waxmill.process.api.WXMProcessDescription;
 import com.io7m.waxmill.process.api.WXMProcessesType;
+import com.io7m.waxmill.realize.WXMRealizations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,6 +194,23 @@ public final class WXMClient implements WXMClientType
     return this.vmConsoleGet(machine)
       .map(WXMDeviceLPC.class::cast)
       .flatMap(device -> this.handleLPCConsole(machine, device));
+  }
+
+  @Override
+  public void vmRealize(
+    final WXMVirtualMachine machine,
+    final WXMDryRun dryRun)
+    throws WXMException
+  {
+    Objects.requireNonNull(machine, "machine");
+    Objects.requireNonNull(dryRun, "dryRun");
+
+    final var realization =
+      WXMRealizations.create(this.processes, this.configuration, machine);
+    final var instructions =
+      realization.evaluate();
+
+    instructions.execute(dryRun);
   }
 
   private Optional<WXMProcessDescription> handleLPCConsole(

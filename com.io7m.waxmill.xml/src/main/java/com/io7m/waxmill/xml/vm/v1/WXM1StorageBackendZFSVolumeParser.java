@@ -23,7 +23,9 @@ import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
+import java.math.BigInteger;
 import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
@@ -67,8 +69,16 @@ public final class WXM1StorageBackendZFSVolumeParser
   public void onElementStart(
     final BTElementParsingContextType context,
     final Attributes attributes)
+    throws SAXParseException
   {
-
+    try {
+      final var expectedSize = attributes.getValue("expectedSize");
+      if (expectedSize != null) {
+        this.builder.setExpectedSize(new BigInteger(expectedSize));
+      }
+    } catch (final Exception e) {
+      throw context.parseException(e);
+    }
   }
 
   @Override

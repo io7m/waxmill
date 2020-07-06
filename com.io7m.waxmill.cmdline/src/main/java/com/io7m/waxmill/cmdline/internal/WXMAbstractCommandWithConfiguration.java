@@ -40,6 +40,22 @@ public abstract class WXMAbstractCommandWithConfiguration
   )
   private Path configurationFile = WXMEnvironment.configurationFile();
 
+  /**
+   * Construct a command.
+   *
+   * @param inLogger  The command logger
+   * @param inContext The command context
+   */
+
+  public WXMAbstractCommandWithConfiguration(
+    final Logger inLogger,
+    final CLPCommandContextType inContext)
+  {
+    super(inContext);
+    this.logger = Objects.requireNonNull(inLogger, "logger");
+    this.messages = WXMMessages.create();
+  }
+
   protected abstract Status executeActualWithConfiguration(
     Path configurationPath)
     throws Exception;
@@ -72,21 +88,5 @@ public abstract class WXMAbstractCommandWithConfiguration
     final Object... arguments)
   {
     this.logger.info("{}", this.messages.format(id, arguments));
-  }
-
-  /**
-   * Construct a command.
-   *
-   * @param inLogger The command logger
-   * @param inContext The command context
-   */
-
-  public WXMAbstractCommandWithConfiguration(
-    final Logger inLogger,
-    final CLPCommandContextType inContext)
-  {
-    super(inContext);
-    this.logger = Objects.requireNonNull(inLogger, "logger");
-    this.messages = WXMMessages.create();
   }
 }

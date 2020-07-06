@@ -26,6 +26,7 @@ import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMMachineMessages;
+import com.io7m.waxmill.machines.WXMOpenOption;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
@@ -38,13 +39,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-
-import com.io7m.waxmill.machines.WXMOpenOption;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMStorageBackends.determineZFSVolumePath;
 
 @Parameters(commandDescription = "Add a virtio disk to a virtual machine.")
-public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMAddVirtioDisk extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMAddVirtioDisk.class);
@@ -99,6 +99,18 @@ public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfi
     super(LOG, inContext);
   }
 
+  private static String showZFSPath(
+    final WXMClientType client,
+    final WXMVirtualMachine machine,
+    final WXMDeviceSlot deviceId)
+  {
+    return determineZFSVolumePath(
+      client.configuration().virtualMachineRuntimeDirectory(),
+      machine.id(),
+      deviceId
+    ).toString();
+  }
+
   @Override
   public String name()
   {
@@ -140,18 +152,6 @@ public final class WXMCommandVMAddVirtioDisk extends WXMAbstractCommandWithConfi
         break;
       }
     }
-  }
-
-  private static String showZFSPath(
-    final WXMClientType client,
-    final WXMVirtualMachine machine,
-    final WXMDeviceSlot deviceId)
-  {
-    return determineZFSVolumePath(
-      client.configuration().virtualMachineRuntimeDirectory(),
-      machine.id(),
-      deviceId
-    ).toString();
   }
 
   @Override

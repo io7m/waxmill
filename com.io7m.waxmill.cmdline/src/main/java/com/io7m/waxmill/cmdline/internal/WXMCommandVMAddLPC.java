@@ -44,7 +44,8 @@ import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 
 @Parameters(commandDescription = "Add an LPC device to a virtual machine.")
-public final class WXMCommandVMAddLPC extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMAddLPC extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMAddLPC.class);
@@ -162,7 +163,10 @@ public final class WXMCommandVMAddLPC extends WXMAbstractCommandWithConfiguratio
             this.info(
               "infoBackendNMDM",
               nmdmBackend.device(),
-              WXMTTYBackends.nmdmPath(FileSystems.getDefault(), machine.id(), NMDM_GUEST));
+              WXMTTYBackends.nmdmPath(
+                FileSystems.getDefault(),
+                machine.id(),
+                NMDM_GUEST));
             break;
           case WXM_STDIO:
             final var stdioBackend = (WXMTTYBackendStdio) device;

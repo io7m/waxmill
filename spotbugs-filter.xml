@@ -54,6 +54,7 @@
       <Class name="com.io7m.waxmill.machines.WXMPinCPU"/>
       <Class name="com.io7m.waxmill.machines.WXMSectorSizes"/>
       <Class name="com.io7m.waxmill.machines.WXMStorageBackendFile"/>
+      <Class name="com.io7m.waxmill.machines.WXMStorageBackendZFSVolume"/>
       <Class name="com.io7m.waxmill.machines.WXMTAPDeviceName"/>
       <Class name="com.io7m.waxmill.machines.WXMTTYBackendFile"/>
       <Class name="com.io7m.waxmill.machines.WXMTTYBackendStdio"/>

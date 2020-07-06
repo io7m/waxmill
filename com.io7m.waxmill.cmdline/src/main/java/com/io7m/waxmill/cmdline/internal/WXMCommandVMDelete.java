@@ -28,7 +28,8 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 @Parameters(commandDescription = "Delete a virtual machine.")
-public final class WXMCommandVMDelete extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMDelete extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMDelete.class);

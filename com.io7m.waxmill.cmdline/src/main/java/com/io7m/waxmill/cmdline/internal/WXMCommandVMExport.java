@@ -34,7 +34,8 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 @Parameters(commandDescription = "Export virtual machine descriptions.")
-public final class WXMCommandVMExport extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMExport extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMExport.class);

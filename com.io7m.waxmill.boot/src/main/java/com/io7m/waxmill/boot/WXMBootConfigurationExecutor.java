@@ -260,7 +260,7 @@ public final class WXMBootConfigurationExecutor
 
   private void executeAndWait(
     final WXMCommandExecution command)
-    throws IOException, InterruptedException
+    throws IOException
   {
     LOG.info("execute: {}", command);
 
@@ -270,25 +270,7 @@ public final class WXMBootConfigurationExecutor
         .addAllArguments(command.arguments())
         .build();
 
-    final var process =
-      this.processes.processStart(processDescription);
-
-    final var result = process.waitFor();
-    if (result != 0) {
-      throw new IOException(this.errorBootCommandFailed(command, result));
-    }
-  }
-
-  private String errorBootCommandFailed(
-    final WXMCommandExecution command,
-    final int result)
-  {
-    return this.messages.format(
-      "bootCommandFailed",
-      this.machine.id(),
-      command,
-      Integer.valueOf(result)
-    );
+    this.processes.processStartAndWait(processDescription);
   }
 
   private String errorRequiredPathsMissing(

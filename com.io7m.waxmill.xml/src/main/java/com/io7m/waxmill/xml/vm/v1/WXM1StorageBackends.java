@@ -26,6 +26,7 @@ import com.io7m.waxmill.xml.WXMSchemas;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -64,6 +65,13 @@ public final class WXM1StorageBackends
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     writer.writeStartElement(namespaceURI, "StorageBackendZFSVolume");
+
+    final Optional<BigInteger> expectedSizeOpt = backend.expectedSize();
+    if (expectedSizeOpt.isPresent()) {
+      final var expectedSize = expectedSizeOpt.get();
+      writer.writeAttribute("expectedSize", expectedSize.toString());
+    }
+
     WXM1Comments.serializeComment(backend.comment(), writer);
     writer.writeEndElement();
   }

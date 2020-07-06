@@ -45,6 +45,8 @@ import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_FILE;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_NMDM;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_STDIO;
+import static java.math.BigInteger.ZERO;
+import static java.math.BigInteger.valueOf;
 
 /**
  * The type of devices that can be attached to virtual machines.
@@ -381,7 +383,6 @@ public interface WXMDeviceType
         path -> "Storage backend path must be absolute"
       );
     }
-
   }
 
   @ImmutablesStyleType
@@ -399,6 +400,28 @@ public interface WXMDeviceType
     default String comment()
     {
       return "";
+    }
+
+    /**
+     * @return The expected size, in bytes, of the ZFS volume
+     */
+
+    Optional<BigInteger> expectedSize();
+
+    /**
+     * Check preconditions for the type.
+     */
+
+    @Value.Check
+    default void checkPreconditions()
+    {
+      this.expectedSize().ifPresent(size -> {
+        Preconditions.checkPrecondition(
+          size,
+          Objects.equals(size.mod(valueOf(128000L)), ZERO),
+          x -> "ZFS volume size must be a multiple of 128 kilobytes"
+        );
+      });
     }
   }
 

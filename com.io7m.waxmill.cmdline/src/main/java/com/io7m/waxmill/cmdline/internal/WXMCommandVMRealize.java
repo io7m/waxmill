@@ -19,15 +19,19 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
-import com.io7m.junreachable.UnimplementedCodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
+import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
+import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
+
 @Parameters(commandDescription = "Realize a virtual machine.")
-public final class WXMCommandVMRealize extends WXMAbstractCommandWithConfiguration
+public final class WXMCommandVMRealize extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(WXMCommandVMRealize.class);
@@ -35,10 +39,17 @@ public final class WXMCommandVMRealize extends WXMAbstractCommandWithConfigurati
   @Parameter(
     names = "--machine",
     description = "The ID of the virtual machine",
-    required = false,
+    required = true,
     converter = WXMUUIDConverter.class
   )
   private UUID id;
+
+  @Parameter(
+    names = "--dry-run",
+    description = "Show the commands that would be executed, but do not execute them.",
+    required = false
+  )
+  private boolean dryRun;
 
   /**
    * Construct a command.
@@ -64,8 +75,9 @@ public final class WXMCommandVMRealize extends WXMAbstractCommandWithConfigurati
     throws Exception
   {
     try (var client = WXMServices.clients().open(configurationPath)) {
-      client.vmFind(this.id);
-      throw new UnimplementedCodeException();
+      final var machine = client.vmFind(this.id);
+      client.vmRealize(machine, this.dryRun ? DRY_RUN : EXECUTE);
     }
+    return SUCCESS;
   }
 }

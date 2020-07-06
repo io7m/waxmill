@@ -37,6 +37,7 @@
     <module>com.io7m.waxmill.strings.api</module>
     <module>com.io7m.waxmill.tests</module>
     <module>com.io7m.waxmill.xml</module>
+    <module>com.io7m.waxmill.realize</module>
   </modules>
 
   <properties>

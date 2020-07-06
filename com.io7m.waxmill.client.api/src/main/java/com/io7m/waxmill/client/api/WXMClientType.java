@@ -177,4 +177,18 @@ public interface WXMClientType extends AutoCloseable
 
   Optional<WXMProcessDescription> vmConsole(
     WXMVirtualMachine machine);
+
+  /**
+   * Realize a virtual machine.
+   *
+   * @param machine The virtual machine
+   * @param dryRun  Whether or not the operation is a dry run
+   *
+   * @throws WXMException On errors
+   */
+
+  void vmRealize(
+    WXMVirtualMachine machine,
+    WXMDryRun dryRun)
+    throws WXMException;
 }
