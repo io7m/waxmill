@@ -19,17 +19,20 @@
   Expected size: {1}
   Actual size:   {2}
   Device:        {3}
+  Action: Resize the ZFS volume (zfs set quota={1} {0}), or edit the machine configuration to set the correct expected size.
 ]]></entry>
 
   <entry
     key="zfsVolumeMissingNoSize"><![CDATA[A required ZFS volume does not exist, and no expected size has been given so the volume cannot be created automatically.
-  Volume:  {0}
-  Device:  {1}
+  Volume: {0}
+  Device: {1}
+  Action: Create the zfs volume manually (zfs create -V).
 ]]></entry>
 
   <entry key="errorRequiredPathsMissing"><![CDATA[One or more required files are missing.
   Machine:  {0}
   Files:    {1}
+  Action: Create the missing files, or remove them from the virtual machine configuration.
 ]]>
   </entry>
 
