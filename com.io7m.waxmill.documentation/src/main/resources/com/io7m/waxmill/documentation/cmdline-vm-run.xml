@@ -23,6 +23,19 @@
       <LinkExternal target="http://smarden.org/runit/">runit</LinkExternal>.
     </Paragraph>
 
+    <Paragraph>
+      The <Term type="command">vm-run</Term> command will, when executed, will first generate and write the necessary
+      configuration files into the
+      <Link target="9f22456e-66d8-4055-be45-5cc62d25b711">virtual machine runtime directory</Link>
+      for the given machine, and then generate and execute the necessary shell commands to start the virtual machine.
+      For example, if the selected boot configuration uses
+      <LinkExternal target="https://github.com/grehan-freebsd/grub2-bhyve">GRUB Bhyve</LinkExternal>, the required
+      <Term type="file">grub.cfg</Term> and <Term type="file">device.map</Term> files will be generated and saved
+      into the directory. The <Term type="parameter">--dry-run</Term> option will cause the command to generate those
+      required files, but will display the shell commands necessary to start the virtual machine on the standard output
+      instead of actually executing them.
+    </Paragraph>
+
     <FormalItem title="Parameters"
                 type="parametersTable">
       <Table type="parametersTable">

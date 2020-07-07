@@ -22,9 +22,10 @@
 .command,
 .constant,
 .expression,
+.file,
+.function,
 .package,
-.parameter,
-.function
+.parameter
 {
   font-family: monospace;
 }

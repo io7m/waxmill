@@ -15,7 +15,7 @@ INFO com.io7m.waxmill.cmdline.Main: Usage: waxmill [options] [command] [command 
 
     $ echo help > file.txt
     $ echo help >> file.txt
-    $ cex @file.txt
+    $ waxmill @file.txt
 
   Commands:
     help                              Show detailed help messages for commands.
