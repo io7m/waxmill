@@ -53,6 +53,7 @@
   <xi:include href="cmdline-version.xml" />
   <xi:include href="cmdline-vm-add-ahci-disk.xml" />
   <xi:include href="cmdline-vm-add-ahci-optical.xml" />
+  <xi:include href="cmdline-vm-add-e1000-network-device.xml" />
   <xi:include href="cmdline-vm-add-lpc.xml" />
   <xi:include href="cmdline-vm-add-passthru.xml" />
   <xi:include href="cmdline-vm-add-virtio-disk.xml" />

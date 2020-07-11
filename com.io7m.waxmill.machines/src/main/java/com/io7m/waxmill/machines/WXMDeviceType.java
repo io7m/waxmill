@@ -34,13 +34,14 @@ import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_CD;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_HD;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_E1000;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_PASSTHRU;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_BLOCK;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_NETWORK;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_TAP;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_VMNET;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType.Kind.WXM_TAP;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType.Kind.WXM_VMNET;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_FILE;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_ZFS_VOLUME;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_FILE;
@@ -90,6 +91,7 @@ public interface WXMDeviceType
       case WXM_VIRTIO_NETWORK:
       case WXM_LPC:
       case WXM_PASSTHRU:
+      case WXM_E1000:
         return false;
       case WXM_VIRTIO_BLOCK:
       case WXM_AHCI_HD:
@@ -113,6 +115,7 @@ public interface WXMDeviceType
       case WXM_AHCI_HD:
       case WXM_AHCI_CD:
       case WXM_PASSTHRU:
+      case WXM_E1000:
         return false;
       case WXM_LPC:
         return true;
@@ -167,8 +170,18 @@ public interface WXMDeviceType
      * A PCI passthru device.
      */
 
-    WXM_PASSTHRU
+    WXM_PASSTHRU,
+
+    /**
+     * An emulation of an Intel e82545 network device.
+     */
+
+    WXM_E1000,
   }
+
+  /**
+   * A PCI passthru device.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -201,6 +214,43 @@ public interface WXMDeviceType
     {
       return "passthru";
     }
+  }
+
+  /**
+   * An emulation of an Intel e82545 network device.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMDeviceE1000Type extends WXMDeviceType
+  {
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    default Kind kind()
+    {
+      return WXM_E1000;
+    }
+
+    @Override
+    WXMDeviceSlot deviceSlot();
+
+    @Override
+    default String externalName()
+    {
+      return "e1000";
+    }
+
+    /**
+     * @return The underlying device backend
+     */
+
+    WXMNetworkDeviceBackendType backend();
   }
 
   @ImmutablesStyleType
@@ -298,63 +348,120 @@ public interface WXMDeviceType
       return "";
     }
 
-    WXMVirtioNetworkBackendType backend();
+    /**
+     * @return The underlying device backend
+     */
 
-    interface WXMVirtioNetworkBackendType
+    WXMNetworkDeviceBackendType backend();
+  }
+
+  /**
+   * The type of network device backends.
+   */
+
+  interface WXMNetworkDeviceBackendType
+  {
+    /**
+     * @return The backend kind
+     */
+
+    Kind kind();
+
+    /**
+     * @return A descriptive comment
+     */
+
+    @Value.Default
+    default String comment()
     {
-      Kind kind();
-
-      String comment();
-
-      enum Kind
-      {
-        WXM_TAP,
-        WXM_VMNET
-      }
+      return "";
     }
 
-    @ImmutablesStyleType
-    @Value.Immutable
-    interface WXMTapType extends WXMVirtioNetworkBackendType
+    /**
+     * The kind of backend.
+     */
+
+    enum Kind
     {
-      @Override
-      default Kind kind()
-      {
-        return WXM_TAP;
-      }
+      /**
+       * The device is backed by a tap device.
+       */
 
-      WXMTAPDeviceName name();
+      WXM_TAP,
 
-      WXMMACAddress address();
+      /**
+       * The device is backed by a vmnet device.
+       */
 
-      @Override
-      @Value.Default
-      default String comment()
-      {
-        return "";
-      }
+      WXM_VMNET
+    }
+  }
+
+  /**
+   * A TAP device.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMTapType extends WXMNetworkDeviceBackendType
+  {
+    @Override
+    default Kind kind()
+    {
+      return WXM_TAP;
     }
 
-    @ImmutablesStyleType
-    @Value.Immutable
-    interface WXMVMNetType extends WXMVirtioNetworkBackendType
+    /**
+     * @return The underlying device name
+     */
+
+    WXMTAPDeviceName name();
+
+    /**
+     * @return The underlying device MAC address
+     */
+
+    WXMMACAddress address();
+
+    @Override
+    @Value.Default
+    default String comment()
     {
-      @Override
-      default Kind kind()
-      {
-        return WXM_VMNET;
-      }
+      return "";
+    }
+  }
 
-      WXMVMNetDeviceName name();
+  /**
+   * A vmnet device.
+   */
 
-      WXMMACAddress address();
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMVMNetType extends WXMNetworkDeviceBackendType
+  {
+    @Override
+    default Kind kind()
+    {
+      return WXM_VMNET;
+    }
 
-      @Override
-      @Value.Default
-      default String comment()
-      {
-        return "";
-      }
+    /**
+     * @return The underlying device name
+     */
+
+    WXMVMNetDeviceName name();
+
+    /**
+     * @return The underlying device MAC address
+     */
+
+    WXMMACAddress address();
+
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
     }
   }
 

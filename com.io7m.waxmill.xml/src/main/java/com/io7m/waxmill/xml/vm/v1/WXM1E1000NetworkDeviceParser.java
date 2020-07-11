@@ -21,22 +21,22 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.machines.WXMDeviceType;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMNetworkDeviceBackendType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
-public final class WXM1DevicesParser
-  implements BTElementHandlerType<Object, List<WXMDeviceType>>
+public final class WXM1E1000NetworkDeviceParser
+  implements BTElementHandlerType<Object, WXMDeviceE1000>
 {
-  private final List<WXMDeviceType> devices;
+  private final WXMDeviceE1000.Builder builder;
 
-  public WXM1DevicesParser()
+  public WXM1E1000NetworkDeviceParser()
   {
-    this.devices = new ArrayList<>();
+    this.builder = WXMDeviceE1000.builder();
   }
 
   @Override
@@ -46,36 +46,20 @@ public final class WXM1DevicesParser
   {
     return Map.ofEntries(
       Map.entry(
-        element("HostBridge"),
-        c -> new WXM1HostBridgeParser()
+        element("DeviceSlot"),
+        c -> new WXM1DeviceSlotParser()
       ),
       Map.entry(
-        element("VirtioNetworkDevice"),
-        c -> new WXM1VirtioNetworkDeviceParser()
+        element("Comment"),
+        c -> new WXM1CommentParser()
       ),
       Map.entry(
-        element("VirtioBlockStorageDevice"),
-        c -> new WXM1VirtioBlockStorageDeviceParser()
+        element("TAPDevice"),
+        c -> new WXM1TapParser()
       ),
       Map.entry(
-        element("AHCIDiskDevice"),
-        c -> new WXM1AHCIDiskDeviceParser()
-      ),
-      Map.entry(
-        element("AHCIOpticalDiskDevice"),
-        c -> new WXM1AHCIOpticalDiskDeviceParser()
-      ),
-      Map.entry(
-        element("LPCDevice"),
-        c -> new WXM1LPCDeviceParser()
-      ),
-      Map.entry(
-        element("PassthruDevice"),
-        c -> new WXM1PassthruDeviceParser()
-      ),
-      Map.entry(
-        element("E1000NetworkDevice"),
-        c -> new WXM1E1000NetworkDeviceParser()
+        element("VMNetDevice"),
+        c -> new WXM1VMNetParser()
       )
     );
   }
@@ -85,17 +69,21 @@ public final class WXM1DevicesParser
     final BTElementParsingContextType context,
     final Object result)
   {
-    if (result instanceof WXMDeviceType) {
-      this.devices.add((WXMDeviceType) result);
+    if (result instanceof WXM1Comment) {
+      this.builder.setComment(((WXM1Comment) result).text());
+    } else if (result instanceof WXMNetworkDeviceBackendType) {
+      this.builder.setBackend((WXMNetworkDeviceBackendType) result);
+    } else if (result instanceof WXMDeviceSlot) {
+      this.builder.setDeviceSlot((WXMDeviceSlot) result);
     } else {
       throw new UnreachableCodeException();
     }
   }
 
   @Override
-  public List<WXMDeviceType> onElementFinished(
+  public WXMDeviceE1000 onElementFinished(
     final BTElementParsingContextType context)
   {
-    return List.copyOf(this.devices);
+    return this.builder.build();
   }
 }

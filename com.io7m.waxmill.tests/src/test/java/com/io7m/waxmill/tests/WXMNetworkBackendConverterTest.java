@@ -16,7 +16,7 @@
 
 package com.io7m.waxmill.tests;
 
-import com.io7m.waxmill.cmdline.internal.WXMVirtioNetworkBackendConverter;
+import com.io7m.waxmill.cmdline.internal.WXMNetworkBackendConverter;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import org.junit.jupiter.api.Test;
@@ -24,13 +24,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMVirtioNetworkBackendConverterTest
+public final class WXMNetworkBackendConverterTest
 {
   @Test
   public void tapIsOK()
   {
     final var result =
-      (WXMTap) new WXMVirtioNetworkBackendConverter()
+      (WXMTap) new WXMNetworkBackendConverter()
         .convert("tap;tap23;f8:e1:e1:79:c9:7e");
 
     assertEquals("tap23", result.name().value());
@@ -41,7 +41,7 @@ public final class WXMVirtioNetworkBackendConverterTest
   public void vmnetIsOK()
   {
     final var result =
-      (WXMVMNet) new WXMVirtioNetworkBackendConverter()
+      (WXMVMNet) new WXMNetworkBackendConverter()
         .convert("vmnet;vmnet23;f8:e1:e1:79:c9:7e");
 
     assertEquals("vmnet23", result.name().value());
@@ -52,7 +52,7 @@ public final class WXMVirtioNetworkBackendConverterTest
   public void syntaxError0()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new WXMVirtioNetworkBackendConverter()
+      new WXMNetworkBackendConverter()
         .convert("");
     });
   }
@@ -61,7 +61,7 @@ public final class WXMVirtioNetworkBackendConverterTest
   public void syntaxError1()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new WXMVirtioNetworkBackendConverter()
+      new WXMNetworkBackendConverter()
         .convert("what;is;this");
     });
   }
@@ -70,7 +70,7 @@ public final class WXMVirtioNetworkBackendConverterTest
   public void syntaxErrorTap0()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new WXMVirtioNetworkBackendConverter()
+      new WXMNetworkBackendConverter()
         .convert("tap");
     });
   }
@@ -79,7 +79,7 @@ public final class WXMVirtioNetworkBackendConverterTest
   public void syntaxErrorTap1()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new WXMVirtioNetworkBackendConverter()
+      new WXMNetworkBackendConverter()
         .convert("tap;tap23");
     });
   }
@@ -88,7 +88,7 @@ public final class WXMVirtioNetworkBackendConverterTest
   public void syntaxErrorVMNet0()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new WXMVirtioNetworkBackendConverter()
+      new WXMNetworkBackendConverter()
         .convert("vmnet");
     });
   }
@@ -97,7 +97,7 @@ public final class WXMVirtioNetworkBackendConverterTest
   public void syntaxErrorVMNet1()
   {
     assertThrows(IllegalArgumentException.class, () -> {
-      new WXMVirtioNetworkBackendConverter()
+      new WXMNetworkBackendConverter()
         .convert("vmnet;vmnet23");
     });
   }

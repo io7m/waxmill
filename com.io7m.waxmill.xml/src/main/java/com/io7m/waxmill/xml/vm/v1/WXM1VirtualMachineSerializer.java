@@ -19,6 +19,7 @@ package com.io7m.waxmill.xml.vm.v1;
 import com.io7m.waxmill.machines.WXMCPUTopology;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDevicePassthru;
@@ -165,7 +166,32 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
         case WXM_PASSTHRU:
           this.serializeDevicePassthru((WXMDevicePassthru) device);
           break;
+        case WXM_E1000:
+          this.serializeDeviceE1000((WXMDeviceE1000) device);
+          break;
       }
+    }
+
+    this.writer.writeEndElement();
+  }
+
+  private void serializeDeviceE1000(
+    final WXMDeviceE1000 device)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "E1000NetworkDevice");
+    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), GUEST, this.writer);
+    WXM1Comments.serializeComment(device.comment(), this.writer);
+
+    final var backend = device.backend();
+    switch (backend.kind()) {
+      case WXM_TAP:
+        this.serializeTAP((WXMTap) backend);
+        break;
+      case WXM_VMNET:
+        this.serializeVMNet((WXMVMNet) backend);
+        break;
     }
 
     this.writer.writeEndElement();

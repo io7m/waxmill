@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
-         id="82039dec-47cf-4bb9-a5ae-c88bc12753c3"
+         id="cf887826-2793-4648-8a4d-934a9e8786f3"
          xmlns:xi="http://www.w3.org/2001/XInclude"
-         title="vm-add-virtio-network-device">
+         title="vm-add-e1000-network-device">
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="command">vm-add-virtio-network-device</Term>
-      - Add a Virtio network device to a virtual machine
+      <Term type="command">vm-add-e1000-network-device</Term>
+      - Add an e1000 network device to a virtual machine
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="command">vm-add-virtio-network-device</Term> command adds a network device to a virtual machine.
-      The device is a
-      <LinkExternal target="https://wiki.libvirt.org/page/Virtio">Virtio</LinkExternal>
-      network device and, as such, requires a driver in the guest operating system that is capable of supporting Virtio.
+      The <Term type="command">vm-add-e1000-network-device</Term> command adds a network device to a virtual machine.
+      The device is an emulation of an
+      <LinkExternal target="https://downloadcenter.intel.com/product/1284/Intel-82545EM-Gigabit-Ethernet-Controller">
+        Intel e82545
+      </LinkExternal>
+      network device and, as such, requires a driver in the guest operating system that is capable of supporting that
+      device.
     </Paragraph>
 
     <FormalItem title="Parameters"
@@ -123,7 +126,7 @@
     <FormalItem title="Example">
       <Verbatim>
         <xi:include parse="text"
-                    href="cmdline-vm-add-virtio-network-device-output.txt"/>
+                    href="cmdline-vm-add-e1000-network-device-output.txt"/>
       </Verbatim>
     </FormalItem>
   </Subsection>

@@ -97,6 +97,17 @@
                       slot="2"
                       function="3"/>
     </PassthruDevice>
+
+    <E1000NetworkDevice>
+      <DeviceSlot bus="0"
+                  slot="7"
+                  function="0"/>
+      <Comment>An E1000 network device.</Comment>
+      <VMNetDevice name="vmnet24"
+                   address="d7:92:b6:60:0d:ac">
+        <Comment>A VMNet device.</Comment>
+      </VMNetDevice>
+    </E1000NetworkDevice>
   </Devices>
 
   <BootConfigurations>

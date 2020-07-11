@@ -20,6 +20,7 @@ import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDevicePassthru;
@@ -112,7 +113,7 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals(BigInteger.valueOf(512000000L), memory.totalBytes());
 
     final var devices = machine.devices();
-    assertEquals(7, devices.size());
+    assertEquals(8, devices.size());
 
     final var hostBridge = (WXMDeviceHostBridge) devices.get(0);
     assertEquals(WXM_AMD, hostBridge.vendor());
@@ -169,6 +170,14 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("0:6:0", passthru.deviceSlot().toString());
     assertEquals("1:2:3", passthru.hostPCISlot().toString());
     assertEquals("A PCI passthru device.", passthru.comment());
+
+    final var e1000 = (WXMDeviceE1000) devices.get(7);
+    assertEquals("0:7:0", e1000.deviceSlot().toString());
+    assertEquals("An E1000 network device.", e1000.comment());
+    final var e1000b = (WXMVMNet) net1.backend();
+    assertEquals("A VMNet device.", e1000b.comment());
+    assertEquals("d7:92:b5:60:0d:ac", e1000b.address().value());
+    assertEquals("vmnet23", e1000b.name().value());
 
     final var flags = machine.flags();
     assertFalse(flags.disableMPTableGeneration());

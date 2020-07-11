@@ -22,11 +22,12 @@ import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 
 import java.util.Map;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMNetworkDeviceBackendType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
 public final class WXM1VirtioNetworkDeviceParser
@@ -72,8 +73,8 @@ public final class WXM1VirtioNetworkDeviceParser
   {
     if (result instanceof WXM1Comment) {
       this.builder.setComment(((WXM1Comment) result).text());
-    } else if (result instanceof WXMVirtioNetworkBackendType) {
-      this.builder.setBackend((WXMVirtioNetworkBackendType) result);
+    } else if (result instanceof WXMNetworkDeviceBackendType) {
+      this.builder.setBackend((WXMDeviceType.WXMDeviceVirtioNetworkType.WXMNetworkDeviceBackendType) result);
     } else if (result instanceof WXMDeviceSlot) {
       this.builder.setDeviceSlot((WXMDeviceSlot) result);
     } else {

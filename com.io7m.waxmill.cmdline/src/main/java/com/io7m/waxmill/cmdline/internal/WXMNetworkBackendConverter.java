@@ -23,20 +23,20 @@ import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVMNetDeviceName;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType;
 
-public final class WXMVirtioNetworkBackendConverter
-  implements IStringConverter<WXMVirtioNetworkBackendType>
+public final class WXMNetworkBackendConverter
+  implements IStringConverter<WXMNetworkDeviceBackendType>
 {
   private final WXMMessages messages;
 
-  public WXMVirtioNetworkBackendConverter()
+  public WXMNetworkBackendConverter()
   {
     this.messages = WXMMessages.create();
   }
 
   @Override
-  public WXMVirtioNetworkBackendType convert(
+  public WXMNetworkDeviceBackendType convert(
     final String value)
   {
     final String[] segments = value.split(";");
@@ -72,7 +72,7 @@ public final class WXMVirtioNetworkBackendConverter
     return new IllegalArgumentException(
       this.messages.format(
         "errorInvalidVirtioNetworkBackend",
-        this.messages.format("virtioNetworkBackendSpec"),
+        this.messages.format("networkBackendSpec"),
         value
       )
     );
@@ -82,7 +82,7 @@ public final class WXMVirtioNetworkBackendConverter
   public String toString()
   {
     return String.format(
-      "[WXMVirtioNetworkBackendConverter 0x%s]",
+      "[WXMNetworkBackendConverter 0x%s]",
       Long.toUnsignedString(System.identityHashCode(this), 16)
     );
   }

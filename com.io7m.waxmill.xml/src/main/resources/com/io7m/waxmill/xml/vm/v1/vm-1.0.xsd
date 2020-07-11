@@ -473,6 +473,25 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="E1000NetworkDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        An emulation of an Intel e82545 network interface.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:TAPDevice"/>
+            <xsd:element ref="wxm:VMNetDevice"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="VirtioBlockStorageDevice">
     <xsd:annotation>
       <xsd:documentation>
@@ -790,11 +809,12 @@
                   maxOccurs="unbounded">
         <xsd:element ref="wxm:AHCIDiskDevice"/>
         <xsd:element ref="wxm:AHCIOpticalDiskDevice"/>
+        <xsd:element ref="wxm:E1000NetworkDevice"/>
         <xsd:element ref="wxm:HostBridge"/>
         <xsd:element ref="wxm:LPCDevice"/>
+        <xsd:element ref="wxm:PassthruDevice"/>
         <xsd:element ref="wxm:VirtioBlockStorageDevice"/>
         <xsd:element ref="wxm:VirtioNetworkDevice"/>
-        <xsd:element ref="wxm:PassthruDevice"/>
       </xsd:choice>
     </xsd:complexType>
 

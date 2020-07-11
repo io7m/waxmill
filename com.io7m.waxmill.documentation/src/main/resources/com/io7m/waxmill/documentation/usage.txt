@@ -23,6 +23,7 @@ INFO com.io7m.waxmill.cmdline.Main: Usage: waxmill [options] [command] [command 
     version                           Show the application version.
     vm-add-ahci-disk                  Add an AHCI disk to a virtual machine.
     vm-add-ahci-optical               Add an AHCI optical drive to a virtual machine.
+    vm-add-e1000-network-device       Add an e1000 network device to a virtual machine.
     vm-add-lpc-device                 Add an LPC device to a virtual machine.
     vm-add-passthru-device            Add a PCI passthru device to a virtual machine.
     vm-add-virtio-disk                Add a virtio disk to a virtual machine.
