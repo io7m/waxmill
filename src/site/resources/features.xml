@@ -2,6 +2,11 @@
 
 <div xmlns="http://www.w3.org/1999/xhtml">
   <ul>
+    <li>Create, configure, run, and destroy virtual machines.</li>
+    <li>Written in pure Java 11 for safety and portability.</li>
+    <li>Designed to run virtual machines under process supervision.</li>
+    <li>Rich command-line interface with extensive correctness checking and detailed usage and error messages.</li>
+    <li>Extensive documentation.</li>
     <li><a href="https://www.osgi.org/">OSGi</a>-ready.</li>
     <li><a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">JPMS</a>-ready</li>
     <li>High coverage automated test suite</li>
