@@ -21,23 +21,25 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.waxmill.machines.WXMDeviceFramebuffer;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
-import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
+import java.net.InetAddress;
 import java.util.Map;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMNetworkDeviceBackendType;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
-public final class WXM1VirtioNetworkDeviceParser
-  implements BTElementHandlerType<Object, WXMDeviceVirtioNetwork>
+public final class WXM1FramebufferDeviceParser
+  implements BTElementHandlerType<Object, WXMDeviceFramebuffer>
 {
-  private final WXMDeviceVirtioNetwork.Builder builder;
+  private final WXMDeviceFramebuffer.Builder builder;
 
-  public WXM1VirtioNetworkDeviceParser()
+  public WXM1FramebufferDeviceParser()
   {
-    this.builder =
-      WXMDeviceVirtioNetwork.builder();
+    this.builder = WXMDeviceFramebuffer.builder();
   }
 
   @Override
@@ -53,14 +55,6 @@ public final class WXM1VirtioNetworkDeviceParser
       Map.entry(
         element("Comment"),
         c -> new WXM1CommentParser()
-      ),
-      Map.entry(
-        element("TAPDevice"),
-        c -> new WXM1TapParser()
-      ),
-      Map.entry(
-        element("VMNetDevice"),
-        c -> new WXM1VMNetParser()
       )
     );
   }
@@ -72,8 +66,6 @@ public final class WXM1VirtioNetworkDeviceParser
   {
     if (result instanceof WXM1Comment) {
       this.builder.setComment(((WXM1Comment) result).text());
-    } else if (result instanceof WXMNetworkDeviceBackendType) {
-      this.builder.setBackend((WXMNetworkDeviceBackendType) result);
     } else if (result instanceof WXMDeviceSlot) {
       this.builder.setDeviceSlot((WXMDeviceSlot) result);
     } else {
@@ -82,7 +74,42 @@ public final class WXM1VirtioNetworkDeviceParser
   }
 
   @Override
-  public WXMDeviceVirtioNetwork onElementFinished(
+  public void onElementStart(
+    final BTElementParsingContextType context,
+    final Attributes attributes)
+    throws SAXException
+  {
+    try {
+      this.builder.setWidth(
+        Integer.parseInt(attributes.getValue("width").trim())
+      );
+      this.builder.setHeight(
+        Integer.parseInt(attributes.getValue("height").trim())
+      );
+      this.builder.setWaitForVNC(
+        Boolean.parseBoolean(attributes.getValue("waitForVNC").trim())
+      );
+
+      final var address =
+        InetAddress.getByName(attributes.getValue("listenAddress").trim());
+      final var port =
+        Integer.parseInt(attributes.getValue("listenPort").trim());
+
+      this.builder.setListenAddress(address);
+      this.builder.setListenPort(port);
+
+      this.builder.setVgaConfiguration(
+        WXMVGAConfiguration.valueOf(
+          attributes.getValue("vgaConfiguration").trim()
+        )
+      );
+    } catch (final Exception e) {
+      throw context.parseException(e);
+    }
+  }
+
+  @Override
+  public WXMDeviceFramebuffer onElementFinished(
     final BTElementParsingContextType context)
   {
     return this.builder.build();

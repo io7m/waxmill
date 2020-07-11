@@ -108,6 +108,18 @@
           <Comment>A VMNet device.</Comment>
         </VMNetDevice>
       </E1000NetworkDevice>
+
+      <FramebufferDevice width="800"
+                         height="600"
+                         waitForVNC="true"
+                         listenAddress="localhost"
+                         listenPort="5901"
+                         vgaConfiguration="OFF">
+        <DeviceSlot bus="0"
+                    slot="8"
+                    function="0"/>
+        <Comment>A framebuffer device.</Comment>
+      </FramebufferDevice>
     </Devices>
 
     <BootConfigurations>

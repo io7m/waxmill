@@ -76,6 +76,10 @@ public final class WXM1DevicesParser
       Map.entry(
         element("E1000NetworkDevice"),
         c -> new WXM1E1000NetworkDeviceParser()
+      ),
+      Map.entry(
+        element("FramebufferDevice"),
+        c -> new WXM1FramebufferDeviceParser()
       )
     );
   }

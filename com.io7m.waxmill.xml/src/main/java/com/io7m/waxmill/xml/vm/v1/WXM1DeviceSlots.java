@@ -29,25 +29,6 @@ public final class WXM1DeviceSlots
 
   }
 
-  /**
-   * The side of emulation upon which the device slot lives.
-   */
-
-  public enum SlotSide
-  {
-    /**
-     * The slot is a host PCI slot.
-     */
-
-    HOST,
-
-    /**
-     * The slot is a guest PCI slot.
-     */
-
-    GUEST
-  }
-
   public static void serializeDeviceSlot(
     final WXMDeviceSlot deviceSlot,
     final SlotSide side,
@@ -74,5 +55,24 @@ public final class WXM1DeviceSlots
       "function",
       String.valueOf(deviceSlot.functionID()));
     writer.writeEndElement();
+  }
+
+  /**
+   * The side of emulation upon which the device slot lives.
+   */
+
+  public enum SlotSide
+  {
+    /**
+     * The slot is a host PCI slot.
+     */
+
+    HOST,
+
+    /**
+     * The slot is a guest PCI slot.
+     */
+
+    GUEST
   }
 }

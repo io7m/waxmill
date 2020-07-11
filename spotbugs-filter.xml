@@ -34,10 +34,12 @@
       <Class name="com.io7m.waxmill.client.api.WXMClientConfiguration"/>
       <Class name="com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve"/>
       <Class name="com.io7m.waxmill.machines.WXMBootConfigurationName"/>
+      <Class name="com.io7m.waxmill.machines.WXMBootConfigurationUEFI"/>
       <Class name="com.io7m.waxmill.machines.WXMCPUTopology"/>
       <Class name="com.io7m.waxmill.machines.WXMCommandExecution"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIDisk"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceFramebuffer"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceHostBridge"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceLPC"/>
       <Class name="com.io7m.waxmill.machines.WXMDeviceSlot"/>
@@ -69,7 +71,6 @@
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Flag"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1OpenOptions"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1PinCPUs"/>
-      <Class name="com.io7m.waxmill.machines.WXMBootConfigurationUEFI"/>
     </Or>
   </Match>
 
@@ -306,6 +307,20 @@
     <Class name="com.io7m.waxmill.xml.vm.v1.WXM1DevicesParser"/>
     <Method name="onChildHandlersRequested"/>
     <Bug pattern="CE_CLASS_ENVY"/>
+  </Match>
+
+  <Match>
+    <!-- InetSocket* wants to be a sealed interface. -->
+    <Class name="com.io7m.waxmill.boot.WXMBootConfigurationEvaluator"/>
+    <Method name="formatVNCSocketAddress"/>
+    <Bug pattern="ITC_INHERITANCE_TYPE_CHECKING"/>
+  </Match>
+
+  <Match>
+    <!-- False positive. -->
+    <Class name="com.io7m.waxmill.xml.vm.v1.WXM1FramebufferDeviceParser"/>
+    <Method name="onElementStart"/>
+    <Bug pattern="REC_CATCH_EXCEPTION"/>
   </Match>
 
 </FindBugsFilter>

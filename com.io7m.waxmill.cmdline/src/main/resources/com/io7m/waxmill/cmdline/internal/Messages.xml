@@ -257,4 +257,9 @@ supporting it.
 
 [0] https://downloadcenter.intel.com/product/1284/Intel-82545EM-Gigabit-Ethernet-Controller
 ]]></entry>
+
+  <entry key="vmAddFramebufferDeviceHelp"><![CDATA[
+The vm-add-framebuffer-device command adds a raw framebuffer device to
+a virtual machine that is connected to a VNC server.
+]]></entry>
 </properties>

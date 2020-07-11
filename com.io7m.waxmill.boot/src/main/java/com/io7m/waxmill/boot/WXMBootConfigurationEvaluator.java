@@ -33,6 +33,8 @@ import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
+import com.io7m.waxmill.machines.WXMDeviceFramebuffer;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDevicePassthru;
@@ -55,6 +57,9 @@ import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -65,8 +70,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationType;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMNetworkDeviceBackendType;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
 import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
@@ -487,8 +492,77 @@ public final class WXMBootConfigurationEvaluator
         configureBhyveDevicePassthru(command, (WXMDevicePassthru) device);
         return;
       }
+      case WXM_E1000: {
+        configureBhyveDeviceE1000Network(
+          command, (WXMDeviceE1000) device);
+        return;
+      }
+      case WXM_FRAMEBUFFER: {
+        configureBhyveDeviceFramebuffer(
+          command, (WXMDeviceFramebuffer) device);
+        return;
+      }
     }
     throw new UnreachableCodeException();
+  }
+
+  private static void configureBhyveDeviceFramebuffer(
+    final WXMCommandExecution.Builder command,
+    final WXMDeviceFramebuffer device)
+  {
+    command.addArguments("-s");
+
+    final var arguments = new ArrayList<String>(8);
+    arguments.add(device.deviceSlot().toString());
+    arguments.add(device.externalName());
+    arguments.add(String.format(
+      "tcp=%s",
+      formatVNCSocketAddress(
+        device.listenAddress(),
+        device.listenPort())));
+    arguments.add(String.format("w=%d", Integer.valueOf(device.width())));
+    arguments.add(String.format("h=%d", Integer.valueOf(device.height())));
+    arguments.add(String.format(
+      "vga=%s",
+      device.vgaConfiguration().externalName()));
+    if (device.waitForVNC()) {
+      arguments.add("wait");
+    }
+    command.addArguments(String.join(",", arguments));
+  }
+
+  private static String formatVNCSocketAddress(
+    final InetAddress listenAddress,
+    final int listenPort)
+  {
+    if (listenAddress instanceof Inet4Address) {
+      return String.format(
+        "%s:%d",
+        listenAddress.getHostAddress(),
+        Integer.valueOf(listenPort)
+      );
+    }
+    if (listenAddress instanceof Inet6Address) {
+      return String.format(
+        "[%s]:%d",
+        listenAddress.getHostAddress(),
+        Integer.valueOf(listenPort)
+      );
+    }
+    throw new UnreachableCodeException();
+  }
+
+  private static void configureBhyveDeviceE1000Network(
+    final WXMCommandExecution.Builder command,
+    final WXMDeviceE1000 device)
+  {
+    command.addArguments("-s");
+    command.addArguments(String.format(
+      "%s,%s,%s",
+      device.deviceSlot(),
+      device.externalName(),
+      configureBhyveNetworkBackend(device.backend())
+    ));
   }
 
   private static void configureBhyveDevicePassthru(

@@ -25,6 +25,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandSchema;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIOptical;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddE1000NetworkDevice;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddFramebufferDevice;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddLPC;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddPassthru;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioDisk;
@@ -75,6 +76,7 @@ public final class Main implements Runnable
         WXMCommandVMAddAHCIDisk::new,
         WXMCommandVMAddAHCIOptical::new,
         WXMCommandVMAddE1000NetworkDevice::new,
+        WXMCommandVMAddFramebufferDevice::new,
         WXMCommandVMAddLPC::new,
         WXMCommandVMAddPassthru::new,
         WXMCommandVMAddVirtioDisk::new,

@@ -22,6 +22,7 @@ import com.io7m.junreachable.UnreachableCodeException;
 import org.immutables.value.Value;
 
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_CD;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_HD;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_E1000;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_FRAMEBUFFER;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_PASSTHRU;
@@ -87,15 +89,16 @@ public interface WXMDeviceType
   default boolean isStorageDevice()
   {
     switch (this.kind()) {
+      case WXM_E1000:
+      case WXM_FRAMEBUFFER:
       case WXM_HOSTBRIDGE:
-      case WXM_VIRTIO_NETWORK:
       case WXM_LPC:
       case WXM_PASSTHRU:
-      case WXM_E1000:
+      case WXM_VIRTIO_NETWORK:
         return false;
-      case WXM_VIRTIO_BLOCK:
-      case WXM_AHCI_HD:
       case WXM_AHCI_CD:
+      case WXM_AHCI_HD:
+      case WXM_VIRTIO_BLOCK:
         return true;
     }
 
@@ -109,13 +112,14 @@ public interface WXMDeviceType
   default boolean isConsoleDevice()
   {
     switch (this.kind()) {
-      case WXM_HOSTBRIDGE:
-      case WXM_VIRTIO_NETWORK:
-      case WXM_VIRTIO_BLOCK:
-      case WXM_AHCI_HD:
       case WXM_AHCI_CD:
-      case WXM_PASSTHRU:
+      case WXM_AHCI_HD:
       case WXM_E1000:
+      case WXM_FRAMEBUFFER:
+      case WXM_HOSTBRIDGE:
+      case WXM_PASSTHRU:
+      case WXM_VIRTIO_BLOCK:
+      case WXM_VIRTIO_NETWORK:
         return false;
       case WXM_LPC:
         return true;
@@ -177,6 +181,12 @@ public interface WXMDeviceType
      */
 
     WXM_E1000,
+
+    /**
+     * A raw framebuffer device attached to a VNC server.
+     */
+
+    WXM_FRAMEBUFFER
   }
 
   /**
@@ -251,6 +261,132 @@ public interface WXMDeviceType
      */
 
     WXMNetworkDeviceBackendType backend();
+  }
+
+  /**
+   * A raw framebuffer device attached to a VNC server.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMDeviceFramebufferType extends WXMDeviceType
+  {
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    default Kind kind()
+    {
+      return WXM_FRAMEBUFFER;
+    }
+
+    @Override
+    WXMDeviceSlot deviceSlot();
+
+    @Override
+    default String externalName()
+    {
+      return "fbuf";
+    }
+
+    /**
+     * @return The IP address upon which the VNC server will listen
+     */
+
+    InetAddress listenAddress();
+
+    /**
+     * @return The port upon which the VNC server will listen
+     */
+
+    int listenPort();
+
+    /**
+     * @return The width of the framebuffer
+     */
+
+    @Value.Default
+    default int width()
+    {
+      return 1024;
+    }
+
+    /**
+     * @return The height of the framebuffer
+     */
+
+    @Value.Default
+    default int height()
+    {
+      return 768;
+    }
+
+    /**
+     * @return The guest VGA configuration used
+     */
+
+    @Value.Default
+    default WXMVGAConfiguration vgaConfiguration()
+    {
+      return WXMVGAConfiguration.IO;
+    }
+
+    /**
+     * @return Delay booting until a VNC connection has arrived
+     */
+
+    boolean waitForVNC();
+
+    /**
+     * The VGA configuration used.
+     */
+
+    enum WXMVGAConfiguration
+    {
+      /**
+       * Used along with the CSM BIOS capability in UEFI to boot traditional
+       * BIOS guests that require the legacy VGA I/O and memory regions to be
+       * available.
+       */
+
+      ON,
+
+      /**
+       * Used for the UEFI guests that assume that VGA adapter is present if
+       * they detect the I/O ports. An example of such a guest is OpenBSD in
+       * UEFI mode.
+       */
+
+      OFF,
+
+      /**
+       * Used for guests that attempt to issue BIOS calls which result in I/O
+       * port queries, and fail to boot if I/O decode is disabled.
+       */
+
+      IO;
+
+      /**
+       * @return The external name of the configuration
+       */
+
+      public String externalName()
+      {
+        switch (this) {
+          case ON:
+            return "on";
+          case OFF:
+            return "off";
+          case IO:
+            return "io";
+        }
+        throw new UnreachableCodeException();
+      }
+    }
   }
 
   @ImmutablesStyleType
