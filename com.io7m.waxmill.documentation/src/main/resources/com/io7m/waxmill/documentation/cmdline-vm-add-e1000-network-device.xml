@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
-         id="22388d06-bf5a-4d35-ae75-80303a670ea3"
+         id="cf887826-2793-4648-8a4d-934a9e8786f3"
          xmlns:xi="http://www.w3.org/2001/XInclude"
-         title="vm-add-lpc-device">
+         title="vm-add-e1000-network-device">
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="command">vm-add-lpc-device</Term>
-      - Add an LPC device to a virtual machine
+      <Term type="command">vm-add-e1000-network-device</Term>
+      - Add an e1000 network device to a virtual machine
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="command">vm-add-lpc-device</Term> command adds an LPC device to a virtual machine. The
-      <Term type="package">bhyve</Term>
-      documentation describes such devices as <Term type="quote">"LPC PCI-ISA bridges with COM1 and COM2 16550 serial
-      ports and a boot ROM"</Term>. In practice, LPC devices are used to provide console access to virtual machines, and
-      <LinkExternal target="https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface">UEFI</LinkExternal>
-      firmware to virtual machines that are booting from UEFI.
+      The <Term type="command">vm-add-e1000-network-device</Term> command adds a network device to a virtual machine.
+      The device is an emulation of an
+      <LinkExternal target="https://downloadcenter.intel.com/product/1284/Intel-82545EM-Gigabit-Ethernet-Controller">
+        Intel e82545
+      </LinkExternal>
+      network device and, as such, requires a driver in the guest operating system that is capable of supporting that
+      device.
     </Paragraph>
 
     <FormalItem title="Parameters"
@@ -33,15 +34,15 @@
         </Columns>
         <Row>
           <Cell>
-            <Term type="parameter">--add-backend</Term>
+            <Term type="parameter">--backend</Term>
           </Cell>
           <Cell>
-            <Term type="parameterType">TTY Backend</Term>
+            <Term type="parameterType">Network Backend</Term>
           </Cell>
           <Cell>
             <Term type="constant">true</Term>
           </Cell>
-          <Cell>A specification of the TTY device backend to add</Cell>
+          <Cell>A specification of the network device backend to add</Cell>
         </Row>
         <Row>
           <Cell>
@@ -53,7 +54,7 @@
           <Cell>
             <Term type="constant">false</Term>
           </Cell>
-          <Cell>A comment describing the new device</Cell>
+          <Cell>A comment describing the new disk</Cell>
         </Row>
         <Row>
           <Cell>
@@ -113,10 +114,10 @@
       </Verbatim>
     </FormalItem>
 
-    <FormalItem title="TTY Backend Syntax">
+    <FormalItem title="Network Backend Syntax">
       <Verbatim>
         <xi:include parse="text"
-                    href="lpc-syntax.txt"/>
+                    href="network-backend-syntax.txt"/>
       </Verbatim>
     </FormalItem>
   </Subsection>
@@ -125,7 +126,7 @@
     <FormalItem title="Example">
       <Verbatim>
         <xi:include parse="text"
-                    href="cmdline-vm-add-lpc-output.txt"/>
+                    href="cmdline-vm-add-e1000-network-device-output.txt"/>
       </Verbatim>
     </FormalItem>
   </Subsection>

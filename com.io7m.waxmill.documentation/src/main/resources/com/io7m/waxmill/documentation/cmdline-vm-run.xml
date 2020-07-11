@@ -16,8 +16,9 @@
     <Paragraph>
       The <Term type="command">vm-run</Term> command starts a virtual machine. The command, internally, uses
       <LinkExternal target="https://www.freebsd.org/cgi/man.cgi?query=execve&amp;sektion=2">execve()</LinkExternal>
-      to replace the waxmill process with that of the Bhyve virtual machine. The virtual machine stays running in the
-      foreground. The command is intended to be used to start virtual machines under process supervision systems such as
+      to replace the waxmill process with that of the <Term type="package">bhyve</Term> virtual machine. The virtual
+      machine stays running in the foreground. The command is intended to be used to start virtual machines under
+      process supervision systems such as
       <LinkExternal target="https://cr.yp.to/daemontools.html">daemontools</LinkExternal>
       or
       <LinkExternal target="http://smarden.org/runit/">runit</LinkExternal>.
@@ -29,11 +30,12 @@
       <Link target="9f22456e-66d8-4055-be45-5cc62d25b711">virtual machine runtime directory</Link>
       for the given machine, and then generate and execute the necessary shell commands to start the virtual machine.
       For example, if the selected boot configuration uses
-      <LinkExternal target="https://github.com/grehan-freebsd/grub2-bhyve">GRUB Bhyve</LinkExternal>, the required
-      <Term type="file">grub.cfg</Term> and <Term type="file">device.map</Term> files will be generated and saved
-      into the directory. The <Term type="parameter">--dry-run</Term> option will cause the command to generate those
-      required files, but will display the shell commands necessary to start the virtual machine on the standard output
-      instead of actually executing them.
+      <LinkExternal target="https://github.com/grehan-freebsd/grub2-bhyve">GRUB bhyve</LinkExternal>, the required
+      <Term type="file">grub.cfg</Term>
+      and <Term type="file">device.map</Term> files will be generated and saved into the directory. The <Term type="parameter">
+      --dry-run
+    </Term> option will cause the command to generate those required files, but will display the shell commands
+      necessary to start the virtual machine on the standard output instead of actually executing them.
     </Paragraph>
 
     <FormalItem title="Parameters"

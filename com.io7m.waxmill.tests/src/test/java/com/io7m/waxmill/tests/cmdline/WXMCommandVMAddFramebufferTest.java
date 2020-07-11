@@ -26,12 +26,11 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMCommandVMConsoleTest
+public final class WXMCommandVMAddFramebufferTest
 {
   private Path directory;
   private Path configFile;
@@ -55,9 +54,6 @@ public final class WXMCommandVMConsoleTest
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
         .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
-        .setZfsExecutable(Paths.get("/bin/echo"))
-        .setGrubBhyveExecutable(Paths.get("/bin/echo"))
-        .setBhyveExecutable(Paths.get("/bin/echo"))
         .build();
 
     new WXMClientConfigurationSerializers()
@@ -69,43 +65,28 @@ public final class WXMCommandVMConsoleTest
   }
 
   @Test
-  public void runTooFewArguments()
+  public void addFramebufferNonexistentVirtualMachine()
   {
     assertThrows(IOException.class, () -> {
+      final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
-          "vm-console"
-        }
-      );
-    });
-  }
-
-  @Test
-  public void runConfigurationFileMissing()
-    throws IOException
-  {
-    Files.deleteIfExists(this.configFile);
-
-    assertThrows(IOException.class, () -> {
-      MainExitless.main(
-        new String[]{
-          "vm-console",
-          "--verbose",
-          "trace",
-          "--machine",
-          UUID.randomUUID().toString(),
+          "vm-add-framebuffer-device",
           "--configuration",
-          this.configFile.toString()
+          this.configFile.toString(),
+          "--machine",
+          id.toString()
         }
       );
     });
   }
 
   @Test
-  public void runNoConsoleDevice()
-    throws IOException
+  public void addFramebufferAlreadyUsed()
+    throws Exception
   {
     final var id = UUID.randomUUID();
+
     MainExitless.main(
       new String[]{
         "vm-define",
@@ -113,8 +94,6 @@ public final class WXMCommandVMConsoleTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--machine",
-        id.toString(),
         "--name",
         "com.io7m.example",
         "--memory-gigabytes",
@@ -122,78 +101,40 @@ public final class WXMCommandVMConsoleTest
         "--memory-megabytes",
         "128",
         "--cpu-count",
-        "2"
+        "2",
+        "--machine",
+        id.toString()
       }
     );
 
-    assertThrows(IOException.class, () -> {
-      MainExitless.main(
-        new String[]{
-          "vm-console",
-          "--verbose",
-          "trace",
-          "--machine",
-          id.toString(),
-          "--configuration",
-          this.configFile.toString()
-        }
-      );
-    });
-  }
-
-  @Test
-  public void runNoConsoleDeviceDryRun()
-    throws IOException
-  {
-    final var id = UUID.randomUUID();
     MainExitless.main(
       new String[]{
-        "vm-define",
+        "vm-add-framebuffer-device",
         "--verbose",
         "trace",
         "--configuration",
         this.configFile.toString(),
         "--machine",
         id.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2"
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-lpc-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--add-backend",
-        "file;com1;/tmp/xyz",
         "--device-slot",
         "0:1:0"
       }
     );
 
-    MainExitless.main(
-      new String[]{
-        "vm-console",
-        "--verbose",
-        "trace",
-        "--dry-run",
-        "true",
-        "--machine",
-        id.toString(),
-        "--configuration",
-        this.configFile.toString()
-      }
-    );
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-add-framebuffer-device",
+          "--verbose",
+          "trace",
+          "--configuration",
+          this.configFile.toString(),
+          "--machine",
+          id.toString(),
+          "--device-slot",
+          "0:1:0"
+        }
+      );
+    });
   }
 }

@@ -1,0 +1,4 @@
+$ waxmill vm-add-e1000-network-device \
+  --machine de17174a-1b3c-4ebc-80af-cb239aa18cbd \
+  --device-slot 0:4:0 \
+  --backend tap;tap23;d9:63:c0:d9:09:e8

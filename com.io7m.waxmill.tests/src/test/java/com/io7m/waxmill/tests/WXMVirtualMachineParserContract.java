@@ -20,8 +20,11 @@ import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
+import com.io7m.waxmill.machines.WXMDeviceFramebuffer;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
@@ -48,6 +51,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration.OFF;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_AMD;
 import static com.io7m.waxmill.machines.WXMOpenOption.NO_CACHE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -111,7 +115,7 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals(BigInteger.valueOf(512000000L), memory.totalBytes());
 
     final var devices = machine.devices();
-    assertEquals(6, devices.size());
+    assertEquals(9, devices.size());
 
     final var hostBridge = (WXMDeviceHostBridge) devices.get(0);
     assertEquals(WXM_AMD, hostBridge.vendor());
@@ -164,6 +168,29 @@ public abstract class WXMVirtualMachineParserContract
       "/dev/nmdm_1a438a53-2fcd-498f-8cc2-0ff0456e3dc4_B",
       file.path().toString());
 
+    final var passthru = (WXMDevicePassthru) devices.get(6);
+    assertEquals("0:6:0", passthru.deviceSlot().toString());
+    assertEquals("1:2:3", passthru.hostPCISlot().toString());
+    assertEquals("A PCI passthru device.", passthru.comment());
+
+    final var e1000 = (WXMDeviceE1000) devices.get(7);
+    assertEquals("0:7:0", e1000.deviceSlot().toString());
+    assertEquals("An E1000 network device.", e1000.comment());
+    final var e1000b = (WXMVMNet) net1.backend();
+    assertEquals("A VMNet device.", e1000b.comment());
+    assertEquals("d7:92:b5:60:0d:ac", e1000b.address().value());
+    assertEquals("vmnet23", e1000b.name().value());
+
+    final var fb = (WXMDeviceFramebuffer) devices.get(8);
+    assertEquals("0:8:0", fb.deviceSlot().toString());
+    assertEquals("A framebuffer device.", fb.comment());
+    assertEquals(800, fb.width());
+    assertEquals(600, fb.height());
+    assertEquals("localhost", fb.listenAddress().getHostName());
+    assertEquals(5901, fb.listenPort());
+    assertEquals(OFF, fb.vgaConfiguration());
+    assertEquals(Boolean.TRUE, Boolean.valueOf(fb.waitForVNC()));
+
     final var flags = machine.flags();
     assertFalse(flags.disableMPTableGeneration());
     assertFalse(flags.forceVirtualIOPCIToUseMSI());
@@ -171,7 +198,7 @@ public abstract class WXMVirtualMachineParserContract
     assertFalse(flags.guestAPICIsX2APIC());
     assertFalse(flags.includeGuestMemoryInCoreFiles());
     assertTrue(flags.realTimeClockIsUTC());
-    assertFalse(flags.wireGuestMemory());
+    assertTrue(flags.wireGuestMemory());
     assertTrue(flags.yieldCPUOnHLT());
 
     final var boots = machine.bootConfigurations();

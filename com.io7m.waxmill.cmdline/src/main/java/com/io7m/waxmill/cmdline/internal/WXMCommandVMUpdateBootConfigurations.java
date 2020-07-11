@@ -56,7 +56,8 @@ public final class WXMCommandVMUpdateBootConfigurations
 
   @Parameter(
     names = "--update",
-    description = "Update existing boot configurations"
+    description = "Update existing boot configurations",
+    arity = 1
   )
   private boolean update;
 

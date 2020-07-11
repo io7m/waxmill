@@ -19,9 +19,9 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceSlots;
-import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
@@ -36,12 +36,12 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType;
 
-@Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
-public final class WXMCommandVMAddVirtioNetworkDevice
+@Parameters(commandDescription = "Add an e1000 network device to a virtual machine.")
+public final class WXMCommandVMAddE1000NetworkDevice
   extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMCommandVMAddVirtioNetworkDevice.class);
+    LoggerFactory.getLogger(WXMCommandVMAddE1000NetworkDevice.class);
 
   @Parameter(
     names = "--machine",
@@ -68,7 +68,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
 
   @Parameter(
     names = "--backend",
-    description = "A specification of the Virtio network device backend to add",
+    description = "A specification of the network device backend to add",
     required = true,
     converter = WXMNetworkBackendConverter.class
   )
@@ -80,7 +80,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
    * @param inContext The command context
    */
 
-  public WXMCommandVMAddVirtioNetworkDevice(
+  public WXMCommandVMAddE1000NetworkDevice(
     final CLPCommandContextType inContext)
   {
     super(LOG, inContext);
@@ -89,7 +89,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   @Override
   public String name()
   {
-    return "vm-add-virtio-network-device";
+    return "vm-add-e1000-network-device";
   }
 
   @Override
@@ -97,7 +97,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   {
     final var messages = this.messages();
     return String.join("", List.of(
-      messages.format("vmAddVirtioNetworkDeviceHelp"),
+      messages.format("vmAddE1000NetworkDeviceHelp"),
       messages.format("networkBackendSpec")
     ));
   }
@@ -117,7 +117,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
         );
 
       final var virtio =
-        WXMDeviceVirtioNetwork.builder()
+        WXMDeviceE1000.builder()
           .setDeviceSlot(this.deviceSlot)
           .setBackend(this.backend)
           .setComment(this.comment)
@@ -131,7 +131,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
 
       client.vmUpdate(updatedMachine);
 
-      this.info("infoAddedVirtioNet", this.deviceSlot);
+      this.info("infoAddedE1000Net", this.deviceSlot);
       switch (this.backend.kind()) {
         case WXM_TAP:
           final var tap = (WXMTap) this.backend;

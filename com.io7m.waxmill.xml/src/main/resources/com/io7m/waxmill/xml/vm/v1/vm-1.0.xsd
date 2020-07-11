@@ -310,6 +310,28 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="HostDeviceSlot">
+    <xsd:annotation>
+      <xsd:documentation>
+        The identifier of a (host) device slot. bhyve provides PCI bus emulation and virtual devices that can be
+        attached to slots on up to 256 busses. There are 32 available slots per bus, with the option of providing up to
+        8 functions per slot.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="bus"
+                     type="wxm:DeviceBusIDType"
+                     use="required"/>
+      <xsd:attribute name="slot"
+                     type="wxm:DeviceSlotIDType"
+                     use="required"/>
+      <xsd:attribute name="function"
+                     type="wxm:DeviceFunctionIDType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:complexType name="DeviceType">
     <xsd:annotation>
       <xsd:documentation>
@@ -436,6 +458,25 @@
         A virtio network device.
 
         See: https://wiki.libvirt.org/page/Virtio
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:TAPDevice"/>
+            <xsd:element ref="wxm:VMNetDevice"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="E1000NetworkDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        An emulation of an Intel e82545 network interface.
       </xsd:documentation>
     </xsd:annotation>
 
@@ -737,6 +778,57 @@
     </xsd:key>
   </xsd:element>
 
+  <xsd:element name="PassthruDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A PCI passthru device. Exclusive access to a PCI device on the host is given to the virtual machine.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:sequence>
+            <xsd:element ref="wxm:HostDeviceSlot"/>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="FramebufferDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A raw framebuffer device attached to VNC server.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="width"
+                         type="xsd:nonNegativeInteger"
+                         use="required"/>
+          <xsd:attribute name="height"
+                         type="xsd:nonNegativeInteger"
+                         use="required"/>
+          <xsd:attribute name="waitForVNC"
+                         type="xsd:boolean"
+                         use="required"/>
+          <xsd:attribute name="listenAddress"
+                         type="xsd:string"
+                         use="required"/>
+          <xsd:attribute name="listenPort"
+                         type="xsd:nonNegativeInteger"
+                         use="required"/>
+          <xsd:attribute name="vgaConfiguration"
+                         type="xsd:string"
+                         use="required"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="Devices">
     <xsd:annotation>
       <xsd:documentation>
@@ -750,8 +842,11 @@
                   maxOccurs="unbounded">
         <xsd:element ref="wxm:AHCIDiskDevice"/>
         <xsd:element ref="wxm:AHCIOpticalDiskDevice"/>
+        <xsd:element ref="wxm:E1000NetworkDevice"/>
+        <xsd:element ref="wxm:FramebufferDevice"/>
         <xsd:element ref="wxm:HostBridge"/>
         <xsd:element ref="wxm:LPCDevice"/>
+        <xsd:element ref="wxm:PassthruDevice"/>
         <xsd:element ref="wxm:VirtioBlockStorageDevice"/>
         <xsd:element ref="wxm:VirtioNetworkDevice"/>
       </xsd:choice>

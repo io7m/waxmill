@@ -87,6 +87,39 @@
                       path="/dev/nmdm_1a438a53-2fcd-498f-8cc2-0ff0456e3dc4_B"/>
       <TTYBackendNMDM device="com2"/>
     </LPCDevice>
+
+    <PassthruDevice>
+      <DeviceSlot bus="0"
+                  slot="6"
+                  function="0"/>
+      <Comment>A PCI passthru device.</Comment>
+      <HostDeviceSlot bus="1"
+                      slot="2"
+                      function="3"/>
+    </PassthruDevice>
+
+    <E1000NetworkDevice>
+      <DeviceSlot bus="0"
+                  slot="7"
+                  function="0"/>
+      <Comment>An E1000 network device.</Comment>
+      <VMNetDevice name="vmnet24"
+                   address="d7:92:b6:60:0d:ac">
+        <Comment>A VMNet device.</Comment>
+      </VMNetDevice>
+    </E1000NetworkDevice>
+
+    <FramebufferDevice width="800"
+                       height="600"
+                       waitForVNC="true"
+                       listenAddress="localhost"
+                       listenPort="5901"
+                       vgaConfiguration="OFF">
+      <DeviceSlot bus="0"
+                  slot="8"
+                  function="0"/>
+      <Comment>A framebuffer device.</Comment>
+    </FramebufferDevice>
   </Devices>
 
   <BootConfigurations>
@@ -153,7 +186,7 @@
     <Flag name="RealTimeClockIsUTC"
           enabled="true"/>
     <Flag name="WireGuestMemory"
-          enabled="false"/>
+          enabled="true"/>
     <Flag name="YieldCPUOnHLT"
           enabled="true"/>
   </Flags>

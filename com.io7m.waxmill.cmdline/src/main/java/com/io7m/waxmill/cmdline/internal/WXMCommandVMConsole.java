@@ -49,7 +49,8 @@ public final class WXMCommandVMConsole
   @Parameter(
     names = "--dry-run",
     description = "Show the commands that would be executed, but do not execute them.",
-    required = false
+    required = false,
+    arity = 1
   )
   private boolean dryRun;
 

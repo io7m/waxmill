@@ -23,7 +23,10 @@ INFO com.io7m.waxmill.cmdline.Main: Usage: waxmill [options] [command] [command 
     version                           Show the application version.
     vm-add-ahci-disk                  Add an AHCI disk to a virtual machine.
     vm-add-ahci-optical               Add an AHCI optical drive to a virtual machine.
+    vm-add-e1000-network-device       Add an e1000 network device to a virtual machine.
+    vm-add-framebuffer-device         Add a framebuffer device to a virtual machine.
     vm-add-lpc-device                 Add an LPC device to a virtual machine.
+    vm-add-passthru-device            Add a PCI passthru device to a virtual machine.
     vm-add-virtio-disk                Add a virtio disk to a virtual machine.
     vm-add-virtio-network-device      Add a virtio network device to a virtual machine.
     vm-console                        Connect to the console of a virtual machine
@@ -35,8 +38,12 @@ INFO com.io7m.waxmill.cmdline.Main: Usage: waxmill [options] [command] [command 
     vm-import                         Import virtual machine descriptions.
     vm-list                           List the available virtual machines.
     vm-list-with-name                 List the virtual machines with the given name.
+    vm-realize                        Realize a virtual machine.
     vm-run                            Run a virtual machine.
+    vm-set                            Set virtual machine configuration flags.
     vm-update-boot-configurations     Add/replace boot configurations in a virtual machine.
 
   Documentation:
     https://www.io7m.com/software/waxmill/documentation/
+
+

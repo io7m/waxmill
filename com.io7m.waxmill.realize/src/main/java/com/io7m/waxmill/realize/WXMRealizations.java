@@ -74,17 +74,22 @@ public final class WXMRealizations implements WXMRealizationType
 
     for (final var device : this.machine.devices()) {
       switch (device.kind()) {
-        case WXM_HOSTBRIDGE:
-        case WXM_VIRTIO_NETWORK:
         case WXM_AHCI_CD:
+        case WXM_E1000:
+        case WXM_FRAMEBUFFER:
+        case WXM_HOSTBRIDGE:
         case WXM_LPC:
+        case WXM_PASSTHRU:
+        case WXM_VIRTIO_NETWORK:
           continue;
+
         case WXM_VIRTIO_BLOCK:
           this.evaluateVirtioBlock(
             builder,
             (WXMDeviceVirtioBlockStorage) device
           );
           continue;
+
         case WXM_AHCI_HD:
           this.evaluateAHCIDisk(
             builder,

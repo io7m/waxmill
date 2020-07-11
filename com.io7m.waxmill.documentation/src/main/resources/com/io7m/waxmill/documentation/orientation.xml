@@ -8,7 +8,7 @@
       <Paragraph>
         The <Term type="package">Waxmill</Term> package provides a command-line interface and Java API for creating,
         configuring, and running
-        <LinkExternal target="https://www.bhyve.org">Bhyve</LinkExternal>
+        <LinkExternal target="https://www.bhyve.org">bhyve</LinkExternal>
         virtual machines. The package follows a number of design principles in order to ensure stability and
         reliability.
       </Paragraph>

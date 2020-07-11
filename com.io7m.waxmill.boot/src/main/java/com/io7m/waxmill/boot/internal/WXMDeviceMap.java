@@ -103,6 +103,9 @@ public final class WXMDeviceMap
         case WXM_HOSTBRIDGE:
         case WXM_VIRTIO_NETWORK:
         case WXM_LPC:
+        case WXM_PASSTHRU:
+        case WXM_FRAMEBUFFER:
+        case WXM_E1000:
           break;
 
         case WXM_VIRTIO_BLOCK:
@@ -162,10 +165,13 @@ public final class WXMDeviceMap
     final WXMVirtualMachine machine)
   {
     switch (device.kind()) {
-      case WXM_HOSTBRIDGE:
-      case WXM_VIRTIO_NETWORK:
-      case WXM_LPC:
       case WXM_AHCI_CD:
+      case WXM_E1000:
+      case WXM_FRAMEBUFFER:
+      case WXM_HOSTBRIDGE:
+      case WXM_LPC:
+      case WXM_PASSTHRU:
+      case WXM_VIRTIO_NETWORK:
         throw new UnreachableCodeException();
 
       case WXM_VIRTIO_BLOCK: {

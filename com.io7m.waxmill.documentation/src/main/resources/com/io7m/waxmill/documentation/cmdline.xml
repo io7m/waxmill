@@ -8,7 +8,7 @@
   <Section title="Overview">
     <Paragraph>
       The <Term type="package">waxmill</Term> package provides a command-line interface and API
-      for creating, configuring, and running <LinkExternal target="https://www.bhyve.org">Bhyve</LinkExternal>
+      for creating, configuring, and running <LinkExternal target="https://www.bhyve.org">bhyve</LinkExternal>
       virtual machines. The base <Term type="command">waxmill</Term> command is broken into a number of subcommands
       which are documented over the following sections.
     </Paragraph>
@@ -53,7 +53,10 @@
   <xi:include href="cmdline-version.xml" />
   <xi:include href="cmdline-vm-add-ahci-disk.xml" />
   <xi:include href="cmdline-vm-add-ahci-optical.xml" />
+  <xi:include href="cmdline-vm-add-e1000-network-device.xml" />
+  <xi:include href="cmdline-vm-add-framebuffer-device.xml" />
   <xi:include href="cmdline-vm-add-lpc.xml" />
+  <xi:include href="cmdline-vm-add-passthru.xml" />
   <xi:include href="cmdline-vm-add-virtio-disk.xml" />
   <xi:include href="cmdline-vm-add-virtio-network-device.xml" />
   <xi:include href="cmdline-vm-console.xml" />
@@ -67,6 +70,7 @@
   <xi:include href="cmdline-vm-list.xml" />
   <xi:include href="cmdline-vm-realize.xml" />
   <xi:include href="cmdline-vm-run.xml" />
+  <xi:include href="cmdline-vm-set.xml" />
   <xi:include href="cmdline-vm-update-boot-configurations.xml" />
 
 </Section>

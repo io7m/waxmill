@@ -19,29 +19,29 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.waxmill.machines.WXMDeviceFramebuffer;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceSlots;
-import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMMachineMessages;
-import com.io7m.waxmill.machines.WXMTap;
-import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration.IO;
 
-@Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
-public final class WXMCommandVMAddVirtioNetworkDevice
+@Parameters(commandDescription = "Add a framebuffer device to a virtual machine.")
+public final class WXMCommandVMAddFramebufferDevice
   extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMCommandVMAddVirtioNetworkDevice.class);
+    LoggerFactory.getLogger(WXMCommandVMAddFramebufferDevice.class);
 
   @Parameter(
     names = "--machine",
@@ -67,12 +67,47 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   private WXMDeviceSlot deviceSlot;
 
   @Parameter(
-    names = "--backend",
-    description = "A specification of the Virtio network device backend to add",
-    required = true,
-    converter = WXMNetworkBackendConverter.class
+    names = "--width",
+    description = "The framebuffer width",
+    required = false
   )
-  private WXMNetworkDeviceBackendType backend;
+  private int width = 1024;
+
+  @Parameter(
+    names = "--height",
+    description = "The framebuffer height",
+    required = false
+  )
+  private int height = 1024;
+
+  @Parameter(
+    names = "--listen-address",
+    description = "The VNC server listen address",
+    required = false
+  )
+  private String listenAddress = "localhost";
+
+  @Parameter(
+    names = "--listen-port",
+    description = "The VNC server listen port",
+    required = false
+  )
+  private int listenPort = 5900;
+
+  @Parameter(
+    names = "--vga-configuration",
+    description = "The guest VGA configuration",
+    required = false
+  )
+  private WXMVGAConfiguration vgaConfiguration = IO;
+
+  @Parameter(
+    names = "--wait-for-vnc",
+    description = "Will cause the machine to wait for a VNC connection before booting",
+    required = false,
+    arity = 1
+  )
+  private boolean waitForVNC;
 
   /**
    * Construct a command.
@@ -80,7 +115,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
    * @param inContext The command context
    */
 
-  public WXMCommandVMAddVirtioNetworkDevice(
+  public WXMCommandVMAddFramebufferDevice(
     final CLPCommandContextType inContext)
   {
     super(LOG, inContext);
@@ -89,7 +124,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   @Override
   public String name()
   {
-    return "vm-add-virtio-network-device";
+    return "vm-add-framebuffer-device";
   }
 
   @Override
@@ -97,8 +132,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   {
     final var messages = this.messages();
     return String.join("", List.of(
-      messages.format("vmAddVirtioNetworkDeviceHelp"),
-      messages.format("networkBackendSpec")
+      messages.format("vmAddFramebufferDeviceHelp")
     ));
   }
 
@@ -117,10 +151,15 @@ public final class WXMCommandVMAddVirtioNetworkDevice
         );
 
       final var virtio =
-        WXMDeviceVirtioNetwork.builder()
+        WXMDeviceFramebuffer.builder()
           .setDeviceSlot(this.deviceSlot)
-          .setBackend(this.backend)
           .setComment(this.comment)
+          .setHeight(this.height)
+          .setWidth(this.width)
+          .setListenAddress(InetAddress.getByName(this.listenAddress))
+          .setListenPort(this.listenPort)
+          .setVgaConfiguration(this.vgaConfiguration)
+          .setWaitForVNC(this.waitForVNC)
           .build();
 
       final var updatedMachine =
@@ -130,26 +169,6 @@ public final class WXMCommandVMAddVirtioNetworkDevice
           .build();
 
       client.vmUpdate(updatedMachine);
-
-      this.info("infoAddedVirtioNet", this.deviceSlot);
-      switch (this.backend.kind()) {
-        case WXM_TAP:
-          final var tap = (WXMTap) this.backend;
-          this.info(
-            "infoBackendTAP",
-            tap.name().value(),
-            tap.address().value()
-          );
-          break;
-        case WXM_VMNET:
-          final var vmnet = (WXMVMNet) this.backend;
-          this.info(
-            "infoBackendVMNet",
-            vmnet.name().value(),
-            vmnet.address().value()
-          );
-          break;
-      }
     }
     return SUCCESS;
   }

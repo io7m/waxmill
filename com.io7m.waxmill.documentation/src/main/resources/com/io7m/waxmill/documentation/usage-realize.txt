@@ -1,6 +1,6 @@
 $ waxmill vm-realize \
   --machine a866f9e4-f6c1-4ecf-ad49-000925eefa0a \
-  --dry-run
+  --dry-run true
 /sbin/zfs create -V 10gb storage/vm/a866f9e4-f6c1-4ecf-ad49-000925eefa0a/disk-0_1_0
 
 $ waxmill vm-realize \

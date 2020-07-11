@@ -202,6 +202,7 @@ public final class WXMCommandVMRealizeTest
         "--machine",
         id.toString(),
         "--dry-run",
+        "true",
         "--configuration",
         this.configFile.toString()
       }
@@ -299,6 +300,7 @@ public final class WXMCommandVMRealizeTest
         "--machine",
         id.toString(),
         "--dry-run",
+        "true",
         "--configuration",
         this.configFile.toString()
       }
@@ -640,6 +642,7 @@ public final class WXMCommandVMRealizeTest
         "--machine",
         id.toString(),
         "--dry-run",
+        "true",
         "--configuration",
         this.configFile.toString()
       }

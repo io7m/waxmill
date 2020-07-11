@@ -22,6 +22,7 @@ import com.io7m.junreachable.UnreachableCodeException;
 import org.immutables.value.Value;
 
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
@@ -34,12 +35,15 @@ import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_CD;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_HD;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_E1000;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_FRAMEBUFFER;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_PASSTHRU;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_BLOCK;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_NETWORK;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_TAP;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_VMNET;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType.Kind.WXM_TAP;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType.Kind.WXM_VMNET;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_FILE;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_ZFS_VOLUME;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_FILE;
@@ -85,13 +89,16 @@ public interface WXMDeviceType
   default boolean isStorageDevice()
   {
     switch (this.kind()) {
+      case WXM_E1000:
+      case WXM_FRAMEBUFFER:
       case WXM_HOSTBRIDGE:
-      case WXM_VIRTIO_NETWORK:
       case WXM_LPC:
+      case WXM_PASSTHRU:
+      case WXM_VIRTIO_NETWORK:
         return false;
-      case WXM_VIRTIO_BLOCK:
-      case WXM_AHCI_HD:
       case WXM_AHCI_CD:
+      case WXM_AHCI_HD:
+      case WXM_VIRTIO_BLOCK:
         return true;
     }
 
@@ -105,11 +112,14 @@ public interface WXMDeviceType
   default boolean isConsoleDevice()
   {
     switch (this.kind()) {
-      case WXM_HOSTBRIDGE:
-      case WXM_VIRTIO_NETWORK:
-      case WXM_VIRTIO_BLOCK:
-      case WXM_AHCI_HD:
       case WXM_AHCI_CD:
+      case WXM_AHCI_HD:
+      case WXM_E1000:
+      case WXM_FRAMEBUFFER:
+      case WXM_HOSTBRIDGE:
+      case WXM_PASSTHRU:
+      case WXM_VIRTIO_BLOCK:
+      case WXM_VIRTIO_NETWORK:
         return false;
       case WXM_LPC:
         return true;
@@ -158,7 +168,225 @@ public interface WXMDeviceType
      * An LPC PCI-ISA bridge with COM1 and COM2 16550 serial ports and a boot ROM.
      */
 
-    WXM_LPC
+    WXM_LPC,
+
+    /**
+     * A PCI passthru device.
+     */
+
+    WXM_PASSTHRU,
+
+    /**
+     * An emulation of an Intel e82545 network device.
+     */
+
+    WXM_E1000,
+
+    /**
+     * A raw framebuffer device attached to a VNC server.
+     */
+
+    WXM_FRAMEBUFFER
+  }
+
+  /**
+   * A PCI passthru device.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMDevicePassthruType extends WXMDeviceType
+  {
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    default Kind kind()
+    {
+      return WXM_PASSTHRU;
+    }
+
+    @Override
+    WXMDeviceSlot deviceSlot();
+
+    /**
+     * @return The slot containing the host PCI devices
+     */
+
+    WXMDeviceSlot hostPCISlot();
+
+    @Override
+    default String externalName()
+    {
+      return "passthru";
+    }
+  }
+
+  /**
+   * An emulation of an Intel e82545 network device.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMDeviceE1000Type extends WXMDeviceType
+  {
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    default Kind kind()
+    {
+      return WXM_E1000;
+    }
+
+    @Override
+    WXMDeviceSlot deviceSlot();
+
+    @Override
+    default String externalName()
+    {
+      return "e1000";
+    }
+
+    /**
+     * @return The underlying device backend
+     */
+
+    WXMNetworkDeviceBackendType backend();
+  }
+
+  /**
+   * A raw framebuffer device attached to a VNC server.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMDeviceFramebufferType extends WXMDeviceType
+  {
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    default Kind kind()
+    {
+      return WXM_FRAMEBUFFER;
+    }
+
+    @Override
+    WXMDeviceSlot deviceSlot();
+
+    @Override
+    default String externalName()
+    {
+      return "fbuf";
+    }
+
+    /**
+     * @return The IP address upon which the VNC server will listen
+     */
+
+    InetAddress listenAddress();
+
+    /**
+     * @return The port upon which the VNC server will listen
+     */
+
+    int listenPort();
+
+    /**
+     * @return The width of the framebuffer
+     */
+
+    @Value.Default
+    default int width()
+    {
+      return 1024;
+    }
+
+    /**
+     * @return The height of the framebuffer
+     */
+
+    @Value.Default
+    default int height()
+    {
+      return 768;
+    }
+
+    /**
+     * @return The guest VGA configuration used
+     */
+
+    @Value.Default
+    default WXMVGAConfiguration vgaConfiguration()
+    {
+      return WXMVGAConfiguration.IO;
+    }
+
+    /**
+     * @return Delay booting until a VNC connection has arrived
+     */
+
+    boolean waitForVNC();
+
+    /**
+     * The VGA configuration used.
+     */
+
+    enum WXMVGAConfiguration
+    {
+      /**
+       * Used along with the CSM BIOS capability in UEFI to boot traditional
+       * BIOS guests that require the legacy VGA I/O and memory regions to be
+       * available.
+       */
+
+      ON,
+
+      /**
+       * Used for the UEFI guests that assume that VGA adapter is present if
+       * they detect the I/O ports. An example of such a guest is OpenBSD in
+       * UEFI mode.
+       */
+
+      OFF,
+
+      /**
+       * Used for guests that attempt to issue BIOS calls which result in I/O
+       * port queries, and fail to boot if I/O decode is disabled.
+       */
+
+      IO;
+
+      /**
+       * @return The external name of the configuration
+       */
+
+      public String externalName()
+      {
+        switch (this) {
+          case ON:
+            return "on";
+          case OFF:
+            return "off";
+          case IO:
+            return "io";
+        }
+        throw new UnreachableCodeException();
+      }
+    }
   }
 
   @ImmutablesStyleType
@@ -256,63 +484,120 @@ public interface WXMDeviceType
       return "";
     }
 
-    WXMVirtioNetworkBackendType backend();
+    /**
+     * @return The underlying device backend
+     */
 
-    interface WXMVirtioNetworkBackendType
+    WXMNetworkDeviceBackendType backend();
+  }
+
+  /**
+   * The type of network device backends.
+   */
+
+  interface WXMNetworkDeviceBackendType
+  {
+    /**
+     * @return The backend kind
+     */
+
+    Kind kind();
+
+    /**
+     * @return A descriptive comment
+     */
+
+    @Value.Default
+    default String comment()
     {
-      Kind kind();
-
-      String comment();
-
-      enum Kind
-      {
-        WXM_TAP,
-        WXM_VMNET
-      }
+      return "";
     }
 
-    @ImmutablesStyleType
-    @Value.Immutable
-    interface WXMTapType extends WXMVirtioNetworkBackendType
+    /**
+     * The kind of backend.
+     */
+
+    enum Kind
     {
-      @Override
-      default Kind kind()
-      {
-        return WXM_TAP;
-      }
+      /**
+       * The device is backed by a tap device.
+       */
 
-      WXMTAPDeviceName name();
+      WXM_TAP,
 
-      WXMMACAddress address();
+      /**
+       * The device is backed by a vmnet device.
+       */
 
-      @Override
-      @Value.Default
-      default String comment()
-      {
-        return "";
-      }
+      WXM_VMNET
+    }
+  }
+
+  /**
+   * A TAP device.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMTapType extends WXMNetworkDeviceBackendType
+  {
+    @Override
+    default Kind kind()
+    {
+      return WXM_TAP;
     }
 
-    @ImmutablesStyleType
-    @Value.Immutable
-    interface WXMVMNetType extends WXMVirtioNetworkBackendType
+    /**
+     * @return The underlying device name
+     */
+
+    WXMTAPDeviceName name();
+
+    /**
+     * @return The underlying device MAC address
+     */
+
+    WXMMACAddress address();
+
+    @Override
+    @Value.Default
+    default String comment()
     {
-      @Override
-      default Kind kind()
-      {
-        return WXM_VMNET;
-      }
+      return "";
+    }
+  }
 
-      WXMVMNetDeviceName name();
+  /**
+   * A vmnet device.
+   */
 
-      WXMMACAddress address();
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMVMNetType extends WXMNetworkDeviceBackendType
+  {
+    @Override
+    default Kind kind()
+    {
+      return WXM_VMNET;
+    }
 
-      @Override
-      @Value.Default
-      default String comment()
-      {
-        return "";
-      }
+    /**
+     * @return The underlying device name
+     */
+
+    WXMVMNetDeviceName name();
+
+    /**
+     * @return The underlying device MAC address
+     */
+
+    WXMMACAddress address();
+
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
     }
   }
 

@@ -1,0 +1,9 @@
+$ waxmill vm-add-framebuffer-device \
+  --machine de17174a-1b3c-4ebc-80af-cb239aa18cbd \
+  --device-slot 0:4:0 \
+  --wait-for-vnc true \
+  --width 1024 \
+  --height 768 \
+  --listen-address [::1] \
+  --listen-port 5901 \
+  --vga-configuration OFF

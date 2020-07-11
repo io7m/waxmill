@@ -35,7 +35,7 @@ Examples:
   zfs-volume;1280000000
 ]]></entry>
 
-  <entry key="virtioNetworkBackendSpec"><![CDATA[
+  <entry key="networkBackendSpec"><![CDATA[
 Virtio network backend syntax:
     "tap" ";" <tapDevice> ";" <macAddress>
   | "vmnet" ";" <vmnetDevice> ";" <macAddress>
@@ -123,6 +123,7 @@ are no longer using the specified device.]]></entry>
   <entry key="infoAddedVirtioDiskFile">Added virtio disk file {0} @ slot {1}</entry>
   <entry key="infoAddedVirtioDiskZFS">Added virtio disk zfs volume {0} @ slot {1}</entry>
   <entry key="infoAddedVirtioNet">Added virtio network device @ slot {0}</entry>
+  <entry key="infoAddedE1000Net">Added e1000 network device @ slot {0}</entry>
   <entry key="infoBackendFile">Backend file {0} {1}</entry>
   <entry key="infoBackendNMDM">Backend nmdm {0} {1}</entry>
   <entry key="infoBackendStdio">Backend stdio {0}</entry>
@@ -211,7 +212,7 @@ Virtio.
 
   <entry key="vmAddVirtioNetworkDeviceHelp"><![CDATA[
 The vm-add-virtio-network-device command adds a network device to a
-virtual machine. The disk is a Virtio[0] network device and, as such,
+virtual machine. The device is a Virtio[0] network device and, as such,
 requires a driver in the guest operating system that is capable of
 supporting Virtio.
 
@@ -237,4 +238,28 @@ unique machine ID unless one is manually specified with the
 --machine option.
 ]]></entry>
 
+  <entry key="vmAddPassthruDeviceHelp"><![CDATA[
+The vm-add-passthru-device command adds an PCI passthru device to
+a virtual machine.
+
+See: https://wiki.freebsd.org/bhyve/pci_passthru
+]]></entry>
+
+  <entry key="vmSetHelp"><![CDATA[
+The vm-set command sets configuration flags for a virtual machine.
+]]></entry>
+
+  <entry key="vmAddE1000NetworkDeviceHelp"><![CDATA[
+The vm-add-e1000-network-device command adds a network device to a
+virtual machine. The device is an Intel e82545[0] network device and, as such,
+requires a driver in the guest operating system that is capable of
+supporting it.
+
+[0] https://downloadcenter.intel.com/product/1284/Intel-82545EM-Gigabit-Ethernet-Controller
+]]></entry>
+
+  <entry key="vmAddFramebufferDeviceHelp"><![CDATA[
+The vm-add-framebuffer-device command adds a raw framebuffer device to
+a virtual machine that is connected to a VNC server.
+]]></entry>
 </properties>

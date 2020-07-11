@@ -19,12 +19,10 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceSlots;
-import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMMachineMessages;
-import com.io7m.waxmill.machines.WXMTap;
-import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +32,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType;
 
-@Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
-public final class WXMCommandVMAddVirtioNetworkDevice
-  extends WXMAbstractCommandWithConfiguration
+@Parameters(commandDescription = "Add a PCI passthru device to a virtual machine.")
+public final class WXMCommandVMAddPassthru extends
+  WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMCommandVMAddVirtioNetworkDevice.class);
+    LoggerFactory.getLogger(WXMCommandVMAddPassthru.class);
 
   @Parameter(
     names = "--machine",
@@ -67,12 +64,12 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   private WXMDeviceSlot deviceSlot;
 
   @Parameter(
-    names = "--backend",
-    description = "A specification of the Virtio network device backend to add",
+    names = "--host-device-slot",
+    description = "The PCI slot to which the device on the host is attached.",
     required = true,
-    converter = WXMNetworkBackendConverter.class
+    converter = WXMDeviceSlotConverter.class
   )
-  private WXMNetworkDeviceBackendType backend;
+  private WXMDeviceSlot hostDeviceSlot;
 
   /**
    * Construct a command.
@@ -80,7 +77,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
    * @param inContext The command context
    */
 
-  public WXMCommandVMAddVirtioNetworkDevice(
+  public WXMCommandVMAddPassthru(
     final CLPCommandContextType inContext)
   {
     super(LOG, inContext);
@@ -89,7 +86,7 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   @Override
   public String name()
   {
-    return "vm-add-virtio-network-device";
+    return "vm-add-passthru-device";
   }
 
   @Override
@@ -97,8 +94,8 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   {
     final var messages = this.messages();
     return String.join("", List.of(
-      messages.format("vmAddVirtioNetworkDeviceHelp"),
-      messages.format("networkBackendSpec")
+      messages.format("vmAddPassthruDeviceHelp"),
+      messages.format("ttyBackendSpec")
     ));
   }
 
@@ -116,40 +113,20 @@ public final class WXMCommandVMAddVirtioNetworkDevice
           this.deviceSlot
         );
 
-      final var virtio =
-        WXMDeviceVirtioNetwork.builder()
-          .setDeviceSlot(this.deviceSlot)
-          .setBackend(this.backend)
+      final var passthru =
+        WXMDevicePassthru.builder()
           .setComment(this.comment)
+          .setDeviceSlot(this.deviceSlot)
+          .setHostPCISlot(this.hostDeviceSlot)
           .build();
 
       final var updatedMachine =
         WXMVirtualMachine.builder()
           .from(machine)
-          .addDevices(virtio)
+          .addDevices(passthru)
           .build();
 
       client.vmUpdate(updatedMachine);
-
-      this.info("infoAddedVirtioNet", this.deviceSlot);
-      switch (this.backend.kind()) {
-        case WXM_TAP:
-          final var tap = (WXMTap) this.backend;
-          this.info(
-            "infoBackendTAP",
-            tap.name().value(),
-            tap.address().value()
-          );
-          break;
-        case WXM_VMNET:
-          final var vmnet = (WXMVMNet) this.backend;
-          this.info(
-            "infoBackendVMNet",
-            vmnet.name().value(),
-            vmnet.address().value()
-          );
-          break;
-      }
     }
     return SUCCESS;
   }

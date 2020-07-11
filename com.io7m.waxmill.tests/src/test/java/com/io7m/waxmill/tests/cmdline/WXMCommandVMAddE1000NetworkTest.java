@@ -18,10 +18,9 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
-import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
-import com.io7m.waxmill.machines.WXMStorageBackendFile;
-import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
-import com.io7m.waxmill.machines.WXMStorageBackends;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
+import com.io7m.waxmill.machines.WXMTap;
+import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +35,7 @@ import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMCommandAddVirtioDiskTest
+public final class WXMCommandVMAddE1000NetworkTest
 {
   private Path directory;
   private Path configFile;
@@ -70,145 +69,14 @@ public final class WXMCommandAddVirtioDiskTest
       );
   }
 
-
   @Test
-  public void addVirtioDiskOK()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2",
-        "--machine",
-        id.toString()
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-virtio-disk",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "file;/tmp/xyz",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var machineSet =
-      parseFirst(this.vmDirectory);
-
-    final var machine =
-      machineSet.machines()
-        .values()
-        .iterator()
-        .next();
-
-    final var disk =
-      (WXMDeviceVirtioBlockStorage) machine.devices().get(1);
-    final var storage =
-      (WXMStorageBackendFile) disk.backend();
-
-    assertEquals("/tmp/xyz", storage.file().toString());
-  }
-
-  @Test
-  public void addVirtioDiskZFSVolumeOK()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2",
-        "--machine",
-        id.toString()
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-virtio-disk",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "zfs-volume",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var machineSet =
-      parseFirst(this.vmDirectory);
-
-    final var machine =
-      machineSet.machines()
-        .values()
-        .iterator()
-        .next();
-
-    final var disk =
-      (WXMDeviceVirtioBlockStorage) machine.devices().get(1);
-    final var storage =
-      (WXMStorageBackendZFSVolume) disk.backend();
-
-    assertEquals(
-      this.zfsDirectory.resolve(id.toString())
-        .resolve(String.format(
-          "disk-%d_%d_%d",
-          Integer.valueOf(disk.deviceSlot().busID()),
-          Integer.valueOf(disk.deviceSlot().slotID()),
-          Integer.valueOf(disk.deviceSlot().functionID())
-        )),
-      WXMStorageBackends.determineZFSVolumePath(
-        this.configuration.virtualMachineRuntimeDirectory(),
-        id,
-        disk.deviceSlot())
-    );
-  }
-
-  @Test
-  public void addVirtioDiskNonexistentVirtualMachine()
+  public void addE1000NetworkNonexistentVirtualMachine()
   {
     assertThrows(IOException.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
-          "vm-add-virtio-disk",
+          "vm-add-e1000-network-device",
           "--verbose",
           "trace",
           "--configuration",
@@ -216,14 +84,14 @@ public final class WXMCommandAddVirtioDiskTest
           "--machine",
           id.toString(),
           "--backend",
-          "file;/tmp/xyz",
+          "tap;tap23;a3:26:9c:74:79:34"
         }
       );
     });
   }
 
   @Test
-  public void addVirtioDiskAlreadyUsed()
+  public void addE1000NetworkAlreadyUsed()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -250,7 +118,7 @@ public final class WXMCommandAddVirtioDiskTest
 
     MainExitless.main(
       new String[]{
-        "vm-add-virtio-disk",
+        "vm-add-e1000-network-device",
         "--verbose",
         "trace",
         "--configuration",
@@ -258,7 +126,7 @@ public final class WXMCommandAddVirtioDiskTest
         "--machine",
         id.toString(),
         "--backend",
-        "file;/tmp/xyz",
+        "tap;tap23;a3:26:9c:74:79:34",
         "--device-slot",
         "0:1:0"
       }
@@ -267,7 +135,7 @@ public final class WXMCommandAddVirtioDiskTest
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-add-virtio-disk",
+          "vm-add-e1000-network-device",
           "--verbose",
           "trace",
           "--configuration",
@@ -275,11 +143,131 @@ public final class WXMCommandAddVirtioDiskTest
           "--machine",
           id.toString(),
           "--backend",
-          "file;/tmp/xyz",
+          "tap;tap23;a3:26:9c:74:79:34",
           "--device-slot",
           "0:1:0"
         }
       );
     });
+  }
+
+  @Test
+  public void addE1000NetworkOKTap()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-e1000-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    final var machineSet =
+      parseFirst(this.vmDirectory);
+
+    final var machine =
+      machineSet.machines()
+        .values()
+        .iterator()
+        .next();
+
+    final var net =
+      (WXMDeviceE1000) machine.devices().get(1);
+    final var tap =
+      (WXMTap) net.backend();
+
+    assertEquals("tap23", tap.name().value());
+    assertEquals("a3:26:9c:74:79:34", tap.address().value());
+  }
+
+  @Test
+  public void addE1000NetworkOKVMNet()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-e1000-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "vmnet;vmnet23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    final var machineSet =
+      parseFirst(this.vmDirectory);
+
+    final var machine =
+      machineSet.machines()
+        .values()
+        .iterator()
+        .next();
+
+    final var net =
+      (WXMDeviceE1000) machine.devices().get(1);
+    final var vmnet =
+      (WXMVMNet) net.backend();
+
+    assertEquals("vmnet23", vmnet.name().value());
+    assertEquals("a3:26:9c:74:79:34", vmnet.address().value());
   }
 }

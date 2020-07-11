@@ -31,11 +31,20 @@ public final class WXM1DeviceSlots
 
   public static void serializeDeviceSlot(
     final WXMDeviceSlot deviceSlot,
+    final SlotSide side,
     final XMLStreamWriter writer)
     throws XMLStreamException
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
-    writer.writeStartElement(namespaceURI, "DeviceSlot");
+    switch (side) {
+      case HOST:
+        writer.writeStartElement(namespaceURI, "HostDeviceSlot");
+        break;
+      case GUEST:
+        writer.writeStartElement(namespaceURI, "DeviceSlot");
+        break;
+    }
+
     writer.writeAttribute(
       "bus",
       String.valueOf(deviceSlot.busID()));
@@ -46,5 +55,24 @@ public final class WXM1DeviceSlots
       "function",
       String.valueOf(deviceSlot.functionID()));
     writer.writeEndElement();
+  }
+
+  /**
+   * The side of emulation upon which the device slot lives.
+   */
+
+  public enum SlotSide
+  {
+    /**
+     * The slot is a host PCI slot.
+     */
+
+    HOST,
+
+    /**
+     * The slot is a guest PCI slot.
+     */
+
+    GUEST
   }
 }

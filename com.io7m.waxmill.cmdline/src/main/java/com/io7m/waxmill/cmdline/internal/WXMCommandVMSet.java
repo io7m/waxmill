@@ -19,7 +19,6 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
-import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +26,12 @@ import java.nio.file.Path;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
-import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
 
-@Parameters(commandDescription = "Run a virtual machine.")
-public final class WXMCommandVMRun extends WXMAbstractCommandWithConfiguration
+@Parameters(commandDescription = "Set virtual machine configuration flags.")
+public final class WXMCommandVMSet extends WXMAbstractCommandWithConfiguration
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMCommandVMRun.class);
+    LoggerFactory.getLogger(WXMCommandVMSet.class);
 
   @Parameter(
     names = "--machine",
@@ -45,20 +42,11 @@ public final class WXMCommandVMRun extends WXMAbstractCommandWithConfiguration
   private UUID id;
 
   @Parameter(
-    names = "--boot-configuration",
-    description = "The name of the boot configuration to use.",
-    required = true,
-    converter = WXMBootConfigurationNameConverter.class
-  )
-  private WXMBootConfigurationName bootConfiguration;
-
-  @Parameter(
-    names = "--dry-run",
-    description = "Show the commands that would be executed, but do not execute them.",
-    required = false,
+    names = "--wire-guest-memory",
+    description = "Enable/disable wiring of guest memory.",
     arity = 1
   )
-  private boolean dryRun;
+  private Boolean wireGuestMemory;
 
   /**
    * Construct a command.
@@ -66,7 +54,7 @@ public final class WXMCommandVMRun extends WXMAbstractCommandWithConfiguration
    * @param inContext The command context
    */
 
-  public WXMCommandVMRun(
+  public WXMCommandVMSet(
     final CLPCommandContextType inContext)
   {
     super(LOG, inContext);
@@ -75,13 +63,13 @@ public final class WXMCommandVMRun extends WXMAbstractCommandWithConfiguration
   @Override
   public String extendedHelp()
   {
-    return this.messages().format("vmRunHelp");
+    return this.messages().format("vmSetHelp");
   }
 
   @Override
   public String name()
   {
-    return "vm-run";
+    return "vm-set";
   }
 
   @Override
@@ -91,11 +79,13 @@ public final class WXMCommandVMRun extends WXMAbstractCommandWithConfiguration
   {
     try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
-      client.vmRun(
-        machine,
-        this.bootConfiguration,
-        this.dryRun ? DRY_RUN : EXECUTE
-      );
+
+      var flags = machine.flags();
+      if (this.wireGuestMemory != null) {
+        flags = flags.withWireGuestMemory(this.wireGuestMemory.booleanValue());
+      }
+
+      client.vmUpdate(machine.withFlags(flags));
     }
     return SUCCESS;
   }

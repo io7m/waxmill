@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Section xmlns="urn:com.io7m.structural:7:0"
-         id="f2ab38c7-6641-4339-9453-201ebb41a97b"
+         id="a8c6bad4-42b0-4558-b9e5-89e7c81d20b4"
          xmlns:xi="http://www.w3.org/2001/XInclude"
-         title="vm-realize">
+         title="vm-set">
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="command">vm-realize</Term>
-      - Realize a virtual machine
+      <Term type="command">vm-set</Term>
+      - Set virtual machine configuration flags
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="command">vm-realize</Term> command
-      <Link target="783bc43e-190a-462e-883b-1b74d71b94e4">realizes</Link> a virtual machine. Realizing a virtual
-      machine may be unnecessary if you have already manually created all of the resources (such as ZFS volumes)
-      that the machine needs to run. The <Link target="60ee3ff2-b938-45da-a1c2-e9bf3bd02d73">vm-run</Link> command
-      will validate that all of the required resources exist when attempting to start a virtual machine.
+      The <Term type="command">vm-set</Term> command sets configuration flags for virtual machines.
     </Paragraph>
 
     <FormalItem title="Parameters"
@@ -44,18 +40,6 @@
         </Row>
         <Row>
           <Cell>
-            <Term type="parameter">--dry-run</Term>
-          </Cell>
-          <Cell>
-            <Term type="parameterType">Boolean</Term>
-          </Cell>
-          <Cell>
-            <Term type="constant">false</Term>
-          </Cell>
-          <Cell>Show the commands that would be executed, but do not execute them.</Cell>
-        </Row>
-        <Row>
-          <Cell>
             <Term type="parameter">--machine</Term>
           </Cell>
           <Cell>
@@ -78,6 +62,18 @@
           </Cell>
           <Cell>Set the minimum logging verbosity level.</Cell>
         </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--wire-guest-memory</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Enable/disable wiring of guest memory.</Cell>
+        </Row>
       </Table>
     </FormalItem>
   </Subsection>
@@ -86,7 +82,7 @@
     <FormalItem title="Example">
       <Verbatim>
         <xi:include parse="text"
-                    href="cmdline-vm-realize-output.txt"/>
+                    href="cmdline-vm-set-output.txt"/>
       </Verbatim>
     </FormalItem>
   </Subsection>

@@ -21,20 +21,22 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.waxmill.machines.WXMOpenOption;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 
 import java.util.Map;
 
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMNetworkDeviceBackendType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
-public final class WXM1OpenOptionsParser
-  implements BTElementHandlerType<Object, WXM1OpenOptions>
+public final class WXM1E1000NetworkDeviceParser
+  implements BTElementHandlerType<Object, WXMDeviceE1000>
 {
-  private final WXM1OpenOptions.Builder builder;
+  private final WXMDeviceE1000.Builder builder;
 
-  public WXM1OpenOptionsParser()
+  public WXM1E1000NetworkDeviceParser()
   {
-    this.builder = WXM1OpenOptions.builder();
+    this.builder = WXMDeviceE1000.builder();
   }
 
   @Override
@@ -44,8 +46,20 @@ public final class WXM1OpenOptionsParser
   {
     return Map.ofEntries(
       Map.entry(
-        element("OpenOption"),
-        c -> new WXM1OpenOptionParser()
+        element("DeviceSlot"),
+        c -> new WXM1DeviceSlotParser()
+      ),
+      Map.entry(
+        element("Comment"),
+        c -> new WXM1CommentParser()
+      ),
+      Map.entry(
+        element("TAPDevice"),
+        c -> new WXM1TapParser()
+      ),
+      Map.entry(
+        element("VMNetDevice"),
+        c -> new WXM1VMNetParser()
       )
     );
   }
@@ -55,15 +69,19 @@ public final class WXM1OpenOptionsParser
     final BTElementParsingContextType context,
     final Object result)
   {
-    if (result instanceof WXMOpenOption) {
-      this.builder.addOpenOptions((WXMOpenOption) result);
+    if (result instanceof WXM1Comment) {
+      this.builder.setComment(((WXM1Comment) result).text());
+    } else if (result instanceof WXMNetworkDeviceBackendType) {
+      this.builder.setBackend((WXMNetworkDeviceBackendType) result);
+    } else if (result instanceof WXMDeviceSlot) {
+      this.builder.setDeviceSlot((WXMDeviceSlot) result);
     } else {
       throw new UnreachableCodeException();
     }
   }
 
   @Override
-  public WXM1OpenOptions onElementFinished(
+  public WXMDeviceE1000 onElementFinished(
     final BTElementParsingContextType context)
   {
     return this.builder.build();

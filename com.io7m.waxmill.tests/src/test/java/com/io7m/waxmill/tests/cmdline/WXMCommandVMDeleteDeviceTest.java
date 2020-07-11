@@ -37,11 +37,11 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class WXMCommandVMUpdateBootConfigurationsTest
+public final class WXMCommandVMDeleteDeviceTest
 {
   private Path directory;
   private Path configFile;
@@ -76,7 +76,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
   }
 
   @Test
-  public void addOK()
+  public void addDeleteDiskOK()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -103,7 +103,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
 
     MainExitless.main(
       new String[]{
-        "vm-add-ahci-disk",
+        "vm-add-virtio-disk",
         "--verbose",
         "trace",
         "--configuration",
@@ -117,63 +117,110 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
       }
     );
 
-    final var bootConf =
-      WXMBootConfigurationGRUBBhyve.builder()
-        .setComment("A configuration")
-        .setName(WXMBootConfigurationName.of("install"))
-        .setKernelInstructions(
-          WXMGRUBKernelOpenBSD.builder()
-            .setKernelPath(Paths.get("/bsd"))
-            .setBootDevice(
-              WXMDeviceSlot.builder()
-                .setBusID(0)
-                .setFunctionID(0)
-                .setSlotID(1)
-                .build())
-            .build()
-        ).build();
-
-    final List<WXMBootConfigurationType> bootConfs =
-      List.of(bootConf);
-
-    new WXMBootConfigurationsSerializers()
-      .serialize(
-        this.directory.resolve("boot.xml"),
-        this.directory.resolve("boot.xml.tmp"),
-        bootConfs
-      );
-
-    MainExitless.main(
-      new String[]{
-        "vm-update-boot-configurations",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--file",
-        this.directory.resolve("boot.xml").toString()
-      }
-    );
-
-    final var machineSet =
+    final var machineSet0 =
       parseFirst(this.vmDirectory);
 
-    final var machine =
-      machineSet.machines()
+    final var machineBefore =
+      machineSet0.machines()
         .values()
         .iterator()
         .next();
 
-    final var bootReceived =
-      (WXMBootConfigurationGRUBBhyve) machine.bootConfigurations().get(0);
+    MainExitless.main(
+      new String[]{
+        "vm-delete-devices",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--device-slot",
+        "0:1:0",
+        "--device-slot",
+        "0:0:0"
+      }
+    );
 
-    assertEquals(bootConf, bootReceived);
+    final var machineSet1 =
+      parseFirst(this.vmDirectory);
+
+    final var machineAfter =
+      machineSet1.machines()
+        .values()
+        .iterator()
+        .next();
+
+    assertNotEquals(machineBefore, machineAfter);
+    assertTrue(machineAfter.deviceMap().isEmpty());
   }
 
   @Test
-  public void addConflict()
+  public void deleteNonexistent()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-delete-devices",
+          "--verbose",
+          "trace",
+          "--configuration",
+          this.configFile.toString(),
+          "--machine",
+          id.toString(),
+          "--device-slot",
+          "0:1:0",
+          "--device-slot",
+          "0:0:0"
+        }
+      );
+    });
+
+    final var machineSet0 =
+      parseFirst(this.vmDirectory);
+
+    final var machine =
+      machineSet0.machines()
+        .values()
+        .iterator()
+        .next();
+
+    assertTrue(
+      machine.deviceMap()
+        .containsKey(
+          WXMDeviceSlot.builder()
+            .setSlotID(0)
+            .setBusID(0)
+            .setFunctionID(0)
+            .build())
+    );
+  }
+
+  @Test
+  public void deleteBootReferenced()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -224,8 +271,8 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
             .setBootDevice(
               WXMDeviceSlot.builder()
                 .setBusID(0)
-                .setFunctionID(0)
                 .setSlotID(1)
+                .setFunctionID(0)
                 .build())
             .build()
         ).build();
@@ -257,137 +304,17 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-update-boot-configurations",
+          "vm-delete-devices",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--file",
-          this.directory.resolve("boot.xml").toString()
+          "--device-slot",
+          "0:1:0"
         }
       );
     });
-  }
-
-  @Test
-  public void replaceOK()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2",
-        "--machine",
-        id.toString()
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-ahci-disk",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "file;/tmp/xyz",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var bootConf =
-      WXMBootConfigurationGRUBBhyve.builder()
-        .setComment("A configuration")
-        .setName(WXMBootConfigurationName.of("install"))
-        .setKernelInstructions(
-          WXMGRUBKernelOpenBSD.builder()
-            .setKernelPath(Paths.get("/bsd"))
-            .setBootDevice(
-              WXMDeviceSlot.builder()
-                .setBusID(0)
-                .setFunctionID(0)
-                .setSlotID(1)
-                .build())
-            .build()
-        ).build();
-
-    new WXMBootConfigurationsSerializers()
-      .serialize(
-        this.directory.resolve("boot.xml"),
-        this.directory.resolve("boot.xml.tmp"),
-        List.of(bootConf)
-      );
-
-    MainExitless.main(
-      new String[]{
-        "vm-update-boot-configurations",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--file",
-        this.directory.resolve("boot.xml").toString()
-      }
-    );
-
-    final var bootConfNew = bootConf.withComment("Updated!");
-
-    new WXMBootConfigurationsSerializers()
-      .serialize(
-        this.directory.resolve("boot.xml"),
-        this.directory.resolve("boot.xml.tmp"),
-        List.of(bootConfNew)
-      );
-
-    MainExitless.main(
-      new String[]{
-        "vm-update-boot-configurations",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--file",
-        this.directory.resolve("boot.xml").toString(),
-        "--update",
-        "true"
-      }
-    );
-
-    final var machineSet =
-      parseFirst(this.vmDirectory);
-
-    final var machine =
-      machineSet.machines()
-        .values()
-        .iterator()
-        .next();
-
-    final var bootReceived =
-      (WXMBootConfigurationGRUBBhyve) machine.bootConfigurations().get(0);
-
-    assertEquals(bootConfNew, bootReceived);
-    assertNotEquals(bootConf, bootReceived);
   }
 }

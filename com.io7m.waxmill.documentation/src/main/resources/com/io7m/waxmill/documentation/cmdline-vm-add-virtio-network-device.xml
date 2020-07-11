@@ -39,7 +39,7 @@
           <Cell>
             <Term type="constant">true</Term>
           </Cell>
-          <Cell>A specification of the Virtio network device backend to add</Cell>
+          <Cell>A specification of the network device backend to add</Cell>
         </Row>
         <Row>
           <Cell>

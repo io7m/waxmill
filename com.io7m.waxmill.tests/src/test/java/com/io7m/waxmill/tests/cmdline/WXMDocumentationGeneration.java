@@ -47,7 +47,7 @@ public final class WXMDocumentationGeneration
     final var command =
       new Main(args)
         .commands()
-        .get("vm-define");
+        .get("vm-add-framebuffer-device");
 
     final var fields = new TreeSet<ParameterField>();
     collectFields(command, command.getClass(), fields);

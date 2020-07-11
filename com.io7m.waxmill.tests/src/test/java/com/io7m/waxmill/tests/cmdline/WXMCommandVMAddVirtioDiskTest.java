@@ -18,13 +18,11 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
-import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
-import com.io7m.waxmill.machines.WXMBootConfigurationName;
-import com.io7m.waxmill.machines.WXMBootConfigurationType;
-import com.io7m.waxmill.machines.WXMDeviceSlot;
-import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
+import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
+import com.io7m.waxmill.machines.WXMStorageBackendFile;
+import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
+import com.io7m.waxmill.machines.WXMStorageBackends;
 import com.io7m.waxmill.tests.WXMTestDirectories;
-import com.io7m.waxmill.xml.WXMBootConfigurationsSerializers;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,16 +30,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.UUID;
 
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class WXMCommandDeleteDeviceTest
+public final class WXMCommandVMAddVirtioDiskTest
 {
   private Path directory;
   private Path configFile;
@@ -75,8 +70,9 @@ public final class WXMCommandDeleteDeviceTest
       );
   }
 
+
   @Test
-  public void addDeleteDiskOK()
+  public void addVirtioDiskOK()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -117,110 +113,117 @@ public final class WXMCommandDeleteDeviceTest
       }
     );
 
-    final var machineSet0 =
+    final var machineSet =
       parseFirst(this.vmDirectory);
 
-    final var machineBefore =
-      machineSet0.machines()
+    final var machine =
+      machineSet.machines()
         .values()
         .iterator()
         .next();
 
+    final var disk =
+      (WXMDeviceVirtioBlockStorage) machine.devices().get(1);
+    final var storage =
+      (WXMStorageBackendFile) disk.backend();
+
+    assertEquals("/tmp/xyz", storage.file().toString());
+  }
+
+  @Test
+  public void addVirtioDiskZFSVolumeOK()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
     MainExitless.main(
       new String[]{
-        "vm-delete-devices",
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-disk",
         "--verbose",
         "trace",
         "--configuration",
         this.configFile.toString(),
         "--machine",
         id.toString(),
+        "--backend",
+        "zfs-volume",
         "--device-slot",
-        "0:1:0",
-        "--device-slot",
-        "0:0:0"
+        "0:1:0"
       }
     );
 
-    final var machineSet1 =
+    final var machineSet =
       parseFirst(this.vmDirectory);
 
-    final var machineAfter =
-      machineSet1.machines()
+    final var machine =
+      machineSet.machines()
         .values()
         .iterator()
         .next();
 
-    assertNotEquals(machineBefore, machineAfter);
-    assertTrue(machineAfter.deviceMap().isEmpty());
+    final var disk =
+      (WXMDeviceVirtioBlockStorage) machine.devices().get(1);
+    final var storage =
+      (WXMStorageBackendZFSVolume) disk.backend();
+
+    assertEquals(
+      this.zfsDirectory.resolve(id.toString())
+        .resolve(String.format(
+          "disk-%d_%d_%d",
+          Integer.valueOf(disk.deviceSlot().busID()),
+          Integer.valueOf(disk.deviceSlot().slotID()),
+          Integer.valueOf(disk.deviceSlot().functionID())
+        )),
+      WXMStorageBackends.determineZFSVolumePath(
+        this.configuration.virtualMachineRuntimeDirectory(),
+        id,
+        disk.deviceSlot())
+    );
   }
 
   @Test
-  public void deleteNonexistent()
-    throws Exception
+  public void addVirtioDiskNonexistentVirtualMachine()
   {
-    final var id = UUID.randomUUID();
-
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2",
-        "--machine",
-        id.toString()
-      }
-    );
-
     assertThrows(IOException.class, () -> {
+      final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
-          "vm-delete-devices",
+          "vm-add-virtio-disk",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--device-slot",
-          "0:1:0",
-          "--device-slot",
-          "0:0:0"
+          "--backend",
+          "file;/tmp/xyz",
         }
       );
     });
-
-    final var machineSet0 =
-      parseFirst(this.vmDirectory);
-
-    final var machine =
-      machineSet0.machines()
-        .values()
-        .iterator()
-        .next();
-
-    assertTrue(
-      machine.deviceMap()
-        .containsKey(
-          WXMDeviceSlot.builder()
-            .setSlotID(0)
-            .setBusID(0)
-            .setFunctionID(0)
-            .build())
-    );
   }
 
   @Test
-  public void deleteBootReferenced()
+  public void addVirtioDiskAlreadyUsed()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -247,7 +250,7 @@ public final class WXMCommandDeleteDeviceTest
 
     MainExitless.main(
       new String[]{
-        "vm-add-ahci-disk",
+        "vm-add-virtio-disk",
         "--verbose",
         "trace",
         "--configuration",
@@ -261,56 +264,18 @@ public final class WXMCommandDeleteDeviceTest
       }
     );
 
-    final var bootConf =
-      WXMBootConfigurationGRUBBhyve.builder()
-        .setComment("A configuration")
-        .setName(WXMBootConfigurationName.of("install"))
-        .setKernelInstructions(
-          WXMGRUBKernelOpenBSD.builder()
-            .setKernelPath(Paths.get("/bsd"))
-            .setBootDevice(
-              WXMDeviceSlot.builder()
-                .setBusID(0)
-                .setSlotID(1)
-                .setFunctionID(0)
-                .build())
-            .build()
-        ).build();
-
-    final List<WXMBootConfigurationType> bootConfs =
-      List.of(bootConf);
-
-    new WXMBootConfigurationsSerializers()
-      .serialize(
-        this.directory.resolve("boot.xml"),
-        this.directory.resolve("boot.xml.tmp"),
-        bootConfs
-      );
-
-    MainExitless.main(
-      new String[]{
-        "vm-update-boot-configurations",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--file",
-        this.directory.resolve("boot.xml").toString()
-      }
-    );
-
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-delete-devices",
+          "vm-add-virtio-disk",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
+          "--backend",
+          "file;/tmp/xyz",
           "--device-slot",
           "0:1:0"
         }
