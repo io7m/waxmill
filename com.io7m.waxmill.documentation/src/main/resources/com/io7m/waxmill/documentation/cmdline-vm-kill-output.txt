@@ -1,0 +1,9 @@
+(Formatted for legibility)
+
+$ waxmill vm-kill \
+  --machine 538a90e4-d50d-4511-8643-ae418279bac4 \
+  --dry-run true
+
+/usr/sbin/bhyvectl \
+  --vm=538a90e4-d50d-4511-8643-ae418279bac4 \
+  --destroy

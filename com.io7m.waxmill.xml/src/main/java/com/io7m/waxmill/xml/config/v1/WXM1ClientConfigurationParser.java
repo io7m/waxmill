@@ -96,6 +96,10 @@ public final class WXM1ClientConfigurationParser
           this.builder.setBhyveExecutable(path.path());
           break;
         }
+        case "BhyveCtlExecutable": {
+          this.builder.setBhyveCtlExecutable(path.path());
+          break;
+        }
         case "ZFSExecutable": {
           this.builder.setZfsExecutable(path.path());
           break;

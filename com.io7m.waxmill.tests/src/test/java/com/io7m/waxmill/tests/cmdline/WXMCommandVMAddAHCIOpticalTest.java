@@ -18,11 +18,7 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
-import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
-import com.io7m.waxmill.machines.WXMStorageBackendFile;
-import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
-import com.io7m.waxmill.machines.WXMStorageBackends;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +30,6 @@ import java.nio.file.Path;
 import java.util.UUID;
 
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMAddAHCIOpticalTest

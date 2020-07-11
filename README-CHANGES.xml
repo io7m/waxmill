@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <c:changelog project="com.io7m.waxmill" xmlns:c="urn:com.io7m.changelog:4.0">
   <c:releases>
-    <c:release date="2020-07-11T17:33:12+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.1">
+    <c:release date="2020-07-11T00:00:00+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.1">
       <c:changes>
-        <c:change date="2020-07-11T17:33:12+00:00" summary="Initial testing release"/>
+        <c:change date="2020-07-11T00:00:00+00:00" summary="Initial testing release"/>
+      </c:changes>
+    </c:release>
+    <c:release date="2020-07-11T18:36:10+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.2">
+      <c:changes>
+        <c:change date="2020-07-11T18:36:10+00:00" summary="Add the vm-kill command"/>
       </c:changes>
     </c:release>
   </c:releases>

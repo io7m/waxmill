@@ -62,6 +62,18 @@ public interface WXMClientConfigurationType
   }
 
   /**
+   * @return The "bhyvectl" executable path, such as {@code /usr/sbin/bhyvectl}
+   */
+
+  @Value.Default
+  default Path bhyveCtlExecutable()
+  {
+    return this.virtualMachineConfigurationDirectory()
+      .getFileSystem()
+      .getPath("/usr/sbin/bhyvectl");
+  }
+
+  /**
    * @return The "grub-bhyve" executable path, such as {@code /usr/local/sbin/grub-bhyve}
    */
 

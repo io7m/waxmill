@@ -25,6 +25,13 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:enumeration>
+      <xsd:enumeration value="BhyveCtlExecutable">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the bhyvectl executable. On FreeBSD, this is /usr/sbin/bhyvectl by default.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
       <xsd:enumeration value="GRUBBhyveExecutable">
         <xsd:annotation>
           <xsd:documentation>

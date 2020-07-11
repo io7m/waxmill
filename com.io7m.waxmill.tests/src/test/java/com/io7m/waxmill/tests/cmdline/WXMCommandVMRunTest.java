@@ -18,7 +18,11 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.machines.WXMBootConfigurationName;
+import com.io7m.waxmill.machines.WXMBootConfigurationType;
+import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.tests.WXMTestDirectories;
+import com.io7m.waxmill.xml.WXMBootConfigurationsSerializers;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +31,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMRunTest
@@ -98,6 +104,161 @@ public final class WXMCommandVMRunTest
           UUID.randomUUID().toString(),
           "--configuration",
           this.configFile.toString()
+        }
+      );
+    });
+  }
+
+  @Test
+  public void runDryRun()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-lpc-device",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--device-slot",
+        "0:2:0",
+        "--add-backend",
+        "stdio;com1"
+      }
+    );
+
+    Files.write(this.directory.resolve("firmware"), "FIRMWARE".getBytes(UTF_8));
+
+    final var bootConf =
+      WXMBootConfigurationUEFI.builder()
+        .setComment("A configuration")
+        .setName(WXMBootConfigurationName.of("run"))
+        .setFirmware(this.directory.resolve("firmware"))
+        .build();
+
+    final List<WXMBootConfigurationType> bootConfs =
+      List.of(bootConf);
+
+    new WXMBootConfigurationsSerializers()
+      .serialize(
+        this.directory.resolve("boot.xml"),
+        this.directory.resolve("boot.xml.tmp"),
+        bootConfs
+      );
+
+    MainExitless.main(
+      new String[]{
+        "vm-update-boot-configurations",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--file",
+        this.directory.resolve("boot.xml").toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-run",
+        "--verbose",
+        "trace",
+        "--machine",
+        id.toString(),
+        "--configuration",
+        this.configFile.toString(),
+        "--dry-run",
+        "true",
+        "--boot-configuration",
+        "run"
+      }
+    );
+  }
+
+  @Test
+  public void runMissingBoot()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2"
+      }
+    );
+
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-run",
+          "--verbose",
+          "trace",
+          "--machine",
+          id.toString(),
+          "--configuration",
+          this.configFile.toString(),
+          "--dry-run",
+          "true",
+          "--boot-configuration",
+          "run"
+        }
+      );
+    });
+  }
+
+  @Test
+  public void runMissingMachine()
+  {
+    final var id = UUID.randomUUID();
+
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-kill",
+          "--verbose",
+          "trace",
+          "--machine",
+          id.toString(),
+          "--configuration",
+          this.configFile.toString(),
+          "--dry-run",
+          "true"
         }
       );
     });

@@ -36,6 +36,7 @@ INFO com.io7m.waxmill.cmdline.Main: Usage: waxmill [options] [command] [command 
     vm-delete-devices                 Delete devices from virtual machines.
     vm-export                         Export virtual machine descriptions.
     vm-import                         Import virtual machine descriptions.
+    vm-kill                           Kill a virtual machine.
     vm-list                           List the available virtual machines.
     vm-list-with-name                 List the virtual machines with the given name.
     vm-realize                        Realize a virtual machine.

@@ -66,6 +66,7 @@
   <xi:include href="cmdline-vm-delete.xml" />
   <xi:include href="cmdline-vm-export.xml" />
   <xi:include href="cmdline-vm-import.xml" />
+  <xi:include href="cmdline-vm-kill.xml" />
   <xi:include href="cmdline-vm-list-with-name.xml" />
   <xi:include href="cmdline-vm-list.xml" />
   <xi:include href="cmdline-vm-realize.xml" />
