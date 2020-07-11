@@ -198,12 +198,20 @@ public final class WXMBootConfigurationExecutor
     throws IOException
   {
     final var missingPaths = new ArrayList<Path>();
+    final var missingNMDMs = new ArrayList<Path>();
+
     for (final var path : this.bootConfiguration.requiredPaths()) {
       if (!Files.exists(path)) {
+        if (this.bootConfiguration.requiredNMDMs().contains(path)) {
+          missingNMDMs.add(path);
+        }
         missingPaths.add(path);
       }
     }
     if (!missingPaths.isEmpty()) {
+      if (!missingNMDMs.isEmpty()) {
+        throw new IOException(this.errorRequiredPathsMissingWithNMDMs(missingPaths, missingNMDMs));
+      }
       throw new IOException(this.errorRequiredPathsMissing(missingPaths));
     }
   }
@@ -303,6 +311,18 @@ public final class WXMBootConfigurationExecutor
       "bootRequiredPathsMissing",
       this.machine.id(),
       missingPaths
+    );
+  }
+
+  private String errorRequiredPathsMissingWithNMDMs(
+    final Collection<Path> missingPaths,
+    final Collection<Path> missingNMDMs)
+  {
+    return this.messages.format(
+      "bootRequiredPathsMissingNMDM",
+      this.machine.id(),
+      missingPaths,
+      missingNMDMs
     );
   }
 

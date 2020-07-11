@@ -28,6 +28,7 @@ import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
+import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMFlags;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
@@ -75,10 +76,17 @@ public final class WXMEqualsTest
         WXMEvaluatedBootConfigurationGRUBBhyve.class,
         Set.of(
           "requiredPaths",
+          "requiredNMDMs",
           "deviceMap",
           "deviceMapFile",
           "grubConfiguration",
           "grubConfigurationFile",
+          "commands")),
+      new WXMClassUnderTest(
+        WXMEvaluatedBootConfigurationUEFI.class,
+        Set.of(
+          "requiredPaths",
+          "requiredNMDMs",
           "commands")),
       new WXMClassUnderTest(
         WXMGRUBKernelLinux.class,

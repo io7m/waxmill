@@ -24,11 +24,13 @@ import com.io7m.waxmill.exceptions.WXMExceptionUnsatisfiedRequirement;
 import com.io7m.waxmill.machines.WXMBootConfigurationType;
 import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
+import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackends;
+import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 
 import java.nio.file.Path;
@@ -41,19 +43,28 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
+import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
 
 public final class WXMDeviceMap
 {
   private final SortedMap<Integer, WXMDeviceAndPath> disks;
   private final SortedMap<Integer, WXMDeviceAndPath> cds;
   private final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments;
+  private final SortedSet<Path> others;
+  private final TreeSet<Path> nmdmPaths;
 
   private WXMDeviceMap(
     final SortedMap<Integer, WXMDeviceAndPath> inDisks,
     final SortedMap<Integer, WXMDeviceAndPath> inCds,
-    final Map<WXMDeviceSlot, WXMBootDiskAttachment> inAttachments)
+    final Map<WXMDeviceSlot, WXMBootDiskAttachment> inAttachments,
+    final TreeSet<Path> inOthers,
+    final TreeSet<Path> inNmdmPaths)
   {
     this.disks =
       Objects.requireNonNull(inDisks, "disks");
@@ -61,6 +72,10 @@ public final class WXMDeviceMap
       Objects.requireNonNull(inCds, "cds");
     this.attachments =
       Map.copyOf(Objects.requireNonNull(inAttachments, "inAttachments"));
+    this.others =
+      Objects.requireNonNull(inOthers, "others");
+    this.nmdmPaths =
+      Objects.requireNonNull(inNmdmPaths, "nmdmPaths");
   }
 
   public static WXMDeviceMap create(
@@ -90,6 +105,10 @@ public final class WXMDeviceMap
       new TreeMap<Integer, WXMDeviceAndPath>();
     final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments =
       new HashMap<>();
+    final var others =
+      new TreeSet<Path>();
+    final var nmdmPaths =
+      new TreeSet<Path>();
 
     final var diskAttachments =
       configuration.diskAttachmentMap();
@@ -102,10 +121,19 @@ public final class WXMDeviceMap
       switch (device.kind()) {
         case WXM_HOSTBRIDGE:
         case WXM_VIRTIO_NETWORK:
-        case WXM_LPC:
         case WXM_PASSTHRU:
         case WXM_FRAMEBUFFER:
         case WXM_E1000:
+          break;
+
+        case WXM_LPC:
+          processLPC(
+            clientConfiguration,
+            machine,
+            (WXMDeviceLPC) device,
+            others,
+            nmdmPaths
+          );
           break;
 
         case WXM_VIRTIO_BLOCK:
@@ -155,7 +183,36 @@ public final class WXMDeviceMap
       }
     }
 
-    return new WXMDeviceMap(hds, cds, attachments);
+    return new WXMDeviceMap(hds, cds, attachments, others, nmdmPaths);
+  }
+
+  private static void processLPC(
+    final WXMClientConfiguration clientConfiguration,
+    final WXMVirtualMachine machine,
+    final WXMDeviceLPC device,
+    final SortedSet<Path> others,
+    final SortedSet<Path> nmdmPaths)
+  {
+    for (final var backend : device.backends()) {
+      final var kind = backend.kind();
+      switch (kind) {
+        case WXM_FILE:
+          final var file = (WXMTTYBackendFile) backend;
+          others.add(file.path());
+          break;
+        case WXM_NMDM:
+          final Path path = nmdmPath(
+            clientConfiguration.virtualMachineRuntimeDirectory().getFileSystem(),
+            machine.id(),
+            NMDM_HOST
+          );
+          others.add(path);
+          nmdmPaths.add(path);
+          break;
+        case WXM_STDIO:
+          break;
+      }
+    }
   }
 
   private static WXMDeviceAndPath makeDeviceMapPath(
@@ -280,7 +337,14 @@ public final class WXMDeviceMap
       final var cd = entry.getValue();
       paths.add(cd.path());
     }
+
+    paths.addAll(this.others);
     return List.copyOf(paths);
+  }
+
+  public Collection<Path> nmdmPaths()
+  {
+    return List.copyOf(this.nmdmPaths);
   }
 
   @Override

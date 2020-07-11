@@ -806,6 +806,7 @@ public final class WXMBootConfigurationEvaluator
     return WXMEvaluatedBootConfigurationGRUBBhyve.builder()
       .setCommands(commands)
       .setRequiredPaths(deviceMap.paths())
+      .setRequiredNMDMs(deviceMap.nmdmPaths())
       .setDeviceMap(deviceMap.serialize())
       .setDeviceMapFile(this.grubDeviceMapPath())
       .setGrubConfiguration(configLines)
@@ -894,6 +895,7 @@ public final class WXMBootConfigurationEvaluator
 
     return WXMEvaluatedBootConfigurationUEFI.builder()
       .setRequiredPaths(requiredPaths)
+      .setRequiredNMDMs(deviceMap.nmdmPaths())
       .setCommands(this.generateUEFICommands(
         configuration,
         configuration.diskAttachmentMap()))

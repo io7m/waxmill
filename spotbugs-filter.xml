@@ -47,6 +47,7 @@
       <Class name="com.io7m.waxmill.machines.WXMDeviceVirtioNetwork"/>
       <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootCommands"/>
       <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve"/>
+      <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI"/>
       <Class name="com.io7m.waxmill.machines.WXMFlags"/>
       <Class name="com.io7m.waxmill.machines.WXMGRUBKernelLinux"/>
       <Class name="com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD"/>

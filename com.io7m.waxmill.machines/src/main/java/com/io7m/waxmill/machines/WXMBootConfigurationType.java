@@ -397,6 +397,12 @@ public interface WXMBootConfigurationType
     List<Path> requiredPaths();
 
     /**
+     * @return The nmdm files required to exist by the boot configuration
+     */
+
+    Set<Path> requiredNMDMs();
+
+    /**
      * @return The set of commands required to bring up the virtual machine
      */
 
@@ -447,6 +453,9 @@ public interface WXMBootConfigurationType
     List<Path> requiredPaths();
 
     @Override
+    Set<Path> requiredNMDMs();
+
+    @Override
     WXMEvaluatedBootCommands commands();
 
     /**
@@ -472,6 +481,25 @@ public interface WXMBootConfigurationType
      */
 
     List<String> grubConfiguration();
+
+    /**
+     * Check preconditions for the type.
+     */
+
+    @Value.Check
+    default void checkPreconditions()
+    {
+      Preconditions.checkPrecondition(
+        this.requiredPaths(),
+        this.requiredPaths().stream().allMatch(Path::isAbsolute),
+        q -> "All required paths must be absolute"
+      );
+      Preconditions.checkPrecondition(
+        this.requiredNMDMs(),
+        this.requiredPaths().containsAll(this.requiredNMDMs()),
+        q -> "All NMDM paths must be required"
+      );
+    }
   }
 
   /**
@@ -493,6 +521,28 @@ public interface WXMBootConfigurationType
     List<Path> requiredPaths();
 
     @Override
+    Set<Path> requiredNMDMs();
+
+    @Override
     WXMEvaluatedBootCommands commands();
+
+    /**
+     * Check preconditions for the type.
+     */
+
+    @Value.Check
+    default void checkPreconditions()
+    {
+      Preconditions.checkPrecondition(
+        this.requiredPaths(),
+        this.requiredPaths().stream().allMatch(Path::isAbsolute),
+        q -> "All required paths must be absolute"
+      );
+      Preconditions.checkPrecondition(
+        this.requiredNMDMs(),
+        this.requiredPaths().containsAll(this.requiredNMDMs()),
+        q -> "All NMDM paths must be required"
+      );
+    }
   }
 }
