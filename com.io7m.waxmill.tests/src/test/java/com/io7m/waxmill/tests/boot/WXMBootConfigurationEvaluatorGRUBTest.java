@@ -26,11 +26,14 @@ import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
+import com.io7m.waxmill.machines.WXMDeviceE1000;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
+import com.io7m.waxmill.machines.WXMFlags;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMMACAddress;
@@ -491,7 +494,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
   }
 
   @Test
-  public void linuxLinuxSimpleHD()
+  public void linuxSimpleHD()
     throws WXMException
   {
     final var machine =
@@ -573,7 +576,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
   }
 
   @Test
-  public void linuxLinuxSimpleCD()
+  public void linuxSimpleCD()
     throws WXMException
   {
     final var machine =
@@ -666,7 +669,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
   }
 
   @Test
-  public void linuxLinuxVirtioNetTAP()
+  public void linuxVirtioNetTAP()
     throws WXMException
   {
     final var machine =
@@ -759,7 +762,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
   }
 
   @Test
-  public void linuxLinuxVirtioNetVMNet()
+  public void linuxVirtioNetVMNet()
     throws WXMException
   {
     final var machine =
@@ -852,7 +855,100 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
   }
 
   @Test
-  public void linuxLinuxLPC()
+  public void linuxE1000Net()
+    throws WXMException
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .addBootConfigurations(
+          WXMBootConfigurationGRUBBhyve.builder()
+            .setName(WXMBootConfigurationName.of("install"))
+            .setKernelInstructions(
+              WXMGRUBKernelLinux.builder()
+                .setKernelDevice(convert("0:1:0"))
+                .setKernelPath(Paths.get("/vmlinuz"))
+                .addKernelArguments("root=/dev/sda1")
+                .addKernelArguments("init=/sbin/runit-init")
+                .setInitRDDevice(convert("0:1:0"))
+                .setInitRDPath(Paths.get("/initrd.img"))
+                .build())
+            .build()
+        )
+        .addDevices(
+          WXMDeviceHostBridge.builder()
+            .setDeviceSlot(convert("0:0:0"))
+            .setVendor(WXM_UNSPECIFIED)
+            .build()
+        )
+        .addDevices(
+          WXMDeviceAHCIDisk.builder()
+            .setDeviceSlot(convert("0:1:0"))
+            .setBackend(
+              WXMStorageBackendFile.builder()
+                .setFile(Path.of("/tmp/file"))
+                .build()
+            ).build()
+        )
+        .addDevices(
+          WXMDeviceE1000.builder()
+            .setDeviceSlot(convert("0:2:0"))
+            .setBackend(
+              WXMVMNet.builder()
+                .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setName(WXMVMNetDeviceName.of("vmnet23"))
+                .build())
+            .build()
+        ).build();
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(this.vms)
+        .build();
+
+    final var evaluator =
+      new WXMBootConfigurationEvaluator(
+        clientConfiguration,
+        machine,
+        WXMBootConfigurationName.of("install")
+      );
+
+    final var evaluated =
+      (WXMEvaluatedBootConfigurationGRUBBhyve) evaluator.evaluate();
+    LOG.debug("evaluated: {}", evaluated);
+
+    final var mapLines = evaluated.deviceMap();
+    assertTrue(mapLines.get(0).contains("/tmp/file"));
+    assertEquals(1, mapLines.size());
+
+    final var grub = evaluated.grubConfiguration();
+    assertEquals(
+      "linux (hd0)/vmlinuz root=/dev/sda1 init=/sbin/runit-init",
+      grub.get(0)
+    );
+    assertEquals("initrd (hd0)/initrd.img", grub.get(1));
+    assertEquals("boot", grub.get(2));
+    assertEquals(3, grub.size());
+
+    final var commands = evaluated.commands();
+    final var configs = commands.configurationCommands();
+    final var cmd0 = configs.get(0);
+    assertEquals("/usr/local/sbin/grub-bhyve", cmd0.executable().toString());
+    assertEquals(1, configs.size());
+
+    final var lastExec = commands.lastExecution().orElseThrow();
+    assertEquals(
+      String.format(
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
+        machine.id()),
+      lastExec.toString()
+    );
+  }
+
+  @Test
+  public void linuxLPC()
     throws WXMException
   {
     final var machine =
@@ -950,6 +1046,97 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,lpc -l bootrom,/tmp/rom -l com1,/dev/nmdm_%s_B -l com2,stdio %s",
+        machine.id(),
+        machine.id()),
+      lastExec.toString()
+    );
+  }
+
+  @Test
+  public void linuxPassthru()
+    throws WXMException
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .setFlags(
+          WXMFlags.builder()
+            .setWireGuestMemory(true)
+            .build())
+        .addBootConfigurations(
+          WXMBootConfigurationGRUBBhyve.builder()
+            .setName(WXMBootConfigurationName.of("install"))
+            .setKernelInstructions(
+              WXMGRUBKernelLinux.builder()
+                .setKernelDevice(convert("0:0:0"))
+                .setKernelPath(Paths.get("/vmlinuz"))
+                .addKernelArguments("root=/dev/sda1")
+                .addKernelArguments("init=/sbin/runit-init")
+                .setInitRDDevice(convert("0:0:0"))
+                .setInitRDPath(Paths.get("/initrd.img"))
+                .build())
+            .build()
+        )
+        .addDevices(
+          WXMDeviceVirtioBlockStorage.builder()
+            .setDeviceSlot(convert("0:0:0"))
+            .setBackend(WXMStorageBackendZFSVolume.builder().build())
+            .build()
+        )
+        .addDevices(
+          WXMDevicePassthru.builder()
+            .setDeviceSlot(convert("0:1:0"))
+            .setHostPCISlot(convert("1:2:3"))
+            .build())
+        .build();
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(this.vms)
+        .build();
+
+    final var evaluator =
+      new WXMBootConfigurationEvaluator(
+        clientConfiguration,
+        machine,
+        WXMBootConfigurationName.of("install")
+      );
+
+    final var evaluated =
+      (WXMEvaluatedBootConfigurationGRUBBhyve) evaluator.evaluate();
+    LOG.debug("evaluated: {}", evaluated);
+
+    final String expectedZFSDisk =
+      this.vms.resolve(machine.id().toString())
+        .resolve("disk-0_0_0")
+        .toString();
+
+    final var mapLines = evaluated.deviceMap();
+    assertTrue(mapLines.get(0).contains(expectedZFSDisk));
+    assertEquals(1, mapLines.size());
+
+    final var grub = evaluated.grubConfiguration();
+    assertEquals(
+      "linux (hd0)/vmlinuz root=/dev/sda1 init=/sbin/runit-init",
+      grub.get(0)
+    );
+    assertEquals("initrd (hd0)/initrd.img", grub.get(1));
+    assertEquals("boot", grub.get(2));
+    assertEquals(3, grub.size());
+
+    final var commands = evaluated.commands();
+    final var configs = commands.configurationCommands();
+    final var cmd0 = configs.get(0);
+    assertEquals("/usr/local/sbin/grub-bhyve", cmd0.executable().toString());
+    assertEquals(1, configs.size());
+
+    final var lastExec = commands.lastExecution().orElseThrow();
+    assertEquals(
+      String.format(
+        "/usr/sbin/bhyve -P -A -S -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,%s/%s/disk-0_0_0 -s 0:1:0,passthru,1/2/3 %s",
+        this.vms.toString(),
         machine.id(),
         machine.id()),
       lastExec.toString()
