@@ -21,10 +21,10 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.waxmill.machines.WXMOpenOption;
 
 import java.util.Map;
 
-import com.io7m.waxmill.machines.WXMOpenOption;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
 public final class WXM1OpenOptionsParser

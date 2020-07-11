@@ -18,9 +18,11 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
-import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
-import com.io7m.waxmill.machines.WXMTap;
-import com.io7m.waxmill.machines.WXMVMNet;
+import com.io7m.waxmill.machines.WXMDevicePassthru;
+import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
+import com.io7m.waxmill.machines.WXMStorageBackendFile;
+import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
+import com.io7m.waxmill.machines.WXMStorageBackends;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +37,7 @@ import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMCommandAddVirtioNetworkTest
+public final class WXMCommandVMAddPassthruTest
 {
   private Path directory;
   private Path configFile;
@@ -70,28 +72,98 @@ public final class WXMCommandAddVirtioNetworkTest
   }
 
   @Test
-  public void addVirtioNetworkNonexistentVirtualMachine()
+  public void addPassthruOK()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-set",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--wire-guest-memory",
+        "true"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-passthru-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--device-slot",
+        "0:1:0",
+        "--host-device-slot",
+        "1:2:3"
+      }
+    );
+
+    final var machineSet =
+      parseFirst(this.vmDirectory);
+
+    final var machine =
+      machineSet.machines()
+        .values()
+        .iterator()
+        .next();
+
+    final var passthru =
+      (WXMDevicePassthru) machine.devices().get(1);
+
+    assertEquals("0:1:0", passthru.deviceSlot().toString());
+    assertEquals("1:2:3", passthru.hostPCISlot().toString());
+  }
+
+  @Test
+  public void addPassthruNonexistentVirtualMachine()
   {
     assertThrows(IOException.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
-          "vm-add-virtio-network-device",
+          "vm-add-passthru-device",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--backend",
-          "tap;tap23;a3:26:9c:74:79:34"
+          "--device-slot",
+          "0:1:0",
+          "--host-device-slot",
+          "1:2:3"
         }
       );
     });
   }
 
   @Test
-  public void addVirtioNetworkAlreadyUsed()
+  public void addPassthruAlreadyUsed()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -118,156 +190,48 @@ public final class WXMCommandAddVirtioNetworkTest
 
     MainExitless.main(
       new String[]{
-        "vm-add-virtio-network-device",
+        "vm-set",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--wire-guest-memory",
+        "true"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-passthru-device",
         "--verbose",
         "trace",
         "--configuration",
         this.configFile.toString(),
         "--machine",
         id.toString(),
-        "--backend",
-        "tap;tap23;a3:26:9c:74:79:34",
         "--device-slot",
-        "0:1:0"
+        "0:1:0",
+        "--host-device-slot",
+        "1:2:3"
       }
     );
 
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-add-virtio-network-device",
+          "vm-add-passthru-device",
           "--verbose",
           "trace",
           "--configuration",
           this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--backend",
-          "tap;tap23;a3:26:9c:74:79:34",
           "--device-slot",
-          "0:1:0"
+          "0:1:0",
+          "--host-device-slot",
+          "1:2:3"
         }
       );
     });
-  }
-
-  @Test
-  public void addVirtioNetworkOKTap()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2",
-        "--machine",
-        id.toString()
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-virtio-network-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "tap;tap23;a3:26:9c:74:79:34",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var machineSet =
-      parseFirst(this.vmDirectory);
-
-    final var machine =
-      machineSet.machines()
-        .values()
-        .iterator()
-        .next();
-
-    final var net =
-      (WXMDeviceVirtioNetwork) machine.devices().get(1);
-    final var tap =
-      (WXMTap) net.backend();
-
-    assertEquals("tap23", tap.name().value());
-    assertEquals("a3:26:9c:74:79:34", tap.address().value());
-  }
-
-  @Test
-  public void addVirtioNetworkOKVMNet()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2",
-        "--machine",
-        id.toString()
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-virtio-network-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "vmnet;vmnet23;a3:26:9c:74:79:34",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var machineSet =
-      parseFirst(this.vmDirectory);
-
-    final var machine =
-      machineSet.machines()
-        .values()
-        .iterator()
-        .next();
-
-    final var net =
-      (WXMDeviceVirtioNetwork) machine.devices().get(1);
-    final var vmnet =
-      (WXMVMNet) net.backend();
-
-    assertEquals("vmnet23", vmnet.name().value());
-    assertEquals("a3:26:9c:74:79:34", vmnet.address().value());
   }
 }

@@ -370,7 +370,8 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         id.toString(),
         "--file",
         this.directory.resolve("boot.xml").toString(),
-        "--update"
+        "--update",
+        "true"
       }
     );
 

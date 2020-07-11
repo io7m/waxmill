@@ -17,11 +17,10 @@
 package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.waxmill.machines.WXMOpenOption;
 import org.immutables.value.Value;
 
 import java.util.List;
-
-import com.io7m.waxmill.machines.WXMOpenOption;
 
 @Value.Immutable
 @ImmutablesStyleType

@@ -78,6 +78,7 @@ public final class WXMRealizations implements WXMRealizationType
         case WXM_VIRTIO_NETWORK:
         case WXM_AHCI_CD:
         case WXM_LPC:
+        case WXM_PASSTHRU:
           continue;
         case WXM_VIRTIO_BLOCK:
           this.evaluateVirtioBlock(

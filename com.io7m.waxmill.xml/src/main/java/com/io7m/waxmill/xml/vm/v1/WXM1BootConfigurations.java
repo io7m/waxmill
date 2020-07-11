@@ -31,6 +31,8 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.io7m.waxmill.xml.vm.v1.WXM1DeviceSlots.SlotSide.GUEST;
+
 public final class WXM1BootConfigurations
 {
   private WXM1BootConfigurations()
@@ -134,7 +136,7 @@ public final class WXM1BootConfigurations
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     writer.writeStartElement(namespaceURI, "BootDiskAttachment");
-    WXM1DeviceSlots.serializeDeviceSlot(attachment.device(), writer);
+    WXM1DeviceSlots.serializeDeviceSlot(attachment.device(), GUEST, writer);
     WXM1StorageBackends.serializeStorageBackend(attachment.backend(), writer);
     writer.writeEndElement();
   }
@@ -159,7 +161,7 @@ public final class WXM1BootConfigurations
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     writer.writeStartElement(namespaceURI, "BSDBootDevice");
     writer.writeAttribute("kernelPath", kernelPath.toString());
-    WXM1DeviceSlots.serializeDeviceSlot(bootDevice, writer);
+    WXM1DeviceSlots.serializeDeviceSlot(bootDevice, GUEST, writer);
     writer.writeEndElement();
   }
 
@@ -188,7 +190,7 @@ public final class WXM1BootConfigurations
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     writer.writeStartElement(namespaceURI, "LinuxInitRDDevice");
     writer.writeAttribute("initRDPath", kernel.initRDPath().toString());
-    WXM1DeviceSlots.serializeDeviceSlot(kernel.initRDDevice(), writer);
+    WXM1DeviceSlots.serializeDeviceSlot(kernel.initRDDevice(), GUEST, writer);
     writer.writeEndElement();
   }
 
@@ -200,7 +202,7 @@ public final class WXM1BootConfigurations
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     writer.writeStartElement(namespaceURI, "LinuxKernelDevice");
     writer.writeAttribute("kernelPath", kernel.kernelPath().toString());
-    WXM1DeviceSlots.serializeDeviceSlot(kernel.kernelDevice(), writer);
+    WXM1DeviceSlots.serializeDeviceSlot(kernel.kernelDevice(), GUEST, writer);
     writer.writeEndElement();
   }
 }

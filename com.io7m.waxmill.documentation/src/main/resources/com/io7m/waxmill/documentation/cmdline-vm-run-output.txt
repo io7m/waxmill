@@ -3,7 +3,7 @@
 $ waxmill vm-run \
   --machine 538a90e4-d50d-4511-8643-ae418279bac4 \
   --boot-configuration install \
-  --dry-run
+  --dry-run true
 
 /usr/local/sbin/grub-bhyve \
   --device-map=/zroot/storage/vm/538a90e4-d50d-4511-8643-ae418279bac4/grub-device.map \

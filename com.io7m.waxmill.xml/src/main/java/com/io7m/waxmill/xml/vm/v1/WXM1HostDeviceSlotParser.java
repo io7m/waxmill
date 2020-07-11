@@ -18,31 +18,45 @@ package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
-import com.io7m.waxmill.machines.WXMOpenOption;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
-public final class WXM1OpenOptionParser
-  implements BTElementHandlerType<Object, WXMOpenOption>
+public final class WXM1HostDeviceSlotParser
+  implements BTElementHandlerType<Object, WXM1HostDeviceSlot>
 {
-  private WXMOpenOption option;
+  private final WXMDeviceSlot.Builder builder;
 
-  public WXM1OpenOptionParser()
+  public WXM1HostDeviceSlotParser()
   {
-
+    this.builder = WXMDeviceSlot.builder();
   }
 
   @Override
   public void onElementStart(
     final BTElementParsingContextType context,
     final Attributes attributes)
+    throws SAXException
   {
-    this.option = WXMOpenOption.valueOf(attributes.getValue("value"));
+    try {
+      this.builder.setBusID(
+        Integer.parseInt(attributes.getValue("bus"))
+      );
+      this.builder.setFunctionID(
+        Integer.parseInt(attributes.getValue("function"))
+      );
+      this.builder.setSlotID(
+        Integer.parseInt(attributes.getValue("slot"))
+      );
+    } catch (final Exception e) {
+      throw context.parseException(e);
+    }
   }
 
   @Override
-  public WXMOpenOption onElementFinished(
+  public WXM1HostDeviceSlot onElementFinished(
     final BTElementParsingContextType context)
   {
-    return this.option;
+    return WXM1HostDeviceSlot.of(this.builder.build());
   }
 }

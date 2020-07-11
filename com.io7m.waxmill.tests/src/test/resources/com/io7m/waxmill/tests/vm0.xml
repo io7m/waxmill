@@ -87,6 +87,16 @@
                       path="/dev/nmdm_1a438a53-2fcd-498f-8cc2-0ff0456e3dc4_B"/>
       <TTYBackendNMDM device="com2"/>
     </LPCDevice>
+
+    <PassthruDevice>
+      <DeviceSlot bus="0"
+                  slot="6"
+                  function="0"/>
+      <Comment>A PCI passthru device.</Comment>
+      <HostDeviceSlot bus="1"
+                      slot="2"
+                      function="3"/>
+    </PassthruDevice>
   </Devices>
 
   <BootConfigurations>
@@ -153,7 +163,7 @@
     <Flag name="RealTimeClockIsUTC"
           enabled="true"/>
     <Flag name="WireGuestMemory"
-          enabled="false"/>
+          enabled="true"/>
     <Flag name="YieldCPUOnHLT"
           enabled="true"/>
   </Flags>

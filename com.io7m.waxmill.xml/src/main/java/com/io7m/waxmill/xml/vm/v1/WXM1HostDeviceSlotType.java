@@ -16,33 +16,14 @@
 
 package com.io7m.waxmill.xml.vm.v1;
 
-import com.io7m.blackthorne.api.BTElementHandlerType;
-import com.io7m.blackthorne.api.BTElementParsingContextType;
-import com.io7m.waxmill.machines.WXMOpenOption;
-import org.xml.sax.Attributes;
+import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.waxmill.machines.WXMDeviceSlot;
+import org.immutables.value.Value;
 
-public final class WXM1OpenOptionParser
-  implements BTElementHandlerType<Object, WXMOpenOption>
+@Value.Immutable
+@ImmutablesStyleType
+public interface WXM1HostDeviceSlotType
 {
-  private WXMOpenOption option;
-
-  public WXM1OpenOptionParser()
-  {
-
-  }
-
-  @Override
-  public void onElementStart(
-    final BTElementParsingContextType context,
-    final Attributes attributes)
-  {
-    this.option = WXMOpenOption.valueOf(attributes.getValue("value"));
-  }
-
-  @Override
-  public WXMOpenOption onElementFinished(
-    final BTElementParsingContextType context)
-  {
-    return this.option;
-  }
+  @Value.Parameter
+  WXMDeviceSlot slot();
 }

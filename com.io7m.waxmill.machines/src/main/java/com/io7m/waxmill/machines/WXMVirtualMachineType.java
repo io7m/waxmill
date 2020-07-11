@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_PASSTHRU;
 
 /**
  * A virtual machine.
@@ -154,6 +155,22 @@ public interface WXMVirtualMachineType
     this.checkAtMostOneLPC();
     this.checkAtMostOneHostBridge();
     this.checkBootConfigurationsReferences();
+    this.checkRequiresWiredMemory();
+  }
+
+  private void checkRequiresWiredMemory()
+  {
+    final var passthruDevice =
+      this.devices().stream()
+        .filter(device -> device.kind() == WXM_PASSTHRU)
+        .findFirst();
+
+    if (passthruDevice.isPresent()) {
+      Preconditions.checkPreconditionV(
+        this.flags().wireGuestMemory(),
+        "Using a passthru PCI device requires guest memory to be wired"
+      );
+    }
   }
 
   private void checkBootConfigurationsReferences()

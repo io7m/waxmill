@@ -18,6 +18,9 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMTap;
+import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,12 +29,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMCommandVMConsoleTest
+public final class WXMCommandVMAddVirtioNetworkTest
 {
   private Path directory;
   private Path configFile;
@@ -55,9 +59,6 @@ public final class WXMCommandVMConsoleTest
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
         .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
-        .setZfsExecutable(Paths.get("/bin/echo"))
-        .setGrubBhyveExecutable(Paths.get("/bin/echo"))
-        .setBhyveExecutable(Paths.get("/bin/echo"))
         .build();
 
     new WXMClientConfigurationSerializers()
@@ -69,83 +70,32 @@ public final class WXMCommandVMConsoleTest
   }
 
   @Test
-  public void runTooFewArguments()
+  public void addVirtioNetworkNonexistentVirtualMachine()
   {
     assertThrows(IOException.class, () -> {
+      final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
-          "vm-console"
-        }
-      );
-    });
-  }
-
-  @Test
-  public void runConfigurationFileMissing()
-    throws IOException
-  {
-    Files.deleteIfExists(this.configFile);
-
-    assertThrows(IOException.class, () -> {
-      MainExitless.main(
-        new String[]{
-          "vm-console",
+          "vm-add-virtio-network-device",
           "--verbose",
           "trace",
-          "--machine",
-          UUID.randomUUID().toString(),
           "--configuration",
-          this.configFile.toString()
-        }
-      );
-    });
-  }
-
-  @Test
-  public void runNoConsoleDevice()
-    throws IOException
-  {
-    final var id = UUID.randomUUID();
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2"
-      }
-    );
-
-    assertThrows(IOException.class, () -> {
-      MainExitless.main(
-        new String[]{
-          "vm-console",
-          "--verbose",
-          "trace",
+          this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--configuration",
-          this.configFile.toString()
+          "--backend",
+          "tap;tap23;a3:26:9c:74:79:34"
         }
       );
     });
   }
 
   @Test
-  public void runNoConsoleDeviceDryRun()
-    throws IOException
+  public void addVirtioNetworkAlreadyUsed()
+    throws Exception
   {
     final var id = UUID.randomUUID();
+
     MainExitless.main(
       new String[]{
         "vm-define",
@@ -153,8 +103,6 @@ public final class WXMCommandVMConsoleTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--machine",
-        id.toString(),
         "--name",
         "com.io7m.example",
         "--memory-gigabytes",
@@ -162,38 +110,164 @@ public final class WXMCommandVMConsoleTest
         "--memory-megabytes",
         "128",
         "--cpu-count",
-        "2"
+        "2",
+        "--machine",
+        id.toString()
       }
     );
 
     MainExitless.main(
       new String[]{
-        "vm-add-lpc-device",
+        "vm-add-virtio-network-device",
         "--verbose",
         "trace",
         "--configuration",
         this.configFile.toString(),
         "--machine",
         id.toString(),
-        "--add-backend",
-        "file;com1;/tmp/xyz",
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
         "--device-slot",
         "0:1:0"
       }
     );
 
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-add-virtio-network-device",
+          "--verbose",
+          "trace",
+          "--configuration",
+          this.configFile.toString(),
+          "--machine",
+          id.toString(),
+          "--backend",
+          "tap;tap23;a3:26:9c:74:79:34",
+          "--device-slot",
+          "0:1:0"
+        }
+      );
+    });
+  }
+
+  @Test
+  public void addVirtioNetworkOKTap()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
     MainExitless.main(
       new String[]{
-        "vm-console",
+        "vm-define",
         "--verbose",
         "trace",
-        "--dry-run",
-        "true",
-        "--machine",
-        id.toString(),
         "--configuration",
-        this.configFile.toString()
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
       }
     );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    final var machineSet =
+      parseFirst(this.vmDirectory);
+
+    final var machine =
+      machineSet.machines()
+        .values()
+        .iterator()
+        .next();
+
+    final var net =
+      (WXMDeviceVirtioNetwork) machine.devices().get(1);
+    final var tap =
+      (WXMTap) net.backend();
+
+    assertEquals("tap23", tap.name().value());
+    assertEquals("a3:26:9c:74:79:34", tap.address().value());
+  }
+
+  @Test
+  public void addVirtioNetworkOKVMNet()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "vmnet;vmnet23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    final var machineSet =
+      parseFirst(this.vmDirectory);
+
+    final var machine =
+      machineSet.machines()
+        .values()
+        .iterator()
+        .next();
+
+    final var net =
+      (WXMDeviceVirtioNetwork) machine.devices().get(1);
+    final var vmnet =
+      (WXMVMNet) net.backend();
+
+    assertEquals("vmnet23", vmnet.name().value());
+    assertEquals("a3:26:9c:74:79:34", vmnet.address().value());
   }
 }

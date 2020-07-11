@@ -310,6 +310,28 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="HostDeviceSlot">
+    <xsd:annotation>
+      <xsd:documentation>
+        The identifier of a (host) device slot. bhyve provides PCI bus emulation and virtual devices that can be
+        attached to slots on up to 256 busses. There are 32 available slots per bus, with the option of providing up
+        to 8 functions per slot.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="bus"
+                     type="wxm:DeviceBusIDType"
+                     use="required"/>
+      <xsd:attribute name="slot"
+                     type="wxm:DeviceSlotIDType"
+                     use="required"/>
+      <xsd:attribute name="function"
+                     type="wxm:DeviceFunctionIDType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:complexType name="DeviceType">
     <xsd:annotation>
       <xsd:documentation>
@@ -737,6 +759,24 @@
     </xsd:key>
   </xsd:element>
 
+  <xsd:element name="PassthruDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A PCI passthru device. Exclusive access to a PCI device on the host is given to the virtual machine.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:sequence>
+            <xsd:element ref="wxm:HostDeviceSlot"/>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="Devices">
     <xsd:annotation>
       <xsd:documentation>
@@ -754,6 +794,7 @@
         <xsd:element ref="wxm:LPCDevice"/>
         <xsd:element ref="wxm:VirtioBlockStorageDevice"/>
         <xsd:element ref="wxm:VirtioNetworkDevice"/>
+        <xsd:element ref="wxm:PassthruDevice"/>
       </xsd:choice>
     </xsd:complexType>
 

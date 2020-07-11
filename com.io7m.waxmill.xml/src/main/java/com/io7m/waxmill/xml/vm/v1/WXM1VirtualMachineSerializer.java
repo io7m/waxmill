@@ -21,6 +21,7 @@ import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
@@ -52,6 +53,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import static com.io7m.waxmill.xml.vm.v1.WXM1DeviceSlots.SlotSide.GUEST;
+import static com.io7m.waxmill.xml.vm.v1.WXM1DeviceSlots.SlotSide.HOST;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class WXM1VirtualMachineSerializer implements WXMSerializerType
@@ -159,9 +162,24 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
         case WXM_LPC:
           this.serializeDeviceLPC((WXMDeviceLPC) device);
           break;
+        case WXM_PASSTHRU:
+          this.serializeDevicePassthru((WXMDevicePassthru) device);
+          break;
       }
     }
 
+    this.writer.writeEndElement();
+  }
+
+  private void serializeDevicePassthru(
+    final WXMDevicePassthru device)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "PassthruDevice");
+    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), GUEST, this.writer);
+    WXM1Comments.serializeComment(device.comment(), this.writer);
+    WXM1DeviceSlots.serializeDeviceSlot(device.hostPCISlot(), HOST, this.writer);
     this.writer.writeEndElement();
   }
 
@@ -171,7 +189,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     this.writer.writeStartElement(namespaceURI, "LPCDevice");
-    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
+    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), GUEST, this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
 
     final var iter =
@@ -235,7 +253,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     this.writer.writeStartElement(namespaceURI, "AHCIOpticalDiskDevice");
-    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
+    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), GUEST, this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
     this.writer.writeEndElement();
   }
@@ -246,7 +264,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     this.writer.writeStartElement(namespaceURI, "AHCIDiskDevice");
-    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
+    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), GUEST, this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
 
     WXM1StorageBackends.serializeStorageBackend(device.backend(), this.writer);
@@ -260,7 +278,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     this.writer.writeStartElement(namespaceURI, "VirtioNetworkDevice");
-    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
+    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), GUEST, this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
 
     final var backend = device.backend();
@@ -282,7 +300,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     this.writer.writeStartElement(namespaceURI, "VirtioBlockStorageDevice");
-    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
+    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), GUEST, this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
     WXM1StorageBackends.serializeStorageBackend(device.backend(), this.writer);
     this.writer.writeEndElement();
@@ -319,7 +337,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     this.writer.writeStartElement(namespaceURI, "HostBridge");
     this.writer.writeAttribute("vendor", device.vendor().externalName());
-    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), this.writer);
+    WXM1DeviceSlots.serializeDeviceSlot(device.deviceSlot(), GUEST, this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
     this.writer.writeEndElement();
   }

@@ -22,6 +22,7 @@ import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
@@ -111,7 +112,7 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals(BigInteger.valueOf(512000000L), memory.totalBytes());
 
     final var devices = machine.devices();
-    assertEquals(6, devices.size());
+    assertEquals(7, devices.size());
 
     final var hostBridge = (WXMDeviceHostBridge) devices.get(0);
     assertEquals(WXM_AMD, hostBridge.vendor());
@@ -164,6 +165,11 @@ public abstract class WXMVirtualMachineParserContract
       "/dev/nmdm_1a438a53-2fcd-498f-8cc2-0ff0456e3dc4_B",
       file.path().toString());
 
+    final var passthru = (WXMDevicePassthru) devices.get(6);
+    assertEquals("0:6:0", passthru.deviceSlot().toString());
+    assertEquals("1:2:3", passthru.hostPCISlot().toString());
+    assertEquals("A PCI passthru device.", passthru.comment());
+
     final var flags = machine.flags();
     assertFalse(flags.disableMPTableGeneration());
     assertFalse(flags.forceVirtualIOPCIToUseMSI());
@@ -171,7 +177,7 @@ public abstract class WXMVirtualMachineParserContract
     assertFalse(flags.guestAPICIsX2APIC());
     assertFalse(flags.includeGuestMemoryInCoreFiles());
     assertTrue(flags.realTimeClockIsUTC());
-    assertFalse(flags.wireGuestMemory());
+    assertTrue(flags.wireGuestMemory());
     assertTrue(flags.yieldCPUOnHLT());
 
     final var boots = machine.bootConfigurations();

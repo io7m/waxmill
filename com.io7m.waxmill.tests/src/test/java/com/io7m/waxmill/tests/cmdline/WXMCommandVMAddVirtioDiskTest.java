@@ -36,7 +36,7 @@ import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMCommandAddVirtioDiskTest
+public final class WXMCommandVMAddVirtioDiskTest
 {
   private Path directory;
   private Path configFile;

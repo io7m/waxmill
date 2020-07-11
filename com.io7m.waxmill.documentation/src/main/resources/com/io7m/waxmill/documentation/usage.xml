@@ -95,6 +95,12 @@
       Similarly, the <Link target="43d302bf-8bd5-43d6-a284-902ce140f352">vm-import</Link> command can be used to import
       one or more virtual machines from a given XML configuration file.
     </Paragraph>
+
+    <Paragraph>
+      <Term type="package">bhyve</Term> virtual machines have a number of configurable boolean flags. The <Link
+      target="a8c6bad4-42b0-4558-b9e5-89e7c81d20b4">vm-set</Link> command can be used to turn these flags on and
+      off. For example, using PCI passthru devices requires wiring the memory of the guest virtual machine.
+    </Paragraph>
   </Subsection>
 
   <Subsection title="Adding Devices"

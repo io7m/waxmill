@@ -103,6 +103,7 @@ public final class WXMDeviceMap
         case WXM_HOSTBRIDGE:
         case WXM_VIRTIO_NETWORK:
         case WXM_LPC:
+        case WXM_PASSTHRU:
           break;
 
         case WXM_VIRTIO_BLOCK:
@@ -166,6 +167,7 @@ public final class WXMDeviceMap
       case WXM_VIRTIO_NETWORK:
       case WXM_LPC:
       case WXM_AHCI_CD:
+      case WXM_PASSTHRU:
         throw new UnreachableCodeException();
 
       case WXM_VIRTIO_BLOCK: {

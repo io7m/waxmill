@@ -35,6 +35,7 @@ import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
@@ -482,8 +483,30 @@ public final class WXMBootConfigurationEvaluator
         this.configureBhyveDeviceLPC(command, (WXMDeviceLPC) device);
         return;
       }
+      case WXM_PASSTHRU: {
+        configureBhyveDevicePassthru(command, (WXMDevicePassthru) device);
+        return;
+      }
     }
     throw new UnreachableCodeException();
+  }
+
+  private static void configureBhyveDevicePassthru(
+    final WXMCommandExecution.Builder command,
+    final WXMDevicePassthru device)
+  {
+    final var hostSlot = device.hostPCISlot();
+    command.addArguments("-s");
+    command.addArguments(
+      String.format(
+        "%s,%s,%d/%d/%d",
+        device.deviceSlot(),
+        device.externalName(),
+        Integer.valueOf(hostSlot.busID()),
+        Integer.valueOf(hostSlot.slotID()),
+        Integer.valueOf(hostSlot.functionID())
+      )
+    );
   }
 
   private void configureBhyveDeviceLPC(

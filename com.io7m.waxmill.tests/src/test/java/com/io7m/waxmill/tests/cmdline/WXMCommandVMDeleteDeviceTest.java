@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class WXMCommandDeleteDeviceTest
+public final class WXMCommandVMDeleteDeviceTest
 {
   private Path directory;
   private Path configFile;

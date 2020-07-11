@@ -25,6 +25,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandSchema;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddAHCIOptical;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddLPC;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddPassthru;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioNetworkDevice;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMConsole;
@@ -38,6 +39,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMList;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMListWithName;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMRealize;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMRun;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMSet;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMUpdateBootConfigurations;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVersion;
 import org.slf4j.Logger;
@@ -72,6 +74,7 @@ public final class Main implements Runnable
         WXMCommandVMAddAHCIDisk::new,
         WXMCommandVMAddAHCIOptical::new,
         WXMCommandVMAddLPC::new,
+        WXMCommandVMAddPassthru::new,
         WXMCommandVMAddVirtioDisk::new,
         WXMCommandVMAddVirtioNetworkDevice::new,
         WXMCommandVMConsole::new,
@@ -85,6 +88,7 @@ public final class Main implements Runnable
         WXMCommandVMListWithName::new,
         WXMCommandVMRealize::new,
         WXMCommandVMRun::new,
+        WXMCommandVMSet::new,
         WXMCommandVMUpdateBootConfigurations::new,
         WXMCommandVersion::new
       );

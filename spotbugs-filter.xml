@@ -282,6 +282,7 @@
       <Method name="checkBootConfigurationRequiredDevices"/>
       <Method name="checkBootConfigurationUEFI"/>
       <Method name="checkBootConfigurationsReferences"/>
+      <Method name="checkRequiresWiredMemory"/>
     </Or>
     <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
   </Match>
@@ -298,6 +299,13 @@
     <Class name="com.io7m.waxmill.boot.WXMBootConfigurationExecutor"/>
     <Method name="execute"/>
     <Bug pattern="EXS_EXCEPTION_SOFTENING_HAS_CHECKED"/>
+  </Match>
+
+  <Match>
+    <!-- Appears to be caused by calls to Map.entry() to build a map. -->
+    <Class name="com.io7m.waxmill.xml.vm.v1.WXM1DevicesParser"/>
+    <Method name="onChildHandlersRequested"/>
+    <Bug pattern="CE_CLASS_ENVY"/>
   </Match>
 
 </FindBugsFilter>

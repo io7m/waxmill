@@ -237,4 +237,15 @@ unique machine ID unless one is manually specified with the
 --machine option.
 ]]></entry>
 
+  <entry key="vmAddPassthruDeviceHelp"><![CDATA[
+The vm-add-passthru-device command adds an PCI passthru device to
+a virtual machine.
+
+See: https://wiki.freebsd.org/bhyve/pci_passthru
+]]></entry>
+
+  <entry key="vmSetHelp"><![CDATA[
+The vm-set command sets configuration flags for a virtual machine.
+]]></entry>
+
 </properties>

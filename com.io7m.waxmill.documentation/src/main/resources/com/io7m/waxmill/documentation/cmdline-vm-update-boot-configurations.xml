@@ -20,7 +20,7 @@
       configurations elements are given in the <Term type="constant">urn:com.io7m.waxmill.vm:1:0</Term> schema
       <LinkFootnote target="f70d9654-f0d8-4540-bf38-1e44ef6e181b"/>.
     </Paragraph>
-    
+
     <FormalItem title="Parameters"
                 type="parametersTable">
       <Table type="parametersTable">
@@ -107,7 +107,7 @@
       <Term type="command">grub-bhyve</Term>:
     </Paragraph>
 
-    <FormalItem title="OpenBSD GRUB-Bhyve">
+    <FormalItem title="OpenBSD GRUB-bhyve">
       <Verbatim><xi:include href="usage-boot-install-openbsd.xml" parse="text"/></Verbatim>
     </FormalItem>
 

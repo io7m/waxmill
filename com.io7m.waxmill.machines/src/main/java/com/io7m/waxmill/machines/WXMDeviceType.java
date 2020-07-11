@@ -36,6 +36,7 @@ import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_CD;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_AHCI_HD;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_PASSTHRU;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_BLOCK;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_NETWORK;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType.Kind.WXM_TAP;
@@ -88,6 +89,7 @@ public interface WXMDeviceType
       case WXM_HOSTBRIDGE:
       case WXM_VIRTIO_NETWORK:
       case WXM_LPC:
+      case WXM_PASSTHRU:
         return false;
       case WXM_VIRTIO_BLOCK:
       case WXM_AHCI_HD:
@@ -110,6 +112,7 @@ public interface WXMDeviceType
       case WXM_VIRTIO_BLOCK:
       case WXM_AHCI_HD:
       case WXM_AHCI_CD:
+      case WXM_PASSTHRU:
         return false;
       case WXM_LPC:
         return true;
@@ -158,7 +161,46 @@ public interface WXMDeviceType
      * An LPC PCI-ISA bridge with COM1 and COM2 16550 serial ports and a boot ROM.
      */
 
-    WXM_LPC
+    WXM_LPC,
+
+    /**
+     * A PCI passthru device.
+     */
+
+    WXM_PASSTHRU
+  }
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMDevicePassthruType extends WXMDeviceType
+  {
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    default Kind kind()
+    {
+      return WXM_PASSTHRU;
+    }
+
+    @Override
+    WXMDeviceSlot deviceSlot();
+
+    /**
+     * @return The slot containing the host PCI devices
+     */
+
+    WXMDeviceSlot hostPCISlot();
+
+    @Override
+    default String externalName()
+    {
+      return "passthru";
+    }
   }
 
   @ImmutablesStyleType
