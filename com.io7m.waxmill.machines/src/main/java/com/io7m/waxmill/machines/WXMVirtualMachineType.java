@@ -159,22 +159,48 @@ public interface WXMVirtualMachineType
   private void checkBootConfigurationsReferences()
   {
     for (final var bootConfiguration : this.bootConfigurations()) {
-      final var requiredDevices = bootConfiguration.requiredDevices();
-      for (final var requiredDevice : requiredDevices) {
-        final var device = this.deviceMap().get(requiredDevice);
-        Preconditions.checkPreconditionV(
-          device != null,
-          "Device %s required by boot configuration \"%s\" must exist",
-          requiredDevice,
-          bootConfiguration.name().value()
-        );
-        Preconditions.checkPreconditionV(
-          device.isStorageDevice(),
-          "Device %s required by boot configuration \"%s\" must be a storage device",
-          requiredDevice,
-          bootConfiguration.name().value()
-        );
+      this.checkBootConfigurationRequiredDevices(bootConfiguration);
+
+      if (bootConfiguration instanceof WXMBootConfigurationUEFI) {
+        this.checkBootConfigurationUEFI(
+          (WXMBootConfigurationUEFI) bootConfiguration);
       }
+    }
+  }
+
+  private void checkBootConfigurationUEFI(
+    final WXMBootConfigurationUEFI bootConfiguration)
+  {
+    final var lpcDevice =
+      this.devices().stream()
+        .filter(device -> device.kind() == WXM_LPC)
+        .findFirst();
+
+    Preconditions.checkPreconditionV(
+      lpcDevice.isPresent(),
+      "UEFI boot configuration \"%s\" requires an LPC device",
+      bootConfiguration.name().value()
+    );
+  }
+
+  private void checkBootConfigurationRequiredDevices(
+    final WXMBootConfigurationType bootConfiguration)
+  {
+    final var requiredDevices = bootConfiguration.requiredDevices();
+    for (final var requiredDevice : requiredDevices) {
+      final var device = this.deviceMap().get(requiredDevice);
+      Preconditions.checkPreconditionV(
+        device != null,
+        "Device %s required by boot configuration \"%s\" must exist",
+        requiredDevice,
+        bootConfiguration.name().value()
+      );
+      Preconditions.checkPreconditionV(
+        device.isStorageDevice(),
+        "Device %s required by boot configuration \"%s\" must be a storage device",
+        requiredDevice,
+        bootConfiguration.name().value()
+      );
     }
   }
 

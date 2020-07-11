@@ -2,7 +2,8 @@
 
 <Section xmlns="urn:com.io7m.structural:7:0"
          xmlns:xi="http://www.w3.org/2001/XInclude"
-         title="Command-Line Interface">
+         title="Command-Line Interface"
+         tableOfContentsDepth="1">
 
   <Section title="Overview">
     <Paragraph>

@@ -23,6 +23,7 @@ import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.locks.WXMFileLock;
 import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDryRun;
+import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.process.api.WXMProcessDescription;
 import com.io7m.waxmill.process.api.WXMProcessesType;
@@ -41,6 +42,7 @@ import static com.io7m.waxmill.boot.WXMBootConfigurationExecutor.WithComment.WIT
 import static com.io7m.waxmill.boot.WXMBootConfigurationExecutor.WithComment.WITH_COMMENT;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationGRUBBhyveType;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationType;
+import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationUEFIType;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -164,7 +166,7 @@ public final class WXMBootConfigurationExecutor
   @Override
   public void execute(
     final WXMDryRun execute)
-    throws WXMException
+    throws WXMException, InterruptedException
   {
     Objects.requireNonNull(execute, "execute");
 
@@ -178,8 +180,14 @@ public final class WXMBootConfigurationExecutor
             (WXMEvaluatedBootConfigurationGRUBBhyveType) this.bootConfiguration
           );
           return;
+        case UEFI:
+          this.executeUEFI(
+            execute,
+            (WXMEvaluatedBootConfigurationUEFIType) this.bootConfiguration
+          );
+          return;
       }
-    } catch (final IOException | InterruptedException e) {
+    } catch (final IOException e) {
       throw new WXMException(e);
     }
 
@@ -200,22 +208,19 @@ public final class WXMBootConfigurationExecutor
     }
   }
 
-  private void executeGRUBBhyve(
+  private void executeUEFI(
     final WXMDryRun execute,
-    final WXMEvaluatedBootConfigurationGRUBBhyveType grubBhyveConfiguration)
-    throws IOException, WXMException, InterruptedException
+    final WXMEvaluatedBootConfigurationUEFIType uefiConfiguration)
+    throws IOException, InterruptedException
   {
-    final var lockFile =
-      this.clientConfiguration.virtualMachineRuntimeDirectory()
-        .resolve(this.machine.id().toString())
-        .resolve("lock");
+    this.executeCommands(execute, uefiConfiguration.commands());
+  }
 
-    try (var ignored = WXMFileLock.acquire(lockFile)) {
-      writeGrubDeviceMap(execute, grubBhyveConfiguration);
-      writeGrubConfig(execute, grubBhyveConfiguration);
-    }
-
-    final var commands = grubBhyveConfiguration.commands();
+  private void executeCommands(
+    final WXMDryRun execute,
+    final WXMEvaluatedBootCommands commands)
+    throws IOException, InterruptedException
+  {
     for (final var command : commands.configurationCommands()) {
       switch (execute) {
         case DRY_RUN: {
@@ -234,13 +239,31 @@ public final class WXMBootConfigurationExecutor
       final var lastExecution = lastExecutionOpt.get();
       switch (execute) {
         case DRY_RUN:
-          System.out.println("exec " + lastExecution.toString());
+          System.out.printf("exec %s%n", lastExecution.toString());
           return;
         case EXECUTE:
           this.executeAndReplace(lastExecution);
           return;
       }
     }
+  }
+
+  private void executeGRUBBhyve(
+    final WXMDryRun execute,
+    final WXMEvaluatedBootConfigurationGRUBBhyveType grubBhyveConfiguration)
+    throws IOException, WXMException, InterruptedException
+  {
+    final var lockFile =
+      this.clientConfiguration.virtualMachineRuntimeDirectory()
+        .resolve(this.machine.id().toString())
+        .resolve("lock");
+
+    try (var ignored = WXMFileLock.acquire(lockFile)) {
+      writeGrubDeviceMap(execute, grubBhyveConfiguration);
+      writeGrubConfig(execute, grubBhyveConfiguration);
+    }
+
+    this.executeCommands(execute, grubBhyveConfiguration.commands());
   }
 
   private void executeAndReplace(
@@ -260,7 +283,7 @@ public final class WXMBootConfigurationExecutor
 
   private void executeAndWait(
     final WXMCommandExecution command)
-    throws IOException
+    throws IOException, InterruptedException
   {
     LOG.info("execute: {}", command);
 

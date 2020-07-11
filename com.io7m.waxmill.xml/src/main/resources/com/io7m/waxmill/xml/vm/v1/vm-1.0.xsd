@@ -864,6 +864,7 @@
       <xsd:choice minOccurs="0"
                   maxOccurs="unbounded">
         <xsd:element ref="wxm:BootConfigurationGRUBBhyve"/>
+        <xsd:element ref="wxm:BootConfigurationUEFI"/>
       </xsd:choice>
     </xsd:complexType>
 
@@ -944,6 +945,31 @@
             <xsd:element ref="wxm:GRUBBhyveKernelLinux"/>
             <xsd:element ref="wxm:GRUBBhyveKernelOpenBSD"/>
           </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="BootConfigurationUEFI">
+    <xsd:annotation>
+      <xsd:documentation>
+        A type of boot configuration that contains definitions that are required to boot various operating systems under
+        UEFI.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:BootConfigurationType">
+          <xsd:attribute name="firmware"
+                         use="required"
+                         type="xsd:anyURI">
+            <xsd:annotation>
+              <xsd:documentation>
+                The location of the UEFI firmware to be loaded into the virtual machine.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>

@@ -158,15 +158,10 @@ public final class WXMProcessesPOSIX implements WXMProcessesType
   @Override
   public void processStartAndWait(
     final WXMProcessDescription description)
-    throws IOException
+    throws IOException, InterruptedException
   {
     final var process = this.processStart(description);
-    final int result;
-    try {
-      result = process.waitFor();
-    } catch (final InterruptedException e) {
-      throw new IOException(e);
-    }
+    final int result = process.waitFor();
 
     if (result != 0) {
       throw new IOException(this.messages.format(

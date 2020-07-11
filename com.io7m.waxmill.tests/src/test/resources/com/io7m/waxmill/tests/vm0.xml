@@ -108,6 +108,18 @@
         </BSDBootDevice>
       </GRUBBhyveKernelOpenBSD>
     </BootConfigurationGRUBBhyve>
+    <BootConfigurationUEFI name="installUEFI"
+                           firmware="/tmp/uefi.fd">
+      <Comment>The installation configuration, booting from a CD with UEFI.</Comment>
+      <BootDiskAttachments>
+        <BootDiskAttachment>
+          <DeviceSlot bus="0"
+                      slot="4"
+                      function="0"/>
+          <StorageBackendFile path="/tmp/openbsd-6.6-amd64.iso"/>
+        </BootDiskAttachment>
+      </BootDiskAttachments>
+    </BootConfigurationUEFI>
     <BootConfigurationGRUBBhyve name="run">
       <Comment>The normal configuration, booting from the disk.</Comment>
       <GRUBBhyveKernelLinux>

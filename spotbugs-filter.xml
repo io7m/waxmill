@@ -69,6 +69,7 @@
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Flag"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1OpenOptions"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1PinCPUs"/>
+      <Class name="com.io7m.waxmill.machines.WXMBootConfigurationUEFI"/>
     </Or>
   </Match>
 
@@ -278,6 +279,8 @@
     <Or>
       <Method name="checkAtMostOneHostBridge"/>
       <Method name="checkAtMostOneLPC"/>
+      <Method name="checkBootConfigurationRequiredDevices"/>
+      <Method name="checkBootConfigurationUEFI"/>
       <Method name="checkBootConfigurationsReferences"/>
     </Or>
     <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
@@ -287,6 +290,13 @@
     <!-- False positive: throwing UnreachableCodeException! -->
     <Class name="com.io7m.waxmill.cmdline.internal.WXMCommandVMConsole"/>
     <Method name="executeActualWithConfiguration"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_HAS_CHECKED"/>
+  </Match>
+
+  <Match>
+    <!-- False positive: throwing UnreachableCodeException! -->
+    <Class name="com.io7m.waxmill.boot.WXMBootConfigurationExecutor"/>
+    <Method name="execute"/>
     <Bug pattern="EXS_EXCEPTION_SOFTENING_HAS_CHECKED"/>
   </Match>
 

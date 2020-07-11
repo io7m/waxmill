@@ -30,6 +30,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.Kind.GRUB_BHYVE;
+import static com.io7m.waxmill.machines.WXMBootConfigurationType.Kind.UEFI;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType.Kind.KERNEL_LINUX;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType.Kind.KERNEL_OPENBSD;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
@@ -101,7 +102,13 @@ public interface WXMBootConfigurationType
      * The boot configuration uses grub-bhyve.
      */
 
-    GRUB_BHYVE
+    GRUB_BHYVE,
+
+    /**
+     * The boot configuration uses UEFI.
+     */
+
+    UEFI
   }
 
   /**
@@ -123,6 +130,57 @@ public interface WXMBootConfigurationType
      */
 
     WXMStorageBackendType backend();
+  }
+
+  /**
+   * A boot configuration that uses UEFI.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMBootConfigurationUEFIType extends WXMBootConfigurationType
+  {
+    @Override
+    default Kind kind()
+    {
+      return UEFI;
+    }
+
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    WXMBootConfigurationName name();
+
+    /**
+     * @return The location of the UEFI firmware to load into the machine
+     */
+
+    Path firmware();
+
+    @Override
+    default Set<WXMDeviceSlot> requiredDevices()
+    {
+      return Set.of();
+    }
+
+    /**
+     * Check preconditions for the type.
+     */
+
+    @Value.Check
+    default void checkPreconditions()
+    {
+      Preconditions.checkPrecondition(
+        this.firmware(),
+        Path::isAbsolute,
+        q -> "Firmware path must be absolute"
+      );
+    }
   }
 
   /**
@@ -414,5 +472,27 @@ public interface WXMBootConfigurationType
      */
 
     List<String> grubConfiguration();
+  }
+
+  /**
+   * A set of evaluated commands used to boot with UEFI.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMEvaluatedBootConfigurationUEFIType
+    extends WXMEvaluatedBootConfigurationType
+  {
+    @Override
+    default Kind kind()
+    {
+      return UEFI;
+    }
+
+    @Override
+    List<Path> requiredPaths();
+
+    @Override
+    WXMEvaluatedBootCommands commands();
   }
 }

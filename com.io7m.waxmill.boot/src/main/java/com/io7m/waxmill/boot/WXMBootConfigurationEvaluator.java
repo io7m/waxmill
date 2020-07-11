@@ -21,13 +21,14 @@ import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.boot.internal.WXMBootMessages;
-import com.io7m.waxmill.boot.internal.WXMGRUBDeviceMap;
+import com.io7m.waxmill.boot.internal.WXMDeviceMap;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMBootConfigurationType;
+import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
@@ -40,8 +41,10 @@ import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
+import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
+import com.io7m.waxmill.machines.WXMOpenOption;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackends;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
@@ -63,8 +66,6 @@ import java.util.stream.Collectors;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMVirtioNetworkBackendType;
-
-import com.io7m.waxmill.machines.WXMOpenOption;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
 import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
@@ -128,7 +129,7 @@ public final class WXMBootConfigurationEvaluator
   }
 
   private static ArrayList<String> generateGRUBConfigLinesLinux(
-    final WXMGRUBDeviceMap deviceMap,
+    final WXMDeviceMap deviceMap,
     final WXMGRUBKernelLinux linux)
   {
     final var kernelDevice =
@@ -211,7 +212,7 @@ public final class WXMBootConfigurationEvaluator
   }
 
   private static ArrayList<String> generateGRUBConfigLinesOpenBSD(
-    final WXMGRUBDeviceMap deviceMap,
+    final WXMDeviceMap deviceMap,
     final WXMGRUBKernelOpenBSD openBSD)
   {
     final var bootDevice =
@@ -414,6 +415,19 @@ public final class WXMBootConfigurationEvaluator
         commandBuilder,
         device
       );
+    }
+
+    switch (bootConfiguration.kind()) {
+      case GRUB_BHYVE: {
+        break;
+      }
+      case UEFI: {
+        final var uefi = (WXMBootConfigurationUEFI) bootConfiguration;
+        commandBuilder.addArguments(
+          String.format("-l bootrom,%s", uefi.firmware())
+        );
+        break;
+      }
     }
 
     commandBuilder.addArguments(this.machine.id().toString());
@@ -639,7 +653,7 @@ public final class WXMBootConfigurationEvaluator
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationOpenBSD(
     final WXMBootConfigurationType bootConfiguration,
-    final WXMGRUBDeviceMap deviceMap,
+    final WXMDeviceMap deviceMap,
     final WXMGRUBKernelOpenBSD openBSD)
   {
     Objects.requireNonNull(openBSD, "openBSD");
@@ -679,7 +693,7 @@ public final class WXMBootConfigurationEvaluator
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationLinux(
     final WXMBootConfigurationType bootConfiguration,
-    final WXMGRUBDeviceMap deviceMap,
+    final WXMDeviceMap deviceMap,
     final WXMGRUBKernelLinux linux)
   {
     Objects.requireNonNull(linux, "linux");
@@ -720,10 +734,22 @@ public final class WXMBootConfigurationEvaluator
           this.errorNoSuchConfiguration()
         ));
 
+    final var deviceMap =
+      WXMDeviceMap.create(
+        this.messages,
+        this.clientConfiguration,
+        configuration,
+        this.machine
+      );
+
     switch (configuration.kind()) {
       case GRUB_BHYVE:
         return this.evaluateGRUBConfiguration(
-          (WXMBootConfigurationGRUBBhyve) configuration
+          (WXMBootConfigurationGRUBBhyve) configuration, deviceMap
+        );
+      case UEFI:
+        return this.evaluateUEFIConfiguration(
+          (WXMBootConfigurationUEFI) configuration, deviceMap
         );
     }
 
@@ -749,18 +775,38 @@ public final class WXMBootConfigurationEvaluator
       .collect(Collectors.toList());
   }
 
-  private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfiguration(
-    final WXMBootConfigurationGRUBBhyve configuration)
-    throws WXMException
+  private WXMEvaluatedBootCommands generateUEFICommands(
+    final WXMBootConfigurationType bootConfiguration,
+    final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments)
   {
-    final var deviceMap =
-      WXMGRUBDeviceMap.create(
-        this.messages,
-        this.clientConfiguration,
-        configuration,
-        this.machine
-      );
+    final WXMCommandExecution bhyve =
+      this.generateBhyveCommand(bootConfiguration, attachments);
 
+    return WXMEvaluatedBootCommands.builder()
+      .setLastExecution(bhyve)
+      .build();
+  }
+
+  private WXMEvaluatedBootConfigurationUEFI evaluateUEFIConfiguration(
+    final WXMBootConfigurationUEFI configuration,
+    final WXMDeviceMap deviceMap)
+  {
+    final var requiredPaths = new ArrayList<Path>();
+    requiredPaths.add(configuration.firmware());
+    requiredPaths.addAll(deviceMap.paths());
+
+    return WXMEvaluatedBootConfigurationUEFI.builder()
+      .setRequiredPaths(requiredPaths)
+      .setCommands(this.generateUEFICommands(
+        configuration,
+        configuration.diskAttachmentMap()))
+      .build();
+  }
+
+  private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfiguration(
+    final WXMBootConfigurationGRUBBhyve configuration,
+    final WXMDeviceMap deviceMap)
+  {
     final var kernel =
       configuration.kernelInstructions();
 

@@ -1,6 +1,12 @@
   "file" ";" <path>
 | "zfs-volume"
+| "zfs-volume" ";" <size>
+
+Where:
+  <path> = Any UNIX-like path
+  <size> = Any non-negative multiple of 128000 (bytes)
 
 Examples:
   file;/tmp/xyz
   zfs-volume
+  zfs-volume;1280000000

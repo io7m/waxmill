@@ -34,5 +34,5 @@ public interface WXMBootConfigurationExecutorType
    */
 
   void execute(WXMDryRun dryRun)
-    throws WXMException;
+    throws WXMException, InterruptedException;
 }

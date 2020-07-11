@@ -69,10 +69,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class WXMBootConfigurationEvaluatorTest
+public final class WXMBootConfigurationEvaluatorGRUBTest
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMBootConfigurationEvaluatorTest.class);
+    LoggerFactory.getLogger(WXMBootConfigurationEvaluatorGRUBTest.class);
 
   private Path directory;
   private Path configs;

@@ -17,6 +17,12 @@
       The <Term type="command">vm-add-ahci-optical</Term> command adds an optical drive to a virtual machine.
     </Paragraph>
 
+    <Paragraph>
+      Optical drives do not have any storage backends assigned to them by default. The storage backend for an
+      optical drive must be specified by a <Link target="62905025-beb3-48af-8b17-127f0961fcf7">boot
+      configuration</Link>.
+    </Paragraph>
+
     <FormalItem title="Parameters"
                 type="parametersTable">
       <Table type="parametersTable">

@@ -18,6 +18,7 @@ package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationType;
+import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
@@ -62,9 +63,28 @@ public final class WXM1BootConfigurations
           serializeBootConfigurationGRUBBhyve(
             (WXMBootConfigurationGRUBBhyve) configuration, writer);
           break;
+        case UEFI:
+          serializeBootConfigurationUEFI(
+            (WXMBootConfigurationUEFI) configuration, writer);
+          break;
       }
     }
 
+    writer.writeEndElement();
+  }
+
+  private static void serializeBootConfigurationUEFI(
+    final WXMBootConfigurationUEFI configuration,
+    final XMLStreamWriter writer)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    writer.writeStartElement(namespaceURI, "BootConfigurationUEFI");
+    writer.writeAttribute("name", configuration.name().value());
+    writer.writeAttribute("firmware", configuration.firmware().toString());
+
+    WXM1Comments.serializeComment(configuration.comment(), writer);
+    serializeBootDiskAttachments(configuration.diskAttachments(), writer);
     writer.writeEndElement();
   }
 

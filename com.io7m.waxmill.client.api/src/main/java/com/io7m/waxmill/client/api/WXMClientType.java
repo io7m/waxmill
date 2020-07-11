@@ -131,14 +131,15 @@ public interface WXMClientType extends AutoCloseable
    * @param bootConfigurationName The boot configuration used
    * @param dryRun                Whether or not the operation is a dry run
    *
-   * @throws WXMException On errors
+   * @throws WXMException         On errors
+   * @throws InterruptedException If the operation was interrupted
    */
 
   void vmRun(
     WXMVirtualMachine machine,
     WXMBootConfigurationName bootConfigurationName,
     WXMDryRun dryRun)
-    throws WXMException;
+    throws WXMException, InterruptedException;
 
   /**
    * Delete the configuration for a virtual machine.

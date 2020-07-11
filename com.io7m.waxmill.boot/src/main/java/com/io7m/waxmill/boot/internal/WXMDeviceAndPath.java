@@ -21,13 +21,13 @@ import com.io7m.waxmill.machines.WXMDeviceType;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public final class WXMGRUBDeviceAndPath
+public final class WXMDeviceAndPath
 {
   private final int index;
   private final WXMDeviceType device;
   private final Path path;
 
-  public WXMGRUBDeviceAndPath(
+  public WXMDeviceAndPath(
     final int inIndex,
     final WXMDeviceType inDevice,
     final Path inPath)

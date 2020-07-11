@@ -81,7 +81,7 @@ public final class WXMProcessesPOSIXTest
 
   @Test
   public void testExecuteLsAndWait()
-    throws IOException
+    throws IOException, InterruptedException
   {
     final var processes = WXMProcessesPOSIX.create();
 

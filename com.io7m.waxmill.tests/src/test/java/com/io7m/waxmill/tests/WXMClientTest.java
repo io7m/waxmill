@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMBootConfigurationUEFIType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -160,6 +161,13 @@ public final class WXMClientTest
         .iterator()
         .next();
 
+    machine = machine.withBootConfigurations(
+      machine.bootConfigurations()
+        .stream()
+        .filter(boot -> !(boot instanceof WXMBootConfigurationUEFIType))
+        .collect(Collectors.toList())
+    );
+
     machine = machine.withDevices(
       machine.devices()
         .stream()
@@ -185,6 +193,13 @@ public final class WXMClientTest
         .values()
         .iterator()
         .next();
+
+    machine = machine.withBootConfigurations(
+      machine.bootConfigurations()
+        .stream()
+        .filter(boot -> !(boot instanceof WXMBootConfigurationUEFIType))
+        .collect(Collectors.toList())
+    );
 
     machine = machine.withDevices(
       machine.devices()

@@ -62,8 +62,9 @@ public interface WXMProcessesType
    *
    * @throws IOException If the process cannot be started, or if the process
    *                     exits with a non-zero error code
+   * @throws InterruptedException If waiting for the process is interrupted
    */
 
   void processStartAndWait(WXMProcessDescription description)
-    throws IOException;
+    throws IOException, InterruptedException;
 }

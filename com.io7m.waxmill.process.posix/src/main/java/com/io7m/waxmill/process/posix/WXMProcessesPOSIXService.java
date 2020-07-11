@@ -53,7 +53,7 @@ public final class WXMProcessesPOSIXService implements WXMProcessesType
   @Override
   public void processStartAndWait(
     final WXMProcessDescription description)
-    throws IOException
+    throws IOException, InterruptedException
   {
     this.delegate.processStartAndWait(description);
   }

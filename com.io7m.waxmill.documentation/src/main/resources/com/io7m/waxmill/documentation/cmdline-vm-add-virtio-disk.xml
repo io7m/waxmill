@@ -120,6 +120,13 @@
       </Verbatim>
     </FormalItem>
 
+    <FormalItem title="Storage Backend Syntax">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="storage-backend-syntax.txt"/>
+      </Verbatim>
+    </FormalItem>
+
     <FormalItem title="Open Options">
       <xi:include href="open-options.xml"/>
     </FormalItem>

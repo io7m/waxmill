@@ -120,7 +120,7 @@ public final class WXMClient implements WXMClientType
     final WXMVirtualMachine machine,
     final WXMBootConfigurationName bootConfigurationName,
     final WXMDryRun dryRun)
-    throws WXMException
+    throws WXMException, InterruptedException
   {
     Objects.requireNonNull(machine, "machine");
     Objects.requireNonNull(bootConfigurationName, "bootConfigurationName");

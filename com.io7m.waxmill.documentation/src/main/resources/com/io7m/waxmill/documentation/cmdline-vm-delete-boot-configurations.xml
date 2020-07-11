@@ -14,7 +14,8 @@
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="command">vm-delete-boot-configurations</Term> removes boot configurations from a given
+      The <Term type="command">vm-delete-boot-configurations</Term> removes
+      <Link target="62905025-beb3-48af-8b17-127f0961fcf7">boot configurations</Link> from a given
       virtual machine.
     </Paragraph>
 

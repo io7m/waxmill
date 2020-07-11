@@ -17,6 +17,7 @@
 package com.io7m.waxmill.tests;
 
 import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
+import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceHostBridge;
@@ -181,7 +182,11 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("0:4:0", installK.bootDevice().toString());
     assertEquals("/6.6/amd64/bsd.rd", installK.kernelPath().toString());
 
-    final var run = (WXMBootConfigurationGRUBBhyve) boots.get(1);
+    final var installUEFI = (WXMBootConfigurationUEFI) boots.get(1);
+    assertEquals("The installation configuration, booting from a CD with UEFI.", installUEFI.comment());
+    assertEquals("/tmp/uefi.fd", installUEFI.firmware().toString());
+
+    final var run = (WXMBootConfigurationGRUBBhyve) boots.get(2);
     assertEquals("The normal configuration, booting from the disk.", run.comment());
     final var runK = (WXMGRUBKernelLinux) run.kernelInstructions();
     assertEquals("run", run.name().value());

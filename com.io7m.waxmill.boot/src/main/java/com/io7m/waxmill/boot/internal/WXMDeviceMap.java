@@ -21,7 +21,7 @@ import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.exceptions.WXMExceptionUnsatisfiedRequirement;
-import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
+import com.io7m.waxmill.machines.WXMBootConfigurationType;
 import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
@@ -33,6 +33,7 @@ import com.io7m.waxmill.machines.WXMVirtualMachine;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -43,15 +44,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public final class WXMGRUBDeviceMap
+public final class WXMDeviceMap
 {
-  private final SortedMap<Integer, WXMGRUBDeviceAndPath> disks;
-  private final SortedMap<Integer, WXMGRUBDeviceAndPath> cds;
+  private final SortedMap<Integer, WXMDeviceAndPath> disks;
+  private final SortedMap<Integer, WXMDeviceAndPath> cds;
   private final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments;
 
-  private WXMGRUBDeviceMap(
-    final SortedMap<Integer, WXMGRUBDeviceAndPath> inDisks,
-    final SortedMap<Integer, WXMGRUBDeviceAndPath> inCds,
+  private WXMDeviceMap(
+    final SortedMap<Integer, WXMDeviceAndPath> inDisks,
+    final SortedMap<Integer, WXMDeviceAndPath> inCds,
     final Map<WXMDeviceSlot, WXMBootDiskAttachment> inAttachments)
   {
     this.disks =
@@ -62,10 +63,10 @@ public final class WXMGRUBDeviceMap
       Map.copyOf(Objects.requireNonNull(inAttachments, "inAttachments"));
   }
 
-  public static WXMGRUBDeviceMap create(
+  public static WXMDeviceMap create(
     final WXMBootMessages messages,
     final WXMClientConfiguration clientConfiguration,
-    final WXMBootConfigurationGRUBBhyve configuration,
+    final WXMBootConfigurationType configuration,
     final WXMVirtualMachine machine)
     throws WXMException
   {
@@ -84,9 +85,9 @@ public final class WXMGRUBDeviceMap
     int cdIndex = 0;
 
     final var hds =
-      new TreeMap<Integer, WXMGRUBDeviceAndPath>();
+      new TreeMap<Integer, WXMDeviceAndPath>();
     final var cds =
-      new TreeMap<Integer, WXMGRUBDeviceAndPath>();
+      new TreeMap<Integer, WXMDeviceAndPath>();
     final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments =
       new HashMap<>();
 
@@ -107,7 +108,7 @@ public final class WXMGRUBDeviceMap
         case WXM_VIRTIO_BLOCK:
         case WXM_AHCI_HD: {
           final var deviceAndPath =
-            makeGRUBDeviceMapPath(
+            makeDeviceMapPath(
               hdIndex,
               device,
               clientConfiguration,
@@ -137,7 +138,7 @@ public final class WXMGRUBDeviceMap
           final var backend =
             attachment.backend();
           final var deviceAndPath =
-            makeGRUBDeviceMapPathStorageBackend(
+            makeDeviceMapPathStorageBackend(
               cdIndex,
               device,
               backend,
@@ -151,10 +152,10 @@ public final class WXMGRUBDeviceMap
       }
     }
 
-    return new WXMGRUBDeviceMap(hds, cds, attachments);
+    return new WXMDeviceMap(hds, cds, attachments);
   }
 
-  private static WXMGRUBDeviceAndPath makeGRUBDeviceMapPath(
+  private static WXMDeviceAndPath makeDeviceMapPath(
     final int index,
     final WXMDeviceType device,
     final WXMClientConfiguration clientConfiguration,
@@ -169,7 +170,7 @@ public final class WXMGRUBDeviceMap
 
       case WXM_VIRTIO_BLOCK: {
         final var storage = (WXMDeviceVirtioBlockStorage) device;
-        return makeGRUBDeviceMapPathStorageBackend(
+        return makeDeviceMapPathStorageBackend(
           index,
           device,
           storage.backend(),
@@ -179,7 +180,7 @@ public final class WXMGRUBDeviceMap
       }
       case WXM_AHCI_HD: {
         final var storage = (WXMDeviceAHCIDisk) device;
-        return makeGRUBDeviceMapPathStorageBackend(
+        return makeDeviceMapPathStorageBackend(
           index,
           device,
           storage.backend(),
@@ -192,7 +193,7 @@ public final class WXMGRUBDeviceMap
     throw new UnreachableCodeException();
   }
 
-  private static WXMGRUBDeviceAndPath makeGRUBDeviceMapPathStorageBackend(
+  private static WXMDeviceAndPath makeDeviceMapPathStorageBackend(
     final int index,
     final WXMDeviceType device,
     final WXMDeviceType.WXMStorageBackendType backend,
@@ -202,7 +203,7 @@ public final class WXMGRUBDeviceMap
     switch (backend.kind()) {
       case WXM_STORAGE_FILE:
         final var file = (WXMStorageBackendFile) backend;
-        return new WXMGRUBDeviceAndPath(index, device, file.file());
+        return new WXMDeviceAndPath(index, device, file.file());
 
       case WXM_STORAGE_ZFS_VOLUME:
         final Path path =
@@ -211,7 +212,7 @@ public final class WXMGRUBDeviceMap
             machine.id(),
             device.deviceSlot()
           );
-        return new WXMGRUBDeviceAndPath(index, device, path);
+        return new WXMDeviceAndPath(index, device, path);
 
       case WXM_SCSI:
         throw new UnimplementedCodeException();
@@ -260,7 +261,7 @@ public final class WXMGRUBDeviceMap
     return List.copyOf(lines);
   }
 
-  public Iterable<Path> paths()
+  public Collection<Path> paths()
   {
     final var paths =
       new ArrayList<Path>(this.disks.size() + this.cds.size());

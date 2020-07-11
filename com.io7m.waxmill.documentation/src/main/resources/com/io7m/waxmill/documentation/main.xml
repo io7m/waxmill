@@ -6,9 +6,11 @@
           tableOfContentsDepth="1">
 
   <Metadata>
-    <dc:title>waxmill ${project.version}</dc:title>
+    <dc:title>Waxmill User Manual ${project.version}</dc:title>
     <dc:identifier>402d2620-c5c9-4330-bc01-5430645815d6</dc:identifier>
     <dc:description>User documentation for the ${project.groupId} package.</dc:description>
+    <dc:source>https://www.io7m.com/software/waxmill/</dc:source>
+    <dc:date>2020-07-08</dc:date>
   </Metadata>
 
   <xi:include href="orientation.xml"/>
