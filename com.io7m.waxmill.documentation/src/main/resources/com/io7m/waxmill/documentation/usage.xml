@@ -254,6 +254,38 @@
     </Paragraph>
   </Subsection>
 
+  <Subsection title="Process Supervision"
+              id="a1f02b53-3295-49b0-9dcc-63dba087a987">
+    <Paragraph>
+      The <Term type="package">Waxmill</Term> package is designed to be usable in environments that use
+      a process supervision system. For example, assuming a virtual machine
+      <Term type="constant">3bab9914-dfe2-4a37-9c19-c7e9b06c854b</Term> has already been configured, it's possible
+      to create <LinkExternal target="http://smarden.org/runit/">runit</LinkExternal>
+      <LinkExternal target="http://smarden.org/runit/runsv.8.html">run</LinkExternal> and
+      <Term type="command">finish</Term> scripts such as the following:
+    </Paragraph>
+
+    <FormalItem title="runit run">
+      <Verbatim>
+        <xi:include href="usage-runit-run.txt"
+                    parse="text"/>
+      </Verbatim>
+    </FormalItem>
+
+    <FormalItem title="runit finish">
+      <Verbatim>
+        <xi:include href="usage-runit-finish.txt"
+                    parse="text"/>
+      </Verbatim>
+    </FormalItem>
+
+    <Paragraph>
+      These scripts will cause <Term type="constant">3bab9914-dfe2-4a37-9c19-c7e9b06c854b</Term> to be started
+      and supervised, and the kernel resources associated with the virtual machine will be properly cleaned up
+      when the service is shut down or restarted.
+    </Paragraph>
+  </Subsection>
+
   <Footnote id="f5bb2919-dc4e-4da2-bb03-aff6bf04539b">
     The <Term type="command">Waxmill</Term> package always prefers to rely on explicit configuration data rather than
     reading untrusted data from the environment (such as the <Term type="parameter">PATH</Term> environment variable).

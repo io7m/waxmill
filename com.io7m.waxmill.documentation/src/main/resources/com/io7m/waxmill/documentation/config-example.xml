@@ -8,6 +8,8 @@
           value="/usr/local/sbin/grub-bhyve"/>
     <Path type="BhyveExecutable"
           value="/usr/sbin/bhyve"/>
+    <Path type="BhyveCtlExecutable"
+          value="/usr/sbin/bhyvectl"/>
     <Path type="CuExecutable"
           value="/usr/bin/cu"/>
     <Path type="VirtualMachineConfigurationDirectory"

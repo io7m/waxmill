@@ -192,4 +192,16 @@ public interface WXMClientType extends AutoCloseable
     WXMVirtualMachine machine,
     WXMDryRun dryRun)
     throws WXMException;
+
+  /**
+   * Kill a running virtual machine.
+   *
+   * @param dryRun  Whether or not the operation is a dry run
+   * @param machine The virtual machine
+   */
+
+  void vmKill(
+    WXMVirtualMachine machine,
+    WXMDryRun dryRun)
+    throws WXMException;
 }

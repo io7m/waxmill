@@ -97,6 +97,10 @@ public final class WXM1ClientConfigurationSerializer
       this.clientConfiguration.bhyveExecutable()
     );
     this.serializePath(
+      "BhyveCtlExecutable",
+      this.clientConfiguration.bhyveCtlExecutable()
+    );
+    this.serializePath(
       "GRUBBhyveExecutable",
       this.clientConfiguration.grubBhyveExecutable()
     );

@@ -19,7 +19,6 @@ package com.io7m.waxmill.tests.cmdline;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
-import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMStorageBackends;

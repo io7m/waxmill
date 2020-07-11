@@ -1,0 +1,3 @@
+#!/bin/sh
+exec /usr/local/bin/waxmill vm-kill \
+  --machine 3bab9914-dfe2-4a37-9c19-c7e9b06c854b \

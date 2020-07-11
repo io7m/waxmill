@@ -37,6 +37,7 @@ import com.io7m.waxmill.realize.WXMRealizations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -146,6 +147,38 @@ public final class WXMClient implements WXMClientType
         break;
       case EXECUTE:
         executor.execute(EXECUTE);
+        break;
+    }
+  }
+
+
+  @Override
+  public void vmKill(
+    final WXMVirtualMachine machine,
+    final WXMDryRun dryRun)
+    throws WXMException
+  {
+    final var processDescription =
+      WXMProcessDescription.builder()
+        .setExecutable(this.configuration.bhyveCtlExecutable())
+        .addArguments(String.format("--vm=%s", machine.id()))
+        .addArguments("--destroy")
+        .build();
+
+    switch (dryRun) {
+      case DRY_RUN:
+        System.out.printf(
+          "%s %s%n",
+          processDescription.executable(),
+          String.join(" ", processDescription.arguments())
+        );
+        break;
+      case EXECUTE:
+        try {
+          this.processes.processReplaceCurrent(processDescription);
+        } catch (final IOException e) {
+          throw new WXMException(e);
+        }
         break;
     }
   }

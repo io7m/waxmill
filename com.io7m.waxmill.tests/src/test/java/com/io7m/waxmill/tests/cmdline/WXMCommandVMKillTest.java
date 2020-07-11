@@ -18,7 +18,6 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
-import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +26,12 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
-import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public final class WXMCommandVMAddPassthruTest
+public final class WXMCommandVMKillTest
 {
   private Path directory;
   private Path configFile;
@@ -57,6 +55,9 @@ public final class WXMCommandVMAddPassthruTest
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
         .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
+        .setZfsExecutable(Paths.get("/bin/echo"))
+        .setGrubBhyveExecutable(Paths.get("/bin/echo"))
+        .setBhyveExecutable(Paths.get("/bin/echo"))
         .build();
 
     new WXMClientConfigurationSerializers()
@@ -68,102 +69,22 @@ public final class WXMCommandVMAddPassthruTest
   }
 
   @Test
-  public void addPassthruOK()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--configuration",
-        this.configFile.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2",
-        "--machine",
-        id.toString()
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-set",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--wire-guest-memory",
-        "true"
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-passthru-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--device-slot",
-        "0:1:0",
-        "--host-device-slot",
-        "1:2:3"
-      }
-    );
-
-    final var machineSet =
-      parseFirst(this.vmDirectory);
-
-    final var machine =
-      machineSet.machines()
-        .values()
-        .iterator()
-        .next();
-
-    final var passthru =
-      (WXMDevicePassthru) machine.devices().get(1);
-
-    assertEquals("0:1:0", passthru.deviceSlot().toString());
-    assertEquals("1:2:3", passthru.hostPCISlot().toString());
-  }
-
-  @Test
-  public void addPassthruNonexistentVirtualMachine()
+  public void killTooFewArguments()
   {
     assertThrows(IOException.class, () -> {
-      final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
-          "vm-add-passthru-device",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--machine",
-          id.toString(),
-          "--device-slot",
-          "0:1:0",
-          "--host-device-slot",
-          "1:2:3"
+          "vm-kill"
         }
       );
     });
   }
 
   @Test
-  public void addPassthruAlreadyUsed()
+  public void killDryRun()
     throws Exception
   {
     final var id = UUID.randomUUID();
-
     MainExitless.main(
       new String[]{
         "vm-define",
@@ -171,6 +92,8 @@ public final class WXMCommandVMAddPassthruTest
         "trace",
         "--configuration",
         this.configFile.toString(),
+        "--machine",
+        id.toString(),
         "--name",
         "com.io7m.example",
         "--memory-gigabytes",
@@ -178,54 +101,65 @@ public final class WXMCommandVMAddPassthruTest
         "--memory-megabytes",
         "128",
         "--cpu-count",
-        "2",
-        "--machine",
-        id.toString()
+        "2"
       }
     );
 
     MainExitless.main(
       new String[]{
-        "vm-set",
-        "--configuration",
-        this.configFile.toString(),
+        "vm-kill",
+        "--verbose",
+        "trace",
         "--machine",
         id.toString(),
-        "--wire-guest-memory",
+        "--configuration",
+        this.configFile.toString(),
+        "--dry-run",
         "true"
       }
     );
+  }
 
-    MainExitless.main(
-      new String[]{
-        "vm-add-passthru-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--device-slot",
-        "0:1:0",
-        "--host-device-slot",
-        "1:2:3"
-      }
-    );
+  @Test
+  public void killMissingMachine()
+  {
+    final var id = UUID.randomUUID();
 
     assertThrows(IOException.class, () -> {
       MainExitless.main(
         new String[]{
-          "vm-add-passthru-device",
+          "vm-kill",
           "--verbose",
           "trace",
-          "--configuration",
-          this.configFile.toString(),
           "--machine",
           id.toString(),
-          "--device-slot",
-          "0:1:0",
-          "--host-device-slot",
-          "1:2:3"
+          "--configuration",
+          this.configFile.toString(),
+          "--dry-run",
+          "true"
+        }
+      );
+    });
+  }
+
+  @Test
+  public void killConfigurationFileMissing()
+    throws IOException
+  {
+    Files.deleteIfExists(this.configFile);
+
+    assertThrows(IOException.class, () -> {
+      MainExitless.main(
+        new String[]{
+          "vm-kill",
+          "--verbose",
+          "trace",
+          "--boot-configuration",
+          "run",
+          "--machine",
+          UUID.randomUUID().toString(),
+          "--configuration",
+          this.configFile.toString()
         }
       );
     });
