@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:7:0"
+         id="3f512dd5-e634-4d6e-bef4-744be73e5b6f"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="vm-delete">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">vm-delete</Term>
+      - Delete defined virtual machines
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="command">vm-delete</Term> command deletes the configuration for a virtual machine. It will not
+      stop any running instance of the given virtual machine, nor will it delete the underlying resources such as ZFS
+      volumes.
+    </Paragraph>
+
+    <FormalItem title="Parameters"
+                type="parametersTable">
+      <Table type="parametersTable">
+        <Columns>
+          <Column>Parameter</Column>
+          <Column>Type</Column>
+          <Column>Required</Column>
+          <Column>Description</Column>
+        </Columns>
+        <Row>
+          <Cell>
+            <Term type="parameter">--configuration</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Path</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--verbose</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Log Level</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Set the minimum logging verbosity level.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--machine</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">UUID</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>The ID of the virtual machine.</Cell>
+        </Row>
+      </Table>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Example">
+    <FormalItem title="Example">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="cmdline-vm-delete-output.txt"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

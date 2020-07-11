@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:wxmc="urn:com.io7m.waxmill.config:1:0"
+            targetNamespace="urn:com.io7m.waxmill.config:1:0">
+
+  <xsd:annotation>
+    <xsd:documentation>
+      A schema describing the format of Waxmill configuration files.
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:simpleType name="PathType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The type of configuration paths.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="BhyveExecutable">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the bhyve executable. On FreeBSD, this is /usr/sbin/bhyve by default.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="GRUBBhyveExecutable">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the grub-bhyve executable. On FreeBSD, this is /usr/local/sbin/grub-bhyve by default.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="VirtualMachineConfigurationDirectory">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the directory that will contain virtual machine configurations.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="VirtualMachineRuntimeDirectory">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the directory that will contain virtual machine runtime data such as ZFS volumes, locks, etc.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="ZFSExecutable">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the zfs executable. On FreeBSD, this is /sbin/zfs by default.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="CuExecutable">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the cu executable. On FreeBSD, this is /usr/bin/cu by default.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Path">
+    <xsd:annotation>
+      <xsd:documentation>
+        A path value.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="type"
+                     type="wxmc:PathType"
+                     use="required"/>
+      <xsd:attribute name="value"
+                     type="xsd:anyURI"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Paths">
+    <xsd:annotation>
+      <xsd:documentation>
+        A set of configuration paths.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="wxmc:Path"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="PathsUnique">
+      <xsd:selector xpath="wxmc:Path"/>
+      <xsd:field xpath="@type"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="Configuration">
+    <xsd:annotation>
+      <xsd:documentation>
+        The waxmill configuration file.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxmc:Paths"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<BootConfigurations xmlns="urn:com.io7m.waxmill.vm:1:0">
+  <BootConfigurationGRUBBhyve name="install">
+    <BootDiskAttachments>
+      <BootDiskAttachment>
+        <DeviceSlot bus="0"
+                    slot="4"
+                    function="0"/>
+        <StorageBackendFile path="/storage/images/openbsd/install67.iso"/>
+      </BootDiskAttachment>
+    </BootDiskAttachments>
+    <GRUBBhyveKernelOpenBSD>
+      <BSDBootDevice kernelPath="/6.7/amd64/bsd.rd">
+        <DeviceSlot bus="0"
+                    slot="4"
+                    function="0"/>
+      </BSDBootDevice>
+    </GRUBBhyveKernelOpenBSD>
+  </BootConfigurationGRUBBhyve>
+</BootConfigurations>

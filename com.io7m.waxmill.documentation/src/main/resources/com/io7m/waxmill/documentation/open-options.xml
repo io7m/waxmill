@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Table xmlns="urn:com.io7m.structural:7:0"
+       type="valueTable">
+  <Columns>
+    <Column>Name</Column>
+    <Column>Description</Column>
+  </Columns>
+  <Row>
+    <Cell>
+      <Term type="constant">NO_CACHE</Term>
+    </Cell>
+    <Cell>Do not use caching (O_DIRECT).</Cell>
+  </Row>
+  <Row>
+    <Cell>
+      <Term type="constant">SYNCHRONOUS</Term>
+    </Cell>
+    <Cell>Writes to the file are synchronous (O_SYNC).</Cell>
+  </Row>
+  <Row>
+    <Cell>
+      <Term type="constant">READ_ONLY</Term>
+    </Cell>
+    <Cell>The file is opened read-only.</Cell>
+  </Row>
+</Table>

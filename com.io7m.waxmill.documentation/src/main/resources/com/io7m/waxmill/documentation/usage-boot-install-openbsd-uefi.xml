@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<BootConfigurations xmlns="urn:com.io7m.waxmill.vm:1:0">
+  <BootConfigurationUEFI name="install"
+                         firmware="/usr/local/share/uefi-firmware/BHYVE_UEFI.fd">
+    <BootDiskAttachments>
+      <BootDiskAttachment>
+        <DeviceSlot bus="0"
+                    slot="4"
+                    function="0"/>
+        <StorageBackendFile path="/storage/images/openbsd/install67.iso"/>
+      </BootDiskAttachment>
+    </BootDiskAttachments>
+  </BootConfigurationUEFI>
+</BootConfigurations>

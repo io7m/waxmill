@@ -1,0 +1,1187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:wxm="urn:com.io7m.waxmill.vm:1:0"
+            targetNamespace="urn:com.io7m.waxmill.vm:1:0">
+
+  <xsd:annotation>
+    <xsd:documentation>
+      A schema describing the format of Waxmill virtual machine configurations.
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:simpleType name="UuidType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A UUID value.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="MACAddressType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        An ethernet MAC address.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="MachineNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A virtual machine name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-z_0-9.\-]{1,64}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="TAPDeviceNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A TAP device name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="tap[a-z_0-9]{1,13}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="VMNetDeviceNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A VMNet device name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="vmnet[a-z_0-9]{1,11}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DeviceBusIDType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A PCI bus ID.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:integer">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="255"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DeviceSlotIDType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A PCI slot ID.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:integer">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="31"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DeviceFunctionIDType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A PCI function ID.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:integer">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="7"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="BootConfigurationNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A boot configuration name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[\p{L}\p{N}_\-.]{1,32}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Comment">
+    <xsd:annotation>
+      <xsd:documentation>
+        A descriptive comment included in configuration data.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+  </xsd:element>
+
+  <xsd:element name="VirtualMachine">
+    <xsd:annotation>
+      <xsd:documentation>
+        A specification of a virtual machine.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+        <xsd:element ref="wxm:CPUTopology"/>
+        <xsd:element ref="wxm:Memory"/>
+        <xsd:element ref="wxm:Devices"/>
+        <xsd:element ref="wxm:BootConfigurations"/>
+        <xsd:element ref="wxm:Flags"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="id"
+                     type="wxm:UuidType"
+                     use="required"/>
+      <xsd:attribute name="name"
+                     type="wxm:MachineNameType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="VirtualMachines">
+    <xsd:annotation>
+      <xsd:documentation>
+        A set of virtual machines.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxm:VirtualMachine"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="VirtualMachinesIDUnique">
+      <xsd:selector xpath="wxm:VirtualMachine"/>
+      <xsd:field xpath="@id"/>
+    </xsd:key>
+    <xsd:key name="VirtualMachinesNamesUnique">
+      <xsd:selector xpath="wxm:VirtualMachine"/>
+      <xsd:field xpath="@name"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:simpleType name="FlagType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The type of virtual machine flags.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="DisableMPTableGeneration">
+        <xsd:annotation>
+          <xsd:documentation>
+            Disable MPtable generation.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="ExitCPUOnPAUSE">
+        <xsd:annotation>
+          <xsd:documentation>
+            Force the guest virtual CPU to exit when a PAUSE instruction is detected.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="ForceVirtualIOPCIToUseMSI">
+        <xsd:annotation>
+          <xsd:documentation>
+            Force virtio PCI device emulations to use MSI interrupts instead of MSI-X interrupts.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="GenerateACPITables">
+        <xsd:annotation>
+          <xsd:documentation>
+            Generate ACPI tables. Required for FreeBSD/amd64 guests.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="GuestAPICIsX2APIC">
+        <xsd:annotation>
+          <xsd:documentation>
+            The guest's local APIC is configured in x2APIC mode.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="IncludeGuestMemoryInCoreFiles">
+        <xsd:annotation>
+          <xsd:documentation>
+            Include guest memory in core files if bhyve crashes.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="RealTimeClockIsUTC">
+        <xsd:annotation>
+          <xsd:documentation>
+            The RTC keeps UTC time.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="WireGuestMemory">
+        <xsd:annotation>
+          <xsd:documentation>
+            Wire guest memory.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="YieldCPUOnHLT">
+        <xsd:annotation>
+          <xsd:documentation>
+            Yield the virtual CPU thread when a HLT instruction is detected. If this option is not specified, virtual
+            CPUs will use 100% of a host CPU.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="Flag">
+    <xsd:annotation>
+      <xsd:documentation>
+        A single virtual machine flag.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="name"
+                     use="required"
+                     type="wxm:FlagType"/>
+      <xsd:attribute name="enabled"
+                     use="required"
+                     type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Flags">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of virtual machine flags.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:Flag"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="FlagNamesUnique">
+      <xsd:selector xpath="wxm:Flag"/>
+      <xsd:field xpath="@name"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="DeviceSlot">
+    <xsd:annotation>
+      <xsd:documentation>
+        The identifier of a device slot. bhyve provides PCI bus emulation and virtual devices that can be attached to
+        slots on up to 256 busses. There are 32 available slots per bus, with the option of providing up to 8 functions
+        per slot.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="bus"
+                     type="wxm:DeviceBusIDType"
+                     use="required"/>
+      <xsd:attribute name="slot"
+                     type="wxm:DeviceSlotIDType"
+                     use="required"/>
+      <xsd:attribute name="function"
+                     type="wxm:DeviceFunctionIDType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="HostDeviceSlot">
+    <xsd:annotation>
+      <xsd:documentation>
+        The identifier of a (host) device slot. bhyve provides PCI bus emulation and virtual devices that can be
+        attached to slots on up to 256 busses. There are 32 available slots per bus, with the option of providing up to
+        8 functions per slot.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="bus"
+                     type="wxm:DeviceBusIDType"
+                     use="required"/>
+      <xsd:attribute name="slot"
+                     type="wxm:DeviceSlotIDType"
+                     use="required"/>
+      <xsd:attribute name="function"
+                     type="wxm:DeviceFunctionIDType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="DeviceType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The base type of devices that can be attached to virtual machines. Each device in a virtual machine is assigned
+        a unique device slot; no two devices can be attached to the same device slot.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element ref="wxm:DeviceSlot"/>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:simpleType name="HostBridgeVendor">
+    <xsd:annotation>
+      <xsd:documentation>
+        The vendor of a host bridge. This does not (apparently) change the functionality of the bridge in any way, but
+        it does change how the host bridge is identified to the guest operating system.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="UNSPECIFIED"/>
+      <xsd:enumeration value="AMD"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="HostBridge">
+    <xsd:annotation>
+      <xsd:documentation>
+        A simple host bridge. This is usually configured at slot 0, and is required by most guest operating systems.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="vendor"
+                         use="optional"
+                         type="wxm:HostBridgeVendor"
+                         default="UNSPECIFIED">
+            <xsd:annotation>
+              <xsd:documentation>
+                The host bridge vendor.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="TAPDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A TAP device.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="name"
+                     type="wxm:TAPDeviceNameType"
+                     use="required">
+        <xsd:annotation>
+          <xsd:documentation>
+            The name of the device, such as tap23.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+
+      <xsd:attribute name="address"
+                     type="wxm:MACAddressType"
+                     use="required">
+        <xsd:annotation>
+          <xsd:documentation>
+            The device MAC address.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="VMNetDevice">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="name"
+                     type="wxm:VMNetDeviceNameType"
+                     use="required">
+        <xsd:annotation>
+          <xsd:documentation>
+            The name of the device, such as vmnet23.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+
+      <xsd:attribute name="address"
+                     type="wxm:MACAddressType"
+                     use="required">
+        <xsd:annotation>
+          <xsd:documentation>
+            The device MAC address.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="VirtioNetworkDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A virtio network device.
+
+        See: https://wiki.libvirt.org/page/Virtio
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:TAPDevice"/>
+            <xsd:element ref="wxm:VMNetDevice"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="E1000NetworkDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        An emulation of an Intel e82545 network interface.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:TAPDevice"/>
+            <xsd:element ref="wxm:VMNetDevice"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="VirtioBlockStorageDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A virtio block storage device.
+
+        See: https://wiki.libvirt.org/page/Virtio
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:StorageBackendFile"/>
+            <xsd:element ref="wxm:StorageBackendZFSVolume"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="StorageOpenOptionValue">
+    <xsd:annotation>
+      <xsd:documentation>
+        The type of options used when opening files.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="NO_CACHE">
+        <xsd:annotation>
+          <xsd:documentation>
+            Open the file with O_DIRECT.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="SYNCHRONOUS">
+        <xsd:annotation>
+          <xsd:documentation>
+            Open the file using O_SYNC.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="READ_ONLY">
+        <xsd:annotation>
+          <xsd:documentation>
+            Force the file to be opened read-only.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="OpenOptions">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of options used when opening a file.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:OpenOption"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="OpenOption">
+    <xsd:annotation>
+      <xsd:documentation>
+        An option used when opening a file.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="value"
+                     type="wxm:StorageOpenOptionValue"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="SectorSizes">
+    <xsd:annotation>
+      <xsd:documentation>
+        A specification of the sector sizes of the underlying storage device. Most consumer storage devices, at the time
+        of writing, use a physical and logical size of 4096.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="logical"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+      <xsd:attribute name="physical"
+                     type="xsd:nonNegativeInteger"
+                     use="optional"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="StorageBackendZFSVolume">
+    <xsd:annotation>
+      <xsd:documentation>
+        A ZFS volume backend for a storage device. The name of the ZFS volume that will be used is derived from the
+        configured virtual machine runtime directory, the unique identifier of the virtual machine, and the identifier
+        of the slot to which the storage device is attached.
+
+        Assuming that the runtime directory is /storage/vm, the generated name will typically look something like
+        /storage/vm/8e0999a4-59df-4f36-8c3b-4cab6cf1d3a1/disk-0_1_0.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+      </xsd:sequence>
+
+      <xsd:attribute type="xsd:nonNegativeInteger"
+                     name="expectedSize"
+                     use="optional"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="StorageBackendFile">
+    <xsd:annotation>
+      <xsd:documentation>
+        A file-based backend for a storage device. Data will be read from and written to the given device.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:OpenOptions"/>
+        </xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:SectorSizes"/>
+        </xsd:sequence>
+      </xsd:sequence>
+      <xsd:attribute name="path"
+                     use="required"
+                     type="xsd:anyURI"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="AHCIDiskDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        An emulation of an AHCI disk drive.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice>
+            <xsd:element ref="wxm:StorageBackendFile"/>
+            <xsd:element ref="wxm:StorageBackendZFSVolume"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="AHCIOpticalDiskDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        An emulation of an AHCI optical disk drive. The drive must be supplied with a disk attachment as part of the
+        boot configuration when attempting to boot the virtual machine.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType"/>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="TTYBackendType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The base type of TTY backends.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="device"
+                   use="required"
+                   type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>
+          The TTY device name, such as "com1", "com2", "bootrom", etc.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:element name="TTYBackendFile">
+    <xsd:annotation>
+      <xsd:documentation>
+        A file-based TTY backend. In effect, the output of the virtual machine will be piped to the specified file (or
+        read from it, in the case of a bootrom TTY).
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:TTYBackendType">
+          <xsd:attribute name="path"
+                         type="xsd:anyURI"
+                         use="required"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="TTYBackendStdio">
+    <xsd:annotation>
+      <xsd:documentation>
+        A stdio based TTY backend. In effect, the output of the virtual machine will be piped to the standard output of
+        the BHyve process.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:TTYBackendType"/>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="TTYBackendNMDM">
+    <xsd:annotation>
+      <xsd:documentation>
+        An nmdm(4) based TTY backend. The actual name of the nmdm device is generated from the unique identifier of the
+        virtual machine that uses it.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:TTYBackendType"/>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LPCDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        An emulation of an LPC PCI-ISA bridge with COM1 and COM2 16550 serial ports and a boot ROM. The LPC bridge
+        emulation can only be configured on bus 0.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:choice minOccurs="1"
+                      maxOccurs="unbounded">
+            <xsd:element ref="wxm:TTYBackendFile"/>
+            <xsd:element ref="wxm:TTYBackendNMDM"/>
+            <xsd:element ref="wxm:TTYBackendStdio"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:key name="TTYDevicePathsUnique">
+      <xsd:selector xpath="wxm:TTYFileDevice"/>
+      <xsd:field xpath="@path"/>
+    </xsd:key>
+    <xsd:key name="TTYDeviceAssignmentsUnique">
+      <xsd:selector xpath="wxm:TTYFileDevice|wxm:TTYStdio|wxm:TTYNMDM"/>
+      <xsd:field xpath="@device"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="PassthruDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A PCI passthru device. Exclusive access to a PCI device on the host is given to the virtual machine.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:sequence>
+            <xsd:element ref="wxm:HostDeviceSlot"/>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="FramebufferDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A raw framebuffer device attached to VNC server.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="width"
+                         type="xsd:nonNegativeInteger"
+                         use="required"/>
+          <xsd:attribute name="height"
+                         type="xsd:nonNegativeInteger"
+                         use="required"/>
+          <xsd:attribute name="waitForVNC"
+                         type="xsd:boolean"
+                         use="required"/>
+          <xsd:attribute name="listenAddress"
+                         type="xsd:string"
+                         use="required"/>
+          <xsd:attribute name="listenPort"
+                         type="xsd:nonNegativeInteger"
+                         use="required"/>
+          <xsd:attribute name="vgaConfiguration"
+                         type="xsd:string"
+                         use="required"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Devices">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of devices present in a virtual machine. Each device in a virtual machine is attached to a unique device
+        slot.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:choice minOccurs="0"
+                  maxOccurs="unbounded">
+        <xsd:element ref="wxm:AHCIDiskDevice"/>
+        <xsd:element ref="wxm:AHCIOpticalDiskDevice"/>
+        <xsd:element ref="wxm:E1000NetworkDevice"/>
+        <xsd:element ref="wxm:FramebufferDevice"/>
+        <xsd:element ref="wxm:HostBridge"/>
+        <xsd:element ref="wxm:LPCDevice"/>
+        <xsd:element ref="wxm:PassthruDevice"/>
+        <xsd:element ref="wxm:VirtioBlockStorageDevice"/>
+        <xsd:element ref="wxm:VirtioNetworkDevice"/>
+      </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:key name="DeviceIDKey">
+      <xsd:selector xpath="*/DeviceSlot"/>
+      <xsd:field xpath="@bus"/>
+      <xsd:field xpath="@slot"/>
+      <xsd:field xpath="@function"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="PinCPU">
+    <xsd:annotation>
+      <xsd:documentation>
+        A pinned CPU in a virtual machine. The guest machine CPU @guest is pinned to the host CPU @host.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="host"
+                     use="required"
+                     type="xsd:nonNegativeInteger"/>
+      <xsd:attribute name="guest"
+                     use="required"
+                     type="xsd:nonNegativeInteger"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="PinCPUs">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of pinned CPUs in a virtual machine.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:PinCPU"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="CPUTopology">
+    <xsd:annotation>
+      <xsd:documentation>
+        The CPU topology assigned to a virtual machine. The topology is expressed as a number of sockets, each of
+        contain one or more cores, each of which may contain one or more threads. In practice, it is typical to use one
+        socket, with many cores, with each core having one thread.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:PinCPUs"/>
+        </xsd:sequence>
+      </xsd:sequence>
+
+      <xsd:attribute name="sockets"
+                     use="required"
+                     type="xsd:positiveInteger"/>
+      <xsd:attribute name="threads"
+                     use="required"
+                     type="xsd:positiveInteger"/>
+      <xsd:attribute name="cores"
+                     use="required"
+                     type="xsd:positiveInteger"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Memory">
+    <xsd:annotation>
+      <xsd:documentation>
+        The size of the memory assigned to a virtual machine. The size is expressed as a sum of megabytes and gigabytes.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+
+      <xsd:attribute name="gigabytes"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+      <xsd:attribute name="megabytes"
+                     type="xsd:nonNegativeInteger"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="BootConfigurations">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of boot configurations available to a virtual machine. The names of boot configurations are required to
+        be unique within a given virtual machine.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:choice minOccurs="0"
+                  maxOccurs="unbounded">
+        <xsd:element ref="wxm:BootConfigurationGRUBBhyve"/>
+        <xsd:element ref="wxm:BootConfigurationUEFI"/>
+      </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:key name="BootConfigurationNamesAreUnique">
+      <xsd:selector xpath="*"/>
+      <xsd:field xpath="@name"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="BootDiskAttachment">
+    <xsd:annotation>
+      <xsd:documentation>
+        A disk that will be attached to a specific device slot upon booting a virtual machine. This is typically used to
+        insert disk images into optical drives.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxm:DeviceSlot"/>
+        <xsd:choice>
+          <xsd:element ref="wxm:StorageBackendFile"/>
+          <xsd:element ref="wxm:StorageBackendZFSVolume"/>
+        </xsd:choice>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="BootDiskAttachments">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of disks that will be attached to devices when a particular boot configuration is executed.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:BootDiskAttachment"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="BootConfigurationType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The base type of boot configurations.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:Comment"/>
+      </xsd:sequence>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="1">
+        <xsd:element ref="wxm:BootDiskAttachments"/>
+      </xsd:sequence>
+    </xsd:sequence>
+    <xsd:attribute name="name"
+                   type="wxm:BootConfigurationNameType"
+                   use="required"/>
+  </xsd:complexType>
+
+  <xsd:element name="BootConfigurationGRUBBhyve">
+    <xsd:annotation>
+      <xsd:documentation>
+        A type of boot configuration that contains definitions that are required to boot various operating systems under
+        grub-bhyve.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:BootConfigurationType">
+          <xsd:choice>
+            <xsd:element ref="wxm:GRUBBhyveKernelLinux"/>
+            <xsd:element ref="wxm:GRUBBhyveKernelOpenBSD"/>
+          </xsd:choice>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="BootConfigurationUEFI">
+    <xsd:annotation>
+      <xsd:documentation>
+        A type of boot configuration that contains definitions that are required to boot various operating systems under
+        UEFI.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:BootConfigurationType">
+          <xsd:attribute name="firmware"
+                         use="required"
+                         type="xsd:anyURI">
+            <xsd:annotation>
+              <xsd:documentation>
+                The location of the UEFI firmware to be loaded into the virtual machine.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LinuxKernelDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A device that holds a Linux kernel.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="kernelPath"
+                         type="xsd:anyURI"
+                         use="required"/>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LinuxKernelArgument">
+    <xsd:annotation>
+      <xsd:documentation>
+        A single kernel argument (such as "root=/dev/sda1", "single", etc).
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="value"
+                     type="xsd:string"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="LinuxInitRDDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A device that holds an initial ramdisk to boot the Linux kernel.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="initRDPath"
+                         type="xsd:anyURI"
+                         use="required">
+            <xsd:annotation>
+              <xsd:documentation>
+                The path to the initial ramdisk (in the guest filesystem) that will be booted.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="BSDBootDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        The definition of a BSD boot device.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType">
+          <xsd:attribute name="kernelPath"
+                         type="xsd:anyURI"
+                         use="required">
+            <xsd:annotation>
+              <xsd:documentation>
+                The path to the kernel (in the guest filesystem) that will be booted.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GRUBBhyveKernelOpenBSD">
+    <xsd:annotation>
+      <xsd:documentation>
+        The definitions required to boot OpenBSD under grub-bhyve.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxm:BSDBootDevice"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GRUBBhyveKernelLinux">
+    <xsd:annotation>
+      <xsd:documentation>
+        The definitions required to boot Linux under grub-bhyve.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="wxm:LinuxKernelDevice"/>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="unbounded">
+
+          <xsd:element ref="wxm:LinuxKernelArgument"/>
+        </xsd:sequence>
+        <xsd:element ref="wxm:LinuxInitRDDevice"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

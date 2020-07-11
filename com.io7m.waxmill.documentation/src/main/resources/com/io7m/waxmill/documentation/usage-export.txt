@@ -1,0 +1,26 @@
+$ waxmill vm-export --machine a866f9e4-f6c1-4ecf-ad49-000925eefa0a
+<?xml version="1.0" encoding="UTF-8"?>
+<wxm:VirtualMachines xmlns:wxm="urn:com.io7m.waxmill.vm:1:0">
+    <wxm:VirtualMachine id="a866f9e4-f6c1-4ecf-ad49-000925eefa0a" name="com.io7m.example4">
+        <wxm:Comment>An example machine</wxm:Comment>
+        <wxm:CPUTopology sockets="1" threads="1" cores="4"/>
+        <wxm:Memory gigabytes="1" megabytes="512"/>
+        <wxm:Devices>
+            <wxm:HostBridge vendor="UNSPECIFIED">
+                <wxm:DeviceSlot bus="0" slot="0" function="0"/>
+            </wxm:HostBridge>
+        </wxm:Devices>
+        <wxm:BootConfigurations/>
+        <wxm:Flags>
+            <wxm:Flag name="DisableMPTableGeneration" enabled="false"/>
+            <wxm:Flag name="ForceVirtualIOPCIToUseMSI" enabled="false"/>
+            <wxm:Flag name="GenerateACPITables" enabled="true"/>
+            <wxm:Flag name="GuestAPICIsX2APIC" enabled="false"/>
+            <wxm:Flag name="IncludeGuestMemoryInCoreFiles" enabled="false"/>
+            <wxm:Flag name="RealTimeClockIsUTC" enabled="false"/>
+            <wxm:Flag name="WireGuestMemory" enabled="false"/>
+            <wxm:Flag name="ExitCPUOnPAUSE" enabled="true"/>
+            <wxm:Flag name="YieldCPUOnHLT" enabled="true"/>
+        </wxm:Flags>
+    </wxm:VirtualMachine>
+</wxm:VirtualMachines>

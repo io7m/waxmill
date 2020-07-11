@@ -1,0 +1,13 @@
+<ipv4> | <ipv6> | <name>
+
+Where:
+  <name> = Any valid domain/host name
+  <ipv4> = Any valid IPv4 address
+  <ipv6> = Any valid IPv6 address
+
+Examples:
+  127.0.0.1
+  [::1]
+  [2600:1417:6000:198::255e]
+  localhost
+  www.example.com

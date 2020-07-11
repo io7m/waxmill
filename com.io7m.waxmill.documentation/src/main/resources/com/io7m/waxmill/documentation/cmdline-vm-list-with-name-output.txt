@@ -1,0 +1,6 @@
+$ waxmill vm-list-with-name --name com.io7m.example
+538a90e4-d50d-4511-8643-ae418279bac4
+
+$ waxmill vm-list-with-name --name nonexistent
+ERROR com.io7m.waxmill.cmdline.internal.WXMCommandVMListWithName: No virtual machines exist with the given name.
+  Name:  nonexistent

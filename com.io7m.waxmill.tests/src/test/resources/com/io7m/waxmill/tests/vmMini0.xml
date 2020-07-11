@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<VirtualMachine xmlns="urn:com.io7m.waxmill.vm:1:0"
+                id="5560eb0a-cbf6-4116-a942-4db218adfa0c"
+                name="minimal0">
+  <CPUTopology sockets="1"
+               threads="1"
+               cores="4"/>
+  <Memory gigabytes="0"
+          megabytes="512"/>
+  <Devices/>
+  <BootConfigurations/>
+  <Flags/>
+</VirtualMachine>

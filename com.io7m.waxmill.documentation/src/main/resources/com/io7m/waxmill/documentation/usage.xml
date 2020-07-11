@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:7:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="Usage">
+
+  <Subsection title="Waxmill">
+    <Paragraph>
+      The primary means by which users use the <Term type="package">Waxmill</Term> package is via the
+      <Term type="command">waxmill</Term>
+      command-line tool.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Paths And Environment"
+              id="9f22456e-66d8-4055-be45-5cc62d25b711">
+    <Paragraph>
+      The <Term type="command">waxmill</Term> command-line tool will attempt to read a configuration file specified by
+      the <Term type="parameter">WAXMILL_CONFIGURATION_FILE</Term> environment variable. The configuration file, by
+      convention, should be stored at
+      <Term type="constant">/etc/waxmill/config.xml</Term>. The default configuration file is as follows:
+    </Paragraph>
+    <FormalItem title="Configuration File">
+      <Verbatim>
+        <xi:include href="config-example.xml"
+                    parse="text"/>
+      </Verbatim>
+    </FormalItem>
+    <Paragraph>
+      The configuration file explicitly specifies the locations of various system utilities
+      <LinkFootnote target="f5bb2919-dc4e-4da2-bb03-aff6bf04539b"/>, and also specifies the location of the <Term type="term">
+      virtual machine configuration directory
+    </Term> and the
+      <Term type="term">virtual machine runtime directory</Term>. The <Term type="term">virtual machine configuration
+      directory
+    </Term> is a directory consisting of XML configuration files for individual virtual machines. The
+      <Term type="term">virtual machine runtime directory</Term>
+      is a directory containing one directory per virtual machine, each of which stores resources needed by virtual
+      machines at run-time such as ZFS volumes, sockets, and lock files.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Virtual Machines">
+    <Paragraph>
+      A <Term type="term">virtual machine</Term>, in <Term type="package">Waxmill</Term>, carries a
+      <LinkExternal target="https://en.wikipedia.org/wiki/Universally_unique_identifier">universally-unique identifier
+      </LinkExternal>
+      that is used to refer to the virtual machine during its entire lifetime. The identifier of a virtual machine
+      cannot be changed after it is defined; this property of identifiers is useful to track virtual machines if they
+      are migrated to new physical machines.
+    </Paragraph>
+    <Paragraph>
+      A virtual machine is first
+      <Link target="4a2d5add-36ac-4930-b671-2c98d2de2436">defined</Link>, then configured with one or more
+      <Link target="a952027e-b2c5-4ae2-a3db-308d776a2f51">devices</Link>, then configured with one or more
+      <Link target="62905025-beb3-48af-8b17-127f0961fcf7">boot configurations</Link>, then
+      <Link target="783bc43e-190a-462e-883b-1b74d71b94e4">realized</Link>, and finally
+      <Link target="6739427c-095e-4539-a792-aee03ebc3baa">run</Link>.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Defining A Virtual Machine"
+              id="4a2d5add-36ac-4930-b671-2c98d2de2436">
+    <Paragraph>
+      <Term type="term">Defining</Term>
+      a virtual machine involves taking a description of the virtual machine and recording that description in
+      the <Term type="term">virtual machine configuration directory</Term>. This is typically accomplished using the
+      <Link target="e3e01232-e25e-4e57-9a3c-426266625417">vm-define</Link>
+      command. Once a virtual machine is <Term type="term">defined</Term>, it will appear in the list of defined virtual
+      machines (which can be inspected using the <Link target="e3e01232-e25e-4e57-9a3c-426266625417">vm-list</Link> command).
+    </Paragraph>
+
+    <FormalItem title="Defining A Virtual Machine">
+      <Verbatim>
+        <xi:include href="usage-define-list.txt"
+                    parse="text"/>
+      </Verbatim>
+    </FormalItem>
+
+    <Paragraph>
+      The definition of the created machine can be <Term type="term">exported</Term> using the
+      <Link target="3c468d4a-8ab5-4f05-a2f3-e3eafbc43401">vm-export</Link>
+      command. The command will simply print the XML configuration file to the standard output. This can be used to
+      manually inspect the configuration of the machine, or to copy the configuration to a new physical machine.
+    </Paragraph>
+
+    <FormalItem title="Exporting A Virtual Machine">
+      <Verbatim>
+        <xi:include href="usage-export.txt"
+                    parse="text"/>
+      </Verbatim>
+    </FormalItem>
+
+    <Paragraph>
+      Similarly, the <Link target="43d302bf-8bd5-43d6-a284-902ce140f352">vm-import</Link> command can be used to import
+      one or more virtual machines from a given XML configuration file.
+    </Paragraph>
+
+    <Paragraph>
+      <Term type="package">bhyve</Term> virtual machines have a number of configurable boolean flags. The <Link
+      target="a8c6bad4-42b0-4558-b9e5-89e7c81d20b4">vm-set</Link> command can be used to turn these flags on and
+      off. For example, using PCI passthru devices requires wiring the memory of the guest virtual machine.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Adding Devices"
+              id="a952027e-b2c5-4ae2-a3db-308d776a2f51">
+    <Paragraph>
+      A virtual machine needs to be configured with one or more <Term type="term">devices</Term> in order to actually do
+      useful work. Typically, a virtual machine will have one or more
+      <Term type="term">storage devices</Term>
+      (emulated disks), one or more
+      <Term type="term">network devices</Term>
+      (emulations of ethernet interfaces), and a
+      <Term type="term">console device</Term>
+      (to allow access to the operating system console from the host machine). A <Term type="term">device</Term> is
+      attached to exactly one <Term type="term">device slot</Term> at any given time. A <Term type="term">device slot
+    </Term> is a <LinkExternal target="https://en.wikipedia.org/wiki/PCI_configuration_space">PCI</LinkExternal> slot
+      value consisting of a 3-tuple <Term type="expression">(bus, pcislot, function)</Term>,
+      where <Term type="expression">bus ∈ [0, 255]</Term>,
+      <Term type="expression">pcislot ∈ [0,31]</Term>, and <Term type="expression">function ∈ [0,7]</Term>. The concrete
+      notation used to denote a device slot is <Term type="expression">bus:pcislot:function</Term>, so the string <Term type="constant">
+      1:5:3
+    </Term> denotes a device slot on bus <Term type="constant">1</Term>, slot <Term type="constant">5</Term>,
+      function <Term type="constant">3</Term>. In practice, virtual machines will typically specify all devices to use
+      bus <Term type="constant">0</Term> and function
+      <Term type="constant">0</Term>, and only vary the slot value.
+    </Paragraph>
+    <Paragraph>
+      The <Term type="command">waxmill</Term> command-line tool contains various subcommands to create and attach
+      devices to virtual machines.
+    </Paragraph>
+    <FormalItem title="Device Commands">
+      <ListUnordered>
+        <Item>
+          <Link target="8e9f4316-a90c-46f4-b06d-7f213d0dd997">vm-add-ahci-disk</Link>
+        </Item>
+        <Item>
+          <Link target="892c105a-d17f-4bf8-a278-fa887fbc4642">vm-add-ahci-optical</Link>
+        </Item>
+        <Item>
+          <Link target="22388d06-bf5a-4d35-ae75-80303a670ea3">vm-add-lpc-device</Link>
+        </Item>
+        <Item>
+          <Link target="faebdfac-68e0-49af-a0ca-dbede6a2c335">vm-add-virtio-disk</Link>
+        </Item>
+        <Item>
+          <Link target="82039dec-47cf-4bb9-a5ae-c88bc12753c3">vm-add-virtio-network-device</Link>
+        </Item>
+      </ListUnordered>
+    </FormalItem>
+    <Paragraph>
+      The types of devices attached to a virtual machine will depend on the level of support that the guest operating
+      system running on the virtual machine has for virtualization. Operating systems that have explicit support for
+      virtualization (typically every major operating system with a release more recent than about 2007) will perform
+      best using
+      <LinkExternal target="https://wiki.libvirt.org/page/Virtio">Virtio</LinkExternal>
+      devices. Older operating systems may need to be presented with the illusion of having access to
+      <LinkExternal target="https://en.wikipedia.org/wiki/Advanced_Host_Controller_Interface">AHCI</LinkExternal>
+      devices. Please see the documentation for each of the commands for details.
+    </Paragraph>
+    <Paragraph>
+      The <Term type="package">Waxmill</Term> package can optionally automatically manage storage devices backed by
+      <LinkExternal target="https://en.wikipedia.org/wiki/ZFS">ZFS volumes</LinkExternal>
+      if requested. If, on a virtual machine with ID <Term type="expression">X</Term>, a storage device that is
+      specified to use a <Term type="constant">zfs-volume</Term> backend is attached to slot
+      <Term type="expression">a:b:c</Term>, the
+      <Term type="package">Waxmill</Term>
+      package will automatically create a ZFS volume at <Term type="expression">/storage/vm/X/disk-a:b:c</Term> (where
+      <Term type="expression">/storage/vm</Term>
+      is the configured <Link target="9f22456e-66d8-4055-be45-5cc62d25b711">virtual machine runtime directory</Link>)
+      when <Link target="783bc43e-190a-462e-883b-1b74d71b94e4">realizing</Link> the virtual machine. This is merely a
+      convenience feature; if the ZFS volume already exists, it will be used and the
+      <Term type="package">Waxmill</Term>
+      package will not attempt to modify it.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Realizing A Virtual Machine"
+              id="783bc43e-190a-462e-883b-1b74d71b94e4">
+    <Paragraph>
+      <Term type="term">Realizing</Term>
+      a virtual machine involves reading the description of the virtual machine from the <Term type="term">virtual
+      machine configuration directory
+    </Term> and then creating any resources that are needed at run-time such
+      as <LinkExternal target="https://docs.oracle.com/cd/E18752_01/html/819-5461/gaypf.html">ZFS volumes</LinkExternal>.
+      The <Link target="f2ab38c7-6641-4339-9453-201ebb41a97b">vm-realize</Link> command is used to<Term type="term">
+      realize
+    </Term> virtual machines:
+    </Paragraph>
+
+    <FormalItem title="Realizing A Virtual Machine">
+      <Verbatim>
+        <xi:include href="usage-realize.txt"
+                    parse="text"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Boot Configurations"
+              id="62905025-beb3-48af-8b17-127f0961fcf7">
+    <Paragraph>
+      Before a virtual machine can actually be started, it is necessary to define at least one
+      <Term type="term">boot configuration</Term>. A <Term type="term">boot configuration</Term> is a named set of
+      instructions that describe how the virtual machine is to be started up. The instructions may include the names of
+      disk images that are to be inserted into emulated <Link target="892c105a-d17f-4bf8-a278-fa887fbc4642">optical
+      drives</Link>, the type of boot loader to be used, and/or how the boot loader is to locate an operating system
+      kernel on any of the storage devices attached to the virtual machine. Because of the complexity of the information
+      described within a boot configuration, there is no terse command analogous to
+      <Link target="e3e01232-e25e-4e57-9a3c-426266625417">vm-define</Link>
+      that can be used to create a boot configuration. Instead, the boot configuration must be written in an XML file
+      and added to the virtual machine with the <Link target="0fd121a2-ea96-409a-a150-1e384d04c64f">
+      vm-update-boot-configurations
+    </Link> command. A simple configuration, named <Term type="constant">install</Term>, that boots
+      <LinkExternal target="https://www.openbsd.org">OpenBSD</LinkExternal>
+      from an official installer image inserted into the optical drive at device slot
+      <Term type="constant">0:4:0</Term>
+      using <LinkExternal target="https://github.com/grehan-freebsd/grub2-bhyve">grub-bhyve</LinkExternal> might look as
+      follows:
+    </Paragraph>
+
+    <FormalItem title="Example OpenBSD Install Boot Configuration">
+      <Verbatim>
+        <xi:include href="usage-boot-install-openbsd.xml"
+                    parse="text"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Running A Virtual Machine"
+              id="6739427c-095e-4539-a792-aee03ebc3baa">
+    <Paragraph>
+      Once a virtual machine has been <Term type="term">realized</Term> and has at least one boot configuration, it can
+      be <Term type="term">run</Term> using the
+      <Link target="60ee3ff2-b938-45da-a1c2-e9bf3bd02d73">vm-run</Link>
+      command:
+    </Paragraph>
+
+    <FormalItem title="Running A Virtual Machine">
+      <Verbatim>
+        <xi:include href="usage-run.txt"
+                    parse="text"/>
+      </Verbatim>
+    </FormalItem>
+
+    <Paragraph>
+      The above command attempts to run the virtual machine with ID
+      <Term type="constant">538a90e4-d50d-4511-8643-ae418279bac4</Term>, using the boot configuration
+      named <Term type="constant">run</Term>. The <Term type="command">waxmill</Term> command-line tool process is
+      replaced with that of the <Term type="command">bhyve</Term> virtual machine, and the
+      <Term type="command">bhyve</Term>
+      process continues to run in the foreground until the user shuts it down. The <Term type="command">vm-run</Term> command
+      is designed to be executed by a process supervision system.
+    </Paragraph>
+  </Subsection>
+
+  <Footnote id="f5bb2919-dc4e-4da2-bb03-aff6bf04539b">
+    The <Term type="command">Waxmill</Term> package always prefers to rely on explicit configuration data rather than
+    reading untrusted data from the environment (such as the <Term type="parameter">PATH</Term> environment variable).
+  </Footnote>
+
+</Section>

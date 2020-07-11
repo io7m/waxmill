@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+  <entry key="errorMachineNonexistent"><![CDATA[The specified machine does not exist.
+  Machine: {0}
+]]></entry>
+
+  <entry key="errorDeviceSlotAlreadyUsed"><![CDATA[The specified device slot is already used.
+  Machine:          {0}
+  Device slot:      {1}
+  Existing device:  {2}
+]]></entry>
+
+  <entry key="errorMachineConflict"><![CDATA[One or more virtual machines encountered with the same ID.
+  ID:                  {0}
+  Machine (A) Name:    {1}
+  Machine (A) Source:  {2}
+  Machine (B) Name:    {3}
+  Machine (B) Source:  {4}
+]]></entry>
+
+  <entry key="errorMachineAlreadyExists"><![CDATA[A virtual machine already exists with the given ID.
+  ID:                  {0}
+  Machine (A) Name:    {1}
+  Machine (A) Source:  {2}
+  Machine (B) Name:    {3}
+  Machine (B) Source:  {4}
+]]></entry>
+</properties>

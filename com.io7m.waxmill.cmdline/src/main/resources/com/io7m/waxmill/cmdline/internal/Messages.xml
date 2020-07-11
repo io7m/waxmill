@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+  <entry key="ttyBackendSpec"><![CDATA[
+TTY backend syntax:
+    "stdio" ";" <port>
+  | "file" ";" <port> ";" <path>
+  | "nmdm" ";" <port>
+
+Where:
+  <port> = "com1" | "com2" | "bootrom"
+
+Examples:
+  stdio;com1
+  file;bootrom;/tmp/xyz
+  nmdm;com2
+]]></entry>
+
+  <entry key="storageBackendSpec"><![CDATA[
+Storage backend syntax:
+    "file" ";" <path>
+  | "zfs-volume"
+  | "zfs-volume" ";" <size>
+
+Where:
+  <path> = Any UNIX-like path
+  <size> = Any non-negative multiple of 128000 (bytes)
+
+Examples:
+  file;/tmp/xyz
+  zfs-volume
+  zfs-volume;1280000000
+]]></entry>
+
+  <entry key="networkBackendSpec"><![CDATA[
+Virtio network backend syntax:
+    "tap" ";" <tapDevice> ";" <macAddress>
+  | "vmnet" ";" <vmnetDevice> ";" <macAddress>
+
+Where:
+  <tapDevice>   = "tap[0-9]'{'1,13'}'"
+  <vmnetDevice> = "vmnet[0-9]'{'1,11'}'"
+  <macAddress>  = "[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}'"
+
+Examples:
+  tap;tap23;d9:63:c0:d9:09:e8
+  tap;tap0000000000001;d9:63:c0:d9:09:e8
+  vmnet;vmnet23;d9:63:c0:d9:09:e8
+  vmnet;vmnet00000000001;d9:63:c0:d9:09:e8
+]]></entry>
+
+  <entry key="deviceSlotSpec"><![CDATA[
+Device slot syntax:
+  <deviceSlot> = <bus> ":" <slot> ":" <function>
+
+Where:
+  <bus>      = [0 .. 255]
+  <slot>     = [0 .. 31]
+  <function> = [0 .. 7]
+
+Examples:
+  0:0:0
+  255:31:7
+]]></entry>
+
+  <entry key="errorInvalidTTYBackend"><![CDATA[Invalid TTY backend specification.
+{0}
+
+Received:
+  {1}
+]]></entry>
+
+  <entry key="errorInvalidStorageBackend"><![CDATA[Invalid storage backend specification.
+{0}
+
+Received:
+  {1}
+]]></entry>
+
+  <entry key="errorInvalidVirtioNetworkBackend"><![CDATA[Invalid virtio network backend specification.
+{0}
+
+Received:
+  {1}
+]]></entry>
+
+  <entry key="errorInvalidDeviceSlot"><![CDATA[Invalid device PCI slot specification.
+{0}
+
+Received:
+  {1}
+]]></entry>
+
+  <entry key="errorNoSingleConsole"><![CDATA[No single unambiguous console device is available.
+  Machine:           {0}
+  Possible consoles: {1}
+
+It may be that the machine has no console devices, or it may be that
+it has multiple console devices and no single device is more suitable
+than any other.]]></entry>
+
+  <entry key="errorNoMachinesWithName"><![CDATA[No virtual machines exist with the given name.
+  Name:  {0}]]></entry>
+
+  <entry key="errorBootConfigurationNonexistent">No boot configuration exists with the given name: {0}</entry>
+  <entry key="errorBootConfigurationAlreadyExists">A boot configuration already exists with the given name: {0}</entry>
+  <entry key="errorDeviceNamesUnique">Backend device names must be unique: {0}</entry>
+  <entry key="errorDeviceUsedByBootConfigurations"><![CDATA[One or more boot configurations are using the device.
+  Device:              {0}
+  Boot configurations: {1}
+
+Please either remove the boot configurations, or modify them such that they
+are no longer using the specified device.]]></entry>
+  <entry key="errorDeviceNonexistent">Device does not exist: {0}</entry>
+  <entry key="errorSchemaNonexistent">No such schema: {0}</entry>
+
+  <entry key="infoAddedDiskFile">Added {0} disk file {1} @ slot {2}</entry>
+  <entry key="infoAddedDiskZFS">Added {0} disk zfs volume {1} @ slot {2}</entry>
+  <entry key="infoAddedLPC">Added LPC device @ slot {0}</entry>
+  <entry key="infoAddedVirtioDiskFile">Added virtio disk file {0} @ slot {1}</entry>
+  <entry key="infoAddedVirtioDiskZFS">Added virtio disk zfs volume {0} @ slot {1}</entry>
+  <entry key="infoAddedVirtioNet">Added virtio network device @ slot {0}</entry>
+  <entry key="infoAddedE1000Net">Added e1000 network device @ slot {0}</entry>
+  <entry key="infoBackendFile">Backend file {0} {1}</entry>
+  <entry key="infoBackendNMDM">Backend nmdm {0} {1}</entry>
+  <entry key="infoBackendStdio">Backend stdio {0}</entry>
+  <entry key="infoBackendTAP">Backend tap {0} {1}</entry>
+  <entry key="infoBackendVMNet">Backend vmnet {0} {1}</entry>
+  <entry key="infoBootConfigurationAdded">Added new boot configuration: {0}</entry>
+  <entry key="infoBootConfigurationRemoved">Deleted boot configuration: {0}</entry>
+  <entry key="infoBootConfigurationUpdated">Updated boot configuration: {0}</entry>
+  <entry key="infoBootConfigurationsParsed">Parsed {0} boot configurations</entry>
+  <entry key="infoDeviceDeleted">Deleted device {0}</entry>
+  <entry key="infoImportedMachines">Imported {0} virtual machines</entry>
+
+  <entry key="test">Test: {0}</entry>
+
+  <entry key="vmRunHelp"><![CDATA[
+The vm-run command starts a virtual machine. The command, internally,
+uses execve()[0] to replace the waxmill process with that of the
+Bhyve virtual machine. The virtual machine stays running in the
+foreground. The command is intended to be used to start virtual
+machines under process supervision systems such as daemontools[1]
+or runit[2].
+
+[0] https://www.freebsd.org/cgi/man.cgi?query=execve&sektion=2
+[1] https://cr.yp.to/daemontools.html
+[2] http://smarden.org/runit/
+]]></entry>
+
+  <entry key="schemaHelp"><![CDATA[
+The schema command lists the available XSD[0] schemas available for
+the various XML formats used by the waxmill tools. The command can dump
+the text of specific schemas when passed the identifier of a schema.
+
+[0] https://www.w3.org/TR/xmlschema11-1/
+]]></entry>
+
+  <entry key="vmDeleteHelp"><![CDATA[
+The vm-delete command deletes the configuration for a virtual
+machine. It will not stop any running instance of the given virtual
+machine, nor will it delete the underlying resources such as ZFS
+volumes.
+]]></entry>
+
+  <entry key="vmListWithNameHelp"><![CDATA[
+The vm-list-with-name command lists the identifiers of all of the
+virtual machines that have a given name. The command raises an error
+if no virtual machines have the given name.]]></entry>
+
+  <entry key="vmConsole"><![CDATA[
+The vm-console command attempts to connect to the primary console
+for the given virtual machine. In practice, this means executing the
+"cu"[0] program on the device node that represents the console for
+the VM. The command will fail with a diagnostic error message if the
+virtual machine has no console, or has multiple consoles.
+
+[0] https://www.freebsd.org/cgi/man.cgi?query=cu&sektion=1
+]]></entry>
+
+  <entry key="vmAddLPCDeviceHelp"><![CDATA[
+The vm-add-lpc-device command adds an LPC device to a virtual
+machine. The BHyve documentation describes such devices as "LPC
+PCI-ISA bridges with COM1 and COM2 16550 serial ports and a boot
+ROM". In practice, LPC devices are used to provide console access
+to virtual machines, and UEFI[0] firmware to virtual machines that are
+booting from UEFI.
+
+[0] https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface
+]]></entry>
+
+  <entry key="vmAddAHCIDiskHelp"><![CDATA[
+The vm-add-ahci-disk command adds a disk to a virtual machine. The disk
+is an emulation of an AHCI[0] controller attached to a SATA hard-drive
+and, as such, requires a driver in the guest operating system that is
+capable of supporting AHCI.
+
+[0] https://en.wikipedia.org/wiki/Advanced_Host_Controller_Interface
+]]></entry>
+
+  <entry key="vmAddVirtioDiskHelp"><![CDATA[
+The vm-add-virtio-disk command adds a disk to a virtual machine.
+The disk is a Virtio[0] block storage device and, as such, requires
+a driver in the guest operating system that is capable of supporting
+Virtio.
+
+[0] https://wiki.libvirt.org/page/Virtio
+]]></entry>
+
+  <entry key="vmAddVirtioNetworkDeviceHelp"><![CDATA[
+The vm-add-virtio-network-device command adds a network device to a
+virtual machine. The device is a Virtio[0] network device and, as such,
+requires a driver in the guest operating system that is capable of
+supporting Virtio.
+
+[0] https://wiki.libvirt.org/page/Virtio
+]]></entry>
+
+  <entry key="vmList"><![CDATA[
+The "vm-list" command lists the defined virtual machines.
+]]></entry>
+
+  <entry key="vmUpdateBootConfigurations"><![CDATA[
+The vm-update-boot-configurations command adds or updates boot
+configurations within a given virtual machine. The boot configurations
+are specified using an XML format.
+]]></entry>
+
+  <entry key="vmDefine"><![CDATA[
+The vm-define command defines a new virtual machine. The command
+will define the configuration of the virtual machine but will not
+create any of the underlying resources such as ZFS filesystems
+and/or volumes. The command will, by default, generate a new
+unique machine ID unless one is manually specified with the
+--machine option.
+]]></entry>
+
+  <entry key="vmAddPassthruDeviceHelp"><![CDATA[
+The vm-add-passthru-device command adds an PCI passthru device to
+a virtual machine.
+
+See: https://wiki.freebsd.org/bhyve/pci_passthru
+]]></entry>
+
+  <entry key="vmSetHelp"><![CDATA[
+The vm-set command sets configuration flags for a virtual machine.
+]]></entry>
+
+  <entry key="vmAddE1000NetworkDeviceHelp"><![CDATA[
+The vm-add-e1000-network-device command adds a network device to a
+virtual machine. The device is an Intel e82545[0] network device and, as such,
+requires a driver in the guest operating system that is capable of
+supporting it.
+
+[0] https://downloadcenter.intel.com/product/1284/Intel-82545EM-Gigabit-Ethernet-Controller
+]]></entry>
+
+  <entry key="vmAddFramebufferDeviceHelp"><![CDATA[
+The vm-add-framebuffer-device command adds a raw framebuffer device to
+a virtual machine that is connected to a VNC server.
+]]></entry>
+</properties>

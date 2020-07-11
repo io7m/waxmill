@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:7:0"
+         id="e3e01232-e25e-4e57-9a3c-426266625417"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="vm-define">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">vm-define</Term>
+      - Define virtual machines
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="command">vm-define</Term> command defines a new virtual machine. The command will define the
+      configuration of the virtual machine but will not create any of the underlying resources such as ZFS filesystems
+      and/or volumes. The command will, by default, generate a new unique machine ID unless one is manually specified
+      with the <Term type="constant">--machine</Term> option.
+    </Paragraph>
+
+    <FormalItem title="Parameters"
+                type="parametersTable">
+      <Table type="parametersTable">
+        <Columns>
+          <Column>Parameter</Column>
+          <Column>Type</Column>
+          <Column>Required</Column>
+          <Column>Description</Column>
+        </Columns>
+        <Row>
+          <Cell>
+            <Term type="parameter">--comment</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">java.lang.String</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>A comment describing the new virtual machine</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--configuration</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Path</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The path to the configuration file (environment variable: $WAXMILL_CONFIGURATION_FILE)</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--cpu-count</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">int</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The number of CPU cores in the virtual machine</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--machine</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">UUID</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The ID of the new virtual machine</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--memory-gigabytes</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">long</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The size in gigabytes of the virtual machine's memory (added to --memory-megabytes)</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--memory-megabytes</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">long</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The size in megabytes of the virtual machine's memory (added to --memory-gigabytes)</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--name</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">String</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>The name of the new virtual machine</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--verbose</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Log Level</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Set the minimum logging verbosity level.</Cell>
+        </Row>
+      </Table>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Example">
+    <FormalItem title="Example">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="cmdline-vm-define-output.txt"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

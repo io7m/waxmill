@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<VirtualMachine xmlns="urn:com.io7m.waxmill.vm:1:0"
+                id="1a438a53-2fcd-498f-8cc2-0ff0456e3dc4"
+                name="example0">
+
+  <Comment>An example virtual machine.</Comment>
+
+  <CPUTopology sockets="1"
+               threads="1"
+               cores="4">
+    <Comment>
+      A CPU topology simulating a quad core CPU. The first two CPUs are pinned to the first two CPUs on the host.
+    </Comment>
+    <PinCPUs>
+      <PinCPU host="0"
+              guest="0"/>
+      <PinCPU host="1"
+              guest="1"/>
+    </PinCPUs>
+  </CPUTopology>
+
+  <Memory gigabytes="0"
+          megabytes="512">
+    <Comment>512mb of memory.</Comment>
+  </Memory>
+
+  <Devices>
+    <HostBridge vendor="AMD">
+      <DeviceSlot bus="0"
+                  slot="0"
+                  function="0"/>
+      <Comment>An AMD-branded host bridge.</Comment>
+    </HostBridge>
+
+    <VirtioNetworkDevice>
+      <DeviceSlot bus="0"
+                  slot="1"
+                  function="0"/>
+      <Comment>A TAP-based network device.</Comment>
+      <TAPDevice name="tap23"
+                 address="d7:94:b5:60:0d:ac">
+        <Comment>A TAP device.</Comment>
+      </TAPDevice>
+    </VirtioNetworkDevice>
+
+    <VirtioNetworkDevice>
+      <DeviceSlot bus="0"
+                  slot="2"
+                  function="0"/>
+      <Comment>A VMNet-based network device.</Comment>
+      <VMNetDevice name="vmnet23"
+                   address="d7:92:b5:60:0d:ac">
+        <Comment>A VMNet device.</Comment>
+      </VMNetDevice>
+    </VirtioNetworkDevice>
+
+    <AHCIDiskDevice>
+      <DeviceSlot bus="0"
+                  slot="3"
+                  function="0"/>
+      <Comment>A disk device.</Comment>
+      <StorageBackendFile path="/path/to/storage">
+        <Comment>File-based storage.</Comment>
+        <OpenOptions>
+          <OpenOption value="NO_CACHE"/>
+        </OpenOptions>
+        <SectorSizes logical="4096"
+                     physical="4096"/>
+      </StorageBackendFile>
+    </AHCIDiskDevice>
+
+    <AHCIOpticalDiskDevice>
+      <DeviceSlot bus="0"
+                  slot="4"
+                  function="0"/>
+      <Comment>An optical disk device.</Comment>
+    </AHCIOpticalDiskDevice>
+
+    <LPCDevice>
+      <DeviceSlot bus="0"
+                  slot="5"
+                  function="0"/>
+      <Comment>A TTY based on a filesystem socket.</Comment>
+      <TTYBackendStdio device="com0"/>
+      <TTYBackendFile device="com1"
+                      path="/dev/nmdm_1a438a53-2fcd-498f-8cc2-0ff0456e3dc4_B"/>
+      <TTYBackendNMDM device="com2"/>
+    </LPCDevice>
+
+    <PassthruDevice>
+      <DeviceSlot bus="0"
+                  slot="6"
+                  function="0"/>
+      <Comment>A PCI passthru device.</Comment>
+      <HostDeviceSlot bus="1"
+                      slot="2"
+                      function="3"/>
+    </PassthruDevice>
+
+    <E1000NetworkDevice>
+      <DeviceSlot bus="0"
+                  slot="7"
+                  function="0"/>
+      <Comment>An E1000 network device.</Comment>
+      <VMNetDevice name="vmnet24"
+                   address="d7:92:b6:60:0d:ac">
+        <Comment>A VMNet device.</Comment>
+      </VMNetDevice>
+    </E1000NetworkDevice>
+
+    <FramebufferDevice width="800"
+                       height="600"
+                       waitForVNC="true"
+                       listenAddress="localhost"
+                       listenPort="5901"
+                       vgaConfiguration="OFF">
+      <DeviceSlot bus="0"
+                  slot="8"
+                  function="0"/>
+      <Comment>A framebuffer device.</Comment>
+    </FramebufferDevice>
+  </Devices>
+
+  <BootConfigurations>
+    <BootConfigurationGRUBBhyve name="install">
+      <Comment>The installation configuration, booting from a CD.</Comment>
+      <BootDiskAttachments>
+        <BootDiskAttachment>
+          <DeviceSlot bus="0"
+                      slot="4"
+                      function="0"/>
+          <StorageBackendFile path="/tmp/openbsd-6.6-amd64.iso"/>
+        </BootDiskAttachment>
+      </BootDiskAttachments>
+      <GRUBBhyveKernelOpenBSD>
+        <BSDBootDevice kernelPath="/6.6/amd64/bsd.rd">
+          <DeviceSlot bus="0"
+                      slot="4"
+                      function="0"/>
+        </BSDBootDevice>
+      </GRUBBhyveKernelOpenBSD>
+    </BootConfigurationGRUBBhyve>
+    <BootConfigurationUEFI name="installUEFI"
+                           firmware="/tmp/uefi.fd">
+      <Comment>The installation configuration, booting from a CD with UEFI.</Comment>
+      <BootDiskAttachments>
+        <BootDiskAttachment>
+          <DeviceSlot bus="0"
+                      slot="4"
+                      function="0"/>
+          <StorageBackendFile path="/tmp/openbsd-6.6-amd64.iso"/>
+        </BootDiskAttachment>
+      </BootDiskAttachments>
+    </BootConfigurationUEFI>
+    <BootConfigurationGRUBBhyve name="run">
+      <Comment>The normal configuration, booting from the disk.</Comment>
+      <GRUBBhyveKernelLinux>
+        <LinuxKernelDevice kernelPath="/vmlinuz">
+          <DeviceSlot bus="0"
+                      slot="3"
+                      function="0"/>
+        </LinuxKernelDevice>
+        <LinuxKernelArgument value="root=/dev/sda1"/>
+        <LinuxKernelArgument value="init=/sbin/runit-init"/>
+        <LinuxInitRDDevice initRDPath="/initrd.img">
+          <DeviceSlot bus="0"
+                      slot="3"
+                      function="0"/>
+        </LinuxInitRDDevice>
+      </GRUBBhyveKernelLinux>
+    </BootConfigurationGRUBBhyve>
+  </BootConfigurations>
+
+  <Flags>
+    <Flag name="DisableMPTableGeneration"
+          enabled="false"/>
+    <Flag name="ForceVirtualIOPCIToUseMSI"
+          enabled="false"/>
+    <Flag name="GenerateACPITables"
+          enabled="true"/>
+    <Flag name="GuestAPICIsX2APIC"
+          enabled="false"/>
+    <Flag name="IncludeGuestMemoryInCoreFiles"
+          enabled="false"/>
+    <Flag name="RealTimeClockIsUTC"
+          enabled="true"/>
+    <Flag name="WireGuestMemory"
+          enabled="true"/>
+    <Flag name="YieldCPUOnHLT"
+          enabled="true"/>
+  </Flags>
+
+</VirtualMachine>

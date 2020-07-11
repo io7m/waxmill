@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+  <entry key="fileCheck"><![CDATA[Checking file exists.
+  File:   {0}
+  Device: {1}
+]]></entry>
+
+  <entry key="zfsVolumeCheck"><![CDATA[Checking ZFS volume exists.
+  Volume:        {0}
+  Expected size: {1}
+  Device:        {2}
+]]></entry>
+
+  <entry key="zfsVolumeSizeMismatch"><![CDATA[A required ZFS volume exists, but the size does not match the machine configuration.
+  Volume:        {0}
+  Expected size: {1}
+  Actual size:   {2}
+  Device:        {3}
+  Action: Resize the ZFS volume (zfs set quota={1} {0}), or edit the machine configuration to set the correct expected size.
+]]></entry>
+
+  <entry
+    key="zfsVolumeMissingNoSize"><![CDATA[A required ZFS volume does not exist, and no expected size has been given so the volume cannot be created automatically.
+  Volume: {0}
+  Device: {1}
+  Action: Create the zfs volume manually (zfs create -V).
+]]></entry>
+
+  <entry key="errorRequiredPathsMissing"><![CDATA[One or more required files are missing.
+  Machine:  {0}
+  Files:    {1}
+  Action: Create the missing files, or remove them from the virtual machine configuration.
+]]>
+  </entry>
+
+</properties>

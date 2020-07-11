@@ -1,0 +1,7 @@
+$ waxmill vm-run \
+  --machine 538a90e4-d50d-4511-8643-ae418279bac4 \
+  --boot-configuration install
+rdmsr to register 0x140 on vcpu 0
+rdmsr to register 0x34 on vcpu 0
+Unhandled ps2 mouse command 0xe1
+Unhandled ps2 mouse command 0x88

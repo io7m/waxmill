@@ -1,0 +1,28 @@
+$ waxmill vm-define \
+  --name 'com.io7m.example4' \
+  --cpu-count 4 \
+  --comment 'An example machine' \
+  --memory-gigabytes 1 \
+  --memory-megabytes 512
+
+$ waxmill vm-define \
+  --name 'com.io7m.example5' \
+  --cpu-count 4 \
+  --comment 'An example machine' \
+  --memory-gigabytes 1 \
+  --memory-megabytes 512 \
+  --machine 7c2bcb79-f20c-47fa-812b-8994f17f97b2
+
+$ waxmill vm-define \
+  --name 'com.io7m.example5' \
+  --cpu-count 4 \
+  --comment 'An example machine' \
+  --memory-gigabytes 1 \
+  --memory-megabytes 512 \
+  --machine 7c2bcb79-f20c-47fa-812b-8994f17f97b2
+ERROR com.io7m.waxmill.cmdline.Main: com.io7m.waxmill.exceptions.WXMExceptionDuplicate: A virtual machine already exists with the given ID.
+  ID:                  7c2bcb79-f20c-47fa-812b-8994f17f97b2
+  Machine (A) Name:    com.io7m.example5
+  Machine (A) Source:  <unspecified>
+  Machine (B) Name:    com.io7m.example5
+  Machine (B) Source:  file:///etc/waxmill/vm/7c2bcb79-f20c-47fa-812b-8994f17f97b2.wvmx

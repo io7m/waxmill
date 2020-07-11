@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:7:0"
+         title="Orientation">
+
+  <Subsection title="Overview">
+    <Subsection title="Design Principles">
+      <Paragraph>
+        The <Term type="package">Waxmill</Term> package provides a command-line interface and Java API for creating,
+        configuring, and running
+        <LinkExternal target="https://www.bhyve.org">bhyve</LinkExternal>
+        virtual machines. The package follows a number of design principles in order to ensure stability and
+        reliability.
+      </Paragraph>
+    </Subsection>
+
+    <Subsection title="Plain Text Configuration">
+      <Paragraph>
+        The <Term type="package">Waxmill</Term> package stores configuration data for virtual machines in a strict,
+        strongly-typed, versioned XML format. This ensures that virtual machine configurations created by older versions
+        of the <Term type="package">Waxmill</Term> package can continue to be understood by newer versions
+        of <Term type="package">Waxmill</Term>, or can be safely migrated to newer formats without any loss of
+        information. <Term type="package">Waxmill</Term> unconditionally validates all input against a schema (including
+        data that the package wrote itself), and will refuse to work with malformed and/or invalid data. Additionally,
+        the <Term type="package">Waxmill</Term> package uses a hardened XML parser configuration that is expected to be
+        immune to
+        <LinkExternal target="https://ws-attacks.org/XML_Entity_Expansion">entity expansion attacks</LinkExternal>.
+      </Paragraph>
+    </Subsection>
+
+    <Subsection title="Memory Safety, Type Safety">
+      <Paragraph>
+        The <Term type="package">Waxmill</Term> package is written
+        in <LinkExternal target="https://jdk.java.net/java-se-ri/11">Java 11</LinkExternal>, using only a couple of
+        native methods (<Term type="function">fork()</Term> and <Term type="function">execve()</Term>), and is therefore
+        likely to be immune to buffer overflows and other memory-safety related bugs that plague the typical present-day
+        system languages. The codebase is, additionally, subjected to extensive static checking on every build. Binary
+        builds are expected to be byte-for-byte reproducible. Extensive use of static typing is used throughout the
+        codebase to enforce invariants statically where possible, and the code is annotated with
+        precondition/invariant/postcondition checks in order to induce bugs to cause early failures instead of silently
+        corrupting state. The codebase also has a high-coverage test suite which exhaustively tests the various API
+        methods and the entire command-line interface.
+      </Paragraph>
+    </Subsection>
+
+    <Subsection title="Process Supervision">
+      <Paragraph>
+        The <Term type="package">Waxmill</Term> package is designed to work under process supervision. The supervision
+        of system services has been a solved problem for decades although many pieces of server software are still not
+        designed to work well under process supervision. Many virtual machine management systems still work with
+        incredibly fragile
+        <Term type="package">rc</Term>-style scripts and pidfiles that instantly become stale and dangerous on virtual
+        machine crashes. The
+        <Term type="package">Waxmill</Term>
+        package provides a single command to start a virtual machine in the foreground such that the virtual machine can
+        be supervised using systems such as
+        <LinkExternal target="https://cr.yp.to/daemontools.html">daemontools</LinkExternal>, or
+        <LinkExternal target="http://smarden.org/runit/">runit</LinkExternal>. These tools can guarantee that a virtual
+        machine always starts from a clean slate, and will always be reliably restarted should it crash.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
+</Section>

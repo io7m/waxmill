@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FindBugsFilter xmlns="https://github.com/spotbugs/filter/3.0.0"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+  <Match>
+    <!-- Generated types. -->
+    <Class name="~com\.io7m\.waxmill\..+\$InitShim"/>
+  </Match>
+
+  <Match>
+    <!-- Generated types. -->
+    <Class name="~com\.io7m\.waxmill\..+\$Builder"/>
+  </Match>
+
+  <Match>
+    <And>
+      <Or>
+        <Class name="~com\.io7m\.waxmill\.xml\.vm\.v1\..+"/>
+        <Class name="~com\.io7m\.waxmill\.xml\.config\.v1\..+"/>
+      </Or>
+      <Or>
+        <Bug pattern="IMC_IMMATURE_CLASS_NO_TOSTRING"/>
+        <Bug pattern="ITC_INHERITANCE_TYPE_CHECKING"/>
+      </Or>
+    </And>
+  </Match>
+
+  <Match>
+    <Or>
+      <!-- Generated types. -->
+      <Class name="com.io7m.waxmill.client.api.WXMApplicationVersion"/>
+      <Class name="com.io7m.waxmill.client.api.WXMClientConfiguration"/>
+      <Class name="com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve"/>
+      <Class name="com.io7m.waxmill.machines.WXMBootConfigurationName"/>
+      <Class name="com.io7m.waxmill.machines.WXMBootConfigurationUEFI"/>
+      <Class name="com.io7m.waxmill.machines.WXMCPUTopology"/>
+      <Class name="com.io7m.waxmill.machines.WXMCommandExecution"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIDisk"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceFramebuffer"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceHostBridge"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceLPC"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceSlot"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceSlotType"/>
+      <Class name="com.io7m.waxmill.machines.WXMDeviceVirtioNetwork"/>
+      <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootCommands"/>
+      <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve"/>
+      <Class name="com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI"/>
+      <Class name="com.io7m.waxmill.machines.WXMFlags"/>
+      <Class name="com.io7m.waxmill.machines.WXMGRUBKernelLinux"/>
+      <Class name="com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD"/>
+      <Class name="com.io7m.waxmill.machines.WXMMACAddress"/>
+      <Class name="com.io7m.waxmill.machines.WXMMachineName"/>
+      <Class name="com.io7m.waxmill.machines.WXMMemory"/>
+      <Class name="com.io7m.waxmill.machines.WXMPinCPU"/>
+      <Class name="com.io7m.waxmill.machines.WXMSectorSizes"/>
+      <Class name="com.io7m.waxmill.machines.WXMStorageBackendFile"/>
+      <Class name="com.io7m.waxmill.machines.WXMStorageBackendZFSVolume"/>
+      <Class name="com.io7m.waxmill.machines.WXMTAPDeviceName"/>
+      <Class name="com.io7m.waxmill.machines.WXMTTYBackendFile"/>
+      <Class name="com.io7m.waxmill.machines.WXMTTYBackendStdio"/>
+      <Class name="com.io7m.waxmill.machines.WXMTap"/>
+      <Class name="com.io7m.waxmill.machines.WXMVMNet"/>
+      <Class name="com.io7m.waxmill.machines.WXMVMNetDeviceName"/>
+      <Class name="com.io7m.waxmill.machines.WXMVirtualMachine"/>
+      <Class name="com.io7m.waxmill.machines.WXMVirtualMachineSet"/>
+      <Class name="com.io7m.waxmill.parser.api.WXMParseError"/>
+      <Class name="com.io7m.waxmill.process.api.WXMProcessDescription"/>
+      <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Comment"/>
+      <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Flag"/>
+      <Class name="com.io7m.waxmill.xml.vm.v1.WXM1OpenOptions"/>
+      <Class name="com.io7m.waxmill.xml.vm.v1.WXM1PinCPUs"/>
+    </Or>
+  </Match>
+
+  <Match>
+    <Or>
+      <Bug pattern="OPM_OVERLY_PERMISSIVE_METHOD"/>
+      <Bug pattern="OCP_OVERLY_CONCRETE_PARAMETER"/>
+    </Or>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Anyone serializing exceptions is asking for trouble anyway. -->
+      <Class name="com.io7m.waxmill.parser.api.WXMParseException"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- jxe removes the XXE -->
+      <Or>
+        <Class name="com.io7m.waxmill.xml.config.v1.WXMClientConfigurationParser"/>
+        <Class name="com.io7m.waxmill.xml.vm.v1.WXMBootConfigurationParser"/>
+        <Class name="com.io7m.waxmill.xml.vm.v1.WXMVirtualMachineParser"/>
+      </Or>
+      <Or>
+        <Bug pattern="XXE_XMLREADER"/>
+        <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CHECKED"/>
+      </Or>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <Class name="com.io7m.waxmill.cmdline.Main"/>
+      <Or>
+        <Bug pattern="UVA_USE_VAR_ARGS"/>
+      </Or>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- The purpose of the root command is to configure logging. -->
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMAbstractCommandWithConfiguration"/>
+      <Or>
+        <Bug pattern="LO_SUSPECT_LOG_CLASS"/>
+        <Bug pattern="LO_SUSPECT_LOG_PARAMETER"/>
+      </Or>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <Class name="com.io7m.waxmill.client.api.WXMApplicationVersions"/>
+      <Method name="ofProperties"/>
+      <Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <Class name="com.io7m.waxmill.parser.api.WXMParserProviderType"/>
+      <Method name="parse"/>
+      <Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <Class name="com.io7m.waxmill.machines.WXMStorageBackends"/>
+      <Method name="zfsVolumePath"/>
+      <Bug pattern="WEM_WEAK_EXCEPTION_MESSAGING"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Deriving a path from user input is the point of the method. -->
+      <Class name="com.io7m.waxmill.machines.WXMTTYBackends"/>
+      <Method name="nmdmPath"/>
+      <Bug pattern="PATH_TRAVERSAL_IN"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Deriving a path from user input is the point of the method. -->
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMStorageBackendConverter"/>
+      <Method name="convert"/>
+      <Bug pattern="PATH_TRAVERSAL_IN"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Deriving a path from user input is the point of these parsers. -->
+      <Or>
+        <Class name="com.io7m.waxmill.xml.vm.v1.WXM1GRUBBhyveKernelLinuxParser"/>
+        <Class name="com.io7m.waxmill.xml.vm.v1.WXM1GRUBBhyveKernelOpenBSDParser"/>
+      </Or>
+      <Bug pattern="PATH_TRAVERSAL_IN"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Indexing is preceded by a check. -->
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMTTYBackendConverter"/>
+      <Method name="convertFile"/>
+      <Bug pattern="CLI_CONSTANT_LIST_INDEX"/>
+    </And>
+  </Match>
+
+  <Match>
+    <Or>
+      <!-- Issues we either don't care about, or don't believe are issues. -->
+      <Bug pattern="BED_HIERARCHICAL_EXCEPTION_DECLARATION"/>
+      <Bug pattern="CRLF_INJECTION_LOGS"/>
+      <Bug pattern="DRE_DECLARED_RUNTIME_EXCEPTION"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+    </Or>
+  </Match>
+
+  <Match>
+    <!-- If an IOException actually happens, it's a bug and should not be caught. -->
+    <Class name="com.io7m.waxmill.strings.api.WXMAbstractStrings"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    <Method name="ofXML"/>
+  </Match>
+
+  <Match>
+    <!-- If an IOException actually happens, it's a bug and should not be caught. -->
+    <Class name="com.io7m.waxmill.strings.api.WXMAbstractStrings"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    <Method name="ofXMLResource"/>
+  </Match>
+
+  <Match>
+    <!-- If an IOException actually happens, it's a bug and should not be caught. -->
+    <Class name="com.io7m.waxmill.boot.internal.WXMBootMessages"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    <Method name="create"/>
+  </Match>
+
+  <Match>
+    <!-- If an IOException actually happens, it's a bug and should not be caught. -->
+    <Class name="com.io7m.waxmill.process.posix.internal.WXMProcessMessages"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    <Method name="create"/>
+  </Match>
+
+  <Match>
+    <!-- If an IOException actually happens, it's a bug and should not be caught. -->
+    <Class name="com.io7m.waxmill.machines.WXMMachineMessages"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    <Method name="create"/>
+  </Match>
+
+  <Match>
+    <!-- I'm not convinced this is a real issue. -->
+    <Class name="com.io7m.waxmill.serializer.api.WXMSerializerProviderType"/>
+    <Method name="serialize"/>
+    <Bug pattern="AFBR_ABNORMAL_FINALLY_BLOCK_RETURN"/>
+  </Match>
+
+  <Match>
+    <!-- This class is entirely for the purposes of command injection! -->
+    <Class name="com.io7m.waxmill.process.posix.WXMProcessesPOSIX"/>
+    <Method name="processStart"/>
+    <Bug pattern="COMMAND_INJECTION"/>
+  </Match>
+
+  <Match>
+    <Class name="com.io7m.waxmill.cmdline.internal.WXMEnvironment"/>
+    <Method name="configurationFile"/>
+    <Bug pattern="AI_ANNOTATION_ISSUES_NEEDS_NULLABLE"/>
+  </Match>
+
+  <Match>
+    <Class name="com.io7m.waxmill.cmdline.internal.WXMMessages"/>
+    <Method name="create"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+  </Match>
+
+  <Match>
+    <!-- Necessary until we get sealed types. -->
+    <Class name="com.io7m.waxmill.xml.vm.v1.WXM1StorageBackends"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+  </Match>
+
+  <Match>
+    <Class name="com.io7m.waxmill.cmdline.internal.WXMDeviceSlotConverter"/>
+    <Method name="convert"/>
+    <Or>
+      <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+      <!-- False positive -->
+      <Bug pattern="LEST_LOST_EXCEPTION_STACK_TRACE"/>
+    </Or>
+  </Match>
+
+  <Match>
+    <!-- False positive: The methods _are_ called by checkPreconditions(). -->
+    <Class name="com.io7m.waxmill.machines.WXMVirtualMachineType"/>
+    <Or>
+      <Method name="checkAtMostOneHostBridge"/>
+      <Method name="checkAtMostOneLPC"/>
+      <Method name="checkBootConfigurationRequiredDevices"/>
+      <Method name="checkBootConfigurationUEFI"/>
+      <Method name="checkBootConfigurationsReferences"/>
+      <Method name="checkRequiresWiredMemory"/>
+    </Or>
+    <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+  </Match>
+
+  <Match>
+    <!-- False positive: throwing UnreachableCodeException! -->
+    <Class name="com.io7m.waxmill.cmdline.internal.WXMCommandVMConsole"/>
+    <Method name="executeActualWithConfiguration"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_HAS_CHECKED"/>
+  </Match>
+
+  <Match>
+    <!-- False positive: throwing UnreachableCodeException! -->
+    <Class name="com.io7m.waxmill.boot.WXMBootConfigurationExecutor"/>
+    <Method name="execute"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_HAS_CHECKED"/>
+  </Match>
+
+  <Match>
+    <!-- Appears to be caused by calls to Map.entry() to build a map. -->
+    <Class name="com.io7m.waxmill.xml.vm.v1.WXM1DevicesParser"/>
+    <Method name="onChildHandlersRequested"/>
+    <Bug pattern="CE_CLASS_ENVY"/>
+  </Match>
+
+  <Match>
+    <!-- InetSocket* wants to be a sealed interface. -->
+    <Class name="com.io7m.waxmill.boot.WXMBootConfigurationEvaluator"/>
+    <Method name="formatVNCSocketAddress"/>
+    <Bug pattern="ITC_INHERITANCE_TYPE_CHECKING"/>
+  </Match>
+
+  <Match>
+    <!-- False positive. -->
+    <Class name="com.io7m.waxmill.xml.vm.v1.WXM1FramebufferDeviceParser"/>
+    <Method name="onElementStart"/>
+    <Bug pattern="REC_CATCH_EXCEPTION"/>
+  </Match>
+
+</FindBugsFilter>

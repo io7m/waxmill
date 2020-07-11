@@ -1,0 +1,13 @@
+$ waxmill vm-console \
+  --machine de17174a-1b3c-4ebc-80af-cb239aa18cbd \
+  --dry-run true
+/usr/bin/cu -l /dev/nmdm_de17174a-1b3c-4ebc-80af-cb239aa18cbd_B
+
+$ waxmill vm-console \
+  --machine de17174a-1b3c-4ebc-80af-cb239aa18cbd
+Connected
+
+
+OpenBSD/amd64 <931.461.60231.14.vt920> (tty00)
+
+login:
