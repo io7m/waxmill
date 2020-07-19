@@ -779,6 +779,23 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     }
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
@@ -917,6 +934,23 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     }
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
@@ -1033,6 +1067,23 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     }
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
@@ -1171,6 +1222,23 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     }
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
@@ -1287,6 +1355,23 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     }
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12 %s",

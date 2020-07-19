@@ -537,8 +537,9 @@ public final class WXMBootConfigurationEvaluator
       }
       case UEFI: {
         final var uefi = (WXMBootConfigurationUEFI) bootConfiguration;
+        commandBuilder.addArguments("-l");
         commandBuilder.addArguments(
-          String.format("-l bootrom,%s", uefi.firmware())
+          String.format("bootrom,%s", uefi.firmware())
         );
         break;
       }

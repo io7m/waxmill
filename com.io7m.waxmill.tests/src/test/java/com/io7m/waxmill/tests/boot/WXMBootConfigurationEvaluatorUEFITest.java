@@ -52,6 +52,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
@@ -147,6 +148,25 @@ public final class WXMBootConfigurationEvaluatorUEFITest
     assertEquals(0, configs.size());
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,lpc", lastArgs.remove(0));
+    assertEquals("-l", lastArgs.remove(0));
+    assertEquals("com1,stdio", lastArgs.remove(0));
+    assertEquals("-l", lastArgs.remove(0));
+    assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096 -s 0:1:0,lpc -l com1,stdio -l bootrom,/tmp/firmware %s",
@@ -217,6 +237,25 @@ public final class WXMBootConfigurationEvaluatorUEFITest
     assertEquals(0, configs.size());
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,lpc", lastArgs.remove(0));
+    assertEquals("-l", lastArgs.remove(0));
+    assertEquals("com1,stdio", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait", lastArgs.remove(0));
+    assertEquals("-l", lastArgs.remove(0));
+    assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
@@ -284,6 +323,25 @@ public final class WXMBootConfigurationEvaluatorUEFITest
     assertEquals(0, configs.size());
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,lpc", lastArgs.remove(0));
+    assertEquals("-l", lastArgs.remove(0));
+    assertEquals("com1,stdio", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,fbuf,tcp=127.0.0.1:5901,w=1200,h=1400,vga=off,wait", lastArgs.remove(0));
+    assertEquals("-l", lastArgs.remove(0));
+    assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=127.0.0.1:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
