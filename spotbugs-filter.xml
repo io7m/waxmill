@@ -51,6 +51,7 @@
       <Class name="com.io7m.waxmill.machines.WXMFlags"/>
       <Class name="com.io7m.waxmill.machines.WXMGRUBKernelLinux"/>
       <Class name="com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD"/>
+      <Class name="com.io7m.waxmill.machines.WXMInterfaceGroupName"/>
       <Class name="com.io7m.waxmill.machines.WXMMACAddress"/>
       <Class name="com.io7m.waxmill.machines.WXMMachineName"/>
       <Class name="com.io7m.waxmill.machines.WXMMemory"/>

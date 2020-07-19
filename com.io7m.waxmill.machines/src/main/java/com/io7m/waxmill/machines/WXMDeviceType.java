@@ -42,8 +42,6 @@ import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_PASSTHRU;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_BLOCK;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_NETWORK;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType.Kind.WXM_TAP;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType.Kind.WXM_VMNET;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_FILE;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_ZFS_VOLUME;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_FILE;
@@ -187,6 +185,27 @@ public interface WXMDeviceType
      */
 
     WXM_FRAMEBUFFER
+  }
+
+  enum WXMLPCTTYNames
+  {
+    WXM_COM1("com1"),
+    WXM_COM2("com2"),
+    WXM_BOOTROM("bootrom");
+
+    private final String deviceName;
+
+    WXMLPCTTYNames(
+      final String inDeviceName)
+    {
+      this.deviceName =
+        Objects.requireNonNull(inDeviceName, "deviceName");
+    }
+
+    public String deviceName()
+    {
+      return this.deviceName;
+    }
   }
 
   /**
@@ -491,116 +510,6 @@ public interface WXMDeviceType
     WXMNetworkDeviceBackendType backend();
   }
 
-  /**
-   * The type of network device backends.
-   */
-
-  interface WXMNetworkDeviceBackendType
-  {
-    /**
-     * @return The backend kind
-     */
-
-    Kind kind();
-
-    /**
-     * @return A descriptive comment
-     */
-
-    @Value.Default
-    default String comment()
-    {
-      return "";
-    }
-
-    /**
-     * The kind of backend.
-     */
-
-    enum Kind
-    {
-      /**
-       * The device is backed by a tap device.
-       */
-
-      WXM_TAP,
-
-      /**
-       * The device is backed by a vmnet device.
-       */
-
-      WXM_VMNET
-    }
-  }
-
-  /**
-   * A TAP device.
-   */
-
-  @ImmutablesStyleType
-  @Value.Immutable
-  interface WXMTapType extends WXMNetworkDeviceBackendType
-  {
-    @Override
-    default Kind kind()
-    {
-      return WXM_TAP;
-    }
-
-    /**
-     * @return The underlying device name
-     */
-
-    WXMTAPDeviceName name();
-
-    /**
-     * @return The underlying device MAC address
-     */
-
-    WXMMACAddress address();
-
-    @Override
-    @Value.Default
-    default String comment()
-    {
-      return "";
-    }
-  }
-
-  /**
-   * A vmnet device.
-   */
-
-  @ImmutablesStyleType
-  @Value.Immutable
-  interface WXMVMNetType extends WXMNetworkDeviceBackendType
-  {
-    @Override
-    default Kind kind()
-    {
-      return WXM_VMNET;
-    }
-
-    /**
-     * @return The underlying device name
-     */
-
-    WXMVMNetDeviceName name();
-
-    /**
-     * @return The underlying device MAC address
-     */
-
-    WXMMACAddress address();
-
-    @Override
-    @Value.Default
-    default String comment()
-    {
-      return "";
-    }
-  }
-
   interface WXMStorageBackendType
   {
     Kind kind();
@@ -887,27 +796,6 @@ public interface WXMDeviceType
     default String comment()
     {
       return "";
-    }
-  }
-
-  enum WXMLPCTTYNames
-  {
-    WXM_COM1("com1"),
-    WXM_COM2("com2"),
-    WXM_BOOTROM("bootrom");
-
-    private final String deviceName;
-
-    public String deviceName()
-    {
-      return this.deviceName;
-    }
-
-    WXMLPCTTYNames(
-      final String inDeviceName)
-    {
-      this.deviceName =
-        Objects.requireNonNull(inDeviceName, "deviceName");
     }
   }
 

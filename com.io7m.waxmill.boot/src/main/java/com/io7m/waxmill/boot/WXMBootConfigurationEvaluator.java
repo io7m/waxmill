@@ -70,7 +70,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationType;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMNetworkDeviceBackendType;
+
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;

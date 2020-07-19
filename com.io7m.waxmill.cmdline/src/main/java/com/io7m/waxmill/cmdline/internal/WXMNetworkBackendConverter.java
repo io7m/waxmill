@@ -23,7 +23,7 @@ import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVMNetDeviceName;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType;
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 
 public final class WXMNetworkBackendConverter
   implements IStringConverter<WXMNetworkDeviceBackendType>

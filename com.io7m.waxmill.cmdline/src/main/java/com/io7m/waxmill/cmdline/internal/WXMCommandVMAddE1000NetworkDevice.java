@@ -34,7 +34,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType;
+
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 
 @Parameters(commandDescription = "Add an e1000 network device to a virtual machine.")
 public final class WXMCommandVMAddE1000NetworkDevice

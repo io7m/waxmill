@@ -59,7 +59,7 @@ public final class WXMVirtualMachineSets
   /**
    * Create a set consisting of the union of all of the given sets.
    *
-   * @param messages The machine messages
+   * @param messages    The machine messages
    * @param machineSets The sets of machines
    *
    * @return A set consisting of all of the machines in all sets

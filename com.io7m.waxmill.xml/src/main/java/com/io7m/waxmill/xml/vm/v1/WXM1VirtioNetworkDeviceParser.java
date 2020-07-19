@@ -26,7 +26,7 @@ import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 
 import java.util.Map;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMNetworkDeviceBackendType;
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
 public final class WXM1VirtioNetworkDeviceParser

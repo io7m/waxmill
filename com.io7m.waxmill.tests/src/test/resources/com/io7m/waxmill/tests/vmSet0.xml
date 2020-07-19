@@ -41,6 +41,7 @@
         <TAPDevice name="tap23"
                    address="d7:94:b5:60:0d:ac">
           <Comment>A TAP device.</Comment>
+          <InterfaceGroup name="highSec"/>
         </TAPDevice>
       </VirtioNetworkDevice>
 
@@ -52,6 +53,8 @@
         <VMNetDevice name="vmnet23"
                      address="d7:92:b5:60:0d:ac">
           <Comment>A VMNet device.</Comment>
+          <InterfaceGroup name="lowSec"/>
+          <InterfaceGroup name="medSec"/>
         </VMNetDevice>
       </VirtioNetworkDevice>
 

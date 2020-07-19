@@ -233,6 +233,12 @@ public interface WXMBootConfigurationType
     Kind kind();
 
     /**
+     * @return The slots required to have assigned storage
+     */
+
+    Set<WXMDeviceSlot> requiredDevices();
+
+    /**
      * The kind of kernels.
      */
 
@@ -250,12 +256,6 @@ public interface WXMBootConfigurationType
 
       KERNEL_LINUX
     }
-
-    /**
-     * @return The slots required to have assigned storage
-     */
-
-    Set<WXMDeviceSlot> requiredDevices();
   }
 
   /**
