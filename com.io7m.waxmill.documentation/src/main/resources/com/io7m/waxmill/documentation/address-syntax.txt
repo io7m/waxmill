@@ -1,9 +1,8 @@
-<ipv4> | <ipv6> | <name>
-
-Where:
-  <name> = Any valid domain/host name
-  <ipv4> = Any valid IPv4 address
-  <ipv6> = Any valid IPv6 address
+ipv4Part = ? [0 .. 255]{1,3} ? ;
+ipv4     = ipv4Part , ".", ipv4Part , "." , ipv4Part , "." , ipv4Part , ;
+ipv6     = ? Any https://tools.ietf.org/html/rfc4291 IPv6 address ? ;
+name     = ? Any host name ? ;
+address  = ipv4 | ipv6 | name ;
 
 Examples:
   127.0.0.1

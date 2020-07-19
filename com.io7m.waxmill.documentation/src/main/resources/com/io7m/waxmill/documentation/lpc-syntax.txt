@@ -1,9 +1,9 @@
-  "stdio" ";" <port>
-| "file" ";" <port> ";" <path>
-| "nmdm" ";" <port>
-
-Where:
-  <port> = "com1" | "com2" | "bootrom"
+path         = ? Any unix-like path ? ;
+port         = "com1" | "com2" | "bootrom" ;
+stdioBackend = "stdio" , ";" , port ;
+fileBackend  = "file" , ";" , port , ";" , path ;
+nmdmBackend  = "nmdm" , ";" , port ;
+ttyBackend   = stdioBackend | fileBackend | nmdmBackend ;
 
 Examples:
   stdio;com1
