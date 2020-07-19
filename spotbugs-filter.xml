@@ -189,6 +189,27 @@
   </Match>
 
   <Match>
+    <And>
+      <!-- Indexing is preceded by a check. -->
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMNetworkBackendConverter"/>
+      <Or>
+        <Method name="convertTAP"/>
+        <Method name="convertVMNet"/>
+      </Or>
+      <Bug pattern="CLI_CONSTANT_LIST_INDEX"/>
+    </And>
+  </Match>
+
+  <Match>
+    <And>
+      <!-- Indexing is preceded by a check. -->
+      <Class name="com.io7m.waxmill.cmdline.internal.WXMNetworkBackendConverter"/>
+      <Method name="groupsOf"/>
+      <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
+    </And>
+  </Match>
+
+  <Match>
     <Or>
       <!-- Issues we either don't care about, or don't believe are issues. -->
       <Bug pattern="BED_HIERARCHICAL_EXCEPTION_DECLARATION"/>

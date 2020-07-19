@@ -60,6 +60,13 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:enumeration>
+      <xsd:enumeration value="IfconfigExecutable">
+        <xsd:annotation>
+          <xsd:documentation>
+            The path to the ifconfig executable. On FreeBSD, this is /sbin/ifconfig by default.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
       <xsd:enumeration value="CuExecutable">
         <xsd:annotation>
           <xsd:documentation>

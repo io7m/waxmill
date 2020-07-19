@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public final class WXMNetworkBackendConverterTest
 {
   @Test
-  public void tapIsOK()
+  public void tapIsOK0()
   {
     final var result =
       (WXMTap) new WXMNetworkBackendConverter()
@@ -38,7 +38,21 @@ public final class WXMNetworkBackendConverterTest
   }
 
   @Test
-  public void vmnetIsOK()
+  public void tapIsOK1()
+  {
+    final var result =
+      (WXMTap) new WXMNetworkBackendConverter()
+        .convert("tap;tap23;f8:e1:e1:79:c9:7e;x,y,z");
+
+    assertEquals("tap23", result.name().value());
+    assertEquals("f8:e1:e1:79:c9:7e", result.address().value());
+    assertEquals("x", result.groups().get(0).value());
+    assertEquals("y", result.groups().get(1).value());
+    assertEquals("z", result.groups().get(2).value());
+  }
+
+  @Test
+  public void vmnetIsOK0()
   {
     final var result =
       (WXMVMNet) new WXMNetworkBackendConverter()
@@ -46,6 +60,20 @@ public final class WXMNetworkBackendConverterTest
 
     assertEquals("vmnet23", result.name().value());
     assertEquals("f8:e1:e1:79:c9:7e", result.address().value());
+  }
+
+  @Test
+  public void vmnetIsOK1()
+  {
+    final var result =
+      (WXMVMNet) new WXMNetworkBackendConverter()
+        .convert("vmnet;vmnet23;f8:e1:e1:79:c9:7e;x,y,z");
+
+    assertEquals("vmnet23", result.name().value());
+    assertEquals("f8:e1:e1:79:c9:7e", result.address().value());
+    assertEquals("x", result.groups().get(0).value());
+    assertEquals("y", result.groups().get(1).value());
+    assertEquals("z", result.groups().get(2).value());
   }
 
   @Test
@@ -85,6 +113,24 @@ public final class WXMNetworkBackendConverterTest
   }
 
   @Test
+  public void syntaxErrorTap2()
+  {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new WXMNetworkBackendConverter()
+        .convert("tap;tap23;f8:e1:e1:79:c9:7e;w0");
+    });
+  }
+
+  @Test
+  public void syntaxErrorTap3()
+  {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new WXMNetworkBackendConverter()
+        .convert("tap;tap23;f8:e1:e1:79:c9:7e;w;x");
+    });
+  }
+
+  @Test
   public void syntaxErrorVMNet0()
   {
     assertThrows(IllegalArgumentException.class, () -> {
@@ -99,6 +145,24 @@ public final class WXMNetworkBackendConverterTest
     assertThrows(IllegalArgumentException.class, () -> {
       new WXMNetworkBackendConverter()
         .convert("vmnet;vmnet23");
+    });
+  }
+
+  @Test
+  public void syntaxErrorVMNet2()
+  {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new WXMNetworkBackendConverter()
+        .convert("vmnet;vmnet23;f8:e1:e1:79:c9:7e;w0");
+    });
+  }
+
+  @Test
+  public void syntaxErrorVMNet3()
+  {
+    assertThrows(IllegalArgumentException.class, () -> {
+      new WXMNetworkBackendConverter()
+        .convert("vmnet;vmnet23;f8:e1:e1:79:c9:7e;w;x");
     });
   }
 }

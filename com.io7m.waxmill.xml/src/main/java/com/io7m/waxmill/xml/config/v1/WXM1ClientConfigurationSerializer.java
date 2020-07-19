@@ -109,6 +109,10 @@ public final class WXM1ClientConfigurationSerializer
       this.clientConfiguration.zfsExecutable()
     );
     this.serializePath(
+      "IfconfigExecutable",
+      this.clientConfiguration.ifconfigExecutable()
+    );
+    this.serializePath(
       "CuExecutable",
       this.clientConfiguration.cuExecutable()
     );

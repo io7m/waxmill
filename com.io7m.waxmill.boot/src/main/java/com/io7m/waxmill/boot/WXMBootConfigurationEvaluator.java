@@ -47,6 +47,7 @@ import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import com.io7m.waxmill.machines.WXMOpenOption;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackends;
@@ -70,8 +71,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationType;
-
-import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
@@ -369,9 +368,117 @@ public final class WXMBootConfigurationEvaluator
       this.generateBhyveCommand(bootConfiguration, attachments);
 
     return WXMEvaluatedBootCommands.builder()
+      .addAllConfigurationCommands(this.networkDeviceCommands())
       .addConfigurationCommands(grubBhyveCommand)
       .setLastExecution(bhyve)
       .build();
+  }
+
+  private Iterable<WXMCommandExecution> networkDeviceCommands()
+  {
+    final var commands = new ArrayList<WXMCommandExecution>();
+
+    for (final var device : this.machine.devices()) {
+      switch (device.kind()) {
+        case WXM_HOSTBRIDGE:
+        case WXM_VIRTIO_BLOCK:
+        case WXM_AHCI_HD:
+        case WXM_AHCI_CD:
+        case WXM_LPC:
+        case WXM_PASSTHRU:
+        case WXM_FRAMEBUFFER:
+          break;
+
+        case WXM_E1000: {
+          final var e1000 = (WXMDeviceE1000) device;
+          this.networkDeviceBackendCommands(commands, e1000.backend());
+          break;
+        }
+        case WXM_VIRTIO_NETWORK: {
+          final var vio = (WXMDeviceVirtioNetwork) device;
+          this.networkDeviceBackendCommands(commands, vio.backend());
+          break;
+        }
+      }
+    }
+    return commands;
+  }
+
+  private void networkDeviceBackendCommands(
+    final ArrayList<WXMCommandExecution> commands,
+    final WXMNetworkDeviceBackendType backend)
+  {
+    final var ifconfig = this.clientConfiguration.ifconfigExecutable();
+
+    switch (backend.kind()) {
+      case WXM_TAP: {
+        final var tap = (WXMTap) backend;
+        final var tapName = tap.name().value();
+        commands.add(
+          WXMCommandExecution.builder()
+            .setExecutable(ifconfig)
+            .addArguments(tapName)
+            .addArguments("create")
+            .setIgnoreFailure(true)
+            .build()
+        );
+
+        commands.add(
+          WXMCommandExecution.builder()
+            .setExecutable(ifconfig)
+            .addArguments(tapName)
+            .addArguments("ether")
+            .addArguments(tap.address().value())
+            .build()
+        );
+
+        for (final var group : tap.groups()) {
+          commands.add(
+            WXMCommandExecution.builder()
+              .setExecutable(ifconfig)
+              .addArguments(tapName)
+              .addArguments("group")
+              .addArguments(group.value())
+              .build()
+          );
+        }
+        break;
+      }
+      case WXM_VMNET: {
+        final var vmNet = (WXMVMNet) backend;
+        final String vmNetName = vmNet.name().value();
+
+        commands.add(
+          WXMCommandExecution.builder()
+            .setExecutable(ifconfig)
+            .addArguments(vmNetName)
+            .addArguments("create")
+            .setIgnoreFailure(true)
+            .build()
+        );
+
+        commands.add(
+          WXMCommandExecution.builder()
+            .setExecutable(ifconfig)
+            .addArguments(vmNetName)
+            .addArguments("ether")
+            .addArguments(vmNet.address().value())
+            .build()
+        );
+
+        for (final var group : vmNet.groups()) {
+          commands.add(
+            WXMCommandExecution.builder()
+              .setExecutable(ifconfig)
+              .addArguments(vmNetName)
+              .addArguments("group")
+              .addArguments(group.value())
+              .build()
+          );
+        }
+        break;
+      }
+    }
   }
 
   private WXMCommandExecution generateGRUBBhyveCommand()
@@ -750,7 +857,7 @@ public final class WXMBootConfigurationEvaluator
   }
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationOpenBSD(
-    final WXMBootConfigurationType bootConfiguration,
+    final WXMBootConfigurationType config,
     final WXMDeviceMap deviceMap,
     final WXMGRUBKernelOpenBSD openBSD)
   {
@@ -758,11 +865,11 @@ public final class WXMBootConfigurationEvaluator
 
     final var configLines =
       generateGRUBConfigLinesOpenBSD(deviceMap, openBSD);
+    final var commands =
+      this.generateGRUBBhyveCommands(config, deviceMap.attachments());
 
     return WXMEvaluatedBootConfigurationGRUBBhyve.builder()
-      .setCommands(this.generateGRUBBhyveCommands(
-        bootConfiguration,
-        deviceMap.attachments()))
+      .setCommands(commands)
       .setRequiredPaths(deviceMap.paths())
       .setDeviceMap(deviceMap.serialize())
       .setDeviceMapFile(this.grubDeviceMapPath())
@@ -882,24 +989,26 @@ public final class WXMBootConfigurationEvaluator
       this.generateBhyveCommand(bootConfiguration, attachments);
 
     return WXMEvaluatedBootCommands.builder()
+      .addAllConfigurationCommands(this.networkDeviceCommands())
       .setLastExecution(bhyve)
       .build();
   }
 
   private WXMEvaluatedBootConfigurationUEFI evaluateUEFIConfiguration(
-    final WXMBootConfigurationUEFI configuration,
+    final WXMBootConfigurationUEFI config,
     final WXMDeviceMap deviceMap)
   {
     final var requiredPaths = new ArrayList<Path>();
-    requiredPaths.add(configuration.firmware());
+    requiredPaths.add(config.firmware());
     requiredPaths.addAll(deviceMap.paths());
+
+    final var commands =
+      this.generateUEFICommands(config, config.diskAttachmentMap());
 
     return WXMEvaluatedBootConfigurationUEFI.builder()
       .setRequiredPaths(requiredPaths)
       .setRequiredNMDMs(deviceMap.nmdmPaths())
-      .setCommands(this.generateUEFICommands(
-        configuration,
-        configuration.diskAttachmentMap()))
+      .setCommands(commands)
       .build();
   }
 

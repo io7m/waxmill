@@ -104,6 +104,10 @@ public final class WXM1ClientConfigurationParser
           this.builder.setZfsExecutable(path.path());
           break;
         }
+        case "IfconfigExecutable": {
+          this.builder.setIfconfigExecutable(path.path());
+          break;
+        }
         case "CuExecutable": {
           this.builder.setCuExecutable(path.path());
           break;

@@ -17,6 +17,7 @@
 package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.IStringConverter;
+import com.io7m.waxmill.machines.WXMInterfaceGroupName;
 import com.io7m.waxmill.machines.WXMMACAddress;
 import com.io7m.waxmill.machines.WXMTAPDeviceName;
 import com.io7m.waxmill.machines.WXMTap;
@@ -24,6 +25,9 @@ import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVMNetDeviceName;
 
 import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class WXMNetworkBackendConverter
   implements IStringConverter<WXMNetworkDeviceBackendType>
@@ -49,21 +53,88 @@ public final class WXMNetworkBackendConverter
     }
 
     switch (segments[0]) {
-      case "tap": {
-        return WXMTap.builder()
-          .setName(WXMTAPDeviceName.of(segments[1]))
-          .setAddress(WXMMACAddress.of(segments[2]))
-          .build();
-      }
-      case "vmnet": {
+      case "tap":
+        return this.convertTAP(value, segments);
+      case "vmnet":
+        return this.convertVMNet(value, segments);
+      default:
+        throw this.syntaxError(value);
+    }
+  }
+
+  private WXMNetworkDeviceBackendType convertVMNet(
+    final String value,
+    final String[] segments)
+  {
+    switch (segments.length) {
+      case 3: {
         return WXMVMNet.builder()
           .setName(WXMVMNetDeviceName.of(segments[1]))
           .setAddress(WXMMACAddress.of(segments[2]))
           .build();
       }
-      default:
+      case 4: {
+        return WXMVMNet.builder()
+          .setName(WXMVMNetDeviceName.of(segments[1]))
+          .setAddress(WXMMACAddress.of(segments[2]))
+          .addAllGroups(this.groupsOf(segments[3]))
+          .build();
+      }
+      default: {
         throw this.syntaxError(value);
+      }
     }
+  }
+
+  private Iterable<WXMInterfaceGroupName> groupsOf(
+    final String text)
+  {
+    try {
+      return List.of(text.split(","))
+        .stream()
+        .map(WXMInterfaceGroupName::of)
+        .collect(Collectors.toList());
+    } catch (final Exception e) {
+      throw this.syntaxErrorWith(e, text);
+    }
+  }
+
+  private WXMNetworkDeviceBackendType convertTAP(
+    final String value,
+    final String[] segments)
+  {
+    switch (segments.length) {
+      case 3: {
+        return WXMTap.builder()
+          .setName(WXMTAPDeviceName.of(segments[1]))
+          .setAddress(WXMMACAddress.of(segments[2]))
+          .build();
+      }
+      case 4: {
+        return WXMTap.builder()
+          .setName(WXMTAPDeviceName.of(segments[1]))
+          .setAddress(WXMMACAddress.of(segments[2]))
+          .addAllGroups(this.groupsOf(segments[3]))
+          .build();
+      }
+      default: {
+        throw this.syntaxError(value);
+      }
+    }
+  }
+
+  private IllegalArgumentException syntaxErrorWith(
+    final Exception exception,
+    final String value)
+  {
+    return new IllegalArgumentException(
+      this.messages.format(
+        "errorInvalidVirtioNetworkBackend",
+        this.messages.format("networkBackendSpec"),
+        value
+      ),
+      exception
+    );
   }
 
   private IllegalArgumentException syntaxError(

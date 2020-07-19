@@ -39,18 +39,26 @@ EBNF syntax for Virtio network backends:
 
   digit           = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
   hexDigit        = "a" | "b" | "c" | "d" | "e" | "f" ;
+  lowerAlpha      = ? [a-z] ? ;
+  upperAlpha      = ? [A-Z] ? ;
+  groupCharacter  = lowerAlpha | upperAlpha | "_" ;
+  groupName       = '{' groupCharacter '}' ;
+  groupList       = groupName , '{' "," , groupName '}' ;
+
   macPart         = hexDigit , hexDigit ;
   macAddress      = macPart , ":" , macPart , ":" , macPart , ":" , macPart , ":" , macPart , ":" , macPart ;
   tapDeviceName   = "tap" , '{' digit '}' ;
   vmnetDeviceName = "vmnet" , '{' digit '}' ;
-  tapDevice       = "tap" , ";" , tapDeviceName , ";" , macAddress ;
-  vmnetDevice     = "vmnet" , ";" , vmnetDeviceName , ";" , macAddress ;
+  tapDevice       = "tap" , ";" , tapDeviceName , ";" , macAddress , [ ";" groupList ] ;
+  vmnetDevice     = "vmnet" , ";" , vmnetDeviceName , ";" , macAddress , [ ";" groupList ] ;
 
 Examples:
   tap;tap23;d9:63:c0:d9:09:e8
   tap;tap0000000000001;d9:63:c0:d9:09:e8
+  tap;tap23;d9:63:c0:d9:09:e8;wwwUsers,mailUsers,ntpdUsers
   vmnet;vmnet23;d9:63:c0:d9:09:e8
   vmnet;vmnet00000000001;d9:63:c0:d9:09:e8
+  vmnet;vmnet23;d9:63:c0:d9:09:e8;wwwUsers,mailUsers,ntpdUsers
 ]]></entry>
 
   <entry key="deviceSlotSpec"><![CDATA[
