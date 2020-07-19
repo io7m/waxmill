@@ -17,65 +17,30 @@
 package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
-import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
-import java.nio.file.Path;
-import java.util.List;
-
 /**
- * An execution of an external command.
+ * A TAP device name, such as {@code tap23}.
  */
 
-@ImmutablesStyleType
 @Value.Immutable
-public abstract class WXMCommandExecutionType
+@ImmutablesStyleType
+public interface WXMInterfaceGroupNameType
 {
   /**
-   * @return The location of the executable
+   * @return The device name
    */
 
-  abstract Path executable();
-
-  /**
-   * @return The list of command-line arguments
-   */
-
-  abstract List<String> arguments();
-
-  /**
-   * @return If the failure of this command should be ignored
-   */
-
-  @Value.Default
-  boolean ignoreFailure()
-  {
-    return false;
-  }
+  @Value.Parameter
+  String value();
 
   /**
    * Check preconditions for the type.
    */
 
   @Value.Check
-  final void checkPreconditions()
+  default void checkPreconditions()
   {
-    Preconditions.checkPrecondition(
-      this.executable(),
-      Path::isAbsolute,
-      q -> "Executable path must be absolute"
-    );
-  }
-
-  @Override
-  public final String toString()
-  {
-    final var builder =
-      new StringBuilder(this.executable().toString());
-    if (!this.arguments().isEmpty()) {
-      builder.append(' ');
-      builder.append(String.join(" ", this.arguments()));
-    }
-    return builder.toString();
+    WXMInterfaceGroupNames.checkValid(this.value());
   }
 }

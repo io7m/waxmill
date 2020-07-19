@@ -301,7 +301,13 @@ public final class WXMBootConfigurationExecutor
         .addAllArguments(command.arguments())
         .build();
 
-    this.processes.processStartAndWait(processDescription);
+    try {
+      this.processes.processStartAndWait(processDescription);
+    } catch (final Exception e) {
+      if (!command.ignoreFailure()) {
+        throw e;
+      }
+    }
   }
 
   private String errorRequiredPathsMissing(

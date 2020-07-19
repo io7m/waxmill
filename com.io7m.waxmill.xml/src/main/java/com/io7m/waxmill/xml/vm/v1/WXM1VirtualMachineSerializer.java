@@ -409,6 +409,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
     this.writer.writeAttribute("name", backend.name().value());
     this.writer.writeAttribute("address", backend.address().value());
     WXM1Comments.serializeComment(backend.comment(), this.writer);
+    WXM1InterfaceGroups.serializeGroups(backend.groups(), this.writer);
     this.writer.writeEndElement();
   }
 
@@ -421,6 +422,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
     this.writer.writeAttribute("name", backend.name().value());
     this.writer.writeAttribute("address", backend.address().value());
     WXM1Comments.serializeComment(backend.comment(), this.writer);
+    WXM1InterfaceGroups.serializeGroups(backend.groups(), this.writer);
     this.writer.writeEndElement();
   }
 

@@ -1,10 +1,8 @@
-  "file" ";" <path>
-| "zfs-volume"
-| "zfs-volume" ";" <size>
-
-Where:
-  <path> = Any UNIX-like path
-  <size> = Any non-negative multiple of 128000 (bytes)
+path           = ? Any UNIX-like path ? ;
+size           = ? Any non-negative multiple of 128000 (bytes) ? ;
+fileBackend    = "file" , ";" , path ;
+zfsBackend     = "zfs-volume" , [ ";" , size ] ;
+storageBackend = fileBackend | zfsBackend ;
 
 Examples:
   file;/tmp/xyz

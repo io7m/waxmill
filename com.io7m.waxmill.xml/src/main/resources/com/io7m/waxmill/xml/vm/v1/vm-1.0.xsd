@@ -43,6 +43,17 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="InterfaceGroupNameType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        An interface group name.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-zA-Z_]{1,15}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="TAPDeviceNameType">
     <xsd:annotation>
       <xsd:documentation xml:lang="en">
@@ -388,6 +399,21 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="InterfaceGroup">
+    <xsd:annotation>
+      <xsd:documentation>
+        An interface group, in ifconfig(8) terms. A network device can be in any number of groups, and these groups can
+        be referred to in packet filter rules.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="name"
+                     type="wxm:InterfaceGroupNameType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="TAPDevice">
     <xsd:annotation>
       <xsd:documentation>
@@ -396,9 +422,15 @@
     </xsd:annotation>
 
     <xsd:complexType>
-      <xsd:sequence minOccurs="0"
-                    maxOccurs="1">
-        <xsd:element ref="wxm:Comment"/>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="unbounded">
+          <xsd:element ref="wxm:InterfaceGroup"/>
+        </xsd:sequence>
       </xsd:sequence>
 
       <xsd:attribute name="name"
@@ -425,9 +457,15 @@
 
   <xsd:element name="VMNetDevice">
     <xsd:complexType>
-      <xsd:sequence minOccurs="0"
-                    maxOccurs="1">
-        <xsd:element ref="wxm:Comment"/>
+      <xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="1">
+          <xsd:element ref="wxm:Comment"/>
+        </xsd:sequence>
+        <xsd:sequence minOccurs="0"
+                      maxOccurs="unbounded">
+          <xsd:element ref="wxm:InterfaceGroup"/>
+        </xsd:sequence>
       </xsd:sequence>
 
       <xsd:attribute name="name"

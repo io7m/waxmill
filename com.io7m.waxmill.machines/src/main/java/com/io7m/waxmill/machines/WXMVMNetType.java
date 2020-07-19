@@ -17,65 +17,45 @@
 package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
-import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
-import java.nio.file.Path;
 import java.util.List;
 
+import static com.io7m.waxmill.machines.WXMNetworkDeviceBackendType.Kind.WXM_VMNET;
+
 /**
- * An execution of an external command.
+ * A vmnet device.
  */
 
 @ImmutablesStyleType
 @Value.Immutable
-public abstract class WXMCommandExecutionType
+public interface WXMVMNetType extends WXMNetworkDeviceBackendType
 {
-  /**
-   * @return The location of the executable
-   */
-
-  abstract Path executable();
-
-  /**
-   * @return The list of command-line arguments
-   */
-
-  abstract List<String> arguments();
-
-  /**
-   * @return If the failure of this command should be ignored
-   */
-
-  @Value.Default
-  boolean ignoreFailure()
+  @Override
+  default Kind kind()
   {
-    return false;
+    return WXM_VMNET;
   }
 
   /**
-   * Check preconditions for the type.
+   * @return The underlying device name
    */
 
-  @Value.Check
-  final void checkPreconditions()
-  {
-    Preconditions.checkPrecondition(
-      this.executable(),
-      Path::isAbsolute,
-      q -> "Executable path must be absolute"
-    );
-  }
+  WXMVMNetDeviceName name();
+
+  /**
+   * @return The underlying device MAC address
+   */
+
+  WXMMACAddress address();
 
   @Override
-  public final String toString()
+  List<WXMInterfaceGroupName> groups();
+
+  @Override
+  @Value.Default
+  default String comment()
   {
-    final var builder =
-      new StringBuilder(this.executable().toString());
-    if (!this.arguments().isEmpty()) {
-      builder.append(' ');
-      builder.append(String.join(" ", this.arguments()));
-    }
-    return builder.toString();
+    return "";
   }
 }

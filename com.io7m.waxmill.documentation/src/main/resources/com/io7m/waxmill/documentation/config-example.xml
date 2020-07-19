@@ -16,5 +16,7 @@
           value="/etc/waxmill/vm"/>
     <Path type="VirtualMachineRuntimeDirectory"
           value="/storage/vm"/>
+    <Path type="IfconfigExecutable"
+          value="/sbin/ifconfig"/>
   </Paths>
 </Configuration>

@@ -34,7 +34,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType;
+
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 
 @Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
 public final class WXMCommandVMAddVirtioNetworkDevice
