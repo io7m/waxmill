@@ -16,6 +16,9 @@
 
 package com.io7m.waxmill.machines;
 
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -55,5 +58,37 @@ public final class WXMVirtualMachines
       }
     }
     return Set.copyOf(referencing);
+  }
+
+  public static WXMVirtualMachine updateWithDevice(
+    final WXMMachineMessages messages,
+    final WXMVirtualMachine machine,
+    final WXMDeviceType device,
+    final boolean replace)
+    throws WXMExceptionDuplicate
+  {
+    Objects.requireNonNull(machine, "machine");
+    Objects.requireNonNull(device, "device");
+
+    final var deviceMap = new HashMap<>(machine.deviceMap());
+    final var existing = deviceMap.get(device.deviceSlot());
+    if (existing != null) {
+      if (!replace) {
+        throw new WXMExceptionDuplicate(
+          messages.format(
+            "errorDeviceSlotAlreadyUsed",
+            machine.id(),
+            existing.deviceSlot(),
+            existing.kind()
+          )
+        );
+      }
+    }
+
+    deviceMap.put(device.deviceSlot(), device);
+    return WXMVirtualMachine.builder()
+      .from(machine)
+      .setDevices(deviceMap.values())
+      .build();
   }
 }

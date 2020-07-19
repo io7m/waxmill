@@ -152,6 +152,67 @@ public final class WXMCommandVMAddVirtioNetworkTest
   }
 
   @Test
+  public void addVirtioNetworkAlreadyUsedReplace()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0",
+        "--replace",
+        "true"
+      }
+    );
+  }
+
+  @Test
   public void addVirtioNetworkOKTap0()
     throws Exception
   {

@@ -19,12 +19,11 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.IStringConverter;
 import com.io7m.waxmill.machines.WXMInterfaceGroupName;
 import com.io7m.waxmill.machines.WXMMACAddress;
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import com.io7m.waxmill.machines.WXMTAPDeviceName;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVMNetDeviceName;
-
-import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 
 import java.util.List;
 import java.util.stream.Collectors;

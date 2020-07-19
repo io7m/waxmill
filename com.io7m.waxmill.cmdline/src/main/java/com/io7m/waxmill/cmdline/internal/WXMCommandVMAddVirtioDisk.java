@@ -22,7 +22,6 @@ import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.client.api.WXMClientType;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
-import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMMachineMessages;
@@ -30,6 +29,7 @@ import com.io7m.waxmill.machines.WXMOpenOption;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachines;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +86,14 @@ public final class WXMCommandVMAddVirtioDisk extends
     converter = WXMStorageBackendConverter.class
   )
   private WXMStorageBackendType backend;
+
+  @Parameter(
+    names = "--replace",
+    description = "Replace an existing device, if one exists",
+    required = false,
+    arity = 1
+  )
+  private boolean replace;
 
   /**
    * Construct a command.
@@ -161,12 +169,6 @@ public final class WXMCommandVMAddVirtioDisk extends
   {
     try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
-      this.deviceSlot =
-        WXMDeviceSlots.checkDeviceSlotNotUsed(
-          WXMMachineMessages.create(),
-          machine,
-          this.deviceSlot
-        );
 
       switch (this.backend.kind()) {
         case WXM_STORAGE_FILE:
@@ -196,10 +198,12 @@ public final class WXMCommandVMAddVirtioDisk extends
           .build();
 
       final var updatedMachine =
-        WXMVirtualMachine.builder()
-          .from(machine)
-          .addDevices(disk)
-          .build();
+        WXMVirtualMachines.updateWithDevice(
+          WXMMachineMessages.create(),
+          machine,
+          disk,
+          this.replace
+        );
 
       client.vmUpdate(updatedMachine);
       this.showCreated(client, machine);

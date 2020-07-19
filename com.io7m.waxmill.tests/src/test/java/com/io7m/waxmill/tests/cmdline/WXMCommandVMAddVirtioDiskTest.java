@@ -70,7 +70,6 @@ public final class WXMCommandVMAddVirtioDiskTest
       );
   }
 
-
   @Test
   public void addVirtioDiskOK()
     throws Exception
@@ -281,5 +280,66 @@ public final class WXMCommandVMAddVirtioDiskTest
         }
       );
     });
+  }
+
+  @Test
+  public void addVirtioDiskAlreadyUsedReplace()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-disk",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "file;/tmp/xyz",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-disk",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "file;/tmp/xyz",
+        "--device-slot",
+        "0:1:0",
+        "--replace",
+        "true"
+      }
+    );
   }
 }
