@@ -1,9 +1,7 @@
-<deviceSlot> = <bus> ":" <slot> ":" <function>
-
-Where:
-  <bus>      = [0 .. 255]
-  <slot>     = [0 .. 31]
-  <function> = [0 .. 7]
+bus        = ? [0 .. 255] ? ;
+slot       = ? [0 .. 31] ? ;
+function   = ? [0 .. 7] ? ;
+deviceSlot = bus , ":" , slot , ":" , function ;
 
 Examples:
   0:0:0

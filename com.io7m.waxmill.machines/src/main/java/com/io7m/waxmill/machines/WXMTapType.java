@@ -14,53 +14,48 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.realize;
+package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
-import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.exceptions.WXMExceptions;
-import com.io7m.waxmill.machines.WXMDryRun;
 import org.immutables.value.Value;
 
 import java.util.List;
-import java.util.Objects;
+
+import static com.io7m.waxmill.machines.WXMNetworkDeviceBackendType.Kind.WXM_TAP;
 
 /**
- * The instructions that comprise a realization.
+ * A TAP device.
  */
 
-@Value.Immutable
 @ImmutablesStyleType
-public interface WXMRealizationInstructionsType
+@Value.Immutable
+public interface WXMTapType extends WXMNetworkDeviceBackendType
 {
-  /**
-   * @return The realization steps
-   */
-
-  List<WXMRealizationStepType> steps();
-
-  /**
-   * Execute the realization.
-   *
-   * @param dryRun If this is a dry run
-   *
-   * @throws WXMException On errors
-   */
-
-  default void execute(
-    final WXMDryRun dryRun)
-    throws WXMException
+  @Override
+  default Kind kind()
   {
-    Objects.requireNonNull(dryRun, "dryRun");
+    return WXM_TAP;
+  }
 
-    final var exceptions = new WXMExceptions();
-    for (final var step : this.steps()) {
-      try {
-        step.execute(dryRun);
-      } catch (final Exception e) {
-        exceptions.add(e);
-      }
-    }
-    exceptions.throwIfRequired();
+  /**
+   * @return The underlying device name
+   */
+
+  WXMTAPDeviceName name();
+
+  /**
+   * @return The underlying device MAC address
+   */
+
+  WXMMACAddress address();
+
+  @Override
+  List<WXMInterfaceGroupName> groups();
+
+  @Override
+  @Value.Default
+  default String comment()
+  {
+    return "";
   }
 }

@@ -14,53 +14,33 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.realize;
+package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
-import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.exceptions.WXMExceptions;
-import com.io7m.waxmill.machines.WXMDryRun;
 import org.immutables.value.Value;
 
-import java.util.List;
-import java.util.Objects;
-
 /**
- * The instructions that comprise a realization.
+ * A TAP device name, such as {@code tap23}.
  */
 
 @Value.Immutable
 @ImmutablesStyleType
-public interface WXMRealizationInstructionsType
+public interface WXMInterfaceGroupNameType
 {
   /**
-   * @return The realization steps
+   * @return The device name
    */
 
-  List<WXMRealizationStepType> steps();
+  @Value.Parameter
+  String value();
 
   /**
-   * Execute the realization.
-   *
-   * @param dryRun If this is a dry run
-   *
-   * @throws WXMException On errors
+   * Check preconditions for the type.
    */
 
-  default void execute(
-    final WXMDryRun dryRun)
-    throws WXMException
+  @Value.Check
+  default void checkPreconditions()
   {
-    Objects.requireNonNull(dryRun, "dryRun");
-
-    final var exceptions = new WXMExceptions();
-    for (final var step : this.steps()) {
-      try {
-        step.execute(dryRun);
-      } catch (final Exception e) {
-        exceptions.add(e);
-      }
-    }
-    exceptions.throwIfRequired();
+    WXMInterfaceGroupNames.checkValid(this.value());
   }
 }

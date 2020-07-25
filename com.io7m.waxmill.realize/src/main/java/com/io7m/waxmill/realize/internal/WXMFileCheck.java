@@ -21,6 +21,8 @@ import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDryRun;
 import com.io7m.waxmill.process.api.WXMProcessDescription;
 import com.io7m.waxmill.realize.WXMRealizationStepType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,6 +35,9 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 public final class WXMFileCheck implements WXMRealizationStepType
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(WXMFileCheck.class);
+
   private final WXMRealizeMessages messages;
   private final WXMDeviceSlot slot;
   private final UUID machineId;
@@ -74,6 +79,8 @@ public final class WXMFileCheck implements WXMRealizationStepType
     if (dryRun == DRY_RUN) {
       return;
     }
+
+    LOG.info("checking {} is regular file", this.file);
 
     if (!Files.isRegularFile(this.file, NOFOLLOW_LINKS)) {
       throw new WXMException(this.errorMissingFile(this.file));

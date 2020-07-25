@@ -152,6 +152,67 @@ public final class WXMCommandVMAddE1000NetworkTest
   }
 
   @Test
+  public void addE1000NetworkAlreadyUsedReplace()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-e1000-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-e1000-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0",
+        "--replace",
+        "true"
+      }
+    );
+  }
+
+  @Test
   public void addE1000NetworkOKTap()
     throws Exception
   {

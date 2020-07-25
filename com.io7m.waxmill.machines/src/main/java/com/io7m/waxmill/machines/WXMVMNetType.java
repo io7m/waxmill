@@ -16,42 +16,46 @@
 
 package com.io7m.waxmill.machines;
 
-import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.immutables.styles.ImmutablesStyleType;
+import org.immutables.value.Value;
 
-import java.util.Objects;
+import java.util.List;
+
+import static com.io7m.waxmill.machines.WXMNetworkDeviceBackendType.Kind.WXM_VMNET;
 
 /**
- * Functions over device slots.
+ * A vmnet device.
  */
 
-public final class WXMDeviceSlots
+@ImmutablesStyleType
+@Value.Immutable
+public interface WXMVMNetType extends WXMNetworkDeviceBackendType
 {
-  private WXMDeviceSlots()
+  @Override
+  default Kind kind()
   {
-
+    return WXM_VMNET;
   }
 
-  public static WXMDeviceSlot checkDeviceSlotNotUsed(
-    final WXMMachineMessages messages,
-    final WXMVirtualMachine machine,
-    final WXMDeviceSlot deviceSlot)
-    throws WXMExceptionDuplicate
-  {
-    Objects.requireNonNull(messages, "messages");
-    Objects.requireNonNull(machine, "machine");
-    Objects.requireNonNull(deviceSlot, "deviceSlot");
+  /**
+   * @return The underlying device name
+   */
 
-    final var device = machine.deviceMap().get(deviceSlot);
-    if (device != null) {
-      throw new WXMExceptionDuplicate(
-        messages.format(
-          "errorDeviceSlotAlreadyUsed",
-          machine.id(),
-          deviceSlot,
-          device.kind()
-        )
-      );
-    }
-    return deviceSlot;
+  WXMVMNetDeviceName name();
+
+  /**
+   * @return The underlying device MAC address
+   */
+
+  WXMMACAddress address();
+
+  @Override
+  List<WXMInterfaceGroupName> groups();
+
+  @Override
+  @Value.Default
+  default String comment()
+  {
+    return "";
   }
 }

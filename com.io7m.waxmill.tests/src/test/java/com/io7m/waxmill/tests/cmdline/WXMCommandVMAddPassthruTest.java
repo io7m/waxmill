@@ -230,4 +230,77 @@ public final class WXMCommandVMAddPassthruTest
       );
     });
   }
+
+  @Test
+  public void addPassthruAlreadyUsedReplace()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-set",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--wire-guest-memory",
+        "true"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-passthru-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--device-slot",
+        "0:1:0",
+        "--host-device-slot",
+        "1:2:3"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-passthru-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--device-slot",
+        "0:1:0",
+        "--host-device-slot",
+        "1:2:3",
+        "--replace",
+        "true"
+      }
+    );
+  }
 }

@@ -152,7 +152,68 @@ public final class WXMCommandVMAddVirtioNetworkTest
   }
 
   @Test
-  public void addVirtioNetworkOKTap()
+  public void addVirtioNetworkAlreadyUsedReplace()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34",
+        "--device-slot",
+        "0:1:0",
+        "--replace",
+        "true"
+      }
+    );
+  }
+
+  @Test
+  public void addVirtioNetworkOKTap0()
     throws Exception
   {
     final var id = UUID.randomUUID();
@@ -209,6 +270,68 @@ public final class WXMCommandVMAddVirtioNetworkTest
 
     assertEquals("tap23", tap.name().value());
     assertEquals("a3:26:9c:74:79:34", tap.address().value());
+  }
+
+  @Test
+  public void addVirtioNetworkOKTap1()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-add-virtio-network-device",
+        "--verbose",
+        "trace",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--backend",
+        "tap;tap23;a3:26:9c:74:79:34;wwwUsers,ntpdUsers",
+        "--device-slot",
+        "0:1:0"
+      }
+    );
+
+    final var machineSet =
+      parseFirst(this.vmDirectory);
+
+    final var machine =
+      machineSet.machines()
+        .values()
+        .iterator()
+        .next();
+
+    final var net =
+      (WXMDeviceVirtioNetwork) machine.devices().get(1);
+    final var tap =
+      (WXMTap) net.backend();
+
+    assertEquals("tap23", tap.name().value());
+    assertEquals("a3:26:9c:74:79:34", tap.address().value());
+    assertEquals("wwwUsers", tap.groups().get(0).value());
+    assertEquals("ntpdUsers", tap.groups().get(1).value());
   }
 
   @Test

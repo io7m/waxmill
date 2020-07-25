@@ -27,9 +27,14 @@ import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.process.api.WXMProcessesType;
 import com.io7m.waxmill.realize.internal.WXMFileCheck;
 import com.io7m.waxmill.realize.internal.WXMRealizeMessages;
+import com.io7m.waxmill.realize.internal.WXMRuntimeDirectoryCreate;
 import com.io7m.waxmill.realize.internal.WXMZFSVolumeCheck;
 
 import java.util.Objects;
+
+/**
+ * Functions to construct realizations.
+ */
 
 public final class WXMRealizations implements WXMRealizationType
 {
@@ -54,6 +59,16 @@ public final class WXMRealizations implements WXMRealizationType
       Objects.requireNonNull(inMachine, "machine");
   }
 
+  /**
+   * Create a realization operation for the given virtual machine.
+   *
+   * @param processes           A process interface
+   * @param clientConfiguration The client configuration
+   * @param machine             The virtual machine
+   *
+   * @return A realization operation
+   */
+
   public static WXMRealizationType create(
     final WXMProcessesType processes,
     final WXMClientConfiguration clientConfiguration,
@@ -71,6 +86,15 @@ public final class WXMRealizations implements WXMRealizationType
   public WXMRealizationInstructions evaluate()
   {
     final var builder = WXMRealizationInstructions.builder();
+
+    builder.addSteps(
+      new WXMRuntimeDirectoryCreate(
+        this.clientConfiguration,
+        this.messages,
+        this.processes,
+        this.machine.id()
+      )
+    );
 
     for (final var device : this.machine.devices()) {
       switch (device.kind()) {

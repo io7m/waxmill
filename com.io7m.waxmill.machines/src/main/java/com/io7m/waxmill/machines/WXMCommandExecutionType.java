@@ -44,6 +44,16 @@ public abstract class WXMCommandExecutionType
   abstract List<String> arguments();
 
   /**
+   * @return If the failure of this command should be ignored
+   */
+
+  @Value.Default
+  boolean ignoreFailure()
+  {
+    return false;
+  }
+
+  /**
    * Check preconditions for the type.
    */
 

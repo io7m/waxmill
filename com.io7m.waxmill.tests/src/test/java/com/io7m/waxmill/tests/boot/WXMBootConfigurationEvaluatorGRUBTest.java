@@ -36,6 +36,7 @@ import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMFlags;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
+import com.io7m.waxmill.machines.WXMInterfaceGroupName;
 import com.io7m.waxmill.machines.WXMMACAddress;
 import com.io7m.waxmill.machines.WXMMachineName;
 import com.io7m.waxmill.machines.WXMSectorSizes;
@@ -59,6 +60,8 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -747,12 +750,207 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals(3, grub.size());
 
     final var commands = evaluated.commands();
-    final var configs = commands.configurationCommands();
-    final var cmd0 = configs.get(0);
-    assertEquals("/usr/local/sbin/grub-bhyve", cmd0.executable().toString());
-    assertEquals(1, configs.size());
+    final var configs = new ArrayList<>(commands.configurationCommands());
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("tap23", arguments.get(0));
+      assertEquals("create", arguments.get(1));
+      assertEquals(2, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("tap23", arguments.get(0));
+      assertEquals("ether", arguments.get(1));
+      assertEquals("1b:61:cb:ba:c0:12", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/usr/local/sbin/grub-bhyve", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals(5, arguments.size());
+    }
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
+    assertEquals(
+      String.format(
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
+        machine.id()),
+      lastExec.toString()
+    );
+  }
+
+  @Test
+  public void linuxVirtioNetTAPGroups()
+    throws WXMException
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .addBootConfigurations(
+          WXMBootConfigurationGRUBBhyve.builder()
+            .setName(WXMBootConfigurationName.of("install"))
+            .setKernelInstructions(
+              WXMGRUBKernelLinux.builder()
+                .setKernelDevice(convert("0:1:0"))
+                .setKernelPath(Paths.get("/vmlinuz"))
+                .addKernelArguments("root=/dev/sda1")
+                .addKernelArguments("init=/sbin/runit-init")
+                .setInitRDDevice(convert("0:1:0"))
+                .setInitRDPath(Paths.get("/initrd.img"))
+                .build())
+            .build()
+        )
+        .addDevices(
+          WXMDeviceHostBridge.builder()
+            .setDeviceSlot(convert("0:0:0"))
+            .setVendor(WXM_UNSPECIFIED)
+            .build()
+        )
+        .addDevices(
+          WXMDeviceAHCIDisk.builder()
+            .setDeviceSlot(convert("0:1:0"))
+            .setBackend(
+              WXMStorageBackendFile.builder()
+                .setFile(Path.of("/tmp/file"))
+                .build()
+            ).build()
+        )
+        .addDevices(
+          WXMDeviceVirtioNetwork.builder()
+            .setDeviceSlot(convert("0:2:0"))
+            .setBackend(
+              WXMTap.builder()
+                .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setName(WXMTAPDeviceName.of("tap23"))
+                .addGroups(WXMInterfaceGroupName.of("wwwUsers"))
+                .addGroups(WXMInterfaceGroupName.of("ntpUsers"))
+                .build())
+            .build()
+        ).build();
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(this.vms)
+        .build();
+
+    final var evaluator =
+      new WXMBootConfigurationEvaluator(
+        clientConfiguration,
+        machine,
+        WXMBootConfigurationName.of("install")
+      );
+
+    final var evaluated =
+      (WXMEvaluatedBootConfigurationGRUBBhyve) evaluator.evaluate();
+    LOG.debug("evaluated: {}", evaluated);
+
+    final var mapLines = evaluated.deviceMap();
+    assertTrue(mapLines.get(0).contains("/tmp/file"));
+    assertEquals(1, mapLines.size());
+
+    final var grub = evaluated.grubConfiguration();
+    assertEquals(
+      "linux (hd0)/vmlinuz root=/dev/sda1 init=/sbin/runit-init",
+      grub.get(0)
+    );
+    assertEquals("initrd (hd0)/initrd.img", grub.get(1));
+    assertEquals("boot", grub.get(2));
+    assertEquals(3, grub.size());
+
+    final var commands = evaluated.commands();
+    final var configs = new ArrayList<>(commands.configurationCommands());
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("tap23", arguments.get(0));
+      assertEquals("create", arguments.get(1));
+      assertEquals(2, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("tap23", arguments.get(0));
+      assertEquals("ether", arguments.get(1));
+      assertEquals("1b:61:cb:ba:c0:12", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("tap23", arguments.get(0));
+      assertEquals("group", arguments.get(1));
+      assertEquals("wwwUsers", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("tap23", arguments.get(0));
+      assertEquals("group", arguments.get(1));
+      assertEquals("ntpUsers", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/usr/local/sbin/grub-bhyve", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals(5, arguments.size());
+    }
+
+    final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
@@ -840,12 +1038,207 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals(3, grub.size());
 
     final var commands = evaluated.commands();
-    final var configs = commands.configurationCommands();
-    final var cmd0 = configs.get(0);
-    assertEquals("/usr/local/sbin/grub-bhyve", cmd0.executable().toString());
-    assertEquals(1, configs.size());
+    final var configs = new ArrayList<>(commands.configurationCommands());
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("vmnet23", arguments.get(0));
+      assertEquals("create", arguments.get(1));
+      assertEquals(2, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("vmnet23", arguments.get(0));
+      assertEquals("ether", arguments.get(1));
+      assertEquals("1b:61:cb:ba:c0:12", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/usr/local/sbin/grub-bhyve", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals(5, arguments.size());
+    }
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
+    assertEquals(
+      String.format(
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
+        machine.id()),
+      lastExec.toString()
+    );
+  }
+
+  @Test
+  public void linuxVirtioNetVMNetGroups()
+    throws WXMException
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .addBootConfigurations(
+          WXMBootConfigurationGRUBBhyve.builder()
+            .setName(WXMBootConfigurationName.of("install"))
+            .setKernelInstructions(
+              WXMGRUBKernelLinux.builder()
+                .setKernelDevice(convert("0:1:0"))
+                .setKernelPath(Paths.get("/vmlinuz"))
+                .addKernelArguments("root=/dev/sda1")
+                .addKernelArguments("init=/sbin/runit-init")
+                .setInitRDDevice(convert("0:1:0"))
+                .setInitRDPath(Paths.get("/initrd.img"))
+                .build())
+            .build()
+        )
+        .addDevices(
+          WXMDeviceHostBridge.builder()
+            .setDeviceSlot(convert("0:0:0"))
+            .setVendor(WXM_UNSPECIFIED)
+            .build()
+        )
+        .addDevices(
+          WXMDeviceAHCIDisk.builder()
+            .setDeviceSlot(convert("0:1:0"))
+            .setBackend(
+              WXMStorageBackendFile.builder()
+                .setFile(Path.of("/tmp/file"))
+                .build()
+            ).build()
+        )
+        .addDevices(
+          WXMDeviceVirtioNetwork.builder()
+            .setDeviceSlot(convert("0:2:0"))
+            .setBackend(
+              WXMVMNet.builder()
+                .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setName(WXMVMNetDeviceName.of("vmnet23"))
+                .addGroups(WXMInterfaceGroupName.of("wwwUsers"))
+                .addGroups(WXMInterfaceGroupName.of("ntpUsers"))
+                .build())
+            .build()
+        ).build();
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(this.vms)
+        .build();
+
+    final var evaluator =
+      new WXMBootConfigurationEvaluator(
+        clientConfiguration,
+        machine,
+        WXMBootConfigurationName.of("install")
+      );
+
+    final var evaluated =
+      (WXMEvaluatedBootConfigurationGRUBBhyve) evaluator.evaluate();
+    LOG.debug("evaluated: {}", evaluated);
+
+    final var mapLines = evaluated.deviceMap();
+    assertTrue(mapLines.get(0).contains("/tmp/file"));
+    assertEquals(1, mapLines.size());
+
+    final var grub = evaluated.grubConfiguration();
+    assertEquals(
+      "linux (hd0)/vmlinuz root=/dev/sda1 init=/sbin/runit-init",
+      grub.get(0)
+    );
+    assertEquals("initrd (hd0)/initrd.img", grub.get(1));
+    assertEquals("boot", grub.get(2));
+    assertEquals(3, grub.size());
+
+    final var commands = evaluated.commands();
+    final var configs = new ArrayList<>(commands.configurationCommands());
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("vmnet23", arguments.get(0));
+      assertEquals("create", arguments.get(1));
+      assertEquals(2, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("vmnet23", arguments.get(0));
+      assertEquals("ether", arguments.get(1));
+      assertEquals("1b:61:cb:ba:c0:12", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("vmnet23", arguments.get(0));
+      assertEquals("group", arguments.get(1));
+      assertEquals("wwwUsers", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("vmnet23", arguments.get(0));
+      assertEquals("group", arguments.get(1));
+      assertEquals("ntpUsers", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/usr/local/sbin/grub-bhyve", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals(5, arguments.size());
+    }
+
+    final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
@@ -933,12 +1326,52 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals(3, grub.size());
 
     final var commands = evaluated.commands();
-    final var configs = commands.configurationCommands();
-    final var cmd0 = configs.get(0);
-    assertEquals("/usr/local/sbin/grub-bhyve", cmd0.executable().toString());
-    assertEquals(1, configs.size());
+    final var configs = new ArrayList<>(commands.configurationCommands());
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("vmnet23", arguments.get(0));
+      assertEquals("create", arguments.get(1));
+      assertEquals(2, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/sbin/ifconfig", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals("vmnet23", arguments.get(0));
+      assertEquals("ether", arguments.get(1));
+      assertEquals("1b:61:cb:ba:c0:12", arguments.get(2));
+      assertEquals(3, arguments.size());
+    }
+
+    {
+      final var cmd = configs.remove(0);
+      assertEquals("/usr/local/sbin/grub-bhyve", cmd.executable().toString());
+      final var arguments = cmd.arguments();
+      assertEquals(5, arguments.size());
+    }
 
     final var lastExec = commands.lastExecution().orElseThrow();
+    final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-P", lastArgs.remove(0));
+    assertEquals("-A", lastArgs.remove(0));
+    assertEquals("-H", lastArgs.remove(0));
+    assertEquals("-c", lastArgs.remove(0));
+    assertEquals("cpus=1,sockets=1,cores=1,threads=1", lastArgs.remove(0));
+    assertEquals("-m", lastArgs.remove(0));
+    assertEquals("512M", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:0:0,hostbridge", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(0, lastArgs.size());
+
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12 %s",

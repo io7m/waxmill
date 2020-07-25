@@ -98,6 +98,18 @@ public interface WXMClientConfigurationType
   }
 
   /**
+   * @return The "ifconfig" executable path, such as {@code /sbin/ifconfig}
+   */
+
+  @Value.Default
+  default Path ifconfigExecutable()
+  {
+    return this.virtualMachineConfigurationDirectory()
+      .getFileSystem()
+      .getPath("/sbin/ifconfig");
+  }
+
+  /**
    * @return The "cu" executable path, such as {@code /usr/bin/cu}
    */
 
@@ -150,6 +162,12 @@ public interface WXMClientConfigurationType
       this.zfsExecutable(),
       Path::isAbsolute,
       path -> "zfs executable path must be absolute"
+    );
+
+    Preconditions.checkPrecondition(
+      this.ifconfigExecutable(),
+      Path::isAbsolute,
+      path -> "ifconfig executable path must be absolute"
     );
 
     Preconditions.checkPrecondition(

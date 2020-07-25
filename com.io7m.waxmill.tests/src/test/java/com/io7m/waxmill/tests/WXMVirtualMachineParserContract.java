@@ -129,6 +129,8 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("A TAP device.", tap.comment());
     assertEquals("d7:94:b5:60:0d:ac", tap.address().value());
     assertEquals("tap23", tap.name().value());
+    assertEquals("highSec", tap.groups().get(0).value());
+    assertEquals(1, tap.groups().size());
 
     final var net1 = (WXMDeviceVirtioNetwork) devices.get(2);
     assertEquals("0:2:0", net1.deviceSlot().toString());
@@ -137,6 +139,9 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("A VMNet device.", vmnet.comment());
     assertEquals("d7:92:b5:60:0d:ac", vmnet.address().value());
     assertEquals("vmnet23", vmnet.name().value());
+    assertEquals("lowSec", vmnet.groups().get(0).value());
+    assertEquals("medSec", vmnet.groups().get(1).value());
+    assertEquals(2, vmnet.groups().size());
 
     final var hd0 = (WXMDeviceAHCIDisk) devices.get(3);
     assertEquals("0:3:0", hd0.deviceSlot().toString());

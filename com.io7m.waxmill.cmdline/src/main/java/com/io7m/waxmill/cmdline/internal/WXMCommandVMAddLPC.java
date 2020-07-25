@@ -21,13 +21,12 @@ import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
-import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 import com.io7m.waxmill.machines.WXMTTYBackends;
-import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachines;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +80,14 @@ public final class WXMCommandVMAddLPC extends
   )
   private List<WXMTTYBackendType> backends = List.of();
 
+  @Parameter(
+    names = "--replace",
+    description = "Replace an existing device, if one exists",
+    required = false,
+    arity = 1
+  )
+  private boolean replace;
+
   /**
    * Construct a command.
    *
@@ -116,12 +123,6 @@ public final class WXMCommandVMAddLPC extends
   {
     try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
-      this.deviceSlot =
-        WXMDeviceSlots.checkDeviceSlotNotUsed(
-          WXMMachineMessages.create(),
-          machine,
-          this.deviceSlot
-        );
 
       final Map<String, WXMTTYBackendType> backendMap = new HashMap<>(3);
       for (final WXMTTYBackendType backend : this.backends) {
@@ -140,10 +141,12 @@ public final class WXMCommandVMAddLPC extends
           .build();
 
       final var updatedMachine =
-        WXMVirtualMachine.builder()
-          .from(machine)
-          .addDevices(lpc)
-          .build();
+        WXMVirtualMachines.updateWithDevice(
+          WXMMachineMessages.create(),
+          machine,
+          lpc,
+          this.replace
+        );
 
       client.vmUpdate(updatedMachine);
 

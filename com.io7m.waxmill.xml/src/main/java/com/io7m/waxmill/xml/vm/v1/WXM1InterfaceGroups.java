@@ -14,41 +14,32 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.realize;
+package com.io7m.waxmill.xml.vm.v1;
 
-import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.machines.WXMDryRun;
-import com.io7m.waxmill.process.api.WXMProcessDescription;
+import com.io7m.waxmill.machines.WXMInterfaceGroupName;
+import com.io7m.waxmill.xml.WXMSchemas;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.List;
 
-/**
- * A single step within a realization.
- */
-
-public interface WXMRealizationStepType
+public final class WXM1InterfaceGroups
 {
-  /**
-   * @return The description of the step
-   */
+  private WXM1InterfaceGroups()
+  {
 
-  String description();
+  }
 
-  /**
-   * @return The list of processes that will be executed
-   */
-
-  List<WXMProcessDescription> processes();
-
-  /**
-   * Execute the step.
-   *
-   * @param dryRun A specification of whether this is a dry run or not
-   *
-   * @throws WXMException On errors
-   */
-
-  void execute(
-    WXMDryRun dryRun)
-    throws WXMException;
+  public static void serializeGroups(
+    final List<WXMInterfaceGroupName> groups,
+    final XMLStreamWriter writer)
+    throws XMLStreamException
+  {
+    for (final var group : groups) {
+      final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+      writer.writeStartElement(namespaceURI, "InterfaceGroup");
+      writer.writeAttribute("name", group.value());
+      writer.writeEndElement();
+    }
+  }
 }

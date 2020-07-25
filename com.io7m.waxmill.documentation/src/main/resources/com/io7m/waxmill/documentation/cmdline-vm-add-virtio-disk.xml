@@ -110,6 +110,18 @@
           </Cell>
           <Cell>Set the minimum logging verbosity level.</Cell>
         </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--replace</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell><Term type="constant">true</Term> if an existing device in the given slot should be replaced.</Cell>
+        </Row>
       </Table>
     </FormalItem>
 

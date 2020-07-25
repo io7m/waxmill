@@ -21,9 +21,8 @@ import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
-import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMMachineMessages;
-import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachines;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +70,14 @@ public final class WXMCommandVMAddPassthru extends
   )
   private WXMDeviceSlot hostDeviceSlot;
 
+  @Parameter(
+    names = "--replace",
+    description = "Replace an existing device, if one exists",
+    required = false,
+    arity = 1
+  )
+  private boolean replace;
+
   /**
    * Construct a command.
    *
@@ -106,12 +113,6 @@ public final class WXMCommandVMAddPassthru extends
   {
     try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
-      this.deviceSlot =
-        WXMDeviceSlots.checkDeviceSlotNotUsed(
-          WXMMachineMessages.create(),
-          machine,
-          this.deviceSlot
-        );
 
       final var passthru =
         WXMDevicePassthru.builder()
@@ -121,10 +122,12 @@ public final class WXMCommandVMAddPassthru extends
           .build();
 
       final var updatedMachine =
-        WXMVirtualMachine.builder()
-          .from(machine)
-          .addDevices(passthru)
-          .build();
+        WXMVirtualMachines.updateWithDevice(
+          WXMMachineMessages.create(),
+          machine,
+          passthru,
+          this.replace
+        );
 
       client.vmUpdate(updatedMachine);
     }

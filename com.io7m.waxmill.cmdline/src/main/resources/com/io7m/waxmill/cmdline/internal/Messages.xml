@@ -5,13 +5,13 @@
 <properties>
 
   <entry key="ttyBackendSpec"><![CDATA[
-TTY backend syntax:
-    "stdio" ";" <port>
-  | "file" ";" <port> ";" <path>
-  | "nmdm" ";" <port>
+EBNF syntax for TTY backends:
 
-Where:
-  <port> = "com1" | "com2" | "bootrom"
+  port         = "com1" | "com2" | "bootrom" ;
+  stdioBackend = "stdio" , ";" , port ;
+  fileBackend  = "file" , ";" , port , ";" , path ;
+  nmdmBackend  = "nmdm" , ";" , port ;
+  ttyBackend   = stdioBackend | fileBackend | nmdmBackend ;
 
 Examples:
   stdio;com1
@@ -20,14 +20,13 @@ Examples:
 ]]></entry>
 
   <entry key="storageBackendSpec"><![CDATA[
-Storage backend syntax:
-    "file" ";" <path>
-  | "zfs-volume"
-  | "zfs-volume" ";" <size>
+EBNF syntax for storage backends:
 
-Where:
-  <path> = Any UNIX-like path
-  <size> = Any non-negative multiple of 128000 (bytes)
+  path           = ? Any UNIX-like path ? ;
+  size           = ? Any non-negative multiple of 128000 (bytes) ? ;
+  fileBackend    = "file" , ";" , path ;
+  zfsBackend     = "zfs-volume" , [ ";" , size ] ;
+  storageBackend = fileBackend | zfsBackend ;
 
 Examples:
   file;/tmp/xyz
@@ -36,30 +35,39 @@ Examples:
 ]]></entry>
 
   <entry key="networkBackendSpec"><![CDATA[
-Virtio network backend syntax:
-    "tap" ";" <tapDevice> ";" <macAddress>
-  | "vmnet" ";" <vmnetDevice> ";" <macAddress>
+EBNF syntax for Virtio network backends:
 
-Where:
-  <tapDevice>   = "tap[0-9]'{'1,13'}'"
-  <vmnetDevice> = "vmnet[0-9]'{'1,11'}'"
-  <macAddress>  = "[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}':[a-f0-9]'{'2'}'"
+  digit           = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+  hexDigit        = "a" | "b" | "c" | "d" | "e" | "f" ;
+  lowerAlpha      = ? [a-z] ? ;
+  upperAlpha      = ? [A-Z] ? ;
+  groupCharacter  = lowerAlpha | upperAlpha | "_" ;
+  groupName       = '{' groupCharacter '}' ;
+  groupList       = groupName , '{' "," , groupName '}' ;
+
+  macPart         = hexDigit , hexDigit ;
+  macAddress      = macPart , ":" , macPart , ":" , macPart , ":" , macPart , ":" , macPart , ":" , macPart ;
+  tapDeviceName   = "tap" , '{' digit '}' ;
+  vmnetDeviceName = "vmnet" , '{' digit '}' ;
+  tapDevice       = "tap" , ";" , tapDeviceName , ";" , macAddress , [ ";" groupList ] ;
+  vmnetDevice     = "vmnet" , ";" , vmnetDeviceName , ";" , macAddress , [ ";" groupList ] ;
 
 Examples:
   tap;tap23;d9:63:c0:d9:09:e8
   tap;tap0000000000001;d9:63:c0:d9:09:e8
+  tap;tap23;d9:63:c0:d9:09:e8;wwwUsers,mailUsers,ntpdUsers
   vmnet;vmnet23;d9:63:c0:d9:09:e8
   vmnet;vmnet00000000001;d9:63:c0:d9:09:e8
+  vmnet;vmnet23;d9:63:c0:d9:09:e8;wwwUsers,mailUsers,ntpdUsers
 ]]></entry>
 
   <entry key="deviceSlotSpec"><![CDATA[
-Device slot syntax:
-  <deviceSlot> = <bus> ":" <slot> ":" <function>
+EBNF syntax for device slots:
 
-Where:
-  <bus>      = [0 .. 255]
-  <slot>     = [0 .. 31]
-  <function> = [0 .. 7]
+  bus        = ? [0 .. 255] ? ;
+  slot       = ? [0 .. 31] ? ;
+  function   = ? [0 .. 7] ? ;
+  deviceSlot = bus , ":" , slot , ":" , function ;
 
 Examples:
   0:0:0

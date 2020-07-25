@@ -14,41 +14,56 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.realize;
+package com.io7m.waxmill.machines;
 
-import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.machines.WXMDryRun;
-import com.io7m.waxmill.process.api.WXMProcessDescription;
+import org.immutables.value.Value;
 
 import java.util.List;
 
 /**
- * A single step within a realization.
+ * The type of network device backends.
  */
 
-public interface WXMRealizationStepType
+public interface WXMNetworkDeviceBackendType
 {
   /**
-   * @return The description of the step
+   * @return The backend kind
    */
 
-  String description();
+  Kind kind();
 
   /**
-   * @return The list of processes that will be executed
+   * @return A descriptive comment
    */
 
-  List<WXMProcessDescription> processes();
+  @Value.Default
+  default String comment()
+  {
+    return "";
+  }
 
   /**
-   * Execute the step.
-   *
-   * @param dryRun A specification of whether this is a dry run or not
-   *
-   * @throws WXMException On errors
+   * @return The groups to which this device backend belongs
    */
 
-  void execute(
-    WXMDryRun dryRun)
-    throws WXMException;
+  List<WXMInterfaceGroupName> groups();
+
+  /**
+   * The kind of backend.
+   */
+
+  enum Kind
+  {
+    /**
+     * The device is backed by a tap device.
+     */
+
+    WXM_TAP,
+
+    /**
+     * The device is backed by a vmnet device.
+     */
+
+    WXM_VMNET
+  }
 }

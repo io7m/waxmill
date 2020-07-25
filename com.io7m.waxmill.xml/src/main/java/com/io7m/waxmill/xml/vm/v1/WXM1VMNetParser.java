@@ -21,6 +21,7 @@ import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.waxmill.machines.WXMInterfaceGroupName;
 import com.io7m.waxmill.machines.WXMMACAddress;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVMNetDeviceName;
@@ -38,8 +39,7 @@ public final class WXM1VMNetParser
 
   public WXM1VMNetParser()
   {
-    this.builder =
-      WXMVMNet.builder();
+    this.builder = WXMVMNet.builder();
   }
 
   @Override
@@ -49,7 +49,12 @@ public final class WXM1VMNetParser
   {
     return Map.ofEntries(
       Map.entry(
-        element("Comment"), c -> new WXM1CommentParser()
+        element("Comment"),
+        c -> new WXM1CommentParser()
+      ),
+      Map.entry(
+        element("InterfaceGroup"),
+        c -> new WXM1InterfaceGroupParser()
       )
     );
   }
@@ -61,6 +66,8 @@ public final class WXM1VMNetParser
   {
     if (result instanceof WXM1Comment) {
       this.builder.setComment(((WXM1Comment) result).text());
+    } else if (result instanceof WXMInterfaceGroupName) {
+      this.builder.addGroups((WXMInterfaceGroupName) result);
     } else {
       throw new UnreachableCodeException();
     }

@@ -20,12 +20,12 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
-import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMMachineMessages;
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
-import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMVirtualMachines;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMNetworkDeviceBackendType;
 
 @Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
 public final class WXMCommandVMAddVirtioNetworkDevice
@@ -74,6 +73,14 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   )
   private WXMNetworkDeviceBackendType backend;
 
+  @Parameter(
+    names = "--replace",
+    description = "Replace an existing device, if one exists",
+    required = false,
+    arity = 1
+  )
+  private boolean replace;
+
   /**
    * Construct a command.
    *
@@ -109,12 +116,6 @@ public final class WXMCommandVMAddVirtioNetworkDevice
   {
     try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
-      this.deviceSlot =
-        WXMDeviceSlots.checkDeviceSlotNotUsed(
-          WXMMachineMessages.create(),
-          machine,
-          this.deviceSlot
-        );
 
       final var virtio =
         WXMDeviceVirtioNetwork.builder()
@@ -124,10 +125,12 @@ public final class WXMCommandVMAddVirtioNetworkDevice
           .build();
 
       final var updatedMachine =
-        WXMVirtualMachine.builder()
-          .from(machine)
-          .addDevices(virtio)
-          .build();
+        WXMVirtualMachines.updateWithDevice(
+          WXMMachineMessages.create(),
+          machine,
+          virtio,
+          this.replace
+        );
 
       client.vmUpdate(updatedMachine);
 
