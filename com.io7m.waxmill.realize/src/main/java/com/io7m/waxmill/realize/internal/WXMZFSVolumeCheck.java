@@ -72,9 +72,9 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
       Objects.requireNonNull(inSlot, "slot");
     this.zfsVolume =
       Objects.requireNonNull(inZFSVolume, "zfsVolume");
-
     final var machineId =
       Objects.requireNonNull(inMachineId, "machineId");
+
     this.volumePath =
       WXMStorageBackends.determineZFSVolumePath(
         this.clientConfiguration.virtualMachineRuntimeDirectory(),

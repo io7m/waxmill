@@ -25,11 +25,27 @@ import org.immutables.value.Value;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The instructions that comprise a realization.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXMRealizationInstructionsType
 {
+  /**
+   * @return The realization steps
+   */
+
   List<WXMRealizationStepType> steps();
+
+  /**
+   * Execute the realization.
+   *
+   * @param dryRun If this is a dry run
+   *
+   * @throws WXMException On errors
+   */
 
   default void execute(
     final WXMDryRun dryRun)

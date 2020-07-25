@@ -16,7 +16,18 @@
 
 package com.io7m.waxmill.realize;
 
+/**
+ * A realization operation.
+ */
+
 public interface WXMRealizationType
 {
+  /**
+   * Evaluate the realization operation, returning the list of instructions
+   * to be performed to realize the virtual machine.
+   *
+   * @return A list of instructions
+   */
+
   WXMRealizationInstructions evaluate();
 }

@@ -22,11 +22,31 @@ import com.io7m.waxmill.process.api.WXMProcessDescription;
 
 import java.util.List;
 
+/**
+ * A single step within a realization.
+ */
+
 public interface WXMRealizationStepType
 {
+  /**
+   * @return The description of the step
+   */
+
   String description();
 
+  /**
+   * @return The list of processes that will be executed
+   */
+
   List<WXMProcessDescription> processes();
+
+  /**
+   * Execute the step.
+   *
+   * @param dryRun A specification of whether this is a dry run or not
+   *
+   * @throws WXMException On errors
+   */
 
   void execute(
     WXMDryRun dryRun)

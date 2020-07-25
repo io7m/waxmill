@@ -52,6 +52,7 @@ public final class WXMCommandVMRealizeTest
     this.vmDirectory = this.directory.resolve("vmDirectory");
     this.zfsDirectory = this.directory.resolve("zfsDirectory");
     Files.createDirectories(this.vmDirectory);
+    Files.createDirectories(this.zfsDirectory);
 
     this.configuration =
       WXMClientConfiguration.builder()

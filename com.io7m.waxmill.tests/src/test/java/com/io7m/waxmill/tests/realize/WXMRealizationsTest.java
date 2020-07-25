@@ -37,8 +37,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.spi.FileSystemProvider;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,9 +53,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public final class WXMRealizationsTest
 {
@@ -96,13 +104,15 @@ public final class WXMRealizationsTest
 
   @Test
   public void realizeNothing()
-    throws WXMException
+    throws WXMException, IOException
   {
     final var machine =
       WXMVirtualMachine.builder()
         .setId(UUID.randomUUID())
         .setName(WXMMachineName.of("vm"))
         .build();
+
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
@@ -115,12 +125,21 @@ public final class WXMRealizationsTest
     final var instructions =
       realizations.evaluate();
 
-    assertEquals(List.of(), instructions.steps());
+    final var steps = new ArrayList<>(instructions.steps());
+
+    {
+      final var step = steps.remove(0);
+      final var description = step.description();
+      LOG.debug("{}", description);
+    }
+
+    assertEquals(0, steps.size());
     instructions.execute(EXECUTE);
   }
 
   @Test
   public void realizeAHCIZFSOK()
+    throws IOException
   {
     final var machine =
       WXMVirtualMachine.builder()
@@ -133,6 +152,8 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
@@ -144,10 +165,16 @@ public final class WXMRealizationsTest
     final var instructions =
       realizations.evaluate();
 
-    assertEquals(1, instructions.steps().size());
+    final var steps = new ArrayList<>(instructions.steps());
 
     {
-      final var step = instructions.steps().get(0);
+      final var step = steps.remove(0);
+      final var description = step.description();
+      LOG.debug("{}", description);
+    }
+
+    {
+      final var step = steps.remove(0);
       final var description = step.description();
       LOG.debug("{}", description);
       assertTrue(description.contains(DEVICE_SLOT_0.toString()));
@@ -173,10 +200,13 @@ public final class WXMRealizationsTest
         machine.id()
       ), arguments.get(3));
     }
+
+    assertEquals(0, steps.size());
   }
 
   @Test
   public void realizeVirtioBlockZFSOK()
+    throws IOException
   {
     final var machine =
       WXMVirtualMachine.builder()
@@ -189,6 +219,8 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
@@ -200,10 +232,16 @@ public final class WXMRealizationsTest
     final var instructions =
       realizations.evaluate();
 
-    assertEquals(1, instructions.steps().size());
+    final var steps = new ArrayList<>(instructions.steps());
 
     {
-      final var step = instructions.steps().get(0);
+      final var step = steps.remove(0);
+      final var description = step.description();
+      LOG.debug("{}", description);
+    }
+
+    {
+      final var step = steps.remove(0);
       final var description = step.description();
       LOG.debug("{}", description);
       assertTrue(description.contains(DEVICE_SLOT_0.toString()));
@@ -229,6 +267,8 @@ public final class WXMRealizationsTest
         machine.id()
       ), arguments.get(3));
     }
+
+    assertEquals(0, steps.size());
   }
 
   @Test
@@ -245,6 +285,8 @@ public final class WXMRealizationsTest
             .setBackend(ZFS_VOLUME_SIZED)
             .build())
         .build();
+
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
@@ -300,6 +342,8 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
@@ -341,6 +385,7 @@ public final class WXMRealizationsTest
 
   @Test
   public void realizeAHCIBlockZFSFailsUnsized()
+    throws IOException
   {
     final var machine =
       WXMVirtualMachine.builder()
@@ -352,6 +397,8 @@ public final class WXMRealizationsTest
             .setBackend(ZFS_VOLUME_UNSIZED)
             .build())
         .build();
+
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
@@ -393,6 +440,8 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
@@ -404,13 +453,19 @@ public final class WXMRealizationsTest
     final var instructions =
       realizations.evaluate();
 
+    final var steps = new ArrayList<>(instructions.steps());
+
     Files.write(file, new byte[100]);
     instructions.execute(EXECUTE);
 
-    assertEquals(1, instructions.steps().size());
+    {
+      final var step = steps.remove(0);
+      final var description = step.description();
+      LOG.debug("{}", description);
+    }
 
     {
-      final var step = instructions.steps().get(0);
+      final var step = steps.remove(0);
       final var description = step.description();
       LOG.debug("{}", description);
       assertTrue(description.contains(DEVICE_SLOT_0.toString()));
@@ -419,6 +474,8 @@ public final class WXMRealizationsTest
       final var processes = step.processes();
       assertEquals(0, processes.size());
     }
+
+    assertEquals(0, steps.size());
   }
 
   @Test
@@ -441,6 +498,8 @@ public final class WXMRealizationsTest
                 .build())
             .build())
         .build();
+
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
@@ -485,6 +544,8 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
@@ -499,10 +560,16 @@ public final class WXMRealizationsTest
     Files.write(file, new byte[100]);
     instructions.execute(EXECUTE);
 
-    assertEquals(1, instructions.steps().size());
+    final var steps = new ArrayList<>(instructions.steps());
 
     {
-      final var step = instructions.steps().get(0);
+      final var step = steps.remove(0);
+      final var description = step.description();
+      LOG.debug("{}", description);
+    }
+
+    {
+      final var step = steps.remove(0);
       final var description = step.description();
       LOG.debug("{}", description);
       assertTrue(description.contains(DEVICE_SLOT_0.toString()));
@@ -534,6 +601,8 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
+    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
@@ -553,5 +622,81 @@ public final class WXMRealizationsTest
 
     final var exc = (Exception) ex.getSuppressed()[0];
     assertTrue(exc.getMessage().contains(file.toString()));
+  }
+
+  @Test
+  public void realizeZFSCreate()
+    throws WXMException, IOException
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .build();
+
+    final var vmFilesystemProvider =
+      mock(FileSystemProvider.class);
+    final var vmFilesystem =
+      mock(FileSystem.class);
+    final var vmFileStore =
+      mock(FileStore.class);
+    final var attributes =
+      mock(BasicFileAttributes.class);
+    final var vmPath =
+      mock(Path.class);
+
+    when(Boolean.valueOf(attributes.isDirectory()))
+      .thenReturn(Boolean.FALSE);
+    when(vmFilesystemProvider.getFileStore(any()))
+      .thenReturn(vmFileStore);
+    when(vmFilesystem.provider())
+      .thenReturn(vmFilesystemProvider);
+    doThrow(IOException.class)
+      .when(vmFilesystemProvider)
+      .checkAccess(any(), any());
+    when(vmFilesystemProvider.readAttributes(
+      any(), eq(BasicFileAttributes.class), any()))
+      .thenReturn(attributes);
+    when(vmPath.resolve(anyString()))
+      .thenReturn(vmPath);
+    when(vmPath.getFileSystem())
+      .thenReturn(vmFilesystem);
+    when(Boolean.valueOf(vmPath.isAbsolute()))
+      .thenReturn(Boolean.TRUE);
+    when(vmPath.toString())
+      .thenReturn("/storage/x/y/z");
+    when(vmFileStore.type())
+      .thenReturn("zfs");
+    when(vmFileStore.name())
+      .thenReturn("storage/x/y/z");
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(vmPath)
+        .build();
+
+    final var realizations =
+      WXMRealizations.create(this.processes, clientConfiguration, machine);
+    final var instructions =
+      realizations.evaluate();
+
+    final var steps = new ArrayList<>(instructions.steps());
+    instructions.execute(EXECUTE);
+
+    {
+      final var step = steps.remove(0);
+      final var description = step.description();
+      LOG.debug("{}", description);
+
+      final var proc = step.processes().get(0);
+      final var arguments = proc.arguments();
+      assertEquals(clientConfiguration.zfsExecutable(), proc.executable());
+      assertEquals("create", arguments.get(0));
+      assertEquals(String.format("storage/x/y/z/%s", machine.id()), arguments.get(1));
+      assertEquals(1, step.processes().size());
+    }
+
+    assertEquals(0, steps.size());
   }
 }
