@@ -6,9 +6,33 @@
         <c:change date="2020-07-11T00:00:00+00:00" summary="Initial testing release"/>
       </c:changes>
     </c:release>
-    <c:release date="2020-07-11T18:36:10+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.2">
+    <c:release date="2020-07-11T00:00:00+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.2">
       <c:changes>
-        <c:change date="2020-07-11T18:36:10+00:00" summary="Add the vm-kill command"/>
+        <c:change date="2020-07-11T00:00:00+00:00" summary="Add the vm-kill command"/>
+      </c:changes>
+    </c:release>
+    <c:release date="2020-07-25T09:00:46+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.3">
+      <c:changes>
+        <c:change date="2020-07-25T00:00:00+00:00" summary="Add support for interface groups">
+          <c:tickets>
+            <c:ticket id="24"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2020-07-25T00:00:00+00:00" summary="Add --replace options to device commands">
+          <c:tickets>
+            <c:ticket id="25"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2020-07-25T00:00:00+00:00" summary="Fix LPC bootrom formatting">
+          <c:tickets>
+            <c:ticket id="26"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2020-07-25T09:00:46+00:00" summary="Automatically create virtual machine filesystems">
+          <c:tickets>
+            <c:ticket id="23"/>
+          </c:tickets>
+        </c:change>
       </c:changes>
     </c:release>
   </c:releases>
