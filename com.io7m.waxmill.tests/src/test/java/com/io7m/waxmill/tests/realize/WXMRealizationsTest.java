@@ -18,6 +18,7 @@ package com.io7m.waxmill.tests.realize;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
+import com.io7m.waxmill.exceptions.WXMExceptionUnsatisfiedRequirement;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
@@ -29,6 +30,7 @@ import com.io7m.waxmill.process.api.WXMProcessDescription;
 import com.io7m.waxmill.process.api.WXMProcessesType;
 import com.io7m.waxmill.realize.WXMRealizations;
 import com.io7m.waxmill.tests.WXMTestDirectories;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.verification.Times;
@@ -86,6 +88,15 @@ public final class WXMRealizationsTest
   private Path directory;
   private Path configs;
   private Path vms;
+  private FileSystemProvider vmFilesystemProvider;
+  private FileSystem vmFilesystem;
+  private FileStore vmBaseFileStore;
+  private FileStore vmSpecificFileStore;
+  private FileStore vmSpecificDeviceFileStore;
+  private Path vmBasePath;
+  private Path vmSpecificPath;
+  private Path vmSpecificDevicePath;
+  private BasicFileAttributes vmSpecificDeviceAttributes;
 
   @BeforeEach
   public void setup()
@@ -100,6 +111,25 @@ public final class WXMRealizationsTest
       this.directory.resolve("configs");
     this.vms =
       this.directory.resolve("vms");
+
+    this.vmFilesystemProvider =
+      mock(FileSystemProvider.class);
+    this.vmFilesystem =
+      mock(FileSystem.class);
+    this.vmBaseFileStore =
+      mock(FileStore.class);
+    this.vmSpecificFileStore =
+      mock(FileStore.class);
+    this.vmSpecificDeviceFileStore =
+      mock(FileStore.class);
+    this.vmBasePath =
+      mock(Path.class);
+    this.vmSpecificPath =
+      mock(Path.class);
+    this.vmSpecificDevicePath =
+      mock(Path.class);
+    this.vmSpecificDeviceAttributes =
+      mock(BasicFileAttributes.class);
   }
 
   @Test
@@ -139,7 +169,7 @@ public final class WXMRealizationsTest
 
   @Test
   public void realizeAHCIZFSOK()
-    throws IOException
+    throws Exception
   {
     final var machine =
       WXMVirtualMachine.builder()
@@ -152,12 +182,32 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
+    when(Boolean.valueOf(this.vmBasePath.isAbsolute()))
+      .thenReturn(Boolean.TRUE);
+    when(this.vmBasePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificPath);
+    when(this.vmBasePath.toString())
+      .thenReturn("storage/vm");
+
+    when(this.vmSpecificPath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmFilesystem.provider())
+      .thenReturn(this.vmFilesystemProvider);
+    when(this.vmFilesystemProvider.getFileStore(this.vmBasePath))
+      .thenReturn(this.vmBaseFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificPath))
+      .thenReturn(this.vmSpecificFileStore);
+    when(this.vmSpecificFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmSpecificFileStore.name())
+      .thenReturn("storage/vm/" + machine.id());
+
     Files.createDirectories(this.vms.resolve(machine.id().toString()));
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
+        .setVirtualMachineRuntimeDirectory(this.vmBasePath)
         .build();
 
     final var realizations =
@@ -179,8 +229,7 @@ public final class WXMRealizationsTest
       LOG.debug("{}", description);
       assertTrue(description.contains(DEVICE_SLOT_0.toString()));
       assertTrue(description.contains(String.format(
-        "%s/%s/disk-0_4_0",
-        clientConfiguration.virtualMachineRuntimeDirectory(),
+        "storage/vm/%s/disk-0_4_0",
         machine.id()
       )));
       assertTrue(description.contains("128000"));
@@ -206,7 +255,7 @@ public final class WXMRealizationsTest
 
   @Test
   public void realizeVirtioBlockZFSOK()
-    throws IOException
+    throws Exception
   {
     final var machine =
       WXMVirtualMachine.builder()
@@ -219,12 +268,30 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
-    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+    when(Boolean.valueOf(this.vmBasePath.isAbsolute()))
+      .thenReturn(Boolean.TRUE);
+    when(this.vmBasePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificPath);
+    when(this.vmBasePath.toString())
+      .thenReturn("storage/vm");
+
+    when(this.vmSpecificPath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmFilesystem.provider())
+      .thenReturn(this.vmFilesystemProvider);
+    when(this.vmFilesystemProvider.getFileStore(this.vmBasePath))
+      .thenReturn(this.vmBaseFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificPath))
+      .thenReturn(this.vmSpecificFileStore);
+    when(this.vmSpecificFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmSpecificFileStore.name())
+      .thenReturn("storage/vm/" + machine.id());
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
+        .setVirtualMachineRuntimeDirectory(this.vmBasePath)
         .build();
 
     final var realizations =
@@ -246,8 +313,7 @@ public final class WXMRealizationsTest
       LOG.debug("{}", description);
       assertTrue(description.contains(DEVICE_SLOT_0.toString()));
       assertTrue(description.contains(String.format(
-        "%s/%s/disk-0_4_0",
-        clientConfiguration.virtualMachineRuntimeDirectory(),
+        "storage/vm/%s/disk-0_4_0",
         machine.id()
       )));
       assertTrue(description.contains("128000"));
@@ -272,6 +338,175 @@ public final class WXMRealizationsTest
   }
 
   @Test
+  public void realizeVirtioBlockZFSNotZFS()
+    throws Exception
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .addDevices(
+          WXMDeviceVirtioBlockStorage.builder()
+            .setDeviceSlot(DEVICE_SLOT_0)
+            .setBackend(ZFS_VOLUME_SIZED)
+            .build())
+        .build();
+
+    when(Boolean.valueOf(this.vmBasePath.isAbsolute()))
+      .thenReturn(Boolean.TRUE);
+    when(this.vmBasePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificPath);
+    when(this.vmBasePath.toString())
+      .thenReturn("storage/vm");
+    when(this.vmBasePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+
+    when(this.vmSpecificPath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificPath.toString())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+    when(this.vmSpecificPath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmSpecificDevicePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificDevicePath.toString())
+      .thenReturn(String.format("storage/vm/%s/EXTRA", machine.id()));
+    when(this.vmSpecificDevicePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmFilesystem.provider())
+      .thenReturn(this.vmFilesystemProvider);
+    when(this.vmFilesystemProvider.getFileStore(this.vmBasePath))
+      .thenReturn(this.vmBaseFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificPath))
+      .thenReturn(this.vmSpecificFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificDevicePath))
+      .thenReturn(this.vmSpecificDeviceFileStore);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificPath);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificDevicePath);
+
+    when(this.vmBaseFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmBaseFileStore.name())
+      .thenReturn("storage/vm");
+
+    when(this.vmSpecificFileStore.type())
+      .thenReturn("xfs");
+    when(this.vmSpecificFileStore.name())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+
+    when(this.vmSpecificDeviceFileStore.type())
+      .thenReturn("xfs");
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(this.vmBasePath)
+        .build();
+
+    final var realizations =
+      WXMRealizations.create(this.processes, clientConfiguration, machine);
+
+    final var ex =
+      assertThrows(
+        WXMExceptionUnsatisfiedRequirement.class,
+        realizations::evaluate
+      );
+
+    LOG.error("error: ", ex);
+    assertTrue(ex.getMessage().contains("The specified directory is not a ZFS filesystem"));
+  }
+
+  @Test
+  public void realizeVirtioBlockZFSWrongSize()
+    throws Exception
+  {
+    final var machine =
+      WXMVirtualMachine.builder()
+        .setId(UUID.randomUUID())
+        .setName(WXMMachineName.of("vm"))
+        .addDevices(
+          WXMDeviceVirtioBlockStorage.builder()
+            .setDeviceSlot(DEVICE_SLOT_0)
+            .setBackend(ZFS_VOLUME_SIZED)
+            .build())
+        .build();
+
+    when(Boolean.valueOf(this.vmBasePath.isAbsolute()))
+      .thenReturn(Boolean.TRUE);
+    when(this.vmBasePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificPath);
+    when(this.vmBasePath.toString())
+      .thenReturn("storage/vm");
+    when(this.vmBasePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+
+    when(this.vmSpecificPath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificPath.toString())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+    when(this.vmSpecificPath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmSpecificDevicePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificDevicePath.toString())
+      .thenReturn(String.format("storage/vm/%s/EXTRA", machine.id()));
+    when(this.vmSpecificDevicePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmFilesystem.provider())
+      .thenReturn(this.vmFilesystemProvider);
+    when(this.vmFilesystemProvider.getFileStore(this.vmBasePath))
+      .thenReturn(this.vmBaseFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificPath))
+      .thenReturn(this.vmSpecificFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificDevicePath))
+      .thenReturn(this.vmSpecificDeviceFileStore);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificPath);
+
+    when(this.vmFilesystemProvider.readAttributes(
+      eq(this.vmSpecificDevicePath), eq(BasicFileAttributes.class), any()))
+      .thenReturn(this.vmSpecificDeviceAttributes);
+
+    when(this.vmBaseFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmBaseFileStore.name())
+      .thenReturn("storage/vm");
+
+    when(this.vmSpecificFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmSpecificFileStore.name())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+
+    when(this.vmSpecificDeviceFileStore.type())
+      .thenReturn("zfs");
+
+    final var clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeDirectory(this.vmBasePath)
+        .build();
+
+    final var realizations =
+      WXMRealizations.create(this.processes, clientConfiguration, machine);
+    final var instructions =
+      realizations.evaluate();
+
+    instructions.execute(EXECUTE);
+  }
+
+  @Test
   public void realizeVirtioBlockZFSFails()
     throws Exception
   {
@@ -286,12 +521,63 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
-    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+    when(Boolean.valueOf(this.vmBasePath.isAbsolute()))
+      .thenReturn(Boolean.TRUE);
+    when(this.vmBasePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificPath);
+    when(this.vmBasePath.toString())
+      .thenReturn("storage/vm");
+    when(this.vmBasePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+
+    when(this.vmSpecificPath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificPath.toString())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+    when(this.vmSpecificPath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmSpecificDevicePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificDevicePath.toString())
+      .thenReturn(String.format("storage/vm/%s/EXTRA", machine.id()));
+    when(this.vmSpecificDevicePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmFilesystem.provider())
+      .thenReturn(this.vmFilesystemProvider);
+    when(this.vmFilesystemProvider.getFileStore(this.vmBasePath))
+      .thenReturn(this.vmBaseFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificPath))
+      .thenReturn(this.vmSpecificFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificDevicePath))
+      .thenReturn(this.vmSpecificDeviceFileStore);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificPath);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificDevicePath);
+
+    when(this.vmBaseFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmBaseFileStore.name())
+      .thenReturn("storage/vm");
+
+    when(this.vmSpecificFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmSpecificFileStore.name())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+
+    when(this.vmSpecificDeviceFileStore.type())
+      .thenReturn("zfs");
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
+        .setVirtualMachineRuntimeDirectory(this.vmBasePath)
         .build();
 
     final var realizations =
@@ -342,12 +628,63 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
-    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+    when(Boolean.valueOf(this.vmBasePath.isAbsolute()))
+      .thenReturn(Boolean.TRUE);
+    when(this.vmBasePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificPath);
+    when(this.vmBasePath.toString())
+      .thenReturn("storage/vm");
+    when(this.vmBasePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+
+    when(this.vmSpecificPath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificPath.toString())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+    when(this.vmSpecificPath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmSpecificDevicePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificDevicePath.toString())
+      .thenReturn(String.format("storage/vm/%s/EXTRA", machine.id()));
+    when(this.vmSpecificDevicePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmFilesystem.provider())
+      .thenReturn(this.vmFilesystemProvider);
+    when(this.vmFilesystemProvider.getFileStore(this.vmBasePath))
+      .thenReturn(this.vmBaseFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificPath))
+      .thenReturn(this.vmSpecificFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificDevicePath))
+      .thenReturn(this.vmSpecificDeviceFileStore);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificPath);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificDevicePath);
+
+    when(this.vmBaseFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmBaseFileStore.name())
+      .thenReturn("storage/vm");
+
+    when(this.vmSpecificFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmSpecificFileStore.name())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+
+    when(this.vmSpecificDeviceFileStore.type())
+      .thenReturn("zfs");
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
+        .setVirtualMachineRuntimeDirectory(this.vmBasePath)
         .build();
 
     final var realizations =
@@ -385,7 +722,7 @@ public final class WXMRealizationsTest
 
   @Test
   public void realizeAHCIBlockZFSFailsUnsized()
-    throws IOException
+    throws Exception
   {
     final var machine =
       WXMVirtualMachine.builder()
@@ -398,12 +735,63 @@ public final class WXMRealizationsTest
             .build())
         .build();
 
-    Files.createDirectories(this.vms.resolve(machine.id().toString()));
+    when(Boolean.valueOf(this.vmBasePath.isAbsolute()))
+      .thenReturn(Boolean.TRUE);
+    when(this.vmBasePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificPath);
+    when(this.vmBasePath.toString())
+      .thenReturn("storage/vm");
+    when(this.vmBasePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+
+    when(this.vmSpecificPath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificPath.toString())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+    when(this.vmSpecificPath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmSpecificDevicePath.getFileSystem())
+      .thenReturn(this.vmFilesystem);
+    when(this.vmSpecificDevicePath.toString())
+      .thenReturn(String.format("storage/vm/%s/EXTRA", machine.id()));
+    when(this.vmSpecificDevicePath.resolve(anyString()))
+      .thenReturn(this.vmSpecificDevicePath);
+
+    when(this.vmFilesystem.provider())
+      .thenReturn(this.vmFilesystemProvider);
+    when(this.vmFilesystemProvider.getFileStore(this.vmBasePath))
+      .thenReturn(this.vmBaseFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificPath))
+      .thenReturn(this.vmSpecificFileStore);
+    when(this.vmFilesystemProvider.getFileStore(this.vmSpecificDevicePath))
+      .thenReturn(this.vmSpecificDeviceFileStore);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificPath);
+
+    doThrow(new IOException())
+      .when(this.vmFilesystemProvider)
+      .checkAccess(this.vmSpecificDevicePath);
+
+    when(this.vmBaseFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmBaseFileStore.name())
+      .thenReturn("storage/vm");
+
+    when(this.vmSpecificFileStore.type())
+      .thenReturn("zfs");
+    when(this.vmSpecificFileStore.name())
+      .thenReturn(String.format("storage/vm/%s", machine.id()));
+
+    when(this.vmSpecificDeviceFileStore.type())
+      .thenReturn("zfs");
 
     final var clientConfiguration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
+        .setVirtualMachineRuntimeDirectory(this.vmBasePath)
         .build();
 
     final var realizations =
@@ -647,6 +1035,10 @@ public final class WXMRealizationsTest
 
     when(Boolean.valueOf(attributes.isDirectory()))
       .thenReturn(Boolean.FALSE);
+    when(vmFilesystemProvider.readAttributes(
+      any(), eq(BasicFileAttributes.class), any()))
+      .thenReturn(attributes);
+
     when(vmFilesystemProvider.getFileStore(any()))
       .thenReturn(vmFileStore);
     when(vmFilesystem.provider())
@@ -654,9 +1046,6 @@ public final class WXMRealizationsTest
     doThrow(IOException.class)
       .when(vmFilesystemProvider)
       .checkAccess(any(), any());
-    when(vmFilesystemProvider.readAttributes(
-      any(), eq(BasicFileAttributes.class), any()))
-      .thenReturn(attributes);
     when(vmPath.resolve(anyString()))
       .thenReturn(vmPath);
     when(vmPath.getFileSystem())

@@ -96,12 +96,11 @@ public final class WXMRuntimeDirectoryCreate implements WXMRealizationStepType
 
     LOG.info("checking if {} is a directory", path);
 
-    if (Files.isDirectory(path)) {
-      LOG.info("{} is a directory", path);
-      return;
-    }
-
     if (Files.exists(path)) {
+      if (Files.isDirectory(path)) {
+        LOG.info("{} is a directory", path);
+        return;
+      }
       throw new WXMException(this.notADirectory(path));
     }
 

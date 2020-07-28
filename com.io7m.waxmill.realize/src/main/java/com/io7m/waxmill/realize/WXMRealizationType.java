@@ -16,6 +16,8 @@
 
 package com.io7m.waxmill.realize;
 
+import com.io7m.waxmill.exceptions.WXMException;
+
 /**
  * A realization operation.
  */
@@ -29,5 +31,6 @@ public interface WXMRealizationType
    * @return A list of instructions
    */
 
-  WXMRealizationInstructions evaluate();
+  WXMRealizationInstructions evaluate()
+    throws WXMException;
 }
