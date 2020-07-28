@@ -22,6 +22,7 @@ import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMStorageBackends;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static java.util.Locale.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMRealizeTest
@@ -215,6 +217,11 @@ public final class WXMCommandVMRealizeTest
     throws Exception
   {
     final var id = UUID.randomUUID();
+
+    final Path path = this.zfsDirectory.resolve(id.toString());
+    Files.createDirectories(path);
+    assumeZFSFilesystem(path);
+
     MainExitless.main(
       new String[]{
         "vm-define",
@@ -263,6 +270,11 @@ public final class WXMCommandVMRealizeTest
     throws Exception
   {
     final var id = UUID.randomUUID();
+
+    final Path path = this.zfsDirectory.resolve(id.toString());
+    Files.createDirectories(path);
+    assumeZFSFilesystem(path);
+
     MainExitless.main(
       new String[]{
         "vm-define",
@@ -357,6 +369,7 @@ public final class WXMCommandVMRealizeTest
       );
     Files.createDirectories(path.getParent());
     Files.write(path, new byte[128000]);
+    assumeZFSFilesystem(path);
 
     MainExitless.main(
       new String[]{
@@ -366,6 +379,15 @@ public final class WXMCommandVMRealizeTest
         "--configuration",
         this.configFile.toString()
       }
+    );
+  }
+
+  private static void assumeZFSFilesystem(final Path path)
+    throws IOException
+  {
+    Assumptions.assumeTrue(
+      "ZFS".equals(Files.getFileStore(path).type().toUpperCase(ROOT)),
+      String.format("%s is a ZFS filesystem", path)
     );
   }
 
@@ -418,6 +440,7 @@ public final class WXMCommandVMRealizeTest
       );
     Files.createDirectories(path.getParent());
     Files.write(path, new byte[128001]);
+    assumeZFSFilesystem(path);
 
     MainExitless.main(
       new String[]{
@@ -435,6 +458,11 @@ public final class WXMCommandVMRealizeTest
     throws Exception
   {
     final var id = UUID.randomUUID();
+
+    final Path path = this.zfsDirectory.resolve(id.toString());
+    Files.createDirectories(path);
+    assumeZFSFilesystem(path);
+
     MainExitless.main(
       new String[]{
         "vm-define",
@@ -527,6 +555,7 @@ public final class WXMCommandVMRealizeTest
       );
     Files.createDirectories(path.getParent());
     Files.write(path, new byte[128000]);
+    assumeZFSFilesystem(path);
 
     MainExitless.main(
       new String[]{
@@ -588,6 +617,7 @@ public final class WXMCommandVMRealizeTest
       );
     Files.createDirectories(path.getParent());
     Files.write(path, new byte[128001]);
+    assumeZFSFilesystem(path);
 
     MainExitless.main(
       new String[]{
@@ -605,6 +635,11 @@ public final class WXMCommandVMRealizeTest
     throws Exception
   {
     final var id = UUID.randomUUID();
+
+    final Path path = this.zfsDirectory.resolve(id.toString());
+    Files.createDirectories(path);
+    assumeZFSFilesystem(path);
+
     MainExitless.main(
       new String[]{
         "vm-define",

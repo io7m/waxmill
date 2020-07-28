@@ -52,11 +52,25 @@ public final class WXMStorageBackends
 
     return machineDirectory
       .resolve(machineId.toString())
-      .resolve(String.format(
-        "disk-%d_%d_%d",
-        Integer.valueOf(deviceID.busID()),
-        Integer.valueOf(deviceID.slotID()),
-        Integer.valueOf(deviceID.functionID())
-      ));
+      .resolve(determineZFSVolumeName(deviceID));
+  }
+
+  /**
+   * Derive the ZFS volume name for the given device ID.
+   *
+   * @param deviceID The device ID
+   *
+   * @return The volume name
+   */
+
+  public static String determineZFSVolumeName(
+    final WXMDeviceSlot deviceID)
+  {
+    return String.format(
+      "disk-%d_%d_%d",
+      Integer.valueOf(deviceID.busID()),
+      Integer.valueOf(deviceID.slotID()),
+      Integer.valueOf(deviceID.functionID())
+    );
   }
 }

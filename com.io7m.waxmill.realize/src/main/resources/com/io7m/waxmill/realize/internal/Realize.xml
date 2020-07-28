@@ -44,4 +44,11 @@
 ]]>
   </entry>
 
+  <entry key="errorNotZFS"><![CDATA[The specified directory is not a ZFS filesystem.
+  Machine:         {0}
+  Path:            {1}
+  Filesystem Type: {2}
+]]>
+  </entry>
+
 </properties>

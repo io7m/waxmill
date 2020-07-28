@@ -18,6 +18,7 @@ package com.io7m.waxmill.realize;
 
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
+import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
@@ -84,6 +85,7 @@ public final class WXMRealizations implements WXMRealizationType
 
   @Override
   public WXMRealizationInstructions evaluate()
+    throws WXMException
   {
     final var builder = WXMRealizationInstructions.builder();
 
@@ -129,6 +131,7 @@ public final class WXMRealizations implements WXMRealizationType
   private void evaluateAHCIDisk(
     final WXMRealizationInstructions.Builder builder,
     final WXMDeviceAHCIDisk device)
+    throws WXMException
   {
     final var backend = device.backend();
     switch (backend.kind()) {
@@ -163,6 +166,7 @@ public final class WXMRealizations implements WXMRealizationType
   private void evaluateVirtioBlock(
     final WXMRealizationInstructions.Builder builder,
     final WXMDeviceVirtioBlockStorage device)
+    throws WXMException
   {
     final var backend = device.backend();
     switch (backend.kind()) {
@@ -184,6 +188,7 @@ public final class WXMRealizations implements WXMRealizationType
     final WXMRealizationInstructions.Builder builder,
     final WXMDeviceType device,
     final WXMStorageBackendZFSVolume zfs)
+    throws WXMException
   {
     builder.addSteps(
       new WXMZFSVolumeCheck(
