@@ -40,6 +40,7 @@ import com.io7m.waxmill.machines.WXMInterfaceGroupName;
 import com.io7m.waxmill.machines.WXMMACAddress;
 import com.io7m.waxmill.machines.WXMMachineName;
 import com.io7m.waxmill.machines.WXMSectorSizes;
+import com.io7m.waxmill.machines.WXMShortIDs;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMTAPDeviceName;
@@ -193,7 +194,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096 %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -258,7 +259,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,/dev/zvol/storage/vm/%s/disk-0_0_0 %s",
         machine.id(),
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -334,7 +335,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,amd_hostbridge -s 0:1:0,ahci-cd,/dev/zvol/storage/vm/%s/disk-0_1_0 %s",
         machine.id(),
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -415,7 +416,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,amd_hostbridge -s 0:1:0,ahci-cd,/dev/zvol/storage/vm/%s/disk-0_1_0 %s",
         machine.id(),
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -531,7 +532,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,/dev/zvol/storage/vm/%s/disk-0_0_0 %s",
         machine.id(),
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -615,7 +616,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-cd,/dev/zvol/storage/vm/%s/disk-0_1_0 %s",
         machine.id(),
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -736,13 +737,13 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
-    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -885,13 +886,13 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
-    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -1012,13 +1013,13 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
-    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -1161,13 +1162,13 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
-    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -1288,13 +1289,13 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
-    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -1393,7 +1394,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,lpc -l bootrom,/tmp/rom -l com1,/dev/nmdm_%s_B -l com2,stdio %s",
         machine.id(),
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -1478,7 +1479,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       String.format(
         "/usr/sbin/bhyve -P -A -S -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,/dev/zvol/storage/vm/%s/disk-0_0_0 -s 0:1:0,passthru,1/2/3 %s",
         machine.id(),
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }

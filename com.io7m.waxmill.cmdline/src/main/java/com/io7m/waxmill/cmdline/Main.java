@@ -36,6 +36,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMDelete;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteBootConfigurations;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDeleteDevice;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMExport;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMIDOf;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMImport;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMKill;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMList;
@@ -88,6 +89,7 @@ public final class Main implements Runnable
         WXMCommandVMDeleteBootConfigurations::new,
         WXMCommandVMDeleteDevice::new,
         WXMCommandVMExport::new,
+        WXMCommandVMIDOf::new,
         WXMCommandVMImport::new,
         WXMCommandVMKill::new,
         WXMCommandVMList::new,
