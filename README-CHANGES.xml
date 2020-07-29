@@ -35,11 +35,20 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2020-07-28T15:55:45+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.4">
+    <c:release date="2020-07-28T00:00:00+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.4">
       <c:changes>
-        <c:change date="2020-07-28T15:55:45+00:00" summary="Fix issue creating ZFS volumes">
+        <c:change date="2020-07-28T00:00:00+00:00" summary="Fix issue creating ZFS volumes">
           <c:tickets>
             <c:ticket id="28"/>
+          </c:tickets>
+        </c:change>
+      </c:changes>
+    </c:release>
+    <c:release date="2020-07-29T18:45:21+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.5">
+      <c:changes>
+        <c:change date="2020-07-29T18:45:21+00:00" summary="Refactor ZFS handling">
+          <c:tickets>
+            <c:ticket id="29"/>
           </c:tickets>
         </c:change>
       </c:changes>
