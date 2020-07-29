@@ -19,25 +19,18 @@ package com.io7m.waxmill.tests.boot;
 import com.io7m.waxmill.boot.WXMBootConfigurationEvaluator;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.exceptions.WXMExceptionUnsatisfiedRequirement;
-import com.io7m.waxmill.machines.WXMBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
-import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceFramebuffer;
-import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
-import com.io7m.waxmill.machines.WXMDeviceType;
-import com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration;
-import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI;
-import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMMachineName;
 import com.io7m.waxmill.machines.WXMSectorSizes;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,15 +48,13 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration.*;
-import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_AMD;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration.OFF;
 import static com.io7m.waxmill.machines.WXMOpenOption.NO_CACHE;
 import static com.io7m.waxmill.machines.WXMOpenOption.READ_ONLY;
 import static com.io7m.waxmill.machines.WXMOpenOption.SYNCHRONOUS;
 import static com.io7m.waxmill.tests.WXMDeviceIDTest.convert;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class WXMBootConfigurationEvaluatorUEFITest
 {
@@ -74,6 +64,7 @@ public final class WXMBootConfigurationEvaluatorUEFITest
   private Path directory;
   private Path configs;
   private Path vms;
+  private WXMClientConfiguration clientConfiguration;
 
   @BeforeEach
   public void setup()
@@ -85,6 +76,16 @@ public final class WXMBootConfigurationEvaluatorUEFITest
       this.directory.resolve("configs");
     this.vms =
       this.directory.resolve("vms");
+
+    this.clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeFilesystem(
+          WXMZFSFilesystem.builder()
+            .setMountPoint(this.vms)
+            .setName("storage/vm")
+            .build())
+        .build();
   }
 
   @Test
@@ -126,15 +127,10 @@ public final class WXMBootConfigurationEvaluatorUEFITest
             ).build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
 
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -157,7 +153,9 @@ public final class WXMBootConfigurationEvaluatorUEFITest
     assertEquals("-m", lastArgs.remove(0));
     assertEquals("512M", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
-    assertEquals("0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096", lastArgs.remove(0));
+    assertEquals(
+      "0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096",
+      lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:1:0,lpc", lastArgs.remove(0));
     assertEquals("-l", lastArgs.remove(0));
@@ -193,7 +191,7 @@ public final class WXMBootConfigurationEvaluatorUEFITest
           WXMDeviceFramebuffer.builder()
             .setDeviceSlot(convert("0:2:0"))
             .setHeight(1400)
-            .setListenAddress(Inet6Address.getByAddress(new byte[] {
+            .setListenAddress(Inet6Address.getByAddress(new byte[]{
               0, 0, 0, 0,
               0, 0, 0, 0,
               0, 0, 0, 0,
@@ -215,15 +213,9 @@ public final class WXMBootConfigurationEvaluatorUEFITest
             .build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -250,7 +242,9 @@ public final class WXMBootConfigurationEvaluatorUEFITest
     assertEquals("-l", lastArgs.remove(0));
     assertEquals("com1,stdio", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
-    assertEquals("0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait", lastArgs.remove(0));
+    assertEquals(
+      "0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait",
+      lastArgs.remove(0));
     assertEquals("-l", lastArgs.remove(0));
     assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
     assertEquals(machine.id().toString(), lastArgs.remove(0));
@@ -282,7 +276,7 @@ public final class WXMBootConfigurationEvaluatorUEFITest
           WXMDeviceFramebuffer.builder()
             .setDeviceSlot(convert("0:2:0"))
             .setHeight(1400)
-            .setListenAddress(Inet4Address.getByAddress(new byte[] {
+            .setListenAddress(Inet4Address.getByAddress(new byte[]{
               0x7f, 0, 0, 1
             }))
             .setListenPort(5901)
@@ -301,15 +295,9 @@ public final class WXMBootConfigurationEvaluatorUEFITest
             .build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -336,7 +324,9 @@ public final class WXMBootConfigurationEvaluatorUEFITest
     assertEquals("-l", lastArgs.remove(0));
     assertEquals("com1,stdio", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
-    assertEquals("0:2:0,fbuf,tcp=127.0.0.1:5901,w=1200,h=1400,vga=off,wait", lastArgs.remove(0));
+    assertEquals(
+      "0:2:0,fbuf,tcp=127.0.0.1:5901,w=1200,h=1400,vga=off,wait",
+      lastArgs.remove(0));
     assertEquals("-l", lastArgs.remove(0));
     assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
     assertEquals(machine.id().toString(), lastArgs.remove(0));
@@ -348,14 +338,5 @@ public final class WXMBootConfigurationEvaluatorUEFITest
         machine.id()),
       lastExec.toString()
     );
-  }
-
-  private static <T extends Throwable> T assertThrowsLogged(
-    final Class<T> expectedType,
-    final Executable executable)
-  {
-    final var ex = assertThrows(expectedType, executable);
-    LOG.debug("", ex);
-    return ex;
   }
 }

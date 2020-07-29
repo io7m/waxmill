@@ -18,8 +18,7 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
-import com.io7m.waxmill.machines.WXMDeviceSlot;
-import com.io7m.waxmill.machines.WXMStorageBackends;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.Assumptions;
@@ -59,7 +58,12 @@ public final class WXMCommandVMRealizeTest
     this.configuration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
-        .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
+        .setVirtualMachineRuntimeFilesystem(
+          WXMZFSFilesystem.builder()
+            .setName("storage/vm")
+            .setMountPoint(this.zfsDirectory)
+            .build()
+        )
         .setZfsExecutable(Paths.get("/bin/echo"))
         .setGrubBhyveExecutable(Paths.get("/bin/echo"))
         .setBhyveExecutable(Paths.get("/bin/echo"))
@@ -320,136 +324,12 @@ public final class WXMCommandVMRealizeTest
     );
   }
 
-  @Test
-  public void realizeZFSVolumeVirtioExists()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2"
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-virtio-disk",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "zfs-volume;128000",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var path =
-      WXMStorageBackends.determineZFSVolumePath(
-        this.zfsDirectory,
-        id,
-        WXMDeviceSlot.builder()
-          .setBusID(0)
-          .setSlotID(1)
-          .setFunctionID(0)
-          .build()
-      );
-    Files.createDirectories(path.getParent());
-    Files.write(path, new byte[128000]);
-    assumeZFSFilesystem(path);
-
-    MainExitless.main(
-      new String[]{
-        "vm-realize",
-        "--machine",
-        id.toString(),
-        "--configuration",
-        this.configFile.toString()
-      }
-    );
-  }
-
   private static void assumeZFSFilesystem(final Path path)
     throws IOException
   {
     Assumptions.assumeTrue(
       "ZFS".equals(Files.getFileStore(path).type().toUpperCase(ROOT)),
       String.format("%s is a ZFS filesystem", path)
-    );
-  }
-
-  @Test
-  public void realizeZFSVolumeVirtioExistsWrongSize()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2"
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-virtio-disk",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "zfs-volume;128000",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var path =
-      WXMStorageBackends.determineZFSVolumePath(
-        this.zfsDirectory,
-        id,
-        WXMDeviceSlot.builder()
-          .setBusID(0)
-          .setSlotID(1)
-          .setFunctionID(0)
-          .build()
-      );
-    Files.createDirectories(path.getParent());
-    Files.write(path, new byte[128001]);
-    assumeZFSFilesystem(path);
-
-    MainExitless.main(
-      new String[]{
-        "vm-realize",
-        "--machine",
-        id.toString(),
-        "--configuration",
-        this.configFile.toString()
-      }
     );
   }
 
@@ -494,130 +374,6 @@ public final class WXMCommandVMRealizeTest
         "0:1:0"
       }
     );
-
-    MainExitless.main(
-      new String[]{
-        "vm-realize",
-        "--machine",
-        id.toString(),
-        "--configuration",
-        this.configFile.toString()
-      }
-    );
-  }
-
-  @Test
-  public void realizeZFSVolumeAHCIExists()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2"
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-ahci-disk",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "zfs-volume;128000",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var path =
-      WXMStorageBackends.determineZFSVolumePath(
-        this.zfsDirectory,
-        id,
-        WXMDeviceSlot.builder()
-          .setBusID(0)
-          .setSlotID(1)
-          .setFunctionID(0)
-          .build()
-      );
-    Files.createDirectories(path.getParent());
-    Files.write(path, new byte[128000]);
-    assumeZFSFilesystem(path);
-
-    MainExitless.main(
-      new String[]{
-        "vm-realize",
-        "--machine",
-        id.toString(),
-        "--configuration",
-        this.configFile.toString()
-      }
-    );
-  }
-
-  @Test
-  public void realizeZFSVolumeAHCIExistsWrongSize()
-    throws Exception
-  {
-    final var id = UUID.randomUUID();
-    MainExitless.main(
-      new String[]{
-        "vm-define",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--name",
-        "com.io7m.example",
-        "--memory-gigabytes",
-        "1",
-        "--memory-megabytes",
-        "128",
-        "--cpu-count",
-        "2"
-      }
-    );
-
-    MainExitless.main(
-      new String[]{
-        "vm-add-ahci-disk",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "zfs-volume;128000",
-        "--device-slot",
-        "0:1:0"
-      }
-    );
-
-    final var path =
-      WXMStorageBackends.determineZFSVolumePath(
-        this.zfsDirectory,
-        id,
-        WXMDeviceSlot.builder()
-          .setBusID(0)
-          .setSlotID(1)
-          .setFunctionID(0)
-          .build()
-      );
-    Files.createDirectories(path.getParent());
-    Files.write(path, new byte[128001]);
-    assumeZFSFilesystem(path);
 
     MainExitless.main(
       new String[]{

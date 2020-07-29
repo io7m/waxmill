@@ -18,11 +18,13 @@ package com.io7m.waxmill.realize.internal;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.exceptions.WXMExceptionUnsatisfiedRequirement;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDryRun;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
-import com.io7m.waxmill.machines.WXMStorageBackends;
+import com.io7m.waxmill.machines.WXMZFSFilesystems;
+import com.io7m.waxmill.machines.WXMZFSVolume;
+import com.io7m.waxmill.machines.WXMZFSVolumes;
 import com.io7m.waxmill.process.api.WXMProcessDescription;
 import com.io7m.waxmill.process.api.WXMProcessesType;
 import com.io7m.waxmill.realize.WXMRealizationStepType;
@@ -32,11 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.file.FileStore;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,8 +53,7 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
   private final WXMProcessesType processes;
   private final WXMRealizeMessages messages;
   private final WXMStorageBackendZFSVolume zfsVolume;
-  private final Path volumePath;
-  private final String volumeCreate;
+  private final WXMZFSVolume volume;
   private List<WXMProcessDescription> processList;
 
   public WXMZFSVolumeCheck(
@@ -65,7 +63,6 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
     final UUID inMachineId,
     final WXMDeviceSlot inSlot,
     final WXMStorageBackendZFSVolume inZFSVolume)
-    throws WXMException
   {
     this.clientConfiguration =
       Objects.requireNonNull(inClientConfiguration, "clientConfiguration");
@@ -80,52 +77,17 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
     final var machineId =
       Objects.requireNonNull(inMachineId, "machineId");
 
-    this.volumeCreate =
-      this.determineVolumeCreatePath(machineId);
-
-    this.volumePath =
-      WXMStorageBackends.determineZFSVolumePath(
-        this.clientConfiguration.virtualMachineRuntimeDirectory(),
-        machineId,
-        this.slot
+    this.volume =
+      WXMZFSVolumes.resolve(
+        WXMZFSFilesystems.resolve(
+          this.clientConfiguration.virtualMachineRuntimeFilesystem(),
+          machineId.toString()
+        ),
+        WXMDeviceSlots.asDiskName(inSlot)
       );
 
     this.processOpt = this.makeProcesses();
     this.processList = this.processOpt.map(List::of).orElseGet(List::of);
-  }
-
-  private String determineVolumeCreatePath(
-    final UUID machineId)
-    throws WXMException
-  {
-    final var base =
-      this.clientConfiguration.virtualMachineRuntimeDirectory()
-        .resolve(machineId.toString());
-
-    final FileStore store;
-    try {
-      store = Files.getFileStore(base);
-    } catch (final IOException e) {
-      throw new WXMException(e);
-    }
-
-    final var type = store.type();
-    if (!"ZFS".equals(type.toUpperCase(Locale.ROOT))) {
-      throw new WXMExceptionUnsatisfiedRequirement(
-        this.messages.format(
-          "errorNotZFS",
-          machineId,
-          base,
-          type
-        )
-      );
-    }
-
-    return String.format(
-      "%s/%s",
-      store.name(),
-      WXMStorageBackends.determineZFSVolumeName(this.slot)
-    );
   }
 
   private Optional<WXMProcessDescription> makeProcesses()
@@ -136,7 +98,7 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
         .addArguments("create")
         .addArguments("-V")
         .addArguments(size.toString())
-        .addArguments(this.volumeCreate)
+        .addArguments(this.volume.name())
         .build()
       );
   }
@@ -147,7 +109,7 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
     final var expectedSize = this.zfsVolume.expectedSize();
     return this.messages.format(
       "zfsVolumeCheck",
-      this.volumeCreate,
+      this.volume.name(),
       expectedSize.map(WXMZFSVolumeCheck::formatSize)
         .orElse("<unspecified>"),
       this.slot
@@ -178,13 +140,14 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
       return;
     }
 
-    if (Files.exists(this.volumePath)) {
+    final var deviceNode = this.volume.device();
+    if (Files.exists(deviceNode)) {
       final var sizeOpt = this.zfsVolume.expectedSize();
       if (sizeOpt.isPresent()) {
         final var expectedSize = sizeOpt.get();
 
         try {
-          final var size = Files.size(this.volumePath);
+          final var size = Files.size(deviceNode);
           if (!Objects.equals(BigInteger.valueOf(size), expectedSize)) {
             LOG.warn("{}", this.zfsVolumeSizeMismatch(expectedSize, size));
           }
@@ -195,7 +158,7 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
       return;
     }
 
-    LOG.debug("creating ZFS volume {}", this.volumePath);
+    LOG.debug("creating ZFS volume {}", this.volume.name());
 
     final var sizeOpt = this.zfsVolume.expectedSize();
     if (sizeOpt.isEmpty()) {
@@ -216,7 +179,7 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
   {
     return this.messages.format(
       "zfsVolumeMissingNoSize",
-      this.volumePath,
+      this.volume.name(),
       this.slot
     );
   }
@@ -227,7 +190,7 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
   {
     return this.messages.format(
       "zfsVolumeSizeMismatch",
-      this.volumePath,
+      this.volume.name(),
       expectedSize,
       Long.valueOf(size),
       this.slot

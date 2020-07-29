@@ -25,6 +25,7 @@ import com.io7m.waxmill.machines.WXMCommandExecution;
 import com.io7m.waxmill.machines.WXMDryRun;
 import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMZFSFilesystems;
 import com.io7m.waxmill.process.api.WXMProcessDescription;
 import com.io7m.waxmill.process.api.WXMProcessesType;
 import org.slf4j.Logger;
@@ -210,7 +211,9 @@ public final class WXMBootConfigurationExecutor
     }
     if (!missingPaths.isEmpty()) {
       if (!missingNMDMs.isEmpty()) {
-        throw new IOException(this.errorRequiredPathsMissingWithNMDMs(missingPaths, missingNMDMs));
+        throw new IOException(this.errorRequiredPathsMissingWithNMDMs(
+          missingPaths,
+          missingNMDMs));
       }
       throw new IOException(this.errorRequiredPathsMissing(missingPaths));
     }
@@ -261,11 +264,13 @@ public final class WXMBootConfigurationExecutor
     final WXMEvaluatedBootConfigurationGRUBBhyveType grubBhyveConfiguration)
     throws IOException, WXMException, InterruptedException
   {
-    final var lockFile =
-      this.clientConfiguration.virtualMachineRuntimeDirectory()
-        .resolve(this.machine.id().toString())
-        .resolve("lock");
+    final var machineFs =
+      WXMZFSFilesystems.resolve(
+        this.clientConfiguration.virtualMachineRuntimeFilesystem(),
+        this.machine.id().toString()
+      );
 
+    final var lockFile = machineFs.mountPoint().resolve("lock");
     try (var ignored = WXMFileLock.acquire(lockFile)) {
       writeGrubDeviceMap(execute, grubBhyveConfiguration);
       writeGrubConfig(execute, grubBhyveConfiguration);

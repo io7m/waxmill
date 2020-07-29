@@ -26,12 +26,14 @@ import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
-import com.io7m.waxmill.machines.WXMStorageBackends;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMZFSFilesystems;
+import com.io7m.waxmill.machines.WXMZFSVolumes;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -202,7 +204,9 @@ public final class WXMDeviceMap
           break;
         case WXM_NMDM:
           final Path path = nmdmPath(
-            clientConfiguration.virtualMachineRuntimeDirectory().getFileSystem(),
+            clientConfiguration.virtualMachineRuntimeFilesystem()
+              .mountPoint()
+              .getFileSystem(),
             machine.id(),
             NMDM_HOST
           );
@@ -264,19 +268,21 @@ public final class WXMDeviceMap
     final WXMVirtualMachine machine)
   {
     switch (backend.kind()) {
-      case WXM_STORAGE_FILE:
+      case WXM_STORAGE_FILE: {
         final var file = (WXMStorageBackendFile) backend;
         return new WXMDeviceAndPath(index, device, file.file());
-
-      case WXM_STORAGE_ZFS_VOLUME:
-        final Path path =
-          WXMStorageBackends.determineZFSVolumePath(
-            clientConfiguration.virtualMachineRuntimeDirectory(),
-            machine.id(),
-            device.deviceSlot()
+      }
+      case WXM_STORAGE_ZFS_VOLUME: {
+        final var volume =
+          WXMZFSVolumes.resolve(
+            WXMZFSFilesystems.resolve(
+              clientConfiguration.virtualMachineRuntimeFilesystem(),
+              machine.id().toString()
+            ),
+            WXMDeviceSlots.asDiskName(device.deviceSlot())
           );
-        return new WXMDeviceAndPath(index, device, path);
-
+        return new WXMDeviceAndPath(index, device, volume.device());
+      }
       case WXM_SCSI:
         throw new UnimplementedCodeException();
     }

@@ -55,6 +55,10 @@ public final class WXM1ClientConfigurationParser
       Map.entry(
         element("Paths"),
         c -> new WXM1PathsParser(this.fileSystem)
+      ),
+      Map.entry(
+        element("ZFSFilesystems"),
+        c -> new WXM1ZFSFilesystemsParser(this.fileSystem)
       )
     );
   }
@@ -67,8 +71,32 @@ public final class WXM1ClientConfigurationParser
   {
     if (result instanceof WXM1Paths) {
       this.onPathsReceived(context, (WXM1Paths) result);
+    } else if (result instanceof WXM1ZFSFilesystems) {
+      this.onZFSFilesystemsReceived(context, (WXM1ZFSFilesystems) result);
     } else {
       throw new UnreachableCodeException();
+    }
+  }
+
+  private void onZFSFilesystemsReceived(
+    final BTElementParsingContextType context,
+    final WXM1ZFSFilesystems result)
+    throws SAXParseException
+  {
+    for (final var fs : result.filesystems()) {
+      final var type = fs.type();
+      switch (type) {
+        case "VirtualMachineRuntimeFilesystem": {
+          this.builder.setVirtualMachineRuntimeFilesystem(fs.filesystem());
+          break;
+        }
+        default:
+          throw context.parseException(
+            new IllegalArgumentException(String.format(
+              "Unrecognized filesystem type: %s",
+              type))
+          );
+      }
     }
   }
 
@@ -82,10 +110,6 @@ public final class WXM1ClientConfigurationParser
       switch (type) {
         case "VirtualMachineConfigurationDirectory": {
           this.builder.setVirtualMachineConfigurationDirectory(path.path());
-          break;
-        }
-        case "VirtualMachineRuntimeDirectory": {
-          this.builder.setVirtualMachineRuntimeDirectory(path.path());
           break;
         }
         case "GRUBBhyveExecutable": {

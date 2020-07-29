@@ -14,42 +14,35 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.realize;
-
-import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.machines.WXMDryRun;
-import com.io7m.waxmill.process.api.WXMProcessDescription;
-
-import java.io.IOException;
-import java.util.List;
+package com.io7m.waxmill.machines;
 
 /**
- * A single step within a realization.
+ * Functions over device slots.
  */
 
-public interface WXMRealizationStepType
+public final class WXMDeviceSlots
 {
-  /**
-   * @return The description of the step
-   */
+  private WXMDeviceSlots()
+  {
 
-  String description();
-
-  /**
-   * @return The list of processes that will be executed
-   */
-
-  List<WXMProcessDescription> processes();
+  }
 
   /**
-   * Execute the step.
+   * Derive the disk name for a given device slot.
    *
-   * @param dryRun A specification of whether this is a dry run or not
+   * @param deviceSlot The device slot
    *
-   * @throws WXMException On errors
+   * @return The disk name
    */
 
-  void execute(
-    WXMDryRun dryRun)
-    throws WXMException, IOException, InterruptedException;
+  public static String asDiskName(
+    final WXMDeviceSlot deviceSlot)
+  {
+    return String.format(
+      "disk-%d_%d_%d",
+      Integer.valueOf(deviceSlot.busID()),
+      Integer.valueOf(deviceSlot.slotID()),
+      Integer.valueOf(deviceSlot.functionID())
+    );
+  }
 }

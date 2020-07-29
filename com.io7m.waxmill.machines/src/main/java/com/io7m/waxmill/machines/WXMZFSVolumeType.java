@@ -14,42 +14,50 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.realize;
+package com.io7m.waxmill.machines;
 
-import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.machines.WXMDryRun;
-import com.io7m.waxmill.process.api.WXMProcessDescription;
+import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.jaffirm.core.Preconditions;
+import org.immutables.value.Value;
 
-import java.io.IOException;
-import java.util.List;
+import java.nio.file.Path;
 
 /**
- * A single step within a realization.
+ * A ZFS volume.
  */
 
-public interface WXMRealizationStepType
+@ImmutablesStyleType
+@Value.Immutable
+public interface WXMZFSVolumeType
 {
   /**
-   * @return The description of the step
+   * The name of the volume. This is the name that would be, for example,
+   * passed to {@code zfs create -V name/of/volume}.
+   *
+   * @return The name of the volume
    */
 
-  String description();
+  String name();
 
   /**
-   * @return The list of processes that will be executed
+   * The device node. For example, {@code /dev/zvol/path/to/volume}.
+   *
+   * @return The device node
    */
 
-  List<WXMProcessDescription> processes();
+  Path device();
 
   /**
-   * Execute the step.
-   *
-   * @param dryRun A specification of whether this is a dry run or not
-   *
-   * @throws WXMException On errors
+   * Check preconditions for the type.
    */
 
-  void execute(
-    WXMDryRun dryRun)
-    throws WXMException, IOException, InterruptedException;
+  @Value.Check
+  default void checkPreconditions()
+  {
+    Preconditions.checkPrecondition(
+      this.device(),
+      this.device().isAbsolute(),
+      x -> "Device path must be absolute"
+    );
+  }
 }

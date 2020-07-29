@@ -21,7 +21,7 @@ import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
-import com.io7m.waxmill.machines.WXMStorageBackends;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,11 @@ public final class WXMCommandVMAddVirtioDiskTest
     this.configuration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
-        .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
+        .setVirtualMachineRuntimeFilesystem(
+          WXMZFSFilesystem.builder()
+            .setName("storage/vm")
+            .setMountPoint(this.zfsDirectory)
+            .build())
         .build();
 
     new WXMClientConfigurationSerializers()
@@ -184,20 +188,6 @@ public final class WXMCommandVMAddVirtioDiskTest
       (WXMDeviceVirtioBlockStorage) machine.devices().get(1);
     final var storage =
       (WXMStorageBackendZFSVolume) disk.backend();
-
-    assertEquals(
-      this.zfsDirectory.resolve(id.toString())
-        .resolve(String.format(
-          "disk-%d_%d_%d",
-          Integer.valueOf(disk.deviceSlot().busID()),
-          Integer.valueOf(disk.deviceSlot().slotID()),
-          Integer.valueOf(disk.deviceSlot().functionID())
-        )),
-      WXMStorageBackends.determineZFSVolumePath(
-        this.configuration.virtualMachineRuntimeDirectory(),
-        id,
-        disk.deviceSlot())
-    );
   }
 
   @Test

@@ -14,42 +14,46 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.realize;
+package com.io7m.waxmill.machines;
 
-import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.machines.WXMDryRun;
-import com.io7m.waxmill.process.api.WXMProcessDescription;
-
-import java.io.IOException;
-import java.util.List;
+import java.util.Objects;
 
 /**
- * A single step within a realization.
+ * Functions over ZFS filesystems.
  */
 
-public interface WXMRealizationStepType
+public final class WXMZFSFilesystems
 {
-  /**
-   * @return The description of the step
-   */
+  private WXMZFSFilesystems()
+  {
 
-  String description();
-
-  /**
-   * @return The list of processes that will be executed
-   */
-
-  List<WXMProcessDescription> processes();
+  }
 
   /**
-   * Execute the step.
+   * Resolve the given name against the given filesystem.
    *
-   * @param dryRun A specification of whether this is a dry run or not
+   * @param filesystem The filesystem
+   * @param name       The file name
    *
-   * @throws WXMException On errors
+   * @return A new filesystem
+   *
+   * @see java.nio.file.Path#resolve(String)
    */
 
-  void execute(
-    WXMDryRun dryRun)
-    throws WXMException, IOException, InterruptedException;
+  public static WXMZFSFilesystem resolve(
+    final WXMZFSFilesystem filesystem,
+    final String name)
+  {
+    Objects.requireNonNull(filesystem, "filesystem");
+    Objects.requireNonNull(name, "name");
+
+    final var mountPoint =
+      filesystem.mountPoint()
+        .resolve(name);
+
+    return WXMZFSFilesystem.builder()
+      .setMountPoint(mountPoint)
+      .setName(String.format("%s/%s", filesystem.name(), name))
+      .build();
+  }
 }

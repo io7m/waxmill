@@ -29,12 +29,12 @@
   Action: Create the zfs volume manually (zfs create -V).
 ]]></entry>
 
-  <entry key="runtimeDirectoryCreate"><![CDATA[Creating a runtime directory for the virtual machine.
+  <entry key="runtimeDirectoryCreate"><![CDATA[Creating a runtime filesystem for the virtual machine.
   Filesystem: {0}
 ]]></entry>
 
-  <entry key="runtimeDirectoryNotADirectory"><![CDATA[The runtime directory for the virtual machine is not a directory.
-  Path: {0}
+  <entry key="runtimeDirectoryNotADirectory"><![CDATA[The runtime filesystem for the virtual machine is not a directory.
+  Filesystem: {0}
 ]]></entry>
 
   <entry key="errorRequiredPathsMissing"><![CDATA[One or more required files are missing.
