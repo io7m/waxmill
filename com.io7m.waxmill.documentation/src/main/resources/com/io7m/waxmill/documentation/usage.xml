@@ -31,12 +31,15 @@
       <LinkFootnote target="f5bb2919-dc4e-4da2-bb03-aff6bf04539b"/>, and also specifies the location of the <Term type="term">
       virtual machine configuration directory
     </Term> and the
-      <Term type="term">virtual machine runtime directory</Term>. The <Term type="term">virtual machine configuration
+      <Term type="term">virtual machine runtime filesystem</Term>. The <Term type="term">virtual machine configuration
       directory
     </Term> is a directory consisting of XML configuration files for individual virtual machines. The
-      <Term type="term">virtual machine runtime directory</Term>
-      is a directory containing one directory per virtual machine, each of which stores resources needed by virtual
-      machines at run-time such as ZFS volumes, sockets, and lock files.
+      <Term type="term">virtual machine runtime filesystem</Term>
+      is a ZFS filesystem containing one ZFS filesystem per virtual machine, each of which stores resources needed by
+      virtual machines at run-time such as GRUB configuration files, sockets, and lock files. The
+      <Term type="command">waxmill</Term> tools expect to take complete ownership of the
+      <Term type="term">virtual machine runtime filesystem</Term>, and can be expected to create arbitrary
+      nested filesystems and volumes as needed.
     </Paragraph>
   </Subsection>
 
@@ -139,7 +142,16 @@
           <Link target="892c105a-d17f-4bf8-a278-fa887fbc4642">vm-add-ahci-optical</Link>
         </Item>
         <Item>
+          <Link target="cf887826-2793-4648-8a4d-934a9e8786f3">vm-add-e1000-network-device</Link>
+        </Item>
+        <Item>
+          <Link target="d9d73534-23b2-42d8-8b94-96f69d045c5c">vm-add-framebuffer-device</Link>
+        </Item>
+        <Item>
           <Link target="22388d06-bf5a-4d35-ae75-80303a670ea3">vm-add-lpc-device</Link>
+        </Item>
+        <Item>
+          <Link target="257d5fba-6796-41f3-a0a2-e431d94cad1b">vm-add-passthru</Link>
         </Item>
         <Item>
           <Link target="faebdfac-68e0-49af-a0ca-dbede6a2c335">vm-add-virtio-disk</Link>
@@ -168,7 +180,7 @@
       <Term type="package">Waxmill</Term>
       package will automatically create a ZFS volume at <Term type="expression">/storage/vm/X/disk-a:b:c</Term> (where
       <Term type="expression">/storage/vm</Term>
-      is the configured <Link target="9f22456e-66d8-4055-be45-5cc62d25b711">virtual machine runtime directory</Link>)
+      is the configured <Link target="9f22456e-66d8-4055-be45-5cc62d25b711">virtual machine runtime filesystem</Link>)
       when <Link target="783bc43e-190a-462e-883b-1b74d71b94e4">realizing</Link> the virtual machine. This is merely a
       convenience feature; if the ZFS volume already exists, it will be used and the
       <Term type="package">Waxmill</Term>

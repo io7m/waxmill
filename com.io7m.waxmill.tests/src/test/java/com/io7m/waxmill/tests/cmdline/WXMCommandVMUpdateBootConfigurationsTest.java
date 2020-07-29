@@ -23,6 +23,7 @@ import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMBootConfigurationType;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMBootConfigurationsSerializers;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
@@ -64,8 +65,12 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
     this.configuration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
-        .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
-        .build();
+        .setVirtualMachineRuntimeFilesystem(
+          WXMZFSFilesystem.builder()
+            .setMountPoint(this.zfsDirectory)
+            .setName("storage/vm")
+            .build()
+        ).build();
 
     new WXMClientConfigurationSerializers()
       .serialize(

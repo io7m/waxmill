@@ -14,42 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.realize;
+package com.io7m.waxmill.xml.config.v1;
 
-import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.machines.WXMDryRun;
-import com.io7m.waxmill.process.api.WXMProcessDescription;
+import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
+import org.immutables.value.Value;
 
-import java.io.IOException;
-import java.util.List;
-
-/**
- * A single step within a realization.
- */
-
-public interface WXMRealizationStepType
+@Value.Immutable
+@ImmutablesStyleType
+public interface WXM1ZFSFilesystemType
 {
-  /**
-   * @return The description of the step
-   */
+  @Value.Parameter
+  String type();
 
-  String description();
-
-  /**
-   * @return The list of processes that will be executed
-   */
-
-  List<WXMProcessDescription> processes();
-
-  /**
-   * Execute the step.
-   *
-   * @param dryRun A specification of whether this is a dry run or not
-   *
-   * @throws WXMException On errors
-   */
-
-  void execute(
-    WXMDryRun dryRun)
-    throws WXMException, IOException, InterruptedException;
+  @Value.Parameter
+  WXMZFSFilesystem filesystem();
 }

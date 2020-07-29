@@ -19,6 +19,7 @@ package com.io7m.waxmill.realize.internal;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.machines.WXMDryRun;
+import com.io7m.waxmill.machines.WXMZFSFilesystems;
 import com.io7m.waxmill.process.api.WXMProcessDescription;
 import com.io7m.waxmill.process.api.WXMProcessesType;
 import com.io7m.waxmill.realize.WXMRealizationStepType;
@@ -33,12 +34,12 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
-import static java.util.Locale.ROOT;
 
-public final class WXMRuntimeDirectoryCreate implements WXMRealizationStepType
+public final class WXMZFSRuntimeFilesystemCreate
+  implements WXMRealizationStepType
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(WXMRuntimeDirectoryCreate.class);
+    LoggerFactory.getLogger(WXMZFSRuntimeFilesystemCreate.class);
 
   private final WXMRealizeMessages messages;
   private final UUID machineId;
@@ -46,7 +47,7 @@ public final class WXMRuntimeDirectoryCreate implements WXMRealizationStepType
   private final WXMProcessesType processes;
   private List<WXMProcessDescription> processesList;
 
-  public WXMRuntimeDirectoryCreate(
+  public WXMZFSRuntimeFilesystemCreate(
     final WXMClientConfiguration inClientConfiguration,
     final WXMRealizeMessages inMessages,
     final WXMProcessesType inProcesses,
@@ -69,8 +70,10 @@ public final class WXMRuntimeDirectoryCreate implements WXMRealizationStepType
   {
     return this.messages.format(
       "runtimeDirectoryCreate",
-      this.clientConfiguration.virtualMachineRuntimeDirectory()
-        .resolve(this.machineId.toString())
+      WXMZFSFilesystems.resolve(
+        this.clientConfiguration.virtualMachineRuntimeFilesystem(),
+        this.machineId.toString()
+      ).name()
     );
   }
 
@@ -83,50 +86,43 @@ public final class WXMRuntimeDirectoryCreate implements WXMRealizationStepType
   @Override
   public void execute(
     final WXMDryRun dryRun)
-    throws WXMException
+    throws WXMException, IOException, InterruptedException
   {
     if (dryRun == DRY_RUN) {
       return;
     }
 
-    final var baseDirectory =
-      this.clientConfiguration.virtualMachineRuntimeDirectory();
-    final var path =
-      baseDirectory.resolve(this.machineId.toString());
+    final var baseFilesystem =
+      this.clientConfiguration.virtualMachineRuntimeFilesystem();
 
-    LOG.info("checking if {} is a directory", path);
+    final var machineFilesystem =
+      WXMZFSFilesystems.resolve(
+        baseFilesystem,
+        this.machineId.toString()
+      );
 
-    if (Files.exists(path)) {
-      if (Files.isDirectory(path)) {
-        LOG.info("{} is a directory", path);
+    final var mountPoint = machineFilesystem.mountPoint();
+    LOG.info("checking if {} is a directory", mountPoint);
+
+    if (Files.exists(mountPoint)) {
+      if (Files.isDirectory(mountPoint)) {
+        LOG.info("{} is a directory", mountPoint);
         return;
       }
-      throw new WXMException(this.notADirectory(path));
+      throw new WXMException(this.notADirectory(mountPoint));
     }
 
-    try {
-      final var store = Files.getFileStore(baseDirectory);
-      if ("ZFS".equals(store.type().toUpperCase(ROOT))) {
-        final var createPath =
-          String.format("%s/%s", store.name(), this.machineId);
+    final var fsName = machineFilesystem.name();
+    LOG.info("creating ZFS filesystem {}", fsName);
+    final var process =
+      WXMProcessDescription.builder()
+        .setExecutable(this.clientConfiguration.zfsExecutable())
+        .addArguments("create")
+        .addArguments(fsName)
+        .build();
 
-        LOG.info("creating ZFS filesystem {}", createPath);
-        final var process =
-          WXMProcessDescription.builder()
-            .setExecutable(this.clientConfiguration.zfsExecutable())
-            .addArguments("create")
-            .addArguments(createPath)
-            .build();
-
-        this.processesList = List.of(process);
-        this.processes.processStartAndWait(process);
-      } else {
-        LOG.info("creating directory {}", path);
-        Files.createDirectories(path);
-      }
-    } catch (final IOException | InterruptedException e) {
-      throw new WXMException(e);
-    }
+    this.processesList = List.of(process);
+    this.processes.processStartAndWait(process);
   }
 
   private String notADirectory(

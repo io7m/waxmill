@@ -67,8 +67,12 @@
       <Class name="com.io7m.waxmill.machines.WXMVMNetDeviceName"/>
       <Class name="com.io7m.waxmill.machines.WXMVirtualMachine"/>
       <Class name="com.io7m.waxmill.machines.WXMVirtualMachineSet"/>
+      <Class name="com.io7m.waxmill.machines.WXMZFSFilesystem"/>
+      <Class name="com.io7m.waxmill.machines.WXMZFSVolume"/>
       <Class name="com.io7m.waxmill.parser.api.WXMParseError"/>
       <Class name="com.io7m.waxmill.process.api.WXMProcessDescription"/>
+      <Class name="com.io7m.waxmill.xml.config.v1.WXM1ZFSFilesystem"/>
+      <Class name="com.io7m.waxmill.xml.config.v1.WXM1ZFSFilesystems"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Comment"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1Flag"/>
       <Class name="com.io7m.waxmill.xml.vm.v1.WXM1OpenOptions"/>
@@ -344,6 +348,13 @@
     <Class name="com.io7m.waxmill.xml.vm.v1.WXM1FramebufferDeviceParser"/>
     <Method name="onElementStart"/>
     <Bug pattern="REC_CATCH_EXCEPTION"/>
+  </Match>
+
+  <Match>
+    <!-- False positive. UnreachableCodeException. -->
+    <Class name="com.io7m.waxmill.boot.WXMBootConfigurationEvaluator"/>
+    <Method name="evaluate"/>
+    <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
   </Match>
 
 </FindBugsFilter>

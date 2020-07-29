@@ -21,6 +21,7 @@ import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,8 +59,12 @@ public final class WXMCommandVMAddVirtioNetworkTest
     this.configuration =
       WXMClientConfiguration.builder()
         .setVirtualMachineConfigurationDirectory(this.vmDirectory)
-        .setVirtualMachineRuntimeDirectory(this.zfsDirectory)
-        .build();
+        .setVirtualMachineRuntimeFilesystem(
+          WXMZFSFilesystem.builder()
+            .setMountPoint(this.zfsDirectory)
+            .setName("storage/vm")
+            .build()
+        ).build();
 
     new WXMClientConfigurationSerializers()
       .serialize(

@@ -18,7 +18,6 @@ package com.io7m.waxmill.realize;
 
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
-import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
@@ -28,7 +27,7 @@ import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.process.api.WXMProcessesType;
 import com.io7m.waxmill.realize.internal.WXMFileCheck;
 import com.io7m.waxmill.realize.internal.WXMRealizeMessages;
-import com.io7m.waxmill.realize.internal.WXMRuntimeDirectoryCreate;
+import com.io7m.waxmill.realize.internal.WXMZFSRuntimeFilesystemCreate;
 import com.io7m.waxmill.realize.internal.WXMZFSVolumeCheck;
 
 import java.util.Objects;
@@ -85,12 +84,11 @@ public final class WXMRealizations implements WXMRealizationType
 
   @Override
   public WXMRealizationInstructions evaluate()
-    throws WXMException
   {
     final var builder = WXMRealizationInstructions.builder();
 
     builder.addSteps(
-      new WXMRuntimeDirectoryCreate(
+      new WXMZFSRuntimeFilesystemCreate(
         this.clientConfiguration,
         this.messages,
         this.processes,
@@ -131,7 +129,6 @@ public final class WXMRealizations implements WXMRealizationType
   private void evaluateAHCIDisk(
     final WXMRealizationInstructions.Builder builder,
     final WXMDeviceAHCIDisk device)
-    throws WXMException
   {
     final var backend = device.backend();
     switch (backend.kind()) {
@@ -166,7 +163,6 @@ public final class WXMRealizations implements WXMRealizationType
   private void evaluateVirtioBlock(
     final WXMRealizationInstructions.Builder builder,
     final WXMDeviceVirtioBlockStorage device)
-    throws WXMException
   {
     final var backend = device.backend();
     switch (backend.kind()) {
@@ -188,7 +184,6 @@ public final class WXMRealizations implements WXMRealizationType
     final WXMRealizationInstructions.Builder builder,
     final WXMDeviceType device,
     final WXMStorageBackendZFSVolume zfs)
-    throws WXMException
   {
     builder.addSteps(
       new WXMZFSVolumeCheck(

@@ -23,10 +23,10 @@ import com.io7m.blackthorne.api.BTQualifiedName;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.waxmill.machines.WXMDeviceE1000;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 
 import java.util.Map;
 
-import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
 public final class WXM1E1000NetworkDeviceParser

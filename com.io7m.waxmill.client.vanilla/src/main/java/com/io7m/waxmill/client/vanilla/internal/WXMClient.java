@@ -266,9 +266,10 @@ public final class WXMClient implements WXMClientType
         );
       }
 
-      case WXM_NMDM:
+      case WXM_NMDM: {
         final var fileSystem =
-          this.configuration.virtualMachineRuntimeDirectory()
+          this.configuration.virtualMachineRuntimeFilesystem()
+            .mountPoint()
             .getFileSystem();
 
         final var path =
@@ -285,10 +286,12 @@ public final class WXMClient implements WXMClientType
             .addArguments(path.toString())
             .build()
         );
+      }
 
-      case WXM_STDIO:
+      case WXM_STDIO: {
         LOG.debug("cannot use a stdio-based console");
         return Optional.empty();
+      }
     }
 
     throw new UnreachableCodeException();

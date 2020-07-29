@@ -23,6 +23,7 @@ import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.waxmill.client.api.WXMClientType;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMOpenOption;
@@ -30,9 +31,12 @@ import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMVirtualMachines;
+import com.io7m.waxmill.machines.WXMZFSFilesystems;
+import com.io7m.waxmill.machines.WXMZFSVolumes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +44,6 @@ import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
-import static com.io7m.waxmill.machines.WXMStorageBackends.determineZFSVolumePath;
 
 @Parameters(commandDescription = "Add an AHCI disk to a virtual machine.")
 public final class WXMCommandVMAddAHCIDisk extends
@@ -112,11 +115,18 @@ public final class WXMCommandVMAddAHCIDisk extends
     final WXMVirtualMachine machine,
     final WXMDeviceSlot deviceId)
   {
-    return determineZFSVolumePath(
-      client.configuration().virtualMachineRuntimeDirectory(),
-      machine.id(),
-      deviceId
-    ).toString();
+    final var machineFs =
+      WXMZFSFilesystems.resolve(
+        client.configuration().virtualMachineRuntimeFilesystem(),
+        machine.id().toString()
+      );
+
+    final var volume =
+      WXMZFSVolumes.resolve(
+        machineFs,
+        WXMDeviceSlots.asDiskName(deviceId));
+
+    return volume.name();
   }
 
   @Override
@@ -138,6 +148,7 @@ public final class WXMCommandVMAddAHCIDisk extends
   private void showCreated(
     final WXMClientType client,
     final WXMVirtualMachine machine)
+    throws IOException
   {
     switch (this.backend.kind()) {
       case WXM_STORAGE_FILE: {

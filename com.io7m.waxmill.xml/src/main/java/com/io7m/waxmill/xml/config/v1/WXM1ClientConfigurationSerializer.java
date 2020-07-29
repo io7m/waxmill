@@ -17,6 +17,7 @@
 package com.io7m.waxmill.xml.config.v1;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.serializer.api.WXMSerializerType;
 import com.io7m.waxmill.xml.WXMSchemas;
 
@@ -73,10 +74,36 @@ public final class WXM1ClientConfigurationSerializer
     try {
       this.start();
       this.serializePaths();
+      this.serializeZFSFilesystems();
       this.finish();
     } catch (final XMLStreamException e) {
       throw new IOException(e);
     }
+  }
+
+  private void serializeZFSFilesystems()
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.configSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "ZFSFilesystems");
+    this.serializeZFSFilesystem(
+      "VirtualMachineRuntimeFilesystem",
+      this.clientConfiguration.virtualMachineRuntimeFilesystem()
+    );
+    this.writer.writeEndElement();
+  }
+
+  private void serializeZFSFilesystem(
+    final String type,
+    final WXMZFSFilesystem value)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.configSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "ZFSFilesystem");
+    this.writer.writeAttribute("type", type);
+    this.writer.writeAttribute("name", value.name());
+    this.writer.writeAttribute("mountPoint", value.mountPoint().toString());
+    this.writer.writeEndElement();
   }
 
   private void serializePaths()
@@ -87,10 +114,6 @@ public final class WXM1ClientConfigurationSerializer
     this.serializePath(
       "VirtualMachineConfigurationDirectory",
       this.clientConfiguration.virtualMachineConfigurationDirectory()
-    );
-    this.serializePath(
-      "VirtualMachineRuntimeDirectory",
-      this.clientConfiguration.virtualMachineRuntimeDirectory()
     );
     this.serializePath(
       "BhyveExecutable",

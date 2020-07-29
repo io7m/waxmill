@@ -23,6 +23,7 @@ import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 import com.io7m.waxmill.machines.WXMVirtualMachineSet;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.parser.api.WXMParseError;
 import com.io7m.waxmill.xml.WXMVirtualMachineParsers;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +70,12 @@ public final class WXMClientTest
 
     this.configuration =
       WXMClientConfiguration.builder()
-        .setVirtualMachineRuntimeDirectory(this.directoryRun)
+        .setVirtualMachineRuntimeFilesystem(
+          WXMZFSFilesystem.builder()
+            .setMountPoint(this.directoryRun)
+            .setName("storage/vm")
+            .build()
+        )
         .setVirtualMachineConfigurationDirectory(this.directoryEtc)
         .build();
   }

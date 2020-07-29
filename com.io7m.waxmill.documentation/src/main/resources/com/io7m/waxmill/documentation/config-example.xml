@@ -14,9 +14,12 @@
           value="/usr/bin/cu"/>
     <Path type="VirtualMachineConfigurationDirectory"
           value="/etc/waxmill/vm"/>
-    <Path type="VirtualMachineRuntimeDirectory"
-          value="/storage/vm"/>
     <Path type="IfconfigExecutable"
           value="/sbin/ifconfig"/>
   </Paths>
+  <ZFSFilesystems>
+    <ZFSFilesystem type="VirtualMachineRuntimeFilesystem"
+                   name="storage/vm"
+                   mountPoint="/storage/vm"/>
+  </ZFSFilesystems>
 </Configuration>

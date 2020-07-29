@@ -18,6 +18,8 @@ package com.io7m.waxmill.client.api;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import com.io7m.jaffirm.core.Preconditions;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
+import com.io7m.waxmill.machines.WXMZFSFilesystems;
 import org.immutables.value.Value;
 
 import java.nio.file.Path;
@@ -41,13 +43,17 @@ public interface WXMClientConfigurationType
   Path virtualMachineConfigurationDirectory();
 
   /**
-   * A directory that contains virtual machines. This directory will contain
-   * one ZFS filesystem per virtual machine.
+   * A ZFS filesystem that contains virtual machines. This directory will
+   * contain one ZFS filesystem per virtual machine. Note that this value is
+   * the name of the ZFS filesystem, and this doesn't necessarily match where
+   * that filesystem is mounted! For example, {@code zfs create x/y/z && zfs set mountpoint=/a/b/c x/y/z}
+   * will create a ZFS filesystem {@code x/y/z} and mount it at {@code /a/b/c};
+   * the value expected here is {@code x/y/z}.
    *
-   * @return The ZFS directory containing virtual machines
+   * @return The ZFS filesystem containing virtual machines
    */
 
-  Path virtualMachineRuntimeDirectory();
+  WXMZFSFilesystem virtualMachineRuntimeFilesystem();
 
   /**
    * @return The "bhyve" executable path, such as {@code /usr/sbin/bhyve}
@@ -129,14 +135,13 @@ public interface WXMClientConfigurationType
    * @return A runtime directory
    */
 
-  default Path virtualMachineRuntimeDirectoryFor(
+  default WXMZFSFilesystem virtualMachineRuntimeFilesystemFor(
     final UUID machineId)
   {
     Objects.requireNonNull(machineId, "machineId");
 
-    return this.virtualMachineRuntimeDirectory()
-      .resolve(machineId.toString())
-      .toAbsolutePath();
+    return WXMZFSFilesystems.resolve(
+      this.virtualMachineRuntimeFilesystem(), machineId.toString());
   }
 
   /**
@@ -174,12 +179,6 @@ public interface WXMClientConfigurationType
       this.virtualMachineConfigurationDirectory(),
       Path::isAbsolute,
       path -> "Virtual machine configuration directory must be absolute"
-    );
-
-    Preconditions.checkPrecondition(
-      this.virtualMachineRuntimeDirectory(),
-      Path::isAbsolute,
-      path -> "Virtual machine runtime directory must be absolute"
     );
   }
 }

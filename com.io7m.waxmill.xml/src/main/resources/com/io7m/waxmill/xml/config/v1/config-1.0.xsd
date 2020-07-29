@@ -10,6 +10,25 @@
     </xsd:documentation>
   </xsd:annotation>
 
+  <xsd:simpleType name="ZFSFilesystemType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The type of configuration ZFS filesystems.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="VirtualMachineRuntimeFilesystem">
+        <xsd:annotation>
+          <xsd:documentation>
+            The ZFS filesystem that will contain one filesystem per virtual machine. The per-machine filesystem
+            is used to hold resources such as ZFS volumes, disk files, locks, etc.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="PathType">
     <xsd:annotation>
       <xsd:documentation>
@@ -43,13 +62,6 @@
         <xsd:annotation>
           <xsd:documentation>
             The path to the directory that will contain virtual machine configurations.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:enumeration>
-      <xsd:enumeration value="VirtualMachineRuntimeDirectory">
-        <xsd:annotation>
-          <xsd:documentation>
-            The path to the directory that will contain virtual machine runtime data such as ZFS volumes, locks, etc.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:enumeration>
@@ -94,6 +106,26 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="ZFSFilesystem">
+    <xsd:annotation>
+      <xsd:documentation>
+        A ZFS filesystem value.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="type"
+                     type="wxmc:ZFSFilesystemType"
+                     use="required"/>
+      <xsd:attribute name="name"
+                     type="xsd:string"
+                     use="required"/>
+      <xsd:attribute name="mountPoint"
+                     type="xsd:anyURI"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="Paths">
     <xsd:annotation>
       <xsd:documentation>
@@ -113,6 +145,25 @@
     </xsd:key>
   </xsd:element>
 
+  <xsd:element name="ZFSFilesystems">
+    <xsd:annotation>
+      <xsd:documentation>
+        A set of configuration ZFS filesystems.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="wxmc:ZFSFilesystem"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="ZFSFilesystemsUnique">
+      <xsd:selector xpath="wxmc:ZFSFilesystem"/>
+      <xsd:field xpath="@type"/>
+    </xsd:key>
+  </xsd:element>
+
   <xsd:element name="Configuration">
     <xsd:annotation>
       <xsd:documentation>
@@ -123,6 +174,7 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="wxmc:Paths"/>
+        <xsd:element ref="wxmc:ZFSFilesystems"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>

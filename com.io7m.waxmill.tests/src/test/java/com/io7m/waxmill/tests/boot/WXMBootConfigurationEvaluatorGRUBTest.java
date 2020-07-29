@@ -50,6 +50,7 @@ import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVMNetDeviceName;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,6 +84,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
   private Path directory;
   private Path configs;
   private Path vms;
+  private WXMClientConfiguration clientConfiguration;
 
   @BeforeEach
   public void setup()
@@ -94,6 +96,16 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       this.directory.resolve("configs");
     this.vms =
       this.directory.resolve("vms");
+
+    this.clientConfiguration =
+      WXMClientConfiguration.builder()
+        .setVirtualMachineConfigurationDirectory(this.configs)
+        .setVirtualMachineRuntimeFilesystem(
+          WXMZFSFilesystem.builder()
+            .setMountPoint(this.vms)
+            .setName("storage/vm")
+            .build())
+        .build();
   }
 
   @Test
@@ -105,15 +117,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
         .setName(WXMMachineName.of("vm"))
         .build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("anything")
       );
@@ -157,15 +163,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             ).build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -224,15 +224,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
         )
         .build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -241,10 +235,8 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
       (WXMEvaluatedBootConfigurationGRUBBhyve) evaluator.evaluate();
     LOG.debug("evaluated: {}", evaluated);
 
-    final String expectedZFSDisk =
-      this.vms.resolve(machine.id().toString())
-        .resolve("disk-0_0_0")
-        .toString();
+    final var expectedZFSDisk =
+      String.format("/dev/zvol/storage/vm/%s/disk-0_0_0", machine.id());
 
     final var mapLines = evaluated.deviceMap();
     assertTrue(mapLines.get(0).contains(expectedZFSDisk));
@@ -264,8 +256,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,%s/%s/disk-0_0_0 %s",
-        this.vms.toString(),
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,/dev/zvol/storage/vm/%s/disk-0_0_0 %s",
         machine.id(),
         machine.id()),
       lastExec.toString()
@@ -309,15 +300,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
         )
         .build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -327,9 +312,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     LOG.debug("evaluated: {}", evaluated);
 
     final String expectedZFSDisk =
-      this.vms.resolve(machine.id().toString())
-        .resolve("disk-0_1_0")
-        .toString();
+      String.format("/dev/zvol/storage/vm/%s/disk-0_1_0", machine.id());
 
     final var mapLines = evaluated.deviceMap();
     assertTrue(mapLines.get(0).contains(expectedZFSDisk));
@@ -349,8 +332,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,amd_hostbridge -s 0:1:0,ahci-cd,%s/%s/disk-0_1_0 %s",
-        this.vms.toString(),
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,amd_hostbridge -s 0:1:0,ahci-cd,/dev/zvol/storage/vm/%s/disk-0_1_0 %s",
         machine.id(),
         machine.id()),
       lastExec.toString()
@@ -399,15 +381,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
         )
         .build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -417,9 +393,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     LOG.debug("evaluated: {}", evaluated);
 
     final String expectedZFSDisk =
-      this.vms.resolve(machine.id().toString())
-        .resolve("disk-0_1_0")
-        .toString();
+      String.format("/dev/zvol/storage/vm/%s/disk-0_1_0", machine.id());
 
     final var mapLines = evaluated.deviceMap();
     assertTrue(mapLines.get(0).contains(expectedZFSDisk));
@@ -439,8 +413,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,amd_hostbridge -s 0:1:0,ahci-cd,%s/%s/disk-0_1_0 %s",
-        this.vms.toString(),
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,amd_hostbridge -s 0:1:0,ahci-cd,/dev/zvol/storage/vm/%s/disk-0_1_0 %s",
         machine.id(),
         machine.id()),
       lastExec.toString()
@@ -477,15 +450,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
         )
         .build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -526,15 +493,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
         )
         .build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -544,9 +505,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     LOG.debug("evaluated: {}", evaluated);
 
     final String expectedZFSDisk =
-      this.vms.resolve(machine.id().toString())
-        .resolve("disk-0_0_0")
-        .toString();
+      String.format("/dev/zvol/storage/vm/%s/disk-0_0_0", machine.id());
 
     final var mapLines = evaluated.deviceMap();
     assertTrue(mapLines.get(0).contains(expectedZFSDisk));
@@ -570,8 +529,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,%s/%s/disk-0_0_0 %s",
-        this.vms.toString(),
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,/dev/zvol/storage/vm/%s/disk-0_0_0 %s",
         machine.id(),
         machine.id()),
       lastExec.toString()
@@ -619,15 +577,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
         )
         .build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -637,9 +589,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     LOG.debug("evaluated: {}", evaluated);
 
     final String expectedZFSDisk =
-      this.vms.resolve(machine.id().toString())
-        .resolve("disk-0_1_0")
-        .toString();
+      String.format("/dev/zvol/storage/vm/%s/disk-0_1_0", machine.id());
 
     final var mapLines = evaluated.deviceMap();
     assertTrue(mapLines.get(0).contains(expectedZFSDisk));
@@ -663,8 +613,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-cd,%s/%s/disk-0_1_0 %s",
-        this.vms.toString(),
+        "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-cd,/dev/zvol/storage/vm/%s/disk-0_1_0 %s",
         machine.id(),
         machine.id()),
       lastExec.toString()
@@ -719,15 +668,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -854,15 +797,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -1007,15 +944,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -1142,15 +1073,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -1295,15 +1220,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -1439,15 +1358,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .build()
         ).build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -1524,15 +1437,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .build())
         .build();
 
-    final var clientConfiguration =
-      WXMClientConfiguration.builder()
-        .setVirtualMachineConfigurationDirectory(this.configs)
-        .setVirtualMachineRuntimeDirectory(this.vms)
-        .build();
-
     final var evaluator =
       new WXMBootConfigurationEvaluator(
-        clientConfiguration,
+        this.clientConfiguration,
         machine,
         WXMBootConfigurationName.of("install")
       );
@@ -1542,9 +1449,10 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     LOG.debug("evaluated: {}", evaluated);
 
     final String expectedZFSDisk =
-      this.vms.resolve(machine.id().toString())
-        .resolve("disk-0_0_0")
-        .toString();
+      String.format(
+        "/dev/zvol/storage/vm/%s/disk-0_0_0",
+        machine.id()
+      );
 
     final var mapLines = evaluated.deviceMap();
     assertTrue(mapLines.get(0).contains(expectedZFSDisk));
@@ -1568,8 +1476,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -S -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,%s/%s/disk-0_0_0 -s 0:1:0,passthru,1/2/3 %s",
-        this.vms.toString(),
+        "/usr/sbin/bhyve -P -A -S -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,virtio-blk,/dev/zvol/storage/vm/%s/disk-0_0_0 -s 0:1:0,passthru,1/2/3 %s",
         machine.id(),
         machine.id()),
       lastExec.toString()

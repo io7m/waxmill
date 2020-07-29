@@ -39,6 +39,7 @@ import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
@@ -50,14 +51,16 @@ import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import com.io7m.waxmill.machines.WXMOpenOption;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
-import com.io7m.waxmill.machines.WXMStorageBackends;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
+import com.io7m.waxmill.machines.WXMZFSFilesystems;
+import com.io7m.waxmill.machines.WXMZFSVolumes;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -483,10 +486,15 @@ public final class WXMBootConfigurationEvaluator
 
   private WXMCommandExecution generateGRUBBhyveCommand()
   {
-    final var machineId =
-      this.machine.id();
+    final String machineId =
+      this.machine.id().toString();
+
     final var basePath =
-      this.clientConfiguration.virtualMachineRuntimeDirectoryFor(machineId);
+      WXMZFSFilesystems.resolve(
+        this.clientConfiguration.virtualMachineRuntimeFilesystem(),
+        machineId
+      ).mountPoint();
+
     final var deviceMapPath =
       this.grubDeviceMapPath();
 
@@ -500,7 +508,7 @@ public final class WXMBootConfigurationEvaluator
       .addArguments("--root=host")
       .addArguments(String.format("--directory=%s", basePath))
       .addArguments(String.format("--memory=%sM", memoryMB))
-      .addArguments(machineId.toString())
+      .addArguments(machineId)
       .build();
   }
 
@@ -731,7 +739,8 @@ public final class WXMBootConfigurationEvaluator
             "%s,%s",
             nmdm.device(),
             nmdmPath(
-              this.clientConfiguration.virtualMachineRuntimeDirectory()
+              this.clientConfiguration.virtualMachineRuntimeFilesystem()
+                .mountPoint()
                 .getFileSystem(),
               this.machine.id(),
               NMDM_HOST
@@ -812,10 +821,13 @@ public final class WXMBootConfigurationEvaluator
   private String configureBhyveStorageZFS(
     final WXMDeviceType device)
   {
-    return WXMStorageBackends.determineZFSVolumePath(
-      this.clientConfiguration.virtualMachineRuntimeDirectory(),
-      this.machine.id(),
-      device.deviceSlot())
+    final var vmFs =
+      this.clientConfiguration.virtualMachineRuntimeFilesystemFor(this.machine.id());
+    final var diskName =
+      WXMDeviceSlots.asDiskName(device.deviceSlot());
+
+    return WXMZFSVolumes.resolve(vmFs, diskName)
+      .device()
       .toString();
   }
 
@@ -881,20 +893,22 @@ public final class WXMBootConfigurationEvaluator
 
   private Path grubDeviceMapPath()
   {
-    final var machineId =
-      this.machine.id();
-    final var basePath =
-      this.clientConfiguration.virtualMachineRuntimeDirectoryFor(machineId);
-    return basePath.resolve("grub-device.map");
+    final var machineId = this.machine.id();
+    return WXMZFSFilesystems.resolve(
+      this.clientConfiguration.virtualMachineRuntimeFilesystem(),
+      machineId.toString()
+    ).mountPoint()
+      .resolve("grub-device.map");
   }
 
   private Path grubConfigPath()
   {
-    final var machineId =
-      this.machine.id();
-    final var basePath =
-      this.clientConfiguration.virtualMachineRuntimeDirectoryFor(machineId);
-    return basePath.resolve("grub.cfg");
+    final var machineId = this.machine.id();
+    return WXMZFSFilesystems.resolve(
+      this.clientConfiguration.virtualMachineRuntimeFilesystem(),
+      machineId.toString()
+    ).mountPoint()
+      .resolve("grub.cfg");
   }
 
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfigurationLinux(
@@ -941,23 +955,27 @@ public final class WXMBootConfigurationEvaluator
           this.errorNoSuchConfiguration()
         ));
 
-    final var deviceMap =
-      WXMDeviceMap.create(
-        this.messages,
-        this.clientConfiguration,
-        configuration,
-        this.machine
-      );
+    try {
+      final var deviceMap =
+        WXMDeviceMap.create(
+          this.messages,
+          this.clientConfiguration,
+          configuration,
+          this.machine
+        );
 
-    switch (configuration.kind()) {
-      case GRUB_BHYVE:
-        return this.evaluateGRUBConfiguration(
-          (WXMBootConfigurationGRUBBhyve) configuration, deviceMap
-        );
-      case UEFI:
-        return this.evaluateUEFIConfiguration(
-          (WXMBootConfigurationUEFI) configuration, deviceMap
-        );
+      switch (configuration.kind()) {
+        case GRUB_BHYVE:
+          return this.evaluateGRUBConfiguration(
+            (WXMBootConfigurationGRUBBhyve) configuration, deviceMap
+          );
+        case UEFI:
+          return this.evaluateUEFIConfiguration(
+            (WXMBootConfigurationUEFI) configuration, deviceMap
+          );
+      }
+    } catch (final IOException e) {
+      throw new WXMException(e);
     }
 
     throw new UnreachableCodeException();
@@ -1016,6 +1034,7 @@ public final class WXMBootConfigurationEvaluator
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfiguration(
     final WXMBootConfigurationGRUBBhyve configuration,
     final WXMDeviceMap deviceMap)
+    throws IOException
   {
     final var kernel =
       configuration.kernelInstructions();
