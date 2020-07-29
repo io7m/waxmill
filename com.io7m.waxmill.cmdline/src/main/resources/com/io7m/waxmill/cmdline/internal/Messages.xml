@@ -274,4 +274,10 @@ a virtual machine that is connected to a VNC server.
   <entry key="vmKillHelp"><![CDATA[
 The vm-kill command kills any running instance of a given virtual machine.
 ]]></entry>
+
+  <entry key="vmIDOfHelp"><![CDATA[
+The vm-id-of command finds the first virtual machine that has a given name
+and prints the ID of the machine. If the --short option is used, the command
+will print the ID in a shortened form consumable by bhyve.
+]]></entry>
 </properties>

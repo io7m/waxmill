@@ -27,6 +27,7 @@ import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDryRun;
+import com.io7m.waxmill.machines.WXMShortIDs;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackends;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
@@ -158,10 +159,13 @@ public final class WXMClient implements WXMClientType
     final WXMDryRun dryRun)
     throws WXMException
   {
+    final var shortId =
+      WXMShortIDs.encode(machine.id());
+
     final var processDescription =
       WXMProcessDescription.builder()
         .setExecutable(this.configuration.bhyveCtlExecutable())
-        .addArguments(String.format("--vm=%s", machine.id()))
+        .addArguments(String.format("--vm=%s", shortId))
         .addArguments("--destroy")
         .build();
 

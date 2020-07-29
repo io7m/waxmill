@@ -50,6 +50,7 @@ import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import com.io7m.waxmill.machines.WXMOpenOption;
+import com.io7m.waxmill.machines.WXMShortIDs;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
@@ -60,7 +61,6 @@ import com.io7m.waxmill.machines.WXMVirtualMachine;
 import com.io7m.waxmill.machines.WXMZFSFilesystems;
 import com.io7m.waxmill.machines.WXMZFSVolumes;
 
-import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -508,7 +508,7 @@ public final class WXMBootConfigurationEvaluator
       .addArguments("--root=host")
       .addArguments(String.format("--directory=%s", basePath))
       .addArguments(String.format("--memory=%sM", memoryMB))
-      .addArguments(machineId)
+      .addArguments(WXMShortIDs.encode(this.machine.id()))
       .build();
   }
 
@@ -553,7 +553,7 @@ public final class WXMBootConfigurationEvaluator
       }
     }
 
-    commandBuilder.addArguments(this.machine.id().toString());
+    commandBuilder.addArguments(WXMShortIDs.encode(this.machine.id()));
     return commandBuilder.build();
   }
 
@@ -955,27 +955,23 @@ public final class WXMBootConfigurationEvaluator
           this.errorNoSuchConfiguration()
         ));
 
-    try {
-      final var deviceMap =
-        WXMDeviceMap.create(
-          this.messages,
-          this.clientConfiguration,
-          configuration,
-          this.machine
-        );
+    final var deviceMap =
+      WXMDeviceMap.create(
+        this.messages,
+        this.clientConfiguration,
+        configuration,
+        this.machine
+      );
 
-      switch (configuration.kind()) {
-        case GRUB_BHYVE:
-          return this.evaluateGRUBConfiguration(
-            (WXMBootConfigurationGRUBBhyve) configuration, deviceMap
-          );
-        case UEFI:
-          return this.evaluateUEFIConfiguration(
-            (WXMBootConfigurationUEFI) configuration, deviceMap
-          );
-      }
-    } catch (final IOException e) {
-      throw new WXMException(e);
+    switch (configuration.kind()) {
+      case GRUB_BHYVE:
+        return this.evaluateGRUBConfiguration(
+          (WXMBootConfigurationGRUBBhyve) configuration, deviceMap
+        );
+      case UEFI:
+        return this.evaluateUEFIConfiguration(
+          (WXMBootConfigurationUEFI) configuration, deviceMap
+        );
     }
 
     throw new UnreachableCodeException();
@@ -1034,7 +1030,6 @@ public final class WXMBootConfigurationEvaluator
   private WXMEvaluatedBootConfigurationGRUBBhyve evaluateGRUBConfiguration(
     final WXMBootConfigurationGRUBBhyve configuration,
     final WXMDeviceMap deviceMap)
-    throws IOException
   {
     final var kernel =
       configuration.kernelInstructions();

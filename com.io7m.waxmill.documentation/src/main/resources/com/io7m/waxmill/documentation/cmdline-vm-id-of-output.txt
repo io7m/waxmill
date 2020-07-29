@@ -1,0 +1,5 @@
+$ waxmill vm-id-of --name example
+538a90e4-d50d-4511-8643-ae418279bac4
+
+$ waxmill vm-id-of --name example --short
+U4qQ5NUNRRGGQ65Bgnm6xA

@@ -27,6 +27,7 @@ import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMMachineName;
 import com.io7m.waxmill.machines.WXMSectorSizes;
+import com.io7m.waxmill.machines.WXMShortIDs;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
@@ -162,13 +163,13 @@ public final class WXMBootConfigurationEvaluatorUEFITest
     assertEquals("com1,stdio", lastArgs.remove(0));
     assertEquals("-l", lastArgs.remove(0));
     assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
-    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096 -s 0:1:0,lpc -l com1,stdio -l bootrom,/tmp/firmware %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -247,13 +248,13 @@ public final class WXMBootConfigurationEvaluatorUEFITest
       lastArgs.remove(0));
     assertEquals("-l", lastArgs.remove(0));
     assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
-    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }
@@ -329,13 +330,13 @@ public final class WXMBootConfigurationEvaluatorUEFITest
       lastArgs.remove(0));
     assertEquals("-l", lastArgs.remove(0));
     assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
-    assertEquals(machine.id().toString(), lastArgs.remove(0));
+    assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
         "/usr/sbin/bhyve -P -A -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=127.0.0.1:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
-        machine.id()),
+        WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
   }

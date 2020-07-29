@@ -80,6 +80,7 @@
   <xi:include href="cmdline-vm-delete-devices.xml"/>
   <xi:include href="cmdline-vm-delete.xml" />
   <xi:include href="cmdline-vm-export.xml" />
+  <xi:include href="cmdline-vm-id-of.xml" />
   <xi:include href="cmdline-vm-import.xml" />
   <xi:include href="cmdline-vm-kill.xml" />
   <xi:include href="cmdline-vm-list-with-name.xml" />
