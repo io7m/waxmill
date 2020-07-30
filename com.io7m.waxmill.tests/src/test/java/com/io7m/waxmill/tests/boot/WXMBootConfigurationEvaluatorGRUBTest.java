@@ -63,7 +63,6 @@ import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -745,7 +744,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
-    assertEquals("0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(
+      "0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12",
+      lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
@@ -898,7 +899,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
-    assertEquals("0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(
+      "0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12",
+      lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
@@ -1029,7 +1032,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
-    assertEquals("0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(
+      "0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12",
+      lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
@@ -1182,7 +1187,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
-    assertEquals("0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(
+      "0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12",
+      lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
@@ -1313,7 +1320,9 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("-s", lastArgs.remove(0));
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
-    assertEquals("0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12", lastArgs.remove(0));
+    assertEquals(
+      "0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12",
+      lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
@@ -1413,6 +1422,41 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     final var configs = commands.configurationCommands();
     final var cmd0 = configs.get(0);
     assertEquals("/usr/local/sbin/grub-bhyve", cmd0.executable().toString());
+    final var cmd0args = cmd0.arguments();
+    assertEquals(
+      String.format(
+        "--cons-dev=/dev/nmdm_%s_A", machine.id()
+      ),
+      cmd0args.get(0)
+    );
+    assertEquals(
+      String.format(
+        "--device-map=%s/%s/grub-device.map",
+        this.vms,
+        machine.id()
+      ),
+      cmd0args.get(1)
+    );
+    assertEquals(
+      "--root=host",
+      cmd0args.get(2)
+    );
+    assertEquals(
+      String.format(
+        "--directory=%s/%s",
+        this.vms,
+        machine.id()
+      ),
+      cmd0args.get(3)
+    );
+    assertEquals(
+      "--memory=512M",
+      cmd0args.get(4)
+    );
+    assertEquals(
+      WXMShortIDs.encode(machine.id()),
+      cmd0args.get(5)
+    );
     assertEquals(1, configs.size());
 
     final var lastExec = commands.lastExecution().orElseThrow();

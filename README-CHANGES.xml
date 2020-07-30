@@ -87,8 +87,17 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2020-07-30T16:09:09+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.9">
+    <c:release date="2020-07-30T00:00:00+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.9">
       <c:changes/>
+    </c:release>
+    <c:release date="2020-07-30T17:02:53+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.10">
+      <c:changes>
+        <c:change date="2020-07-30T17:02:53+00:00" summary="Ensure grub-bhyve invocations are passed console devices">
+          <c:tickets>
+            <c:ticket id="34"/>
+          </c:tickets>
+        </c:change>
+      </c:changes>
     </c:release>
   </c:releases>
   <c:ticket-systems>
