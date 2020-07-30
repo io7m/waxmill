@@ -146,6 +146,8 @@ public final class WXMBootConfigurationEvaluatorUEFITest
 
     final var lastExec = commands.lastExecution().orElseThrow();
     final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-U", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
     assertEquals("-P", lastArgs.remove(0));
     assertEquals("-A", lastArgs.remove(0));
     assertEquals("-w", lastArgs.remove(0));
@@ -169,7 +171,8 @@ public final class WXMBootConfigurationEvaluatorUEFITest
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096 -s 0:1:0,lpc -l com1,stdio -l bootrom,/tmp/firmware %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,ahci-hd,/tmp/file,nocache,direct,ro,sectorsize=2048/4096 -s 0:1:0,lpc -l com1,stdio -l bootrom,/tmp/firmware %s",
+        machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
@@ -232,6 +235,8 @@ public final class WXMBootConfigurationEvaluatorUEFITest
 
     final var lastExec = commands.lastExecution().orElseThrow();
     final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-U", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
     assertEquals("-P", lastArgs.remove(0));
     assertEquals("-A", lastArgs.remove(0));
     assertEquals("-w", lastArgs.remove(0));
@@ -255,7 +260,8 @@ public final class WXMBootConfigurationEvaluatorUEFITest
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
+        machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
@@ -315,6 +321,8 @@ public final class WXMBootConfigurationEvaluatorUEFITest
 
     final var lastExec = commands.lastExecution().orElseThrow();
     final var lastArgs = new ArrayList<>(lastExec.arguments());
+    assertEquals("-U", lastArgs.remove(0));
+    assertEquals(machine.id().toString(), lastArgs.remove(0));
     assertEquals("-P", lastArgs.remove(0));
     assertEquals("-A", lastArgs.remove(0));
     assertEquals("-w", lastArgs.remove(0));
@@ -338,7 +346,8 @@ public final class WXMBootConfigurationEvaluatorUEFITest
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=127.0.0.1:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=127.0.0.1:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
+        machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );

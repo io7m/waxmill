@@ -857,6 +857,9 @@ public final class WXMBootConfigurationEvaluator
   private void configureBhyveFlags(
     final WXMCommandExecution.Builder cmd)
   {
+    cmd.addArguments("-U");
+    cmd.addArguments(this.machine.id().toString());
+
     final var flags = this.machine.flags();
     configureBhyveFlag(cmd, flags.disableMPTableGeneration(), "-Y");
     configureBhyveFlag(cmd, flags.exitOnPAUSE(), "-P");
