@@ -77,7 +77,6 @@ import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBoo
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
-import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
 import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
 
 /**

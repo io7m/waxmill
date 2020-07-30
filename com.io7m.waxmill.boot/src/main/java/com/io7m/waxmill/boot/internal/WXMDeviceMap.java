@@ -51,7 +51,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
-import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
 import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
 
 public final class WXMDeviceMap
