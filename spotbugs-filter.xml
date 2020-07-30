@@ -351,6 +351,12 @@
   </Match>
 
   <Match>
+    <Class name="com.io7m.waxmill.xml.vm.v1.WXM1FlagsParser"/>
+    <Method name="onChildValueProduced"/>
+    <Bug pattern="CC_CYCLOMATIC_COMPLEXITY"/>
+  </Match>
+
+  <Match>
     <!-- False positive. UnreachableCodeException. -->
     <Class name="com.io7m.waxmill.boot.WXMBootConfigurationEvaluator"/>
     <Method name="evaluate"/>

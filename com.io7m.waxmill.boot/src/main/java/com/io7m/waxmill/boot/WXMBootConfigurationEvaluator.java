@@ -864,6 +864,7 @@ public final class WXMBootConfigurationEvaluator
     configureBhyveFlag(cmd, flags.generateACPITables(), "-A");
     configureBhyveFlag(cmd, flags.guestAPICIsX2APIC(), "-x");
     configureBhyveFlag(cmd, flags.includeGuestMemoryInCoreFiles(), "-C");
+    configureBhyveFlag(cmd, flags.ignoreUnimplementedModelSpecificRegisters(), "-w");
     configureBhyveFlag(cmd, flags.realTimeClockIsUTC(), "-u");
     configureBhyveFlag(cmd, flags.wireGuestMemory(), "-S");
     configureBhyveFlag(cmd, flags.yieldCPUOnHLT(), "-H");
