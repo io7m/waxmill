@@ -35,7 +35,7 @@ WAXMILL_JAR_FILE="${WAXMILL_HOME}/${WAXMILL_JAR_NAME}"
 
 if [ ! -z "${WAXMILL_JVM_OPTIONS}" ]
 then
-  exec java "${WAXMILL_JVM_OPTIONS}" -jar "${WAXMILL_JAR_FILE}" "$@"
+  exec java ${WAXMILL_JVM_OPTIONS} -jar "${WAXMILL_JAR_FILE}" "$@"
 else
   exec java -jar "${WAXMILL_JAR_FILE}" "$@"
 fi
