@@ -251,9 +251,10 @@ public final class WXMBootConfigurationEvaluator
     bootHD.ifPresent(index -> {
       configLines.add(
         String.format(
-          "kopenbsd -h com0 -r sd%da (hd%d)%s",
+          "kopenbsd -h com0 -r sd%da (hd%d,%s)%s",
           index,
           index,
+          openBSD.partition(),
           openBSD.kernelPath()
         )
       );

@@ -148,12 +148,18 @@ public final class WXM1BootConfigurations
   {
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     writer.writeStartElement(namespaceURI, "GRUBBhyveKernelOpenBSD");
-    serializeBSDBootDevice(kernel.kernelPath(), kernel.bootDevice(), writer);
+    serializeBSDBootDevice(
+      kernel.kernelPath(),
+      kernel.partition(),
+      kernel.bootDevice(),
+      writer
+    );
     writer.writeEndElement();
   }
 
   private static void serializeBSDBootDevice(
     final Path kernelPath,
+    final String partition,
     final WXMDeviceSlot bootDevice,
     final XMLStreamWriter writer)
     throws XMLStreamException
@@ -161,6 +167,7 @@ public final class WXM1BootConfigurations
     final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
     writer.writeStartElement(namespaceURI, "BSDBootDevice");
     writer.writeAttribute("kernelPath", kernelPath.toString());
+    writer.writeAttribute("partition", partition);
     WXM1DeviceSlots.serializeDeviceSlot(bootDevice, GUEST, writer);
     writer.writeEndElement();
   }

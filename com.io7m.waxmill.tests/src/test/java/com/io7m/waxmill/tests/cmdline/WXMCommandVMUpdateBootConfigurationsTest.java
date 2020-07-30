@@ -129,6 +129,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         .setKernelInstructions(
           WXMGRUBKernelOpenBSD.builder()
             .setKernelPath(Paths.get("/bsd"))
+            .setPartition("openbsd1")
             .setBootDevice(
               WXMDeviceSlot.builder()
                 .setBusID(0)
@@ -226,6 +227,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         .setKernelInstructions(
           WXMGRUBKernelOpenBSD.builder()
             .setKernelPath(Paths.get("/bsd"))
+            .setPartition("openbsd1")
             .setBootDevice(
               WXMDeviceSlot.builder()
                 .setBusID(0)
@@ -325,6 +327,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
         .setKernelInstructions(
           WXMGRUBKernelOpenBSD.builder()
             .setKernelPath(Paths.get("/bsd"))
+            .setPartition("openbsd1")
             .setBootDevice(
               WXMDeviceSlot.builder()
                 .setBusID(0)

@@ -273,6 +273,7 @@ public final class WXMCommandVMDeleteDeviceTest
         .setKernelInstructions(
           WXMGRUBKernelOpenBSD.builder()
             .setKernelPath(Paths.get("/bsd"))
+            .setPartition("openbsd1")
             .setBootDevice(
               WXMDeviceSlot.builder()
                 .setBusID(0)

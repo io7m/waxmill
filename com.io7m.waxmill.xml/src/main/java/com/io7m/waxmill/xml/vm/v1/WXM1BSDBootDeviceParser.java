@@ -81,6 +81,7 @@ public final class WXM1BSDBootDeviceParser
       this.builder.setKernelPath(
         this.fileSystem.getPath(attributes.getValue("kernelPath"))
       );
+      this.builder.setPartition(attributes.getValue("partition"));
     } catch (final Exception e) {
       throw context.parseException(e);
     }

@@ -144,6 +144,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
               WXMGRUBKernelOpenBSD.builder()
                 .setBootDevice(convert("0:0:0"))
                 .setKernelPath(Paths.get("/bsd"))
+                .setPartition("openbsd1")
                 .build())
             .build()
         )
@@ -179,7 +180,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals(1, mapLines.size());
 
     final var grub = evaluated.grubConfiguration();
-    assertEquals("kopenbsd -h com0 -r sd0a (hd0)/bsd", grub.get(0));
+    assertEquals("kopenbsd -h com0 -r sd0a (hd0,openbsd1)/bsd", grub.get(0));
     assertEquals("boot", grub.get(1));
     assertEquals(2, grub.size());
 
@@ -214,6 +215,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
               WXMGRUBKernelOpenBSD.builder()
                 .setBootDevice(convert("0:0:0"))
                 .setKernelPath(Paths.get("/bsd"))
+                .setPartition("openbsd1")
                 .build())
             .build()
         )
@@ -244,7 +246,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals(1, mapLines.size());
 
     final var grub = evaluated.grubConfiguration();
-    assertEquals("kopenbsd -h com0 -r sd0a (hd0)/bsd", grub.get(0));
+    assertEquals("kopenbsd -h com0 -r sd0a (hd0,openbsd1)/bsd", grub.get(0));
     assertEquals("boot", grub.get(1));
     assertEquals(2, grub.size());
 
@@ -286,6 +288,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
               WXMGRUBKernelOpenBSD.builder()
                 .setBootDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/bsd"))
+                .setPartition("openbsd1")
                 .build())
             .build()
         )
@@ -363,6 +366,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
               WXMGRUBKernelOpenBSD.builder()
                 .setBootDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/bsd"))
+                .setPartition("openbsd1")
                 .build())
             .build()
         )
@@ -438,6 +442,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
               WXMGRUBKernelOpenBSD.builder()
                 .setBootDevice(convert("0:1:0"))
                 .setKernelPath(Paths.get("/bsd"))
+                .setPartition("openbsd1")
                 .build())
             .build()
         )

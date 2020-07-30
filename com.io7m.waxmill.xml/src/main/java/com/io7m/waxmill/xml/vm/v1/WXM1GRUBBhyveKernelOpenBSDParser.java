@@ -66,6 +66,7 @@ public final class WXM1GRUBBhyveKernelOpenBSDParser
       final var bootDevice = (WXM1BSDBootDevice) result;
       this.builder.setBootDevice(bootDevice.deviceSlot());
       this.builder.setKernelPath(bootDevice.kernelPath());
+      this.builder.setPartition(bootDevice.partition());
     } else {
       throw new UnreachableCodeException();
     }

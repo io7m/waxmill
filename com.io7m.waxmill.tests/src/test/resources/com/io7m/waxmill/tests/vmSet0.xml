@@ -137,7 +137,7 @@
           </BootDiskAttachment>
         </BootDiskAttachments>
         <GRUBBhyveKernelOpenBSD>
-          <BSDBootDevice kernelPath="/6.6/amd64/bsd.rd">
+          <BSDBootDevice kernelPath="/6.6/amd64/bsd.rd" partition="openbsd1">
             <DeviceSlot bus="0"
                         slot="4"
                         function="0"/>
