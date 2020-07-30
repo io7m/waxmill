@@ -1418,7 +1418,7 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     final var lastExec = commands.lastExecution().orElseThrow();
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,lpc -l bootrom,/tmp/rom -l com1,/dev/nmdm_%s_B -l com2,stdio %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,lpc -l bootrom,/tmp/rom -l com1,/dev/nmdm_%s_A -l com2,stdio %s",
         machine.id(),
         machine.id(),
         WXMShortIDs.encode(machine.id())),
