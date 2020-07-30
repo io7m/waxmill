@@ -28,5 +28,7 @@ public interface WXM1BSDBootDeviceType
 {
   WXMDeviceSlot deviceSlot();
 
+  String partition();
+
   Path kernelPath();
 }

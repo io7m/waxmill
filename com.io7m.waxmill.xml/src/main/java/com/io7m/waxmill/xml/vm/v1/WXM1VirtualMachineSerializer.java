@@ -354,9 +354,7 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
       GUEST,
       this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
-
     WXM1StorageBackends.serializeStorageBackend(device.backend(), this.writer);
-
     this.writer.writeEndElement();
   }
 

@@ -279,6 +279,16 @@ public interface WXMBootConfigurationType
     WXMDeviceSlot bootDevice();
 
     /**
+     * The name of the partition within which to find the kernel. This
+     * is typically {@code openbsd1} if the defaults are picked in the OpenBSD
+     * installer.
+     *
+     * @return The name of the partition
+     */
+
+    String partition();
+
+    /**
      * @return The path to the kernel on the guest filesystem
      */
 

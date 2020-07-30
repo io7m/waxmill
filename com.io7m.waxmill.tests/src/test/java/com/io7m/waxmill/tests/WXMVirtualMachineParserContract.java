@@ -212,6 +212,7 @@ public abstract class WXMVirtualMachineParserContract
     final var installK = (WXMGRUBKernelOpenBSD) install.kernelInstructions();
     assertEquals("install", install.name().value());
     assertEquals("0:4:0", installK.bootDevice().toString());
+    assertEquals("openbsd1", installK.partition());
     assertEquals("/6.6/amd64/bsd.rd", installK.kernelPath().toString());
 
     final var installUEFI = (WXMBootConfigurationUEFI) boots.get(1);

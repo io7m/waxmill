@@ -128,6 +128,7 @@ public final class WXMCommandVMDeleteBootConfigurationsTest
         .setKernelInstructions(
           WXMGRUBKernelOpenBSD.builder()
             .setKernelPath(Paths.get("/bsd"))
+            .setPartition("openbsd1")
             .setBootDevice(
               WXMDeviceSlot.builder()
                 .setBusID(0)

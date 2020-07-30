@@ -98,7 +98,7 @@ public final class WXMEqualsTest
           "kernelArguments")),
       new WXMClassUnderTest(
         WXMGRUBKernelOpenBSD.class,
-        Set.of("bootDevice", "kernelPath")),
+        Set.of("bootDevice", "kernelPath", "partition")),
       new WXMClassUnderTest(
         WXMParseError.class,
         Set.of("lexical", "severity", "message")),

@@ -1190,6 +1190,17 @@
               </xsd:documentation>
             </xsd:annotation>
           </xsd:attribute>
+
+          <xsd:attribute name="partition"
+                         type="xsd:string"
+                         use="required">
+            <xsd:annotation>
+              <xsd:documentation>
+                The partition that will be inspected for the kernel. This may be ignored depending on which BSD
+                operating system is being booted.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
