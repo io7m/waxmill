@@ -33,6 +33,7 @@ import java.util.UUID;
 
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -116,6 +117,120 @@ public final class WXMCommandVMSetTest
     assertTrue(flagsAfter.wireGuestMemory());
     final var flagsCheck = flagsAfter.withWireGuestMemory(false);
     assertEquals(flagsStart, flagsCheck);
+  }
+
+  @Test
+  public void setAllTrue()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-set",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--disable-mptable-generation", "true",
+        "--exit-on-PAUSE", "true",
+        "--force-msi-interrupts", "true",
+        "--generate-acpi-tables", "true",
+        "--guest-apic-is-x2apic", "true",
+        "--ignore-unimplemented-msr", "true",
+        "--include-guest-memory-cores", "true",
+        "--rtc-is-utc", "true",
+        "--wire-guest-memory", "true",
+        "--yield-on-HLT", "true",
+      }
+    );
+
+    final var flagsAfter = this.getFlags();
+    assertTrue(flagsAfter.disableMPTableGeneration());
+    assertTrue(flagsAfter.exitOnPAUSE());
+    assertTrue(flagsAfter.forceVirtualIOPCIToUseMSI());
+    assertTrue(flagsAfter.generateACPITables());
+    assertTrue(flagsAfter.guestAPICIsX2APIC());
+    assertTrue(flagsAfter.ignoreUnimplementedModelSpecificRegisters());
+    assertTrue(flagsAfter.includeGuestMemoryInCoreFiles());
+    assertTrue(flagsAfter.realTimeClockIsUTC());
+    assertTrue(flagsAfter.wireGuestMemory());
+    assertTrue(flagsAfter.yieldCPUOnHLT());
+  }
+
+  @Test
+  public void setAllFalse()
+    throws Exception
+  {
+    final var id = UUID.randomUUID();
+
+    MainExitless.main(
+      new String[]{
+        "vm-define",
+        "--configuration",
+        this.configFile.toString(),
+        "--name",
+        "com.io7m.example",
+        "--memory-gigabytes",
+        "1",
+        "--memory-megabytes",
+        "128",
+        "--cpu-count",
+        "2",
+        "--machine",
+        id.toString()
+      }
+    );
+
+    MainExitless.main(
+      new String[]{
+        "vm-set",
+        "--configuration",
+        this.configFile.toString(),
+        "--machine",
+        id.toString(),
+        "--disable-mptable-generation", "false",
+        "--exit-on-PAUSE", "false",
+        "--force-msi-interrupts", "false",
+        "--generate-acpi-tables", "false",
+        "--guest-apic-is-x2apic", "false",
+        "--ignore-unimplemented-msr", "false",
+        "--include-guest-memory-cores", "false",
+        "--rtc-is-utc", "false",
+        "--wire-guest-memory", "false",
+        "--yield-on-HLT", "false",
+      }
+    );
+
+    final var flagsAfter = this.getFlags();
+    assertFalse(flagsAfter.disableMPTableGeneration());
+    assertFalse(flagsAfter.exitOnPAUSE());
+    assertFalse(flagsAfter.forceVirtualIOPCIToUseMSI());
+    assertFalse(flagsAfter.generateACPITables());
+    assertFalse(flagsAfter.guestAPICIsX2APIC());
+    assertFalse(flagsAfter.ignoreUnimplementedModelSpecificRegisters());
+    assertFalse(flagsAfter.includeGuestMemoryInCoreFiles());
+    assertFalse(flagsAfter.realTimeClockIsUTC());
+    assertFalse(flagsAfter.wireGuestMemory());
+    assertFalse(flagsAfter.yieldCPUOnHLT());
   }
 
   private WXMFlags getFlags()

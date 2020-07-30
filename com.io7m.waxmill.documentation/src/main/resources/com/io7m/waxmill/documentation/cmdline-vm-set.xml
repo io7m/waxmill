@@ -64,6 +64,114 @@
         </Row>
         <Row>
           <Cell>
+            <Term type="parameter">--include-guest-memory-cores</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Include guest memory in core files.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--yield-on-HLT</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Yield the virtual CPU thread when a HLT instruction is detected.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--exit-on-PAUSE</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Force the guest virtual CPU to exit when a PAUSE instruction is detected.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--generate-acpi-tables</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Generate ACPI tables. Required for FreeBSD/amd64 guests.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--disable-mptable-generation</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Disable MP table generation.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--force-msi-interrupts</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Force virtio PCI device emulations to use MSI interrupts instead of MSI-X interrupts.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--guest-apic-is-x2apic</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The guest's local APIC is configured in x2APIC mode.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--rtc-is-utc</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>RTC keeps UTC time.</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--ignore-unimplemented-msr</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Boolean</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>Ignore accesses to unimplemented Model Specific Registers.</Cell>
+        </Row>
+        <Row>
+          <Cell>
             <Term type="parameter">--wire-guest-memory</Term>
           </Cell>
           <Cell>

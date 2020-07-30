@@ -55,41 +55,48 @@ public final class WXM1FlagsParser
     final BTElementParsingContextType context,
     final WXM1Flag result)
   {
-    switch (result.name().trim()) {
+    final var name = result.name().trim();
+    final var value = result.value();
+
+    switch (name) {
       case "ExitCPUOnPAUSE": {
-        this.builder.setExitOnPAUSE(result.value());
+        this.builder.setExitOnPAUSE(value);
         break;
       }
       case "DisableMPTableGeneration": {
-        this.builder.setDisableMPTableGeneration(result.value());
+        this.builder.setDisableMPTableGeneration(value);
         break;
       }
       case "ForceVirtualIOPCIToUseMSI": {
-        this.builder.setForceVirtualIOPCIToUseMSI(result.value());
+        this.builder.setForceVirtualIOPCIToUseMSI(value);
         break;
       }
       case "GenerateACPITables": {
-        this.builder.setGenerateACPITables(result.value());
+        this.builder.setGenerateACPITables(value);
         break;
       }
       case "GuestAPICIsX2APIC": {
-        this.builder.setGuestAPICIsX2APIC(result.value());
+        this.builder.setGuestAPICIsX2APIC(value);
+        break;
+      }
+      case "IgnoreUnimplementedModelSpecificRegisters": {
+        this.builder.setIgnoreUnimplementedModelSpecificRegisters(value);
         break;
       }
       case "IncludeGuestMemoryInCoreFiles": {
-        this.builder.setIncludeGuestMemoryInCoreFiles(result.value());
+        this.builder.setIncludeGuestMemoryInCoreFiles(value);
         break;
       }
       case "RealTimeClockIsUTC": {
-        this.builder.setRealTimeClockIsUTC(result.value());
+        this.builder.setRealTimeClockIsUTC(value);
         break;
       }
       case "WireGuestMemory": {
-        this.builder.setWireGuestMemory(result.value());
+        this.builder.setWireGuestMemory(value);
         break;
       }
       case "YieldCPUOnHLT": {
-        this.builder.setYieldCPUOnHLT(result.value());
+        this.builder.setYieldCPUOnHLT(value);
         break;
       }
       default:

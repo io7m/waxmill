@@ -31,6 +31,8 @@ public interface WXMFlagsType
    * Include guest memory in core files.
    *
    * @return {@code true} if guest memory should appear in core files.
+   *
+   * @see "-C option to bhyve"
    */
 
   @Value.Default
@@ -45,6 +47,8 @@ public interface WXMFlagsType
    * use 100% of a host CPU.
    *
    * @return {@code true} if the virtual CPU should yield on HLT
+   *
+   * @see "-H option to bhyve"
    */
 
   @Value.Default
@@ -58,6 +62,8 @@ public interface WXMFlagsType
    * is detected.
    *
    * @return {@code true} if the virtual CPU should exit on PAUSE
+   *
+   * @see "-P option to bhyve"
    */
 
   @Value.Default
@@ -70,6 +76,8 @@ public interface WXMFlagsType
    * Generate ACPI tables.  Required for FreeBSD/amd64 guests.
    *
    * @return {@code true} if ACPI tables should be generated.
+   *
+   * @see "-A option to bhyve"
    */
 
   @Value.Default
@@ -82,6 +90,8 @@ public interface WXMFlagsType
    * Disable MP table generation.
    *
    * @return {@code true} if generation should be disabled
+   *
+   * @see "-Y option to bhyve"
    */
 
   @Value.Default
@@ -95,6 +105,8 @@ public interface WXMFlagsType
    * instead of MSI-X interrupts.
    *
    * @return {@code true} if MSI interrupts should be used
+   *
+   * @see "-W option to bhyve"
    */
 
   @Value.Default
@@ -107,6 +119,8 @@ public interface WXMFlagsType
    * The guest's local APIC is configured in x2APIC mode.
    *
    * @return {@code true} if the guest's local APIC is configured in x2APIC mode.
+   *
+   * @see "-x option to bhyve"
    */
 
   @Value.Default
@@ -119,6 +133,8 @@ public interface WXMFlagsType
    * Wire guest memory.
    *
    * @return {@code true} if the guest's memory should be wired
+   *
+   * @see "-S option to bhyve"
    */
 
   @Value.Default
@@ -131,11 +147,28 @@ public interface WXMFlagsType
    * RTC keeps UTC time.
    *
    * @return {@code true} if the guest's RTC keeps UTC time.
+   *
+   * @see "-u option to bhyve"
    */
 
   @Value.Default
   default boolean realTimeClockIsUTC()
   {
     return false;
+  }
+
+  /**
+   * Ignore accesses to unimplemented Model Specific Registers
+   * (MSRs).  This is intended for debug purposes.
+   *
+   * @return {@code true} if unimplemented accesses should be ignored
+   *
+   * @see "-w option to bhyve"
+   */
+
+  @Value.Default
+  default boolean ignoreUnimplementedModelSpecificRegisters()
+  {
+    return true;
   }
 }

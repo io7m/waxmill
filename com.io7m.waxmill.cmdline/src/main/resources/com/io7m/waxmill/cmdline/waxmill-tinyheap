@@ -15,27 +15,14 @@
 #  IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-fatal()
-{
-  echo "waxmill: fatal: $1" 1>&2
-  exit 1
-}
+WJO=""
+WJO="${WJO} -XX:+UseSerialGC"
+WJO="${WJO} -XX:-UseCompressedClassPointers"
+WJO="${WJO} -XX:MaxMetaspaceSize=32m"
+WJO="${WJO} -XX:MetaspaceSize=32m"
+WJO="${WJO} -XX:TieredStopAtLevel=2"
+WJO="${WJO} -Xms16m"
+WJO="${WJO} -Xmx16m"
 
-if [ -z "${WAXMILL_HOME}" ]
-then
-  fatal "WAXMILL_HOME is not defined"
-fi
-
-if [ -z "${WAXMILL_JAR_NAME}" ]
-then
-  WAXMILL_JAR_NAME="waxmill.jar"
-fi
-
-WAXMILL_JAR_FILE="${WAXMILL_HOME}/${WAXMILL_JAR_NAME}"
-
-if [ ! -z "${WAXMILL_JVM_OPTIONS}" ]
-then
-  exec java ${WAXMILL_JVM_OPTIONS} -jar "${WAXMILL_JAR_FILE}" "$@"
-else
-  exec java -jar "${WAXMILL_JAR_FILE}" "$@"
-fi
+export WAXMILL_JVM_OPTIONS="${WJO}"
+exec waxmill "$@"

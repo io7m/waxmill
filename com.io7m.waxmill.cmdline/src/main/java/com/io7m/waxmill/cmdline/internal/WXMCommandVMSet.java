@@ -19,6 +19,7 @@ package com.io7m.waxmill.cmdline.internal;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.waxmill.machines.WXMFlags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,69 @@ public final class WXMCommandVMSet extends WXMAbstractCommandWithConfiguration
     arity = 1
   )
   private Boolean wireGuestMemory;
+
+  @Parameter(
+    names = "--include-guest-memory-cores",
+    description = "Include guest memory in core files.",
+    arity = 1
+  )
+  private Boolean includeGuestMemoryInCoreFiles;
+
+  @Parameter(
+    names = "--yield-on-HLT",
+    description = "Yield the virtual CPU thread when a HLT instruction is detected.",
+    arity = 1
+  )
+  private Boolean yieldOnHLT;
+
+  @Parameter(
+    names = "--exit-on-PAUSE",
+    description = "Force the guest virtual CPU to exit when a PAUSE instruction is detected.",
+    arity = 1
+  )
+  private Boolean exitOnPAUSE;
+
+  @Parameter(
+    names = "--generate-acpi-tables",
+    description = "Generate ACPI tables. Required for FreeBSD/amd64 guests.",
+    arity = 1
+  )
+  private Boolean generateACPITables;
+
+  @Parameter(
+    names = "--disable-mptable-generation",
+    description = "Disable MP table generation.",
+    arity = 1
+  )
+  private Boolean disableMPTableGeneration;
+
+  @Parameter(
+    names = "--force-msi-interrupts",
+    description = "Force virtio PCI device emulations to use MSI interrupts instead of MSI-X interrupts.",
+    arity = 1
+  )
+  private Boolean forceMSIInterrupts;
+
+  @Parameter(
+    names = "--guest-apic-is-x2apic",
+    description = "The guest's local APIC is configured in x2APIC mode.",
+    arity = 1
+  )
+  private Boolean guestAPICIsX2APIC;
+
+  @Parameter(
+    names = "--rtc-is-utc",
+    description = "RTC keeps UTC time.",
+    arity = 1
+  )
+  private Boolean realTimeClockIsUTC;
+
+  @Parameter(
+    names = "--ignore-unimplemented-msr",
+    description = "Ignore accesses to unimplemented Model Specific Registers.",
+    arity = 1
+  )
+  private Boolean ignoreUnimplementedModelSpecificRegisters;
 
   /**
    * Construct a command.
@@ -80,13 +144,67 @@ public final class WXMCommandVMSet extends WXMAbstractCommandWithConfiguration
     try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
 
-      var flags = machine.flags();
-      if (this.wireGuestMemory != null) {
-        flags = flags.withWireGuestMemory(this.wireGuestMemory.booleanValue());
-      }
+      final var flagBuilder =
+        WXMFlags.builder()
+          .from(machine.flags());
 
-      client.vmUpdate(machine.withFlags(flags));
+      handleFlag(
+        this.disableMPTableGeneration,
+        flagBuilder::setDisableMPTableGeneration
+      );
+      handleFlag(
+        this.exitOnPAUSE,
+        flagBuilder::setExitOnPAUSE
+      );
+      handleFlag(
+        this.forceMSIInterrupts,
+        flagBuilder::setForceVirtualIOPCIToUseMSI
+      );
+      handleFlag(
+        this.generateACPITables,
+        flagBuilder::setGenerateACPITables
+      );
+      handleFlag(
+        this.guestAPICIsX2APIC,
+        flagBuilder::setGuestAPICIsX2APIC
+      );
+      handleFlag(
+        this.ignoreUnimplementedModelSpecificRegisters,
+        flagBuilder::setIgnoreUnimplementedModelSpecificRegisters
+      );
+      handleFlag(
+        this.includeGuestMemoryInCoreFiles,
+        flagBuilder::setIncludeGuestMemoryInCoreFiles
+      );
+      handleFlag(
+        this.realTimeClockIsUTC,
+        flagBuilder::setRealTimeClockIsUTC
+      );
+      handleFlag(
+        this.wireGuestMemory,
+        flagBuilder::setWireGuestMemory
+      );
+      handleFlag(
+        this.yieldOnHLT,
+        flagBuilder::setYieldCPUOnHLT
+      );
+
+      client.vmUpdate(machine.withFlags(flagBuilder.build()));
     }
     return SUCCESS;
+  }
+
+  interface FlagSetterType
+  {
+    void set(boolean flag);
+  }
+
+  private static void handleFlag(
+    final Boolean flag,
+    final FlagSetterType flagSetter)
+  {
+    if (flag != null) {
+      flagSetter.set(flag.booleanValue());
+    }
   }
 }

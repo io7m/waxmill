@@ -186,6 +186,8 @@
             enabled="false"/>
       <Flag name="IncludeGuestMemoryInCoreFiles"
             enabled="false"/>
+      <Flag name="IgnoreUnimplementedModelSpecificRegisters"
+            enabled="true"/>
       <Flag name="RealTimeClockIsUTC"
             enabled="true"/>
       <Flag name="WireGuestMemory"

@@ -463,6 +463,9 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
       "IncludeGuestMemoryInCoreFiles",
       flags.includeGuestMemoryInCoreFiles());
     this.serializeFlag(
+      "IgnoreUnimplementedModelSpecificRegisters",
+      flags.ignoreUnimplementedModelSpecificRegisters());
+    this.serializeFlag(
       "RealTimeClockIsUTC",
       flags.realTimeClockIsUTC());
     this.serializeFlag(

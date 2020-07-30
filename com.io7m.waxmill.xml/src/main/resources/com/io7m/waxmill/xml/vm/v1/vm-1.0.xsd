@@ -237,6 +237,13 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:enumeration>
+      <xsd:enumeration value="IgnoreUnimplementedModelSpecificRegisters">
+        <xsd:annotation>
+          <xsd:documentation>
+            Ignore accesses to unimplemented Model Specific Registers. This is intended for debug purposes.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
       <xsd:enumeration value="RealTimeClockIsUTC">
         <xsd:annotation>
           <xsd:documentation>
