@@ -63,14 +63,19 @@
         <c:change date="2020-07-29T00:00:00+00:00" summary="Add vm-id-of command"/>
       </c:changes>
     </c:release>
-    <c:release date="2020-07-30T15:32:12+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.7">
+    <c:release date="2020-07-30T15:42:16+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.7">
       <c:changes>
         <c:change date="2020-07-30T00:00:00+00:00" summary="Use -w by default.">
           <c:tickets>
             <c:ticket id="31"/>
           </c:tickets>
         </c:change>
-        <c:change date="2020-07-30T15:32:12+00:00" summary="Extended the vm-set command to cover all flags"/>
+        <c:change date="2020-07-30T00:00:00+00:00" summary="Extended the vm-set command to cover all flags"/>
+        <c:change date="2020-07-30T15:42:16+00:00" summary="Assign VMs UUIDs with the bhyve -U flag">
+          <c:tickets>
+            <c:ticket id="32"/>
+          </c:tickets>
+        </c:change>
       </c:changes>
     </c:release>
   </c:releases>
