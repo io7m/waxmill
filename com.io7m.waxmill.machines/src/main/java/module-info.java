@@ -30,6 +30,7 @@ module com.io7m.waxmill.machines
   requires com.io7m.junreachable.core;
   requires com.io7m.waxmill.exceptions;
   requires com.io7m.waxmill.strings.api;
+  requires org.slf4j;
 
   exports com.io7m.waxmill.machines;
 }
