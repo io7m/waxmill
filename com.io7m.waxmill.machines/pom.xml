@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.waxmill</artifactId>
     <groupId>com.io7m.waxmill</groupId>
-    <version>0.0.9</version>
+    <version>0.0.10-SNAPSHOT</version>
   </parent>
 
   <artifactId>com.io7m.waxmill.machines</artifactId>
@@ -41,6 +41,10 @@
     <dependency>
       <groupId>com.io7m.junreachable</groupId>
       <artifactId>com.io7m.junreachable.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
 
     <dependency>

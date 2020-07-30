@@ -24,6 +24,7 @@ import com.io7m.waxmill.client.api.WXMClientType;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.exceptions.WXMException;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
+import com.io7m.waxmill.machines.WXMConsoles;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDryRun;
@@ -42,9 +43,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMLPCTTYNames.WXM_COM1;
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
@@ -200,26 +199,7 @@ public final class WXMClient implements WXMClientType
     final WXMVirtualMachine machine)
   {
     Objects.requireNonNull(machine, "machine");
-
-    final var consoleDevices =
-      machine.devices()
-        .stream()
-        .filter(dev -> dev.kind() == WXM_LPC)
-        .map(WXMDeviceLPC.class::cast)
-        .filter(lpc -> lpc.backendMap().containsKey(WXM_COM1.deviceName()))
-        .collect(Collectors.toList());
-
-    final var deviceCount = consoleDevices.size();
-    LOG.debug(
-      "found {} console devices in machine {}",
-      Integer.valueOf(deviceCount),
-      machine.id()
-    );
-
-    if (deviceCount == 1) {
-      return Optional.of(consoleDevices.get(0));
-    }
-    return Optional.empty();
+    return WXMConsoles.findDefaultConsole(machine);
   }
 
   @Override

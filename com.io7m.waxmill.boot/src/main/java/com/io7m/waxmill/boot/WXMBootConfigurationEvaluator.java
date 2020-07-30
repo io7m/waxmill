@@ -31,6 +31,7 @@ import com.io7m.waxmill.machines.WXMBootConfigurationType;
 import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMBootDiskAttachment;
 import com.io7m.waxmill.machines.WXMCommandExecution;
+import com.io7m.waxmill.machines.WXMConsoles;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMDeviceE1000;
@@ -75,6 +76,7 @@ import java.util.stream.Collectors;
 
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMEvaluatedBootConfigurationType;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceVirtioNetworkType.WXMTTYBackendType;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMLPCTTYNames.WXM_COM1;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
@@ -502,14 +504,74 @@ public final class WXMBootConfigurationEvaluator
       this.machine.memory()
         .totalMegabytes();
 
-    return WXMCommandExecution.builder()
-      .setExecutable(this.clientConfiguration.grubBhyveExecutable())
-      .addArguments(String.format("--device-map=%s", deviceMapPath))
+    final WXMCommandExecution.Builder builder =
+      WXMCommandExecution.builder();
+
+    builder.setExecutable(this.clientConfiguration.grubBhyveExecutable());
+
+    final var consoleOpt = WXMConsoles.findDefaultConsole(this.machine);
+    consoleOpt.ifPresent(device -> {
+      this.generateGRUBBhyveCommandConsoleDevice(builder, device);
+    });
+
+    return builder.addArguments(String.format("--device-map=%s", deviceMapPath))
       .addArguments("--root=host")
       .addArguments(String.format("--directory=%s", basePath))
       .addArguments(String.format("--memory=%sM", memoryMB))
       .addArguments(WXMShortIDs.encode(this.machine.id()))
       .build();
+  }
+
+  private void generateGRUBBhyveCommandConsoleDevice(
+    final WXMCommandExecution.Builder builder,
+    final WXMDeviceType device)
+  {
+    switch (device.kind()) {
+      case WXM_LPC: {
+        final var lpc = (WXMDeviceLPC) device;
+        final var backend = lpc.backendMap().get(WXM_COM1.deviceName());
+        this.generateGRUBBhyveCommandConsoleDeviceLPCBackend(builder, backend);
+        return;
+      }
+
+      case WXM_HOSTBRIDGE:
+      case WXM_VIRTIO_NETWORK:
+      case WXM_VIRTIO_BLOCK:
+      case WXM_AHCI_HD:
+      case WXM_AHCI_CD:
+      case WXM_PASSTHRU:
+      case WXM_E1000:
+      case WXM_FRAMEBUFFER:
+        throw new UnreachableCodeException();
+    }
+
+    throw new UnreachableCodeException();
+  }
+
+  private void generateGRUBBhyveCommandConsoleDeviceLPCBackend(
+    final WXMCommandExecution.Builder builder,
+    final WXMTTYBackendType backend)
+  {
+    switch (backend.kind()) {
+      case WXM_FILE: {
+        final var file = (WXMTTYBackendFile) backend;
+        builder.addArguments(String.format("--cons-dev=%s", file.path()));
+        break;
+      }
+      case WXM_NMDM: {
+        builder.addArguments(String.format("--cons-dev=%s", nmdmPath(
+          this.clientConfiguration.virtualMachineRuntimeFilesystem()
+            .mountPoint()
+            .getFileSystem(),
+          this.machine.id(),
+          NMDM_GUEST
+        )));
+        break;
+      }
+      case WXM_STDIO: {
+        break;
+      }
+    }
   }
 
   private WXMCommandExecution generateBhyveCommand(
@@ -867,7 +929,10 @@ public final class WXMBootConfigurationEvaluator
     configureBhyveFlag(cmd, flags.generateACPITables(), "-A");
     configureBhyveFlag(cmd, flags.guestAPICIsX2APIC(), "-x");
     configureBhyveFlag(cmd, flags.includeGuestMemoryInCoreFiles(), "-C");
-    configureBhyveFlag(cmd, flags.ignoreUnimplementedModelSpecificRegisters(), "-w");
+    configureBhyveFlag(
+      cmd,
+      flags.ignoreUnimplementedModelSpecificRegisters(),
+      "-w");
     configureBhyveFlag(cmd, flags.realTimeClockIsUTC(), "-u");
     configureBhyveFlag(cmd, flags.wireGuestMemory(), "-S");
     configureBhyveFlag(cmd, flags.yieldCPUOnHLT(), "-H");
