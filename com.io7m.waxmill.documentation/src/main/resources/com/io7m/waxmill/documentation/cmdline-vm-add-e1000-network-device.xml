@@ -78,7 +78,7 @@
           <Cell>
             <Term type="constant">false</Term>
           </Cell>
-          <Cell>The interface groups to which the device belongs. May be repeated.</Cell>
+          <Cell>The interface groups to which the device belongs. May be repeated to specify multiple groups.</Cell>
         </Row>
         <Row>
           <Cell>
