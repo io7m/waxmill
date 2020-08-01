@@ -18,6 +18,8 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
@@ -30,9 +32,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMAddPassthruTest
 {
@@ -143,7 +145,7 @@ public final class WXMCommandVMAddPassthruTest
   @Test
   public void addPassthruNonexistentVirtualMachine()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionNonexistent.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
@@ -217,7 +219,7 @@ public final class WXMCommandVMAddPassthruTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionDuplicate.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-passthru-device",

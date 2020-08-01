@@ -18,6 +18,7 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
@@ -30,7 +31,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 
 public final class WXMCommandVMKillTest
 {
@@ -77,7 +79,7 @@ public final class WXMCommandVMKillTest
   @Test
   public void killTooFewArguments()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-kill"
@@ -131,7 +133,7 @@ public final class WXMCommandVMKillTest
   {
     final var id = UUID.randomUUID();
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionNonexistent.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-kill",
@@ -154,7 +156,7 @@ public final class WXMCommandVMKillTest
   {
     Files.deleteIfExists(this.configFile);
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-kill",

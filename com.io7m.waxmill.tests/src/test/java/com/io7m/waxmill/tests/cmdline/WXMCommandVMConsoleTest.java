@@ -30,7 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 
 public final class WXMCommandVMConsoleTest
 {
@@ -77,7 +77,7 @@ public final class WXMCommandVMConsoleTest
   @Test
   public void runTooFewArguments()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-console"
@@ -92,7 +92,7 @@ public final class WXMCommandVMConsoleTest
   {
     Files.deleteIfExists(this.configFile);
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-console",
@@ -132,7 +132,7 @@ public final class WXMCommandVMConsoleTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-console",

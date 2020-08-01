@@ -25,6 +25,8 @@ import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 
 module com.io7m.waxmill.cmdline
 {
+  requires static com.io7m.immutables.style;
+  requires static org.immutables.value;
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 

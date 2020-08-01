@@ -16,8 +16,10 @@
 
 package com.io7m.waxmill.tests.cmdline;
 
+import com.beust.jcommander.ParameterException;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
@@ -37,9 +39,10 @@ import java.util.UUID;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
 import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMAddLPCTest
 {
@@ -82,7 +85,7 @@ public final class WXMCommandVMAddLPCTest
   @Test
   public void addLPCNonexistentVirtualMachine()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, ParameterException.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
@@ -142,7 +145,7 @@ public final class WXMCommandVMAddLPCTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionDuplicate.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-lpc-device",
@@ -248,7 +251,7 @@ public final class WXMCommandVMAddLPCTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-lpc-device",
@@ -488,7 +491,7 @@ public final class WXMCommandVMAddLPCTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-lpc-device",

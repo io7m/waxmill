@@ -16,9 +16,11 @@
 
 package com.io7m.waxmill.tests.cmdline;
 
+import com.io7m.claypot.core.internal.CLPLogLevelUnrecognized;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.machines.WXMZFSFilesystem;
+import com.io7m.waxmill.tests.WXMExceptions;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +29,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVersionTest
 {
@@ -82,7 +82,7 @@ public final class WXMCommandVersionTest
   @Test
   public void versionBadLogLevel()
   {
-    assertThrows(IOException.class, () -> {
+    WXMExceptions.assertThrowsCauseLogged(IOException.class, CLPLogLevelUnrecognized.class, () -> {
       MainExitless.main(
         new String[]{
           "version",

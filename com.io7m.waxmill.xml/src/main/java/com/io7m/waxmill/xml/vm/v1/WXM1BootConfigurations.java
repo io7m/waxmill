@@ -31,7 +31,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.io7m.waxmill.xml.vm.v1.WXM1DeviceSlots.SlotSide.GUEST;
+import static com.io7m.waxmill.machines.WXMSide.GUEST;
 
 public final class WXM1BootConfigurations
 {

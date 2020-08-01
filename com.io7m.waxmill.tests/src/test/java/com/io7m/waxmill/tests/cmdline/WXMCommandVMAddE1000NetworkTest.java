@@ -18,6 +18,8 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMDeviceE1000;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
@@ -32,9 +34,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMAddE1000NetworkTest
 {
@@ -77,19 +79,19 @@ public final class WXMCommandVMAddE1000NetworkTest
   @Test
   public void addE1000NetworkNonexistentVirtualMachine()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionNonexistent.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
           "vm-add-e1000-network-device",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--machine",
-          id.toString(),
-          "--backend",
-          "tap;tap23;a3:26:9c:74:79:34"
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--machine", id.toString(),
+          "--type", "tap",
+          "--host-mac", "a3:26:9c:74:79:34",
+          "--guest-mac", "a3:26:9c:74:79:35",
+          "--name", "tap23",
+          "--device-slot", "0:1:0"
         }
       );
     });
@@ -124,33 +126,29 @@ public final class WXMCommandVMAddE1000NetworkTest
     MainExitless.main(
       new String[]{
         "vm-add-e1000-network-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "tap;tap23;a3:26:9c:74:79:34",
-        "--device-slot",
-        "0:1:0"
+        "--verbose", "trace",
+        "--configuration", this.configFile.toString(),
+        "--machine", id.toString(),
+        "--type", "tap",
+        "--host-mac", "a3:26:9c:74:79:34",
+        "--guest-mac", "a3:26:9c:74:79:35",
+        "--name", "tap23",
+        "--device-slot", "0:1:0"
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionDuplicate.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-e1000-network-device",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--machine",
-          id.toString(),
-          "--backend",
-          "tap;tap23;a3:26:9c:74:79:34",
-          "--device-slot",
-          "0:1:0"
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--machine", id.toString(),
+          "--type", "tap",
+          "--host-mac", "a3:26:9c:74:79:34",
+          "--guest-mac", "a3:26:9c:74:79:35",
+          "--name", "tap23",
+          "--device-slot", "0:1:0"
         }
       );
     });
@@ -185,34 +183,29 @@ public final class WXMCommandVMAddE1000NetworkTest
     MainExitless.main(
       new String[]{
         "vm-add-e1000-network-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "tap;tap23;a3:26:9c:74:79:34",
-        "--device-slot",
-        "0:1:0"
+        "--verbose", "trace",
+        "--configuration", this.configFile.toString(),
+        "--machine", id.toString(),
+        "--type", "tap",
+        "--host-mac", "a3:26:9c:74:79:34",
+        "--guest-mac", "a3:26:9c:74:79:35",
+        "--name", "tap23",
+        "--device-slot", "0:1:0"
       }
     );
 
     MainExitless.main(
       new String[]{
         "vm-add-e1000-network-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "tap;tap23;a3:26:9c:74:79:34",
-        "--device-slot",
-        "0:1:0",
-        "--replace",
-        "true"
+        "--verbose", "trace",
+        "--configuration", this.configFile.toString(),
+        "--machine", id.toString(),
+        "--type", "tap",
+        "--host-mac", "a3:26:9c:74:79:34",
+        "--guest-mac", "a3:26:9c:74:79:35",
+        "--name", "tap23",
+        "--device-slot", "0:1:0",
+        "--replace", "true"
       }
     );
   }
@@ -246,16 +239,14 @@ public final class WXMCommandVMAddE1000NetworkTest
     MainExitless.main(
       new String[]{
         "vm-add-e1000-network-device",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "tap;tap23;a3:26:9c:74:79:34",
-        "--device-slot",
-        "0:1:0"
+        "--verbose", "trace",
+        "--configuration", this.configFile.toString(),
+        "--machine", id.toString(),
+        "--type", "tap",
+        "--host-mac", "a3:26:9c:74:79:34",
+        "--guest-mac", "a3:26:9c:74:79:35",
+        "--name", "tap23",
+        "--device-slot", "0:1:0"
       }
     );
 
@@ -274,7 +265,8 @@ public final class WXMCommandVMAddE1000NetworkTest
       (WXMTap) net.backend();
 
     assertEquals("tap23", tap.name().value());
-    assertEquals("a3:26:9c:74:79:34", tap.address().value());
+    assertEquals("a3:26:9c:74:79:34", tap.hostMAC().value());
+    assertEquals("a3:26:9c:74:79:35", tap.guestMAC().value());
   }
 
   @Test
@@ -310,12 +302,12 @@ public final class WXMCommandVMAddE1000NetworkTest
         "trace",
         "--configuration",
         this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "vmnet;vmnet23;a3:26:9c:74:79:34",
-        "--device-slot",
-        "0:1:0"
+        "--machine", id.toString(),
+        "--type", "vmnet",
+        "--host-mac", "a3:26:9c:74:79:34",
+        "--guest-mac", "a3:26:9c:74:79:35",
+        "--name", "vmnet23",
+        "--device-slot", "0:1:0"
       }
     );
 
@@ -334,6 +326,7 @@ public final class WXMCommandVMAddE1000NetworkTest
       (WXMVMNet) net.backend();
 
     assertEquals("vmnet23", vmnet.name().value());
-    assertEquals("a3:26:9c:74:79:34", vmnet.address().value());
+    assertEquals("a3:26:9c:74:79:34", vmnet.hostMAC().value());
+    assertEquals("a3:26:9c:74:79:35", vmnet.guestMAC().value());
   }
 }

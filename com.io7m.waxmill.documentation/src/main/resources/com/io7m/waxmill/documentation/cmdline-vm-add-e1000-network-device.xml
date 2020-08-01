@@ -34,15 +34,51 @@
         </Columns>
         <Row>
           <Cell>
-            <Term type="parameter">--backend</Term>
+            <Term type="parameter">--type</Term>
           </Cell>
           <Cell>
-            <Term type="parameterType">Network Backend</Term>
+            <Term type="parameterType">Network Backend Kind</Term>
           </Cell>
           <Cell>
             <Term type="constant">true</Term>
           </Cell>
-          <Cell>A specification of the network device backend to add</Cell>
+          <Cell>The type of network device backend to add (such as WXM_TAP, WXM_VMNET)</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--guest-mac</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">MAC Address</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>The MAC address of the device on the guest side</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--host-mac</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">MAC Address</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">true</Term>
+          </Cell>
+          <Cell>The MAC address of the device on the host side</Cell>
+        </Row>
+        <Row>
+          <Cell>
+            <Term type="parameter">--interface-group</Term>
+          </Cell>
+          <Cell>
+            <Term type="parameterType">Interface group name</Term>
+          </Cell>
+          <Cell>
+            <Term type="constant">false</Term>
+          </Cell>
+          <Cell>The interface groups to which the device belongs. May be repeated.</Cell>
         </Row>
         <Row>
           <Cell>
@@ -123,13 +159,6 @@
       <Verbatim>
         <xi:include parse="text"
                     href="device-slot-syntax.txt"/>
-      </Verbatim>
-    </FormalItem>
-
-    <FormalItem title="Network Backend Syntax">
-      <Verbatim>
-        <xi:include parse="text"
-                    href="network-backend-syntax.txt"/>
       </Verbatim>
     </FormalItem>
   </Subsection>

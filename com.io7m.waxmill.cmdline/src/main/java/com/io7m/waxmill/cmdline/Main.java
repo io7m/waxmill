@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.stream.Stream;
 
@@ -168,5 +169,14 @@ public final class Main implements Runnable
       "[Main 0x%s]",
       Long.toUnsignedString(System.identityHashCode(this), 16)
     );
+  }
+
+  /**
+   * @return The exception that caused the exit
+   */
+
+  public Optional<Exception> exitCause()
+  {
+    return this.claypot.exitCause();
   }
 }

@@ -19,6 +19,7 @@ package com.io7m.waxmill.tests.cmdline;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.exceptions.WXMException;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
 import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
@@ -31,9 +32,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMDefineTest
 {
@@ -132,7 +134,7 @@ public final class WXMCommandVMDefineTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionDuplicate.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-define",
@@ -161,7 +163,7 @@ public final class WXMCommandVMDefineTest
   {
     Files.deleteIfExists(this.configFile);
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{

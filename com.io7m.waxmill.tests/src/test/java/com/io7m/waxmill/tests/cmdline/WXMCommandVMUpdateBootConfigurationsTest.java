@@ -37,10 +37,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMUpdateBootConfigurationsTest
 {
@@ -261,7 +261,7 @@ public final class WXMCommandVMUpdateBootConfigurationsTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-update-boot-configurations",

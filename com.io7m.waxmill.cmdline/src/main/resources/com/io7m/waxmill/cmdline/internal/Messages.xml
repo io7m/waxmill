@@ -34,33 +34,6 @@ Examples:
   zfs-volume;1280000000
 ]]></entry>
 
-  <entry key="networkBackendSpec"><![CDATA[
-EBNF syntax for Virtio network backends:
-
-  digit           = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-  hexDigit        = "a" | "b" | "c" | "d" | "e" | "f" ;
-  lowerAlpha      = ? [a-z] ? ;
-  upperAlpha      = ? [A-Z] ? ;
-  groupCharacter  = lowerAlpha | upperAlpha | "_" ;
-  groupName       = '{' groupCharacter '}' ;
-  groupList       = groupName , '{' "," , groupName '}' ;
-
-  macPart         = hexDigit , hexDigit ;
-  macAddress      = macPart , ":" , macPart , ":" , macPart , ":" , macPart , ":" , macPart , ":" , macPart ;
-  tapDeviceName   = "tap" , '{' digit '}' ;
-  vmnetDeviceName = "vmnet" , '{' digit '}' ;
-  tapDevice       = "tap" , ";" , tapDeviceName , ";" , macAddress , [ ";" groupList ] ;
-  vmnetDevice     = "vmnet" , ";" , vmnetDeviceName , ";" , macAddress , [ ";" groupList ] ;
-
-Examples:
-  tap;tap23;d9:63:c0:d9:09:e8
-  tap;tap0000000000001;d9:63:c0:d9:09:e8
-  tap;tap23;d9:63:c0:d9:09:e8;wwwUsers,mailUsers,ntpdUsers
-  vmnet;vmnet23;d9:63:c0:d9:09:e8
-  vmnet;vmnet00000000001;d9:63:c0:d9:09:e8
-  vmnet;vmnet23;d9:63:c0:d9:09:e8;wwwUsers,mailUsers,ntpdUsers
-]]></entry>
-
   <entry key="deviceSlotSpec"><![CDATA[
 EBNF syntax for device slots:
 
@@ -125,6 +98,12 @@ are no longer using the specified device.]]></entry>
   <entry key="errorDeviceNonexistent">Device does not exist: {0}</entry>
   <entry key="errorSchemaNonexistent">No such schema: {0}</entry>
 
+  <entry key="errorUnrecognizedNetworkBackendType"><![CDATA[Unrecognized network backend type.
+  Received:  {0}
+  Expected:  tap | vmnet]]></entry>
+
+  <entry key="errorDependentParameterMissing"><![CDATA[Because {0} was specified as {1}, {2} must be provided.]]></entry>
+
   <entry key="infoAddedDiskFile">Added {0} disk file {1} @ slot {2}</entry>
   <entry key="infoAddedDiskZFS">Added {0} disk zfs volume {1} @ slot {2}</entry>
   <entry key="infoAddedLPC">Added LPC device @ slot {0}</entry>
@@ -135,8 +114,8 @@ are no longer using the specified device.]]></entry>
   <entry key="infoBackendFile">Backend file {0} {1}</entry>
   <entry key="infoBackendNMDM">Backend nmdm {0} {1}</entry>
   <entry key="infoBackendStdio">Backend stdio {0}</entry>
-  <entry key="infoBackendTAP">Backend tap {0} {1}</entry>
-  <entry key="infoBackendVMNet">Backend vmnet {0} {1}</entry>
+  <entry key="infoBackendTAP">Backend tap {0} (host MAC {1}) (guest MAC {2})</entry>
+  <entry key="infoBackendVMNet">Backend vmnet {0} (host MAC {1}) (guest MAC {2})</entry>
   <entry key="infoBootConfigurationAdded">Added new boot configuration: {0}</entry>
   <entry key="infoBootConfigurationRemoved">Deleted boot configuration: {0}</entry>
   <entry key="infoBootConfigurationUpdated">Updated boot configuration: {0}</entry>

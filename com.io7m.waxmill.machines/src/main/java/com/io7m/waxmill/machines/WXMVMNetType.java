@@ -17,9 +17,11 @@
 package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.io7m.waxmill.machines.WXMNetworkDeviceBackendType.Kind.WXM_VMNET;
 
@@ -43,11 +45,11 @@ public interface WXMVMNetType extends WXMNetworkDeviceBackendType
 
   WXMVMNetDeviceName name();
 
-  /**
-   * @return The underlying device MAC address
-   */
+  @Override
+  WXMMACAddress guestMAC();
 
-  WXMMACAddress address();
+  @Override
+  WXMMACAddress hostMAC();
 
   @Override
   List<WXMInterfaceGroupName> groups();
@@ -57,5 +59,18 @@ public interface WXMVMNetType extends WXMNetworkDeviceBackendType
   default String comment()
   {
     return "";
+  }
+
+  /**
+   * Check preconditions for the type.
+   */
+
+  @Value.Check
+  default void checkPreconditions()
+  {
+    Preconditions.checkPrecondition(
+      !Objects.equals(this.guestMAC(), this.hostMAC()),
+      "Host and guest MAC addresses must differ"
+    );
   }
 }

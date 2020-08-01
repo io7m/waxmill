@@ -23,6 +23,7 @@ import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.client.api.WXMClientType;
 import com.io7m.waxmill.database.api.WXMVirtualMachineDatabaseType;
 import com.io7m.waxmill.exceptions.WXMException;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMBootConfigurationName;
 import com.io7m.waxmill.machines.WXMConsoles;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
@@ -92,7 +93,7 @@ public final class WXMClient implements WXMClientType
     Objects.requireNonNull(id, "id");
 
     return this.database.vmGet(id)
-      .orElseThrow(() -> new WXMException(
+      .orElseThrow(() -> new WXMExceptionNonexistent(
         String.format("No such virtual machine: %s", id))
       );
   }

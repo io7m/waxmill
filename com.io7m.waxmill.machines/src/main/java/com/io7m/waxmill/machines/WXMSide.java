@@ -16,66 +16,21 @@
 
 package com.io7m.waxmill.machines;
 
-import org.immutables.value.Value;
-
-import java.util.List;
-
 /**
- * The type of network device backends.
+ * The "side" of a device that is visible to both the host and guest.
  */
 
-public interface WXMNetworkDeviceBackendType
+public enum WXMSide
 {
   /**
-   * @return The backend kind
+   * The host side of an object.
    */
 
-  Kind kind();
+  HOST,
 
   /**
-   * @return A descriptive comment
+   * The guest side of an object.
    */
 
-  @Value.Default
-  default String comment()
-  {
-    return "";
-  }
-
-  /**
-   * @return The device MAC address on the guest side
-   */
-
-  WXMMACAddress guestMAC();
-
-  /**
-   * @return The device MAC address on the host side
-   */
-
-  WXMMACAddress hostMAC();
-
-  /**
-   * @return The groups to which this device backend belongs
-   */
-
-  List<WXMInterfaceGroupName> groups();
-
-  /**
-   * The kind of backend.
-   */
-
-  enum Kind
-  {
-    /**
-     * The device is backed by a tap device.
-     */
-
-    WXM_TAP,
-
-    /**
-     * The device is backed by a vmnet device.
-     */
-
-    WXM_VMNET
-  }
+  GUEST
 }
