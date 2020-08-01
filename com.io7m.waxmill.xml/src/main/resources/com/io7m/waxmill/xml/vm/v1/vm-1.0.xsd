@@ -21,6 +21,25 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="SideType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="HOST">
+        <xsd:annotation>
+          <xsd:documentation xml:lang="en">
+            The "host" side of an object that can be observed from the host or guest.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="GUEST">
+        <xsd:annotation>
+          <xsd:documentation xml:lang="en">
+            The "guest" side of an object that can be observed from the host or guest.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="MACAddressType">
     <xsd:annotation>
       <xsd:documentation xml:lang="en">
@@ -162,6 +181,11 @@
                      type="wxm:MachineNameType"
                      use="required"/>
     </xsd:complexType>
+
+    <xsd:key name="MACAddressKey">
+      <xsd:selector xpath="wxm:Devices/*/wxm:MACAddress"/>
+      <xsd:field xpath="@value"/>
+    </xsd:key>
   </xsd:element>
 
   <xsd:element name="VirtualMachines">
@@ -421,6 +445,23 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="MACAddress">
+    <xsd:annotation>
+      <xsd:documentation>
+        A MAC address.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="value"
+                     type="wxm:MACAddressType"
+                     use="required"/>
+      <xsd:attribute name="side"
+                     type="wxm:SideType"
+                     use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="TAPDevice">
     <xsd:annotation>
       <xsd:documentation>
@@ -434,6 +475,8 @@
                       maxOccurs="1">
           <xsd:element ref="wxm:Comment"/>
         </xsd:sequence>
+        <xsd:element ref="wxm:MACAddress"/>
+        <xsd:element ref="wxm:MACAddress"/>
         <xsd:sequence minOccurs="0"
                       maxOccurs="unbounded">
           <xsd:element ref="wxm:InterfaceGroup"/>
@@ -449,17 +492,17 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:attribute>
-
-      <xsd:attribute name="address"
-                     type="wxm:MACAddressType"
-                     use="required">
-        <xsd:annotation>
-          <xsd:documentation>
-            The device MAC address.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
     </xsd:complexType>
+
+    <xsd:unique name="TAPBothSidesSpecified">
+      <xsd:annotation>
+        <xsd:documentation>
+          The MAC addresses for both sides of the device must be specified.
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:selector xpath="wxm:MACAddress"/>
+      <xsd:field xpath="@side"/>
+    </xsd:unique>
   </xsd:element>
 
   <xsd:element name="VMNetDevice">
@@ -469,6 +512,8 @@
                       maxOccurs="1">
           <xsd:element ref="wxm:Comment"/>
         </xsd:sequence>
+        <xsd:element ref="wxm:MACAddress"/>
+        <xsd:element ref="wxm:MACAddress"/>
         <xsd:sequence minOccurs="0"
                       maxOccurs="unbounded">
           <xsd:element ref="wxm:InterfaceGroup"/>
@@ -484,17 +529,17 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:attribute>
-
-      <xsd:attribute name="address"
-                     type="wxm:MACAddressType"
-                     use="required">
-        <xsd:annotation>
-          <xsd:documentation>
-            The device MAC address.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
     </xsd:complexType>
+
+    <xsd:unique name="VMNetBothSidesSpecified">
+      <xsd:annotation>
+        <xsd:documentation>
+          The MAC addresses for both sides of the device must be specified.
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:selector xpath="wxm:MACAddress"/>
+      <xsd:field xpath="@side"/>
+    </xsd:unique>
   </xsd:element>
 
   <xsd:element name="VirtioNetworkDevice">
@@ -898,7 +943,7 @@
     </xsd:complexType>
 
     <xsd:key name="DeviceIDKey">
-      <xsd:selector xpath="*/DeviceSlot"/>
+      <xsd:selector xpath="*/wxm:DeviceSlot"/>
       <xsd:field xpath="@bus"/>
       <xsd:field xpath="@slot"/>
       <xsd:field xpath="@function"/>

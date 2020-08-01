@@ -35,8 +35,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMRunTest
 {
@@ -83,7 +83,7 @@ public final class WXMCommandVMRunTest
   @Test
   public void runTooFewArguments()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-run"
@@ -98,7 +98,7 @@ public final class WXMCommandVMRunTest
   {
     Files.deleteIfExists(this.configFile);
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-run",
@@ -229,7 +229,7 @@ public final class WXMCommandVMRunTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-run",
@@ -253,7 +253,7 @@ public final class WXMCommandVMRunTest
   {
     final var id = UUID.randomUUID();
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-kill",

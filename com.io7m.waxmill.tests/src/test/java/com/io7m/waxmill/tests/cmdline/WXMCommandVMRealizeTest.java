@@ -31,8 +31,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static java.util.Locale.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
+import static java.util.Locale.ROOT;
 
 public final class WXMCommandVMRealizeTest
 {
@@ -80,7 +80,7 @@ public final class WXMCommandVMRealizeTest
   @Test
   public void tooFewArguments()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-realize"
@@ -95,7 +95,7 @@ public final class WXMCommandVMRealizeTest
   {
     Files.deleteIfExists(this.configFile);
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-realize",
@@ -151,7 +151,7 @@ public final class WXMCommandVMRealizeTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-realize",

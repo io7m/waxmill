@@ -127,7 +127,8 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("A TAP-based network device.", net0.comment());
     final var tap = (WXMTap) net0.backend();
     assertEquals("A TAP device.", tap.comment());
-    assertEquals("d7:94:b5:60:0d:ac", tap.address().value());
+    assertEquals("d7:92:b5:60:0d:a0", tap.hostMAC().value());
+    assertEquals("d7:92:b5:60:0d:a1", tap.guestMAC().value());
     assertEquals("tap23", tap.name().value());
     assertEquals("highSec", tap.groups().get(0).value());
     assertEquals(1, tap.groups().size());
@@ -137,7 +138,8 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals("A VMNet-based network device.", net1.comment());
     final var vmnet = (WXMVMNet) net1.backend();
     assertEquals("A VMNet device.", vmnet.comment());
-    assertEquals("d7:92:b5:60:0d:ac", vmnet.address().value());
+    assertEquals("d7:92:b5:60:0d:a2", vmnet.hostMAC().value());
+    assertEquals("d7:92:b5:60:0d:a3", vmnet.guestMAC().value());
     assertEquals("vmnet23", vmnet.name().value());
     assertEquals("lowSec", vmnet.groups().get(0).value());
     assertEquals("medSec", vmnet.groups().get(1).value());
@@ -181,10 +183,11 @@ public abstract class WXMVirtualMachineParserContract
     final var e1000 = (WXMDeviceE1000) devices.get(7);
     assertEquals("0:7:0", e1000.deviceSlot().toString());
     assertEquals("An E1000 network device.", e1000.comment());
-    final var e1000b = (WXMVMNet) net1.backend();
+    final var e1000b = (WXMVMNet) e1000.backend();
     assertEquals("A VMNet device.", e1000b.comment());
-    assertEquals("d7:92:b5:60:0d:ac", e1000b.address().value());
-    assertEquals("vmnet23", e1000b.name().value());
+    assertEquals("d7:92:b5:60:0d:a4", e1000b.hostMAC().value());
+    assertEquals("d7:92:b5:60:0d:a5", e1000b.guestMAC().value());
+    assertEquals("vmnet24", e1000b.name().value());
 
     final var fb = (WXMDeviceFramebuffer) devices.get(8);
     assertEquals("0:8:0", fb.deviceSlot().toString());

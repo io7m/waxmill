@@ -18,6 +18,8 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
@@ -29,7 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
 
 public final class WXMCommandVMAddFramebufferTest
 {
@@ -72,7 +74,7 @@ public final class WXMCommandVMAddFramebufferTest
   @Test
   public void addFramebufferNonexistentVirtualMachine()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionNonexistent.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
@@ -80,7 +82,9 @@ public final class WXMCommandVMAddFramebufferTest
           "--configuration",
           this.configFile.toString(),
           "--machine",
-          id.toString()
+          id.toString(),
+          "--device-slot",
+          "0:1:0"
         }
       );
     });
@@ -126,7 +130,7 @@ public final class WXMCommandVMAddFramebufferTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionDuplicate.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-framebuffer-device",

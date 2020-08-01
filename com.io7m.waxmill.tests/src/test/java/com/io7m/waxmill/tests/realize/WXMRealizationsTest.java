@@ -18,7 +18,6 @@ package com.io7m.waxmill.tests.realize;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.exceptions.WXMException;
-import com.io7m.waxmill.exceptions.WXMExceptionUnsatisfiedRequirement;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
@@ -33,7 +32,6 @@ import com.io7m.waxmill.realize.WXMRealizations;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.internal.verification.Times;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +49,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
@@ -473,7 +471,7 @@ public final class WXMRealizationsTest
       eq(this.vmSpecificPath), eq(BasicFileAttributes.class), any()))
       .thenReturn(this.vmSpecificAttributes);
 
-    when (Boolean.valueOf(this.vmSpecificAttributes.isDirectory()))
+    when(Boolean.valueOf(this.vmSpecificAttributes.isDirectory()))
       .thenReturn(Boolean.TRUE);
 
     doThrow(new IOException())
@@ -797,7 +795,7 @@ public final class WXMRealizationsTest
       eq(this.vmSpecificPath), eq(BasicFileAttributes.class), any()))
       .thenReturn(this.vmSpecificAttributes);
 
-    when (Boolean.valueOf(this.vmSpecificAttributes.isDirectory()))
+    when(Boolean.valueOf(this.vmSpecificAttributes.isDirectory()))
       .thenReturn(Boolean.FALSE);
 
     final var realizations =
@@ -813,14 +811,5 @@ public final class WXMRealizationsTest
 
     final var exc = (Exception) ex.getSuppressed()[0];
     assertTrue(exc.getMessage().contains("not a directory"));
-  }
-
-  private static <T extends Throwable> T assertThrowsLogged(
-    final Class<T> expectedType,
-    final Executable executable)
-  {
-    final var ex = assertThrows(expectedType, executable);
-    LOG.debug("", ex);
-    return ex;
   }
 }

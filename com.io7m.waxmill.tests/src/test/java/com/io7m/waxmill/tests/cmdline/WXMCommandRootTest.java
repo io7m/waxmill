@@ -21,13 +21,14 @@ import com.io7m.waxmill.cmdline.MainExitless;
 import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import com.io7m.waxmill.xml.WXMClientConfigurationSerializers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 
 public final class WXMCommandRootTest
 {
@@ -70,7 +71,7 @@ public final class WXMCommandRootTest
   @Test
   public void usageOK()
   {
-    Assertions.assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
 

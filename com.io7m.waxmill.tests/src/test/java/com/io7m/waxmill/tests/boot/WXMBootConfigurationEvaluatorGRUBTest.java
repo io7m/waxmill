@@ -55,7 +55,6 @@ import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,8 +71,8 @@ import static com.io7m.waxmill.machines.WXMOpenOption.NO_CACHE;
 import static com.io7m.waxmill.machines.WXMOpenOption.READ_ONLY;
 import static com.io7m.waxmill.machines.WXMOpenOption.SYNCHRONOUS;
 import static com.io7m.waxmill.tests.WXMDeviceIDTest.convert;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class WXMBootConfigurationEvaluatorGRUBTest
@@ -673,7 +672,8 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .setDeviceSlot(convert("0:2:0"))
             .setBackend(
               WXMTap.builder()
-                .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setHostMAC(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setGuestMAC(WXMMACAddress.of("1b:61:cb:ba:c0:13"))
                 .setName(WXMTAPDeviceName.of("tap23"))
                 .build())
             .build()
@@ -750,14 +750,14 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals(
-      "0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12",
+      "0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:13",
       lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:13 %s",
         machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
@@ -806,7 +806,8 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .setDeviceSlot(convert("0:2:0"))
             .setBackend(
               WXMTap.builder()
-                .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setHostMAC(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setGuestMAC(WXMMACAddress.of("1b:61:cb:ba:c0:13"))
                 .setName(WXMTAPDeviceName.of("tap23"))
                 .addGroups(WXMInterfaceGroupName.of("wwwUsers"))
                 .addGroups(WXMInterfaceGroupName.of("ntpUsers"))
@@ -905,14 +906,14 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals(
-      "0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12",
+      "0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:13",
       lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:12 %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,tap23,mac=1b:61:cb:ba:c0:13 %s",
         machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
@@ -961,7 +962,8 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .setDeviceSlot(convert("0:2:0"))
             .setBackend(
               WXMVMNet.builder()
-                .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setHostMAC(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setGuestMAC(WXMMACAddress.of("1b:61:cb:ba:c0:13"))
                 .setName(WXMVMNetDeviceName.of("vmnet23"))
                 .build())
             .build()
@@ -1038,14 +1040,14 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals(
-      "0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12",
+      "0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:13",
       lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:13 %s",
         machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
@@ -1094,7 +1096,8 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .setDeviceSlot(convert("0:2:0"))
             .setBackend(
               WXMVMNet.builder()
-                .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setHostMAC(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setGuestMAC(WXMMACAddress.of("1b:61:cb:ba:c0:13"))
                 .setName(WXMVMNetDeviceName.of("vmnet23"))
                 .addGroups(WXMInterfaceGroupName.of("wwwUsers"))
                 .addGroups(WXMInterfaceGroupName.of("ntpUsers"))
@@ -1193,14 +1196,14 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals(
-      "0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12",
+      "0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:13",
       lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,virtio-net,vmnet23,mac=1b:61:cb:ba:c0:13 %s",
         machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
@@ -1249,7 +1252,8 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
             .setDeviceSlot(convert("0:2:0"))
             .setBackend(
               WXMVMNet.builder()
-                .setAddress(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setHostMAC(WXMMACAddress.of("1b:61:cb:ba:c0:12"))
+                .setGuestMAC(WXMMACAddress.of("1b:61:cb:ba:c0:13"))
                 .setName(WXMVMNetDeviceName.of("vmnet23"))
                 .build())
             .build()
@@ -1326,14 +1330,14 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
     assertEquals("0:1:0,ahci-hd,/tmp/file", lastArgs.remove(0));
     assertEquals("-s", lastArgs.remove(0));
     assertEquals(
-      "0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12",
+      "0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:13",
       lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
     assertEquals(0, lastArgs.size());
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:12 %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:0:0,hostbridge -s 0:1:0,ahci-hd,/tmp/file -s 0:2:0,e1000,vmnet23,mac=1b:61:cb:ba:c0:13 %s",
         machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
@@ -1559,14 +1563,5 @@ public final class WXMBootConfigurationEvaluatorGRUBTest
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()
     );
-  }
-
-  private static <T extends Throwable> T assertThrowsLogged(
-    final Class<T> expectedType,
-    final Executable executable)
-  {
-    final var ex = assertThrows(expectedType, executable);
-    LOG.debug("", ex);
-    return ex;
   }
 }

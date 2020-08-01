@@ -16,8 +16,10 @@
 
 package com.io7m.waxmill.tests.cmdline;
 
+import com.beust.jcommander.ParameterException;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
 import com.io7m.waxmill.machines.WXMDeviceAHCIOpticalDisk;
 import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
@@ -30,8 +32,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMAddAHCIOpticalTest
 {
@@ -180,7 +182,7 @@ public final class WXMCommandVMAddAHCIOpticalTest
   @Test
   public void addAHCIDiskNonexistentVirtualMachine()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, ParameterException.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
@@ -236,7 +238,7 @@ public final class WXMCommandVMAddAHCIOpticalTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionDuplicate.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-ahci-optical",
@@ -336,7 +338,7 @@ public final class WXMCommandVMAddAHCIOpticalTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, IllegalArgumentException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-ahci-optical",
@@ -379,7 +381,7 @@ public final class WXMCommandVMAddAHCIOpticalTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, IllegalArgumentException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-ahci-optical",

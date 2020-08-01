@@ -246,12 +246,35 @@ public interface WXMDeviceType
   }
 
   /**
+   * A network device.
+   */
+
+  interface WXMDeviceNetworkType extends WXMDeviceType
+  {
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    WXMDeviceSlot deviceSlot();
+
+    /**
+     * @return The underlying device backend
+     */
+
+    WXMNetworkDeviceBackendType backend();
+  }
+
+  /**
    * An emulation of an Intel e82545 network device.
    */
 
   @ImmutablesStyleType
   @Value.Immutable
-  interface WXMDeviceE1000Type extends WXMDeviceType
+  interface WXMDeviceE1000Type extends WXMDeviceNetworkType
   {
     @Override
     @Value.Default
@@ -275,10 +298,7 @@ public interface WXMDeviceType
       return "e1000";
     }
 
-    /**
-     * @return The underlying device backend
-     */
-
+    @Override
     WXMNetworkDeviceBackendType backend();
   }
 
@@ -479,7 +499,7 @@ public interface WXMDeviceType
 
   @ImmutablesStyleType
   @Value.Immutable
-  interface WXMDeviceVirtioNetworkType extends WXMDeviceType
+  interface WXMDeviceVirtioNetworkType extends WXMDeviceNetworkType
   {
     @Override
     WXMDeviceSlot deviceSlot();
@@ -503,10 +523,7 @@ public interface WXMDeviceType
       return "";
     }
 
-    /**
-     * @return The underlying device backend
-     */
-
+    @Override
     WXMNetworkDeviceBackendType backend();
   }
 

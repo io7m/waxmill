@@ -31,10 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class WXMCommandVMSetTest
@@ -251,7 +251,7 @@ public final class WXMCommandVMSetTest
   @Test
   public void setNonexistentVirtualMachine()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{

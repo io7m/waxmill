@@ -21,6 +21,8 @@ import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
 import com.io7m.waxmill.machines.WXMDeviceE1000;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMInterfaceGroupName;
+import com.io7m.waxmill.machines.WXMMACAddress;
 import com.io7m.waxmill.machines.WXMMachineMessages;
 import com.io7m.waxmill.machines.WXMNetworkDeviceBackendType;
 import com.io7m.waxmill.machines.WXMTap;
@@ -30,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,8 +55,7 @@ public final class WXMCommandVMAddE1000NetworkDevice
 
   @Parameter(
     names = "--comment",
-    description = "A comment describing the new device",
-    required = false
+    description = "A comment describing the new device"
   )
   private String comment = "";
 
@@ -66,20 +68,48 @@ public final class WXMCommandVMAddE1000NetworkDevice
   private WXMDeviceSlot deviceSlot;
 
   @Parameter(
-    names = "--backend",
-    description = "A specification of the network device backend to add",
-    required = true,
-    converter = WXMNetworkBackendConverter.class
-  )
-  private WXMNetworkDeviceBackendType backend;
-
-  @Parameter(
     names = "--replace",
     description = "Replace an existing device, if one exists",
-    required = false,
     arity = 1
   )
   private boolean replace;
+
+  @Parameter(
+    names = "--type",
+    description = "The type of network backend",
+    required = true,
+    converter = WXMNetworkDeviceKindConverter.class
+  )
+  private WXMNetworkDeviceBackendType.Kind type;
+
+  @Parameter(
+    names = "--host-mac",
+    description = "The MAC address on the host device",
+    required = true,
+    converter = WXMMACAddressConverter.class
+  )
+  private WXMMACAddress hostMAC;
+
+  @Parameter(
+    names = "--guest-mac",
+    description = "The MAC address on the guest device",
+    required = true,
+    converter = WXMMACAddressConverter.class
+  )
+  private WXMMACAddress guestMAC;
+
+  @Parameter(
+    names = "--name",
+    description = "The name of the device"
+  )
+  private String deviceName;
+
+  @Parameter(
+    names = "--interface-group",
+    description = "The group to which the device will belong on the host",
+    converter = WXMInterfaceGroupNameConverter.class
+  )
+  private List<WXMInterfaceGroupName> groups = new ArrayList<>();
 
   /**
    * Construct a command.
@@ -102,11 +132,7 @@ public final class WXMCommandVMAddE1000NetworkDevice
   @Override
   public String extendedHelp()
   {
-    final var messages = this.messages();
-    return String.join("", List.of(
-      messages.format("vmAddE1000NetworkDeviceHelp"),
-      messages.format("networkBackendSpec")
-    ));
+    return this.messages().format("vmAddE1000NetworkDeviceHelp");
   }
 
   @Override
@@ -117,10 +143,21 @@ public final class WXMCommandVMAddE1000NetworkDevice
     try (var client = WXMServices.clients().open(configurationPath)) {
       final var machine = client.vmFind(this.id);
 
+      final var backend =
+        new WXMNetworkBackendArguments()
+          .parse(
+            WXMNamedParameter.of("--type", this.type),
+            WXMNamedParameter.of("--comment", this.comment),
+            WXMNamedParameters.optional("--name", this.deviceName),
+            WXMNamedParameters.optional("--host-mac", this.hostMAC),
+            WXMNamedParameters.optional("--guest-mac", this.guestMAC),
+            WXMNamedParameter.of("--interface-group", this.groups)
+          );
+
       final var virtio =
         WXMDeviceE1000.builder()
           .setDeviceSlot(this.deviceSlot)
-          .setBackend(this.backend)
+          .setBackend(backend)
           .setComment(this.comment)
           .build();
 
@@ -135,21 +172,23 @@ public final class WXMCommandVMAddE1000NetworkDevice
       client.vmUpdate(updatedMachine);
 
       this.info("infoAddedE1000Net", this.deviceSlot);
-      switch (this.backend.kind()) {
+      switch (this.type) {
         case WXM_TAP:
-          final var tap = (WXMTap) this.backend;
+          final var tap = (WXMTap) backend;
           this.info(
             "infoBackendTAP",
             tap.name().value(),
-            tap.address().value()
+            tap.hostMAC().value(),
+            tap.guestMAC().value()
           );
           break;
         case WXM_VMNET:
-          final var vmnet = (WXMVMNet) this.backend;
+          final var vmnet = (WXMVMNet) backend;
           this.info(
             "infoBackendVMNet",
             vmnet.name().value(),
-            vmnet.address().value()
+            vmnet.hostMAC().value(),
+            vmnet.guestMAC().value()
           );
           break;
       }

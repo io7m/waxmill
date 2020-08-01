@@ -35,7 +35,6 @@ import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import com.io7m.waxmill.tests.WXMTestDirectories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,6 @@ import static com.io7m.waxmill.machines.WXMOpenOption.READ_ONLY;
 import static com.io7m.waxmill.machines.WXMOpenOption.SYNCHRONOUS;
 import static com.io7m.waxmill.tests.WXMDeviceIDTest.convert;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMBootConfigurationEvaluatorUEFITest
 {

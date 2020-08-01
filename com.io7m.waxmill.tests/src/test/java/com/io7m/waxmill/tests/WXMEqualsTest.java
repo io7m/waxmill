@@ -146,7 +146,7 @@ public final class WXMEqualsTest
         Set.of("logical", "physical")),
       new WXMClassUnderTest(
         WXMTap.class,
-        Set.of("comment", "name", "address", "groups")),
+        Set.of("comment", "name", "hostMAC", "guestMAC", "groups")),
       new WXMClassUnderTest(
         WXMTAPDeviceName.class,
         Set.of("value")),
@@ -172,7 +172,7 @@ public final class WXMEqualsTest
         Set.of("machines")),
       new WXMClassUnderTest(
         WXMVMNet.class,
-        Set.of("comment", "name", "address", "groups")),
+        Set.of("comment", "name", "hostMAC", "guestMAC", "groups")),
       new WXMClassUnderTest(
         WXMVMNetDeviceName.class,
         Set.of("value"))

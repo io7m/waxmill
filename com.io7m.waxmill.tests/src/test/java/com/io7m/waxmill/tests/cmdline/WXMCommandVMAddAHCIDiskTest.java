@@ -16,8 +16,10 @@
 
 package com.io7m.waxmill.tests.cmdline;
 
+import com.beust.jcommander.ParameterException;
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
@@ -32,9 +34,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMAddAHCIDiskTest
 {
@@ -162,16 +164,11 @@ public final class WXMCommandVMAddAHCIDiskTest
     MainExitless.main(
       new String[]{
         "vm-add-ahci-disk",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "zfs-volume",
-        "--device-slot",
-        "0:1:0"
+        "--verbose", "trace",
+        "--configuration", this.configFile.toString(),
+        "--machine", id.toString(),
+        "--backend", "zfs-volume",
+        "--device-slot", "0:1:0"
       }
     );
 
@@ -193,19 +190,15 @@ public final class WXMCommandVMAddAHCIDiskTest
   @Test
   public void addAHCIDiskNonexistentVirtualMachine()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, ParameterException.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
           "vm-add-ahci-disk",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--machine",
-          id.toString(),
-          "--backend",
-          "file;/tmp/xyz",
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--machine", id.toString(),
+          "--backend", "file;/tmp/xyz",
         }
       );
     });
@@ -240,33 +233,23 @@ public final class WXMCommandVMAddAHCIDiskTest
     MainExitless.main(
       new String[]{
         "vm-add-ahci-disk",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--machine",
-        id.toString(),
-        "--backend",
-        "file;/tmp/xyz",
-        "--device-slot",
-        "0:1:0"
+        "--verbose", "trace",
+        "--configuration", this.configFile.toString(),
+        "--machine", id.toString(),
+        "--backend", "file;/tmp/xyz",
+        "--device-slot", "0:1:0"
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionDuplicate.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-ahci-disk",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--machine",
-          id.toString(),
-          "--backend",
-          "file;/tmp/xyz",
-          "--device-slot",
-          "0:1:0"
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--machine", id.toString(),
+          "--backend", "file;/tmp/xyz",
+          "--device-slot", "0:1:0"
         }
       );
     });
@@ -359,7 +342,7 @@ public final class WXMCommandVMAddAHCIDiskTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, IllegalArgumentException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-ahci-disk",
@@ -404,7 +387,7 @@ public final class WXMCommandVMAddAHCIDiskTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, IllegalArgumentException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-ahci-disk",

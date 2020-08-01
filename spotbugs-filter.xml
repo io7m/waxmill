@@ -53,6 +53,7 @@
       <Class name="com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD"/>
       <Class name="com.io7m.waxmill.machines.WXMInterfaceGroupName"/>
       <Class name="com.io7m.waxmill.machines.WXMMACAddress"/>
+      <Class name="com.io7m.waxmill.machines.WXMMACAddressWithSide"/>
       <Class name="com.io7m.waxmill.machines.WXMMachineName"/>
       <Class name="com.io7m.waxmill.machines.WXMMemory"/>
       <Class name="com.io7m.waxmill.machines.WXMPinCPU"/>
@@ -193,27 +194,6 @@
   </Match>
 
   <Match>
-    <And>
-      <!-- Indexing is preceded by a check. -->
-      <Class name="com.io7m.waxmill.cmdline.internal.WXMNetworkBackendConverter"/>
-      <Or>
-        <Method name="convertTAP"/>
-        <Method name="convertVMNet"/>
-      </Or>
-      <Bug pattern="CLI_CONSTANT_LIST_INDEX"/>
-    </And>
-  </Match>
-
-  <Match>
-    <And>
-      <!-- Indexing is preceded by a check. -->
-      <Class name="com.io7m.waxmill.cmdline.internal.WXMNetworkBackendConverter"/>
-      <Method name="groupsOf"/>
-      <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
-    </And>
-  </Match>
-
-  <Match>
     <Or>
       <!-- Issues we either don't care about, or don't believe are issues. -->
       <Bug pattern="BED_HIERARCHICAL_EXCEPTION_DECLARATION"/>
@@ -311,6 +291,7 @@
       <Method name="checkBootConfigurationUEFI"/>
       <Method name="checkBootConfigurationsReferences"/>
       <Method name="checkRequiresWiredMemory"/>
+      <Method name="checkUniqueMACs"/>
     </Or>
     <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
   </Match>
