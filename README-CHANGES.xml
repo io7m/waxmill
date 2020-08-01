@@ -99,14 +99,17 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2020-07-30T19:01:35+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.11">
+    <c:release date="2020-07-30T00:00:00+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.11">
       <c:changes>
-        <c:change compatible="false" date="2020-07-30T19:01:35+00:00" summary="Require partition names for BSD booting">
+        <c:change compatible="false" date="2020-07-30T00:00:00+00:00" summary="Require partition names for BSD booting">
           <c:tickets>
             <c:ticket id="35"/>
           </c:tickets>
         </c:change>
       </c:changes>
+    </c:release>
+    <c:release date="2020-08-01T11:14:44+00:00" ticket-system="com.github.io7m.waxmill" version="0.0.12">
+      <c:changes/>
     </c:release>
   </c:releases>
   <c:ticket-systems>
