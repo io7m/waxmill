@@ -38,7 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 
 public final class WXMCommandVMListTest
 {
@@ -86,7 +86,7 @@ public final class WXMCommandVMListTest
       "WAXMILL_CONFIGURATION_FILE environment variable must be undefined"
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-list"
@@ -101,7 +101,7 @@ public final class WXMCommandVMListTest
   {
     Files.deleteIfExists(this.configFile);
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-list",

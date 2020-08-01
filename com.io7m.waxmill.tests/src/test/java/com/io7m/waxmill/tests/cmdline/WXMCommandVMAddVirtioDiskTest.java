@@ -18,6 +18,8 @@ package com.io7m.waxmill.tests.cmdline;
 
 import com.io7m.waxmill.client.api.WXMClientConfiguration;
 import com.io7m.waxmill.cmdline.MainExitless;
+import com.io7m.waxmill.exceptions.WXMExceptionDuplicate;
+import com.io7m.waxmill.exceptions.WXMExceptionNonexistent;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
@@ -32,9 +34,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsCauseLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMAddVirtioDiskTest
 {
@@ -193,19 +195,16 @@ public final class WXMCommandVMAddVirtioDiskTest
   @Test
   public void addVirtioDiskNonexistentVirtualMachine()
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionNonexistent.class, () -> {
       final var id = UUID.randomUUID();
       MainExitless.main(
         new String[]{
           "vm-add-virtio-disk",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--machine",
-          id.toString(),
-          "--backend",
-          "file;/tmp/xyz",
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--machine", id.toString(),
+          "--backend", "file;/tmp/xyz",
+          "--device-slot", "0:1:0"
         }
       );
     });
@@ -253,7 +252,7 @@ public final class WXMCommandVMAddVirtioDiskTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsCauseLogged(IOException.class, WXMExceptionDuplicate.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-add-virtio-disk",

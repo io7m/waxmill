@@ -31,8 +31,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMCommandVMImportTest
 {
@@ -106,12 +106,9 @@ public final class WXMCommandVMImportTest
     MainExitless.main(
       new String[]{
         "vm-import",
-        "--verbose",
-        "trace",
-        "--configuration",
-        this.configFile.toString(),
-        "--file",
-        this.vm0.toString()
+        "--verbose", "trace",
+        "--configuration", this.configFile.toString(),
+        "--file", this.vm0.toString()
       }
     );
 
@@ -139,20 +136,15 @@ public final class WXMCommandVMImportTest
   public void importUnparseable()
     throws IOException
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-import",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--file",
-          this.vmBad0.toString(),
-          "--file",
-          this.vmBad1.toString(),
-          "--file",
-          this.vmBad2.toString()
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--file", this.vmBad0.toString(),
+          "--file", this.vmBad1.toString(),
+          "--file", this.vmBad2.toString()
         }
       );
     });
@@ -165,18 +157,15 @@ public final class WXMCommandVMImportTest
 
   @Test
   public void importNonexistent()
-    throws IOException, WXMException
+    throws IOException
   {
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-import",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--file",
-          this.vmNonexistent.toString()
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--file", this.vmNonexistent.toString()
         }
       );
     });

@@ -21,6 +21,7 @@ import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_HOSTBRIDGE;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_PASSTHRU;
+import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceNetworkType;
 
 /**
  * A virtual machine.
@@ -156,6 +158,7 @@ public interface WXMVirtualMachineType
     this.checkAtMostOneHostBridge();
     this.checkBootConfigurationsReferences();
     this.checkRequiresWiredMemory();
+    this.checkUniqueMACs();
   }
 
   private void checkRequiresWiredMemory()
@@ -249,5 +252,33 @@ public interface WXMVirtualMachineType
       hbCount <= 1,
       count -> "At most one host bridge device can be added to a virtual machine"
     );
+  }
+
+  private void checkUniqueMACs()
+  {
+    final var netDevices =
+      this.devices().stream()
+        .filter(device -> device instanceof WXMDeviceNetworkType)
+        .map(WXMDeviceNetworkType.class::cast)
+        .collect(Collectors.toList());
+
+    final var macs = new HashSet<WXMMACAddress>(netDevices.size() * 2);
+    for (final var device : netDevices) {
+      final var backend = device.backend();
+      final var hostMAC = backend.hostMAC();
+      final var guestMAC = backend.guestMAC();
+      Preconditions.checkPrecondition(
+        hostMAC,
+        !macs.contains(hostMAC),
+        mac -> "A MAC address may appear at most once within a virtual machine"
+      );
+      Preconditions.checkPrecondition(
+        guestMAC,
+        !macs.contains(guestMAC),
+        mac -> "A MAC address may appear at most once within a virtual machine"
+      );
+      macs.add(hostMAC);
+      macs.add(guestMAC);
+    }
   }
 }

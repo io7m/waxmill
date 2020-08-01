@@ -20,13 +20,11 @@ import com.io7m.jaffirm.core.PreconditionViolationException;
 import com.io7m.waxmill.cmdline.internal.WXMStorageBackendConverter;
 import com.io7m.waxmill.machines.WXMStorageBackendFile;
 import com.io7m.waxmill.machines.WXMStorageBackendZFSVolume;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class WXMStorageBackendConverterTest

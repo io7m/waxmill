@@ -305,7 +305,7 @@ public final class WXMBootConfigurationEvaluator
     return String.format(
       "%s,mac=%s",
       backend.name().value(),
-      backend.address().value()
+      backend.guestMAC().value()
     );
   }
 
@@ -315,7 +315,7 @@ public final class WXMBootConfigurationEvaluator
     return String.format(
       "%s,mac=%s",
       backend.name().value(),
-      backend.address().value()
+      backend.guestMAC().value()
     );
   }
 
@@ -434,7 +434,7 @@ public final class WXMBootConfigurationEvaluator
             .setExecutable(ifconfig)
             .addArguments(tapName)
             .addArguments("ether")
-            .addArguments(tap.address().value())
+            .addArguments(tap.hostMAC().value())
             .build()
         );
 
@@ -468,7 +468,7 @@ public final class WXMBootConfigurationEvaluator
             .setExecutable(ifconfig)
             .addArguments(vmNetName)
             .addArguments("ether")
-            .addArguments(vmNet.address().value())
+            .addArguments(vmNet.hostMAC().value())
             .build()
         );
 

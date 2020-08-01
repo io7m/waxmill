@@ -14,53 +14,30 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.waxmill.cmdline;
+package com.io7m.waxmill.cmdline.internal;
 
-import java.io.IOException;
+import com.beust.jcommander.IStringConverter;
+import com.io7m.waxmill.machines.WXMInterfaceGroupName;
 
 /**
- * Main command line entry point that does not call {@code exit()}.
+ * A converter for {@link WXMInterfaceGroupName} values.
  */
 
-public final class MainExitless
+public final class WXMInterfaceGroupNameConverter
+  implements IStringConverter<WXMInterfaceGroupName>
 {
-  private MainExitless()
-  {
-
-  }
-
   /**
-   * The main entry point.
-   *
-   * @param args Command line arguments
-   *
-   * @throws IOException On errors
+   * Construct a converter.
    */
 
-  // CHECKSTYLE:OFF
-  public static void main(
-    final String[] args)
-    throws IOException
+  public WXMInterfaceGroupNameConverter()
   {
-    // CHECKSTYLE:ON
-    final Main cm = new Main(args);
-    cm.run();
 
-    final int exitCode = cm.exitCode();
-    if (exitCode != 0) {
-      throw new IOException(
-        String.format("Returned exit code %d", Integer.valueOf(exitCode)),
-        cm.exitCause().orElse(null)
-      );
-    }
   }
 
   @Override
-  public String toString()
+  public WXMInterfaceGroupName convert(final String value)
   {
-    return String.format(
-      "[MainExitless 0x%s]",
-      Long.toUnsignedString(System.identityHashCode(this), 16)
-    );
+    return WXMInterfaceGroupName.of(value);
   }
 }

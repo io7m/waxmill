@@ -17,60 +17,28 @@
 package com.io7m.waxmill.machines;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
-import com.io7m.jaffirm.core.Preconditions;
 import org.immutables.value.Value;
 
-import java.util.List;
-import java.util.Objects;
-
-import static com.io7m.waxmill.machines.WXMNetworkDeviceBackendType.Kind.WXM_TAP;
-
 /**
- * A TAP device.
+ * A MAC address paired with the "side" of the device to which the address
+ * is applied (such as the guest side, or host side).
  */
 
-@ImmutablesStyleType
 @Value.Immutable
-public interface WXMTapType extends WXMNetworkDeviceBackendType
+@ImmutablesStyleType
+public interface WXMMACAddressWithSideType
 {
-  @Override
-  default Kind kind()
-  {
-    return WXM_TAP;
-  }
-
   /**
-   * @return The underlying device name
+   * @return The MAC address
    */
 
-  WXMTAPDeviceName name();
-
-  @Override
-  WXMMACAddress guestMAC();
-
-  @Override
-  WXMMACAddress hostMAC();
-
-  @Override
-  List<WXMInterfaceGroupName> groups();
-
-  @Override
-  @Value.Default
-  default String comment()
-  {
-    return "";
-  }
+  @Value.Parameter
+  WXMMACAddress value();
 
   /**
-   * Check preconditions for the type.
+   * @return The side of the object
    */
 
-  @Value.Check
-  default void checkPreconditions()
-  {
-    Preconditions.checkPrecondition(
-      !Objects.equals(this.guestMAC(), this.hostMAC()),
-      "Host and guest MAC addresses must differ"
-    );
-  }
+  @Value.Parameter
+  WXMSide side();
 }

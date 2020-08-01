@@ -17,6 +17,7 @@
 package com.io7m.waxmill.xml.vm.v1;
 
 import com.io7m.waxmill.machines.WXMDeviceSlot;
+import com.io7m.waxmill.machines.WXMSide;
 import com.io7m.waxmill.xml.WXMSchemas;
 
 import javax.xml.stream.XMLStreamException;
@@ -31,7 +32,7 @@ public final class WXM1DeviceSlots
 
   public static void serializeDeviceSlot(
     final WXMDeviceSlot deviceSlot,
-    final SlotSide side,
+    final WXMSide side,
     final XMLStreamWriter writer)
     throws XMLStreamException
   {
@@ -55,24 +56,5 @@ public final class WXM1DeviceSlots
       "function",
       String.valueOf(deviceSlot.functionID()));
     writer.writeEndElement();
-  }
-
-  /**
-   * The side of emulation upon which the device slot lives.
-   */
-
-  public enum SlotSide
-  {
-    /**
-     * The slot is a host PCI slot.
-     */
-
-    HOST,
-
-    /**
-     * The slot is a guest PCI slot.
-     */
-
-    GUEST
   }
 }

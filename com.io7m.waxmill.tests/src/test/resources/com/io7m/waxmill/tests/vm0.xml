@@ -38,9 +38,12 @@
                   slot="1"
                   function="0"/>
       <Comment>A TAP-based network device.</Comment>
-      <TAPDevice name="tap23"
-                 address="d7:94:b5:60:0d:ac">
+      <TAPDevice name="tap23">
         <Comment>A TAP device.</Comment>
+        <MACAddress value="d7:92:b5:60:0d:a0"
+                    side="HOST"/>
+        <MACAddress value="d7:92:b5:60:0d:a1"
+                    side="GUEST"/>
         <InterfaceGroup name="highSec"/>
       </TAPDevice>
     </VirtioNetworkDevice>
@@ -50,9 +53,12 @@
                   slot="2"
                   function="0"/>
       <Comment>A VMNet-based network device.</Comment>
-      <VMNetDevice name="vmnet23"
-                   address="d7:92:b5:60:0d:ac">
+      <VMNetDevice name="vmnet23">
         <Comment>A VMNet device.</Comment>
+        <MACAddress value="d7:92:b5:60:0d:a2"
+                    side="HOST"/>
+        <MACAddress value="d7:92:b5:60:0d:a3"
+                    side="GUEST"/>
         <InterfaceGroup name="lowSec"/>
         <InterfaceGroup name="medSec"/>
       </VMNetDevice>
@@ -106,9 +112,12 @@
                   slot="7"
                   function="0"/>
       <Comment>An E1000 network device.</Comment>
-      <VMNetDevice name="vmnet24"
-                   address="d7:92:b6:60:0d:ac">
+      <VMNetDevice name="vmnet24">
         <Comment>A VMNet device.</Comment>
+        <MACAddress value="d7:92:b5:60:0d:a4"
+                    side="HOST"/>
+        <MACAddress value="d7:92:b5:60:0d:a5"
+                    side="GUEST"/>
       </VMNetDevice>
     </E1000NetworkDevice>
 
@@ -137,7 +146,8 @@
         </BootDiskAttachment>
       </BootDiskAttachments>
       <GRUBBhyveKernelOpenBSD>
-        <BSDBootDevice kernelPath="/6.6/amd64/bsd.rd" partition="openbsd1">
+        <BSDBootDevice kernelPath="/6.6/amd64/bsd.rd"
+                       partition="openbsd1">
           <DeviceSlot bus="0"
                       slot="4"
                       function="0"/>

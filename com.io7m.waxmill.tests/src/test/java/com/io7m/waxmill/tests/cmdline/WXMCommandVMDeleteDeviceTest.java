@@ -37,9 +37,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import static com.io7m.waxmill.tests.WXMExceptions.assertThrowsLogged;
 import static com.io7m.waxmill.tests.cmdline.WXMParsing.parseFirst;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class WXMCommandVMDeleteDeviceTest
@@ -186,20 +186,15 @@ public final class WXMCommandVMDeleteDeviceTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-delete-devices",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--machine",
-          id.toString(),
-          "--device-slot",
-          "0:1:0",
-          "--device-slot",
-          "0:0:0"
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--machine", id.toString(),
+          "--device-slot", "0:1:0",
+          "--device-slot", "0:0:0"
         }
       );
     });
@@ -307,18 +302,14 @@ public final class WXMCommandVMDeleteDeviceTest
       }
     );
 
-    assertThrows(IOException.class, () -> {
+    assertThrowsLogged(IOException.class, () -> {
       MainExitless.main(
         new String[]{
           "vm-delete-devices",
-          "--verbose",
-          "trace",
-          "--configuration",
-          this.configFile.toString(),
-          "--machine",
-          id.toString(),
-          "--device-slot",
-          "0:1:0"
+          "--verbose", "trace",
+          "--configuration", this.configFile.toString(),
+          "--machine", id.toString(),
+          "--device-slot", "0:1:0"
         }
       );
     });
