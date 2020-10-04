@@ -8,10 +8,6 @@
       <img src="https://img.shields.io/maven-central/v/com.io7m.waxmill/com.io7m.waxmill.png?style=flat-square"
            alt="Maven Central"/>
     </a>
-    <a href="https://www.codacy.com/app/github_79/waxmill">
-      <img src="https://img.shields.io/codacy/grade/91fb072385cb45beaeae138aa24706fa.png?style=flat-square"
-           alt="Codacy"/>
-    </a>
     <a href="https://codecov.io/gh/io7m/waxmill">
       <img src="https://img.shields.io/codecov/c/github/io7m/waxmill.png?style=flat-square"
            alt="Codecov"/>
