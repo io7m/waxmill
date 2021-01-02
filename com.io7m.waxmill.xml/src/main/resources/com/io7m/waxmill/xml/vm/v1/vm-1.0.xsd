@@ -919,6 +919,20 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="XHCIUSBTabletDevice">
+    <xsd:annotation>
+      <xsd:documentation>
+        A USB tablet device which provides precise cursor synchronization when using VNC.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="wxm:DeviceType"/>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="Devices">
     <xsd:annotation>
       <xsd:documentation>
@@ -939,6 +953,7 @@
         <xsd:element ref="wxm:PassthruDevice"/>
         <xsd:element ref="wxm:VirtioBlockStorageDevice"/>
         <xsd:element ref="wxm:VirtioNetworkDevice"/>
+        <xsd:element ref="wxm:XHCIUSBTabletDevice"/>
       </xsd:choice>
     </xsd:complexType>
 

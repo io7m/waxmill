@@ -250,6 +250,11 @@ The vm-add-framebuffer-device command adds a raw framebuffer device to
 a virtual machine that is connected to a VNC server.
 ]]></entry>
 
+  <entry key="vmAddXHCIUSBTabletDeviceHelp"><![CDATA[
+The vm-add-xhci-usb-tablet-device command adds an XHCI USB tablet device
+to a virtual machine.
+]]></entry>
+
   <entry key="vmKillHelp"><![CDATA[
 The vm-kill command kills any running instance of a given virtual machine.
 ]]></entry>

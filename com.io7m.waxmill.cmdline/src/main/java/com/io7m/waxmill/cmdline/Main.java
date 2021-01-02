@@ -30,6 +30,7 @@ import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddLPC;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddPassthru;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioDisk;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddVirtioNetworkDevice;
+import com.io7m.waxmill.cmdline.internal.WXMCommandVMAddXHCIUSBTabletDevice;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMConsole;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDefine;
 import com.io7m.waxmill.cmdline.internal.WXMCommandVMDelete;
@@ -84,6 +85,7 @@ public final class Main implements Runnable
         WXMCommandVMAddPassthru::new,
         WXMCommandVMAddVirtioDisk::new,
         WXMCommandVMAddVirtioNetworkDevice::new,
+        WXMCommandVMAddXHCIUSBTabletDevice::new,
         WXMCommandVMConsole::new,
         WXMCommandVMDefine::new,
         WXMCommandVMDelete::new,

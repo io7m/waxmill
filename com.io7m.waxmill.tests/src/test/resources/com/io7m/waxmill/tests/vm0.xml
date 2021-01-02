@@ -132,6 +132,13 @@
                   function="0"/>
       <Comment>A framebuffer device.</Comment>
     </FramebufferDevice>
+
+    <XHCIUSBTabletDevice>
+      <DeviceSlot bus="0"
+                  slot="9"
+                  function="0"/>
+      <Comment>A USB tablet device.</Comment>
+    </XHCIUSBTabletDevice>
   </Devices>
 
   <BootConfigurations>

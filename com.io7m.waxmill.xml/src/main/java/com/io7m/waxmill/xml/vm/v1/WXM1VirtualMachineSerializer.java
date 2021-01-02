@@ -28,6 +28,7 @@ import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMDeviceXHCIUSBTablet;
 import com.io7m.waxmill.machines.WXMFlags;
 import com.io7m.waxmill.machines.WXMMACAddress;
 import com.io7m.waxmill.machines.WXMMemory;
@@ -175,9 +176,28 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
         case WXM_FRAMEBUFFER:
           this.serializeDeviceFramebuffer((WXMDeviceFramebuffer) device);
           break;
+        case WXM_XHCI_USB_TABLET:
+          this.serializeXHCIUSBTablet((WXMDeviceXHCIUSBTablet) device);
+          break;
       }
     }
 
+    this.writer.writeEndElement();
+  }
+
+  private void serializeXHCIUSBTablet(
+    final WXMDeviceXHCIUSBTablet device)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "XHCIUSBTabletDevice");
+
+    WXM1DeviceSlots.serializeDeviceSlot(
+      device.deviceSlot(),
+      GUEST,
+      this.writer);
+
+    WXM1Comments.serializeComment(device.comment(), this.writer);
     this.writer.writeEndElement();
   }
 

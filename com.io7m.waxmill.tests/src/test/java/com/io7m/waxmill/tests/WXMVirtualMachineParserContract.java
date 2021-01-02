@@ -26,6 +26,7 @@ import com.io7m.waxmill.machines.WXMDeviceHostBridge;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
 import com.io7m.waxmill.machines.WXMDevicePassthru;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMDeviceXHCIUSBTablet;
 import com.io7m.waxmill.machines.WXMGRUBKernelLinux;
 import com.io7m.waxmill.machines.WXMGRUBKernelOpenBSD;
 import com.io7m.waxmill.machines.WXMSectorSizes;
@@ -115,7 +116,7 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals(BigInteger.valueOf(512000000L), memory.totalBytes());
 
     final var devices = machine.devices();
-    assertEquals(9, devices.size());
+    assertEquals(10, devices.size());
 
     final var hostBridge = (WXMDeviceHostBridge) devices.get(0);
     assertEquals(WXM_AMD, hostBridge.vendor());
@@ -198,6 +199,10 @@ public abstract class WXMVirtualMachineParserContract
     assertEquals(5901, fb.listenPort());
     assertEquals(OFF, fb.vgaConfiguration());
     assertEquals(Boolean.TRUE, Boolean.valueOf(fb.waitForVNC()));
+
+    final var tablet = (WXMDeviceXHCIUSBTablet) devices.get(9);
+    assertEquals("0:9:0", tablet.deviceSlot().toString());
+    assertEquals("A USB tablet device.", tablet.comment());
 
     final var flags = machine.flags();
     assertFalse(flags.disableMPTableGeneration());

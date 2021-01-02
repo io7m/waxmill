@@ -74,6 +74,7 @@
   <xi:include href="cmdline-vm-add-passthru.xml" />
   <xi:include href="cmdline-vm-add-virtio-disk.xml" />
   <xi:include href="cmdline-vm-add-virtio-network-device.xml" />
+  <xi:include href="cmdline-vm-add-xhci-tablet-device.xml" />
   <xi:include href="cmdline-vm-console.xml" />
   <xi:include href="cmdline-vm-define.xml" />
   <xi:include href="cmdline-vm-delete-boot-configurations.xml" />

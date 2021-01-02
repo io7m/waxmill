@@ -24,6 +24,7 @@ import com.io7m.waxmill.machines.WXMBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMDeviceAHCIDisk;
 import com.io7m.waxmill.machines.WXMDeviceFramebuffer;
 import com.io7m.waxmill.machines.WXMDeviceLPC;
+import com.io7m.waxmill.machines.WXMDeviceXHCIUSBTablet;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI;
 import com.io7m.waxmill.machines.WXMMachineName;
 import com.io7m.waxmill.machines.WXMSectorSizes;
@@ -191,6 +192,11 @@ public final class WXMBootConfigurationEvaluatorUEFITest
             .build()
         )
         .addDevices(
+          WXMDeviceXHCIUSBTablet.builder()
+            .setDeviceSlot(convert("0:3:0"))
+            .build()
+        )
+        .addDevices(
           WXMDeviceFramebuffer.builder()
             .setDeviceSlot(convert("0:2:0"))
             .setHeight(1400)
@@ -251,6 +257,8 @@ public final class WXMBootConfigurationEvaluatorUEFITest
     assertEquals(
       "0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait",
       lastArgs.remove(0));
+    assertEquals("-s", lastArgs.remove(0));
+    assertEquals("0:3:0,xhci,tablet", lastArgs.remove(0));
     assertEquals("-l", lastArgs.remove(0));
     assertEquals("bootrom,/tmp/firmware", lastArgs.remove(0));
     assertEquals(WXMShortIDs.encode(machine.id()), lastArgs.remove(0));
@@ -258,7 +266,7 @@ public final class WXMBootConfigurationEvaluatorUEFITest
 
     assertEquals(
       String.format(
-        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait -l bootrom,/tmp/firmware %s",
+        "/usr/sbin/bhyve -U %s -P -A -w -H -c cpus=1,sockets=1,cores=1,threads=1 -m 512M -s 0:1:0,lpc -l com1,stdio -s 0:2:0,fbuf,tcp=[0:0:0:0:0:0:0:1]:5901,w=1200,h=1400,vga=off,wait -s 0:3:0,xhci,tablet -l bootrom,/tmp/firmware %s",
         machine.id(),
         WXMShortIDs.encode(machine.id())),
       lastExec.toString()

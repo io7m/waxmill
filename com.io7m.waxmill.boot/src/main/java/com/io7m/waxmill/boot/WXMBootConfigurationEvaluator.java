@@ -44,6 +44,7 @@ import com.io7m.waxmill.machines.WXMDeviceSlots;
 import com.io7m.waxmill.machines.WXMDeviceType;
 import com.io7m.waxmill.machines.WXMDeviceVirtioBlockStorage;
 import com.io7m.waxmill.machines.WXMDeviceVirtioNetwork;
+import com.io7m.waxmill.machines.WXMDeviceXHCIUSBTablet;
 import com.io7m.waxmill.machines.WXMEvaluatedBootCommands;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationGRUBBhyve;
 import com.io7m.waxmill.machines.WXMEvaluatedBootConfigurationUEFI;
@@ -393,6 +394,7 @@ public final class WXMBootConfigurationEvaluator
         case WXM_LPC:
         case WXM_PASSTHRU:
         case WXM_FRAMEBUFFER:
+        case WXM_XHCI_USB_TABLET:
           break;
 
         case WXM_E1000: {
@@ -535,6 +537,7 @@ public final class WXMBootConfigurationEvaluator
         return;
       }
 
+      case WXM_XHCI_USB_TABLET:
       case WXM_HOSTBRIDGE:
       case WXM_VIRTIO_NETWORK:
       case WXM_VIRTIO_BLOCK:
@@ -682,8 +685,24 @@ public final class WXMBootConfigurationEvaluator
           command, (WXMDeviceFramebuffer) device);
         return;
       }
+      case WXM_XHCI_USB_TABLET:
+        configureBhyveDeviceXHCIUSBTablet(
+          command, (WXMDeviceXHCIUSBTablet) device);
+        return;
     }
     throw new UnreachableCodeException();
+  }
+
+  private static void configureBhyveDeviceXHCIUSBTablet(
+    final WXMCommandExecution.Builder command,
+    final WXMDeviceXHCIUSBTablet device)
+  {
+    command.addArguments("-s");
+
+    final var arguments = new ArrayList<String>(8);
+    arguments.add(device.deviceSlot().toString());
+    arguments.add(device.externalName());
+    command.addArguments(String.join(",", arguments));
   }
 
   private static void configureBhyveDeviceFramebuffer(

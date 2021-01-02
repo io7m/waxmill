@@ -42,6 +42,7 @@ import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_LPC;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_PASSTHRU;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_BLOCK;
 import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_VIRTIO_NETWORK;
+import static com.io7m.waxmill.machines.WXMDeviceType.Kind.WXM_XHCI_USB_TABLET;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_FILE;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType.Kind.WXM_STORAGE_ZFS_VOLUME;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType.Kind.WXM_FILE;
@@ -93,6 +94,7 @@ public interface WXMDeviceType
       case WXM_LPC:
       case WXM_PASSTHRU:
       case WXM_VIRTIO_NETWORK:
+      case WXM_XHCI_USB_TABLET:
         return false;
       case WXM_AHCI_CD:
       case WXM_AHCI_HD:
@@ -118,6 +120,7 @@ public interface WXMDeviceType
       case WXM_PASSTHRU:
       case WXM_VIRTIO_BLOCK:
       case WXM_VIRTIO_NETWORK:
+      case WXM_XHCI_USB_TABLET:
         return false;
       case WXM_LPC:
         return true;
@@ -184,7 +187,14 @@ public interface WXMDeviceType
      * A raw framebuffer device attached to a VNC server.
      */
 
-    WXM_FRAMEBUFFER
+    WXM_FRAMEBUFFER,
+
+    /**
+     * A USB tablet device which provides precise cursor synchronization when
+     * using VNC.
+     */
+
+    WXM_XHCI_USB_TABLET
   }
 
   enum WXMLPCTTYNames
@@ -300,6 +310,38 @@ public interface WXMDeviceType
 
     @Override
     WXMNetworkDeviceBackendType backend();
+  }
+
+  /**
+   * A USB tablet device which provides precise cursor synchronization when
+   * using VNC.
+   */
+
+  @ImmutablesStyleType
+  @Value.Immutable
+  interface WXMDeviceXHCIUSBTabletType extends WXMDeviceType
+  {
+    @Override
+    @Value.Default
+    default String comment()
+    {
+      return "";
+    }
+
+    @Override
+    default Kind kind()
+    {
+      return WXM_XHCI_USB_TABLET;
+    }
+
+    @Override
+    WXMDeviceSlot deviceSlot();
+
+    @Override
+    default String externalName()
+    {
+      return "xhci,tablet";
+    }
   }
 
   /**
