@@ -46,9 +46,10 @@ public final class WXMCommandVersion extends CLPAbstractCommand
       WXMServices.findApplicationVersion();
 
     System.out.printf(
-      "%s %s%n",
+      "%s %s (%s)%n",
       version.applicationName(),
-      version.applicationVersion()
+      version.applicationVersion(),
+      version.applicationBuild()
     );
     return SUCCESS;
   }

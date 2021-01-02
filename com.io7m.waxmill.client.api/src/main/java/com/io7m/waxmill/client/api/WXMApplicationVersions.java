@@ -70,16 +70,19 @@ public final class WXMApplicationVersions
       properties.getProperty("applicationName");
     final String version =
       properties.getProperty("applicationVersion");
+    final String build =
+      properties.getProperty("applicationBuild");
 
-    if (name != null && version != null) {
+    if (name != null && version != null && build != null) {
       return WXMApplicationVersion.builder()
         .setApplicationName(name)
         .setApplicationVersion(version)
+        .setApplicationBuild(build)
         .build();
     }
 
     throw new IllegalArgumentException(
-      "Must specify applicationName and applicationVersion fields"
+      "Must specify applicationName, applicationVersion, applicationBuild fields"
     );
   }
 }

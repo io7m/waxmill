@@ -38,4 +38,10 @@ public interface WXMApplicationVersionType
    */
 
   String applicationVersion();
+
+  /**
+   * @return The build of the application
+   */
+
+  String applicationBuild();
 }
