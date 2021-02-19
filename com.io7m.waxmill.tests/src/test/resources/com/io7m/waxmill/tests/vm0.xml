@@ -213,4 +213,10 @@
           enabled="true"/>
   </Flags>
 
+  <Tags>
+    <Tag name="a"/>
+    <Tag name="b"/>
+    <Tag name="c"/>
+  </Tags>
+
 </VirtualMachine>

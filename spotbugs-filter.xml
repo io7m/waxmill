@@ -63,6 +63,8 @@
       <Class name="com.io7m.waxmill.machines.WXMTAPDeviceName"/>
       <Class name="com.io7m.waxmill.machines.WXMTTYBackendFile"/>
       <Class name="com.io7m.waxmill.machines.WXMTTYBackendStdio"/>
+      <Class name="com.io7m.waxmill.machines.WXMTag"/>
+      <Class name="com.io7m.waxmill.machines.WXMTags"/>
       <Class name="com.io7m.waxmill.machines.WXMTap"/>
       <Class name="com.io7m.waxmill.machines.WXMVMNet"/>
       <Class name="com.io7m.waxmill.machines.WXMVMNetDeviceName"/>

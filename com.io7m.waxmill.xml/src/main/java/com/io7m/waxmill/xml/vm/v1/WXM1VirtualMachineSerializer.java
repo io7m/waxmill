@@ -37,6 +37,7 @@ import com.io7m.waxmill.machines.WXMSide;
 import com.io7m.waxmill.machines.WXMTTYBackendFile;
 import com.io7m.waxmill.machines.WXMTTYBackendNMDM;
 import com.io7m.waxmill.machines.WXMTTYBackendStdio;
+import com.io7m.waxmill.machines.WXMTag;
 import com.io7m.waxmill.machines.WXMTap;
 import com.io7m.waxmill.machines.WXMVMNet;
 import com.io7m.waxmill.machines.WXMVirtualMachine;
@@ -57,6 +58,7 @@ import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.SortedSet;
 
 import static com.io7m.waxmill.machines.WXMSide.GUEST;
 import static com.io7m.waxmill.machines.WXMSide.HOST;
@@ -129,8 +131,10 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
       false
     );
     this.serializeFlags(machine.flags());
+    this.serializeTags(machine.tags());
     this.writer.writeEndElement();
   }
+
 
   private void serializeDevices(
     final List<WXMDeviceType> devices)
@@ -458,6 +462,28 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
       GUEST,
       this.writer);
     WXM1Comments.serializeComment(device.comment(), this.writer);
+    this.writer.writeEndElement();
+  }
+
+  private void serializeTags(
+    final SortedSet<WXMTag> tags)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "Tags");
+    for (final var tag : tags) {
+      this.serializeTag(tag);
+    }
+    this.writer.writeEndElement();
+  }
+
+  private void serializeTag(
+    final WXMTag tag)
+    throws XMLStreamException
+  {
+    final var namespaceURI = WXMSchemas.vmSchemaV1p0NamespaceText();
+    this.writer.writeStartElement(namespaceURI, "Tag");
+    this.writer.writeAttribute("name", tag.value());
     this.writer.writeEndElement();
   }
 

@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -101,6 +103,16 @@ public interface WXMVirtualMachineType
   {
     return WXMFlags.builder()
       .build();
+  }
+
+  /**
+   * @return The tags
+   */
+
+  @Value.Default
+  default SortedSet<WXMTag> tags()
+  {
+    return new TreeSet<>();
   }
 
   /**

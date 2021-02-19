@@ -62,6 +62,17 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="TagType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        A descriptive tag.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-z_0-9\-]{1,64}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="InterfaceGroupNameType">
     <xsd:annotation>
       <xsd:documentation xml:lang="en">
@@ -172,6 +183,7 @@
         <xsd:element ref="wxm:Devices"/>
         <xsd:element ref="wxm:BootConfigurations"/>
         <xsd:element ref="wxm:Flags"/>
+        <xsd:element ref="wxm:Tags"/>
       </xsd:sequence>
 
       <xsd:attribute name="id"
@@ -326,6 +338,40 @@
 
     <xsd:key name="FlagNamesUnique">
       <xsd:selector xpath="wxm:Flag"/>
+      <xsd:field xpath="@name"/>
+    </xsd:key>
+  </xsd:element>
+
+  <xsd:element name="Tag">
+    <xsd:annotation>
+      <xsd:documentation>
+        A single virtual machine tag.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:attribute name="name"
+                     use="required"
+                     type="wxm:TagType"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Tags">
+    <xsd:annotation>
+      <xsd:documentation>
+        The set of virtual machine tags.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0"
+                    maxOccurs="unbounded">
+        <xsd:element ref="wxm:Tag"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:key name="TagNamesUnique">
+      <xsd:selector xpath="wxm:Tag"/>
       <xsd:field xpath="@name"/>
     </xsd:key>
   </xsd:element>

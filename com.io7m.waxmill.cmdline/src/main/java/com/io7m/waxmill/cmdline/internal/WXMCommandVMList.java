@@ -18,10 +18,12 @@ package com.io7m.waxmill.cmdline.internal;
 
 import com.beust.jcommander.Parameters;
 import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.waxmill.machines.WXMTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
@@ -66,11 +68,19 @@ public final class WXMCommandVMList extends WXMAbstractCommandWithConfiguration
         return SUCCESS;
       }
 
-      System.out.printf("# %-40s %-16s%n", "ID", "Name");
+      System.out.printf("# %-40s %-16s %-16s%n", "ID", "Name", "Tags");
       for (final var entry : machineSet.machines().entrySet()) {
         final var id = entry.getKey();
         final var machine = entry.getValue();
-        System.out.printf("%-40s %-16s%n", id, machine.name().value());
+        final var machineName = machine.name().value();
+        final var machineTags =
+          machine.tags()
+            .stream()
+            .map(WXMTag::value)
+            .collect(Collectors.joining(",")
+            );
+
+        System.out.printf("%-40s %-16s %s%n", id, machineName, machineTags);
       }
     }
     return SUCCESS;

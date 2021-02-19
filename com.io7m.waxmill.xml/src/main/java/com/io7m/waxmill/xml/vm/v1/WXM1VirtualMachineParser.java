@@ -88,6 +88,10 @@ public final class WXM1VirtualMachineParser
       Map.entry(
         element("Flags"),
         c -> new WXM1FlagsParser()
+      ),
+      Map.entry(
+        element("Tags"),
+        c -> new WXM1TagsParser()
       )
     );
   }
@@ -120,6 +124,8 @@ public final class WXM1VirtualMachineParser
       }
     } else if (result instanceof WXMFlags) {
       this.builder.setFlags((WXMFlags) result);
+    } else if (result instanceof WXM1Tags) {
+      this.builder.setTags(((WXM1Tags) result).tags());
     } else {
       throw new UnreachableCodeException();
     }

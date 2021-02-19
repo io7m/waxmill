@@ -164,6 +164,7 @@ public final class WXMEqualsTest
           "comment",
           "name",
           "flags",
+          "tags",
           "devices",
           "cpuTopology",
           "memory")),
