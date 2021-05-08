@@ -25,11 +25,21 @@ import org.xml.sax.SAXException;
 import java.nio.file.FileSystem;
 import java.util.Objects;
 
+/**
+ * "ZFSFilesystem" parser.
+ */
+
 public final class WXM1ZFSFilesystemParser
   implements BTElementHandlerType<Object, WXM1ZFSFilesystem>
 {
   private final WXM1ZFSFilesystem.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * "ZFSFilesystem" parser.
+   *
+   * @param inFileSystem The filesystem
+   */
 
   public WXM1ZFSFilesystemParser(
     final FileSystem inFileSystem)

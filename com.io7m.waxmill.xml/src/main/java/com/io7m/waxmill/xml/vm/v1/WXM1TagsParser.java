@@ -27,10 +27,18 @@ import java.util.TreeSet;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * "Tags" parser.
+ */
+
 public final class WXM1TagsParser
   implements BTElementHandlerType<WXMTag, WXM1Tags>
 {
   private final TreeSet<WXMTag> tags;
+
+  /**
+   * "Tags" parser.
+   */
 
   public WXM1TagsParser()
   {

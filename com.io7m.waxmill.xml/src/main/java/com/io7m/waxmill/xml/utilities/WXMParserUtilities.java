@@ -30,12 +30,24 @@ import java.util.function.Consumer;
 import static com.io7m.waxmill.parser.api.WXMParseErrorType.Severity.ERROR;
 import static com.io7m.waxmill.parser.api.WXMParseErrorType.Severity.WARNING;
 
+/**
+ * Parser utilities.
+ */
+
 public final class WXMParserUtilities
 {
   private WXMParserUtilities()
   {
 
   }
+
+  /**
+   * Ensure an exception always has a message.
+   *
+   * @param e The exception
+   *
+   * @return The exception message
+   */
 
   public static String safeMessage(
     final Exception e)
@@ -46,6 +58,14 @@ public final class WXMParserUtilities
     }
     return message;
   }
+
+  /**
+   * Map blackthorne severity levels to WXM severity levels.
+   *
+   * @param severity The blackthorne severity
+   *
+   * @return The WXM severity
+   */
 
   public static WXMParseErrorType.Severity mapSeverity(
     final BTParseErrorType.Severity severity)
@@ -59,6 +79,14 @@ public final class WXMParserUtilities
         throw new UnreachableCodeException();
     }
   }
+
+  /**
+   * Publish an error.
+   *
+   * @param error  The error
+   * @param errors The error consumer
+   * @param logger The logger
+   */
 
   public static void publishError(
     final WXMParseError error,
@@ -99,6 +127,14 @@ public final class WXMParserUtilities
       logger.error("ignored exception raised by error consumer: ", e);
     }
   }
+
+  /**
+   * Map from blackthorne errors to WXM errors.
+   *
+   * @param btError The blackthorne error
+   *
+   * @return The WXM error
+   */
 
   public static WXMParseError mapBlackthorneError(
     final BTParseError btError)

@@ -35,11 +35,21 @@ import java.util.Objects;
 import static com.io7m.waxmill.machines.WXMBootConfigurationType.WXMGRUBKernelInstructionsType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A GRUB bhyve boot configuration parser.
+ */
+
 public final class WXM1BootConfigurationGRUBBhyveParser
   implements BTElementHandlerType<Object, WXMBootConfigurationGRUBBhyve>
 {
   private final WXMBootConfigurationGRUBBhyve.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * A GRUB bhyve boot configuration parser.
+   *
+   * @param inFileSystem The file system
+   */
 
   public WXM1BootConfigurationGRUBBhyveParser(
     final FileSystem inFileSystem)

@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * An XHCI USB tablet device parser.
+ */
+
 public final class WXM1XHCIUSBTabletDeviceParser
   implements BTElementHandlerType<Object, WXMDeviceXHCIUSBTablet>
 {
   private final WXMDeviceXHCIUSBTablet.Builder builder;
+
+  /**
+   * An XHCI USB tablet device parser.
+   */
 
   public WXM1XHCIUSBTabletDeviceParser()
   {

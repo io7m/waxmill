@@ -22,11 +22,23 @@ import org.immutables.value.Value;
 
 import java.nio.file.Path;
 
+/**
+ * A Linux kernel device.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1LinuxKernelDeviceType
 {
+  /**
+   * @return The device slot
+   */
+
   WXMDeviceSlot deviceSlot();
+
+  /**
+   * @return The kernel path
+   */
 
   Path kernelPath();
 }

@@ -40,12 +40,23 @@ import java.util.UUID;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Virtual machine parser.
+ */
+
 public final class WXM1VirtualMachineParser
   implements BTElementHandlerType<Object, WXMVirtualMachine>
 {
   private final WXMVirtualMachine.Builder builder;
   private final FileSystem fileSystem;
   private final URI sourceURI;
+
+  /**
+   * Virtual machine parser.
+   *
+   * @param inFileSystem The filesystem
+   * @param inSourceURI  The source URI
+   */
 
   public WXM1VirtualMachineParser(
     final FileSystem inFileSystem,

@@ -42,6 +42,10 @@ import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 
+/**
+ * The "vm-add-lpc-device" command.
+ */
+
 @Parameters(commandDescription = "Add an LPC device to a virtual machine.")
 public final class WXMCommandVMAddLPC extends
   WXMAbstractCommandWithConfiguration

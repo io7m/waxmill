@@ -35,6 +35,10 @@ import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Serializer for boot configurations.
+ */
+
 public final class WXM1BootConfigurationsSerializer
   implements WXMBootConfigurationsSerializerType
 {
@@ -46,6 +50,16 @@ public final class WXM1BootConfigurationsSerializer
   private final OutputStream stream;
   private final Transformer transformer;
   private final List<WXMBootConfigurationType> bootConfigurations;
+
+  /**
+   * Serializer for boot configurations.
+   *
+   * @param inWriter             The stream writer
+   * @param inBufferedOutput     The buffered output stream
+   * @param inStream             The output stream
+   * @param inTransformer        The transformer
+   * @param inBootConfigurations The boot configurations
+   */
 
   public WXM1BootConfigurationsSerializer(
     final XMLStreamWriter inWriter,

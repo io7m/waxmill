@@ -23,12 +23,26 @@ import com.io7m.waxmill.xml.WXMSchemas;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+/**
+ * Functions over device slots.
+ */
+
 public final class WXM1DeviceSlots
 {
   private WXM1DeviceSlots()
   {
 
   }
+
+  /**
+   * Serialize the device slot.
+   *
+   * @param deviceSlot The device slot
+   * @param side       The device side
+   * @param writer     The XML writer
+   *
+   * @throws XMLStreamException On errors
+   */
 
   public static void serializeDeviceSlot(
     final WXMDeviceSlot deviceSlot,

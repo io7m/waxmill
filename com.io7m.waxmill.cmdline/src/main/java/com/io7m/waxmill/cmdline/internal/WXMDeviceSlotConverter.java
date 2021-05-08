@@ -22,6 +22,10 @@ import com.io7m.waxmill.machines.WXMDeviceSlot;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * A converter of device slot values.
+ */
+
 public final class WXMDeviceSlotConverter
   implements IStringConverter<WXMDeviceSlot>
 {
@@ -29,6 +33,10 @@ public final class WXMDeviceSlotConverter
     Pattern.compile("([0-9]+):([0-9]+):([0-9]+)");
 
   private final WXMMessages messages;
+
+  /**
+   * A converter of device slot values.
+   */
 
   public WXMDeviceSlotConverter()
   {

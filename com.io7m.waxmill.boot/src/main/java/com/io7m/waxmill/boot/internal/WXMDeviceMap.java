@@ -53,6 +53,10 @@ import java.util.stream.Collectors;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_GUEST;
 import static com.io7m.waxmill.machines.WXMTTYBackends.nmdmPath;
 
+/**
+ * A device map used for GRUB.
+ */
+
 public final class WXMDeviceMap
 {
   private final SortedMap<Integer, WXMDeviceAndPath> disks;
@@ -79,6 +83,19 @@ public final class WXMDeviceMap
     this.nmdmPaths =
       Objects.requireNonNull(inNmdmPaths, "nmdmPaths");
   }
+
+  /**
+   * Create a device map.
+   *
+   * @param messages            The string resources
+   * @param clientConfiguration The client configuration
+   * @param configuration       The boot configuration
+   * @param machine             The virtual machine
+   *
+   * @return A new device map
+   *
+   * @throws WXMException On errors
+   */
 
   public static WXMDeviceMap create(
     final WXMBootMessages messages,
@@ -289,10 +306,22 @@ public final class WXMDeviceMap
     throw new UnreachableCodeException();
   }
 
+  /**
+   * @return The boot disk attachments
+   */
+
   public Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments()
   {
     return this.attachments;
   }
+
+  /**
+   * Search for the CD device.
+   *
+   * @param deviceID The device slot
+   *
+   * @return The CD device, if any
+   */
 
   public Optional<Integer> searchForCD(
     final WXMDeviceSlot deviceID)
@@ -304,6 +333,14 @@ public final class WXMDeviceMap
       .findFirst();
   }
 
+  /**
+   * Search for the HD device.
+   *
+   * @param deviceID The device slot
+   *
+   * @return The HD device, if any
+   */
+
   public Optional<Integer> searchForHD(
     final WXMDeviceSlot deviceID)
   {
@@ -313,6 +350,12 @@ public final class WXMDeviceMap
       .map(dp -> Integer.valueOf(dp.index()))
       .findFirst();
   }
+
+  /**
+   * Serialize the device map.
+   *
+   * @return The list of device map lines
+   */
 
   public Iterable<String> serialize()
   {
@@ -329,6 +372,10 @@ public final class WXMDeviceMap
     }
     return List.copyOf(lines);
   }
+
+  /**
+   * @return The set of device paths
+   */
 
   public Collection<Path> paths()
   {
@@ -348,6 +395,10 @@ public final class WXMDeviceMap
     return List.copyOf(paths);
   }
 
+  /**
+   * @return The set of nmdm paths
+   */
+
   public Collection<Path> nmdmPaths()
   {
     return List.copyOf(this.nmdmPaths);
@@ -357,7 +408,7 @@ public final class WXMDeviceMap
   public String toString()
   {
     return String.format(
-      "[WXMGRUBDeviceMap 0x%s]",
+      "[WXMDeviceMap 0x%s]",
       Long.toUnsignedString(System.identityHashCode(this), 16)
     );
   }

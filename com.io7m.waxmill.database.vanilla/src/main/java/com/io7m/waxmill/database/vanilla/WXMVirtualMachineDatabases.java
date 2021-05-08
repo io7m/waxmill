@@ -28,12 +28,24 @@ import com.io7m.waxmill.serializer.api.WXMVirtualMachineSerializerProviderType;
 import java.util.Objects;
 import java.util.ServiceLoader;
 
+/**
+ * A provider of virtual machine databases.
+ */
+
 public final class WXMVirtualMachineDatabases
   implements WXMVirtualMachineDatabaseProviderType
 {
   private final WXMVirtualMachineParserProviderType parsers;
   private final WXMVirtualMachineSerializerProviderType serializers;
   private final WXMMachineMessages messages;
+
+  /**
+   * A provider of virtual machine databases.
+   *
+   * @param inMessages    The string resources
+   * @param inParsers     A provider of parsers
+   * @param inSerializers A provider of serializers
+   */
 
   public WXMVirtualMachineDatabases(
     final WXMMachineMessages inMessages,
@@ -47,6 +59,11 @@ public final class WXMVirtualMachineDatabases
     this.serializers =
       Objects.requireNonNull(inSerializers, "inSerializers");
   }
+
+  /**
+   * A provider of virtual machine databases. Dependencies are resolved
+   * from {@link ServiceLoader}.
+   */
 
   public WXMVirtualMachineDatabases()
   {

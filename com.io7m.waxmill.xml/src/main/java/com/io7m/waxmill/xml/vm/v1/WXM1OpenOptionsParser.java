@@ -27,10 +27,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * "OpenOptions" parser.
+ */
+
 public final class WXM1OpenOptionsParser
   implements BTElementHandlerType<Object, WXM1OpenOptions>
 {
   private final WXM1OpenOptions.Builder builder;
+
+  /**
+   * "OpenOptions" parser.
+   */
 
   public WXM1OpenOptionsParser()
   {

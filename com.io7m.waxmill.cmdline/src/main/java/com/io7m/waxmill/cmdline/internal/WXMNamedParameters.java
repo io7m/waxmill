@@ -20,12 +20,26 @@ import com.beust.jcommander.ParameterException;
 
 import java.util.Optional;
 
+/**
+ * Functions over named parameters.
+ */
+
 public final class WXMNamedParameters
 {
   private WXMNamedParameters()
   {
 
   }
+
+  /**
+   * An optional parameter.
+   *
+   * @param name      The name
+   * @param parameter The value
+   * @param <T>       The type of values
+   *
+   * @return A parameter
+   */
 
   public static <T> WXMNamedParameter<Optional<T>> optional(
     final String name,
@@ -36,6 +50,17 @@ public final class WXMNamedParameters
       .setValue(Optional.ofNullable(parameter))
       .build();
   }
+
+  /**
+   * Check a required parameter is present.
+   *
+   * @param messages  The messages
+   * @param owner     The owner
+   * @param parameter The parameter
+   * @param <T>       The type of parameter values
+   *
+   * @return The parameter value
+   */
 
   public static <T> T checkRequired(
     final WXMMessages messages,

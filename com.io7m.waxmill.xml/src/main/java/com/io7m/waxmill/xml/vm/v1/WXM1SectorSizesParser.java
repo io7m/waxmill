@@ -24,10 +24,18 @@ import org.xml.sax.SAXParseException;
 
 import java.math.BigInteger;
 
+/**
+ * Sector sizes parser.
+ */
+
 public final class WXM1SectorSizesParser
   implements BTElementHandlerType<Object, WXMSectorSizes>
 {
   private final WXMSectorSizes.Builder builder;
+
+  /**
+   * Sector sizes parser.
+   */
 
   public WXM1SectorSizesParser()
   {

@@ -31,6 +31,10 @@ import java.util.List;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-import" command.
+ */
+
 @Parameters(commandDescription = "Import virtual machine descriptions.")
 public final class WXMCommandVMImport extends
   WXMAbstractCommandWithConfiguration

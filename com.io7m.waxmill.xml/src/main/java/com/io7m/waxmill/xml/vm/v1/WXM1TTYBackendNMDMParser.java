@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * nmdm-based TTY backend parser.
+ */
+
 public final class WXM1TTYBackendNMDMParser
   implements BTElementHandlerType<Object, WXMTTYBackendNMDM>
 {
   private final WXMTTYBackendNMDM.Builder builder;
+
+  /**
+   * nmdm-based TTY backend parser.
+   */
 
   public WXM1TTYBackendNMDMParser()
   {

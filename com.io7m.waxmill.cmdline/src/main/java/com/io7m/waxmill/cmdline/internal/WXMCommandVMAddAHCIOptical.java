@@ -33,6 +33,10 @@ import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-add-ahci-optical" command.
+ */
+
 @Parameters(commandDescription = "Add an AHCI optical drive to a virtual machine.")
 public final class WXMCommandVMAddAHCIOptical extends
   WXMAbstractCommandWithConfiguration

@@ -36,6 +36,10 @@ import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * "Configuration" serializer.
+ */
+
 public final class WXM1ClientConfigurationSerializer
   implements WXMSerializerType
 {
@@ -47,6 +51,16 @@ public final class WXM1ClientConfigurationSerializer
   private final OutputStream stream;
   private final Transformer transformer;
   private final WXMClientConfiguration clientConfiguration;
+
+  /**
+   * "Configuration" serializer.
+   *
+   * @param inWriter         The stream writer
+   * @param inBufferedOutput The buffered output stream
+   * @param inStream         The output stream
+   * @param inTransformer    The XML transformer
+   * @param inValue          The configuration value to serialize
+   */
 
   public WXM1ClientConfigurationSerializer(
     final XMLStreamWriter inWriter,

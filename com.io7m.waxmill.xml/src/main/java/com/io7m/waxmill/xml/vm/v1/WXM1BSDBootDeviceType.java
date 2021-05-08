@@ -22,13 +22,29 @@ import org.immutables.value.Value;
 
 import java.nio.file.Path;
 
+/**
+ * A BSD boot device.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1BSDBootDeviceType
 {
+  /**
+   * @return The device slot
+   */
+
   WXMDeviceSlot deviceSlot();
 
+  /**
+   * @return The partition
+   */
+
   String partition();
+
+  /**
+   * @return The kernel path
+   */
 
   Path kernelPath();
 }

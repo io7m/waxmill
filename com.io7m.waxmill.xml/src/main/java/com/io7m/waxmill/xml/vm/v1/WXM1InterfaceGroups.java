@@ -23,12 +23,25 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.List;
 
+/**
+ * Functions over interface groups.
+ */
+
 public final class WXM1InterfaceGroups
 {
   private WXM1InterfaceGroups()
   {
 
   }
+
+  /**
+   * Serialize interface groups.
+   *
+   * @param groups The groups
+   * @param writer The XML writer
+   *
+   * @throws XMLStreamException On errors
+   */
 
   public static void serializeGroups(
     final List<WXMInterfaceGroupName> groups,

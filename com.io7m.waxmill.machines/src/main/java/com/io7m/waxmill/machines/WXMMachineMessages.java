@@ -20,6 +20,10 @@ import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
 import java.util.ResourceBundle;
 
+/**
+ * Machine string resources.
+ */
+
 public final class WXMMachineMessages extends WXMAbstractStrings
 {
   private WXMMachineMessages(
@@ -27,6 +31,10 @@ public final class WXMMachineMessages extends WXMAbstractStrings
   {
     super(inResources);
   }
+
+  /**
+   * @return The string resources
+   */
 
   public static WXMMachineMessages create()
   {

@@ -31,11 +31,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.config.v1.WXM1CNames.element;
 
+/**
+ * "Configuration" parser.
+ */
+
 public final class WXM1ClientConfigurationParser
   implements BTElementHandlerType<Object, WXMClientConfiguration>
 {
   private final WXMClientConfiguration.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * "Configuration" parser.
+   *
+   * @param inFileSystem The filesystem
+   */
 
   public WXM1ClientConfigurationParser(
     final FileSystem inFileSystem)

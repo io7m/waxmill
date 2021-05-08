@@ -38,6 +38,10 @@ import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-add-e1000-network-device" command.
+ */
+
 @Parameters(commandDescription = "Add an e1000 network device to a virtual machine.")
 public final class WXMCommandVMAddE1000NetworkDevice
   extends WXMAbstractCommandWithConfiguration

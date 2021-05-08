@@ -42,6 +42,10 @@ import java.util.UUID;
 
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 
+/**
+ * A realization step that checks a ZFS volume.
+ */
+
 public final class WXMZFSVolumeCheck implements WXMRealizationStepType
 {
   private static final Logger LOG =
@@ -55,6 +59,17 @@ public final class WXMZFSVolumeCheck implements WXMRealizationStepType
   private final WXMStorageBackendZFSVolume zfsVolume;
   private final WXMZFSVolume volume;
   private List<WXMProcessDescription> processList;
+
+  /**
+   * A realization step that checks a ZFS volume.
+   *
+   * @param inClientConfiguration The client configuration
+   * @param inMessages            The realization string resources
+   * @param inProcesses           A process provider
+   * @param inMachineId           A machine ID
+   * @param inSlot                A device slot
+   * @param inZFSVolume           The ZFS volume
+   */
 
   public WXMZFSVolumeCheck(
     final WXMClientConfiguration inClientConfiguration,

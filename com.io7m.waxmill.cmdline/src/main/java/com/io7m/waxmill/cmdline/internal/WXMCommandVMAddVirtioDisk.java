@@ -45,6 +45,10 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 
+/**
+ * The "vm-add-virtio-disk" command.
+ */
+
 @Parameters(commandDescription = "Add a virtio disk to a virtual machine.")
 public final class WXMCommandVMAddVirtioDisk extends
   WXMAbstractCommandWithConfiguration

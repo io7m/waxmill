@@ -19,10 +19,18 @@ package com.io7m.waxmill.xml.vm.v1;
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import org.immutables.value.Value;
 
+/**
+ * A comment.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1CommentType
 {
+  /**
+   * @return The comment text
+   */
+
   @Value.Parameter
   String text();
 }

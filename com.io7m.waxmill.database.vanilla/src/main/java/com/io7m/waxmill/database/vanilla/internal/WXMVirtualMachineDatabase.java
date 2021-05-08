@@ -47,6 +47,10 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 
+/**
+ * A virtual machine database.
+ */
+
 public final class WXMVirtualMachineDatabase
   implements WXMVirtualMachineDatabaseType
 {
@@ -74,6 +78,19 @@ public final class WXMVirtualMachineDatabase
     this.lockFile =
       Objects.requireNonNull(inLockFile, "lockFile");
   }
+
+  /**
+   * Open a virtual machine database.
+   *
+   * @param inMachineMessages The machine string resources
+   * @param inParsers         A provider of parsers
+   * @param inSerializers     A provider of serializers
+   * @param configuration     A database configuration
+   *
+   * @return A virtual machine database
+   *
+   * @throws WXMException On errors
+   */
 
   public static WXMVirtualMachineDatabaseType open(
     final WXMMachineMessages inMachineMessages,

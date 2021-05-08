@@ -30,10 +30,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A ZFS-volume backed storage backend.
+ */
+
 public final class WXM1StorageBackendZFSVolumeParser
   implements BTElementHandlerType<Object, WXMStorageBackendZFSVolume>
 {
   private final WXMStorageBackendZFSVolume.Builder builder;
+
+  /**
+   * A ZFS-volume backed storage backend.
+   */
 
   public WXM1StorageBackendZFSVolumeParser()
   {

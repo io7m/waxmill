@@ -37,6 +37,10 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor.WXM_UNSPECIFIED;
 
+/**
+ * The "vm-define" command.
+ */
+
 @Parameters(commandDescription = "Define a new virtual machine.")
 public final class WXMCommandVMDefine extends
   WXMAbstractCommandWithConfiguration

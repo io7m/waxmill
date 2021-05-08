@@ -64,6 +64,10 @@ import static com.io7m.waxmill.machines.WXMSide.GUEST;
 import static com.io7m.waxmill.machines.WXMSide.HOST;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Virtual machine serializer.
+ */
+
 public final class WXM1VirtualMachineSerializer implements WXMSerializerType
 {
   private static final byte[] XML_DECLARATION =
@@ -74,6 +78,16 @@ public final class WXM1VirtualMachineSerializer implements WXMSerializerType
   private final OutputStream stream;
   private final Transformer transformer;
   private final WXMVirtualMachineSet machineSet;
+
+  /**
+   * Virtual machine serializer.
+   *
+   * @param inWriter         The XML writer
+   * @param inBufferedOutput The buffered output
+   * @param inStream         The stream output
+   * @param inTransformer    The transformer
+   * @param inValue          The set of machines
+   */
 
   public WXM1VirtualMachineSerializer(
     final XMLStreamWriter inWriter,

@@ -28,10 +28,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A PCI passthru device parser.
+ */
+
 public final class WXM1PassthruDeviceParser
   implements BTElementHandlerType<Object, WXMDevicePassthru>
 {
   private final WXMDevicePassthru.Builder builder;
+
+  /**
+   * A PCI passthru device parser.
+   */
 
   public WXM1PassthruDeviceParser()
   {

@@ -21,10 +21,18 @@ import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.waxmill.machines.WXMOpenOption;
 import org.xml.sax.Attributes;
 
+/**
+ * "OpenOption" parser.
+ */
+
 public final class WXM1OpenOptionParser
   implements BTElementHandlerType<Object, WXMOpenOption>
 {
   private WXMOpenOption option;
+
+  /**
+   * "OpenOption" parser.
+   */
 
   public WXM1OpenOptionParser()
   {

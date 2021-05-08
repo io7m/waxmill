@@ -365,6 +365,95 @@ public final class WXMBootConfigurationEvaluator
     throw new UnreachableCodeException();
   }
 
+  private static void configureBhyveDeviceXHCIUSBTablet(
+    final WXMCommandExecution.Builder command,
+    final WXMDeviceXHCIUSBTablet device)
+  {
+    command.addArguments("-s");
+
+    final var arguments = new ArrayList<String>(8);
+    arguments.add(device.deviceSlot().toString());
+    arguments.add(device.externalName());
+    command.addArguments(String.join(",", arguments));
+  }
+
+  private static void configureBhyveDeviceFramebuffer(
+    final WXMCommandExecution.Builder command,
+    final WXMDeviceFramebuffer device)
+  {
+    command.addArguments("-s");
+
+    final var arguments = new ArrayList<String>(8);
+    arguments.add(device.deviceSlot().toString());
+    arguments.add(device.externalName());
+    arguments.add(String.format(
+      "tcp=%s",
+      formatVNCSocketAddress(
+        device.listenAddress(),
+        device.listenPort())));
+    arguments.add(String.format("w=%d", Integer.valueOf(device.width())));
+    arguments.add(String.format("h=%d", Integer.valueOf(device.height())));
+    arguments.add(String.format(
+      "vga=%s",
+      device.vgaConfiguration().externalName()));
+    if (device.waitForVNC()) {
+      arguments.add("wait");
+    }
+    command.addArguments(String.join(",", arguments));
+  }
+
+  private static String formatVNCSocketAddress(
+    final InetAddress listenAddress,
+    final int listenPort)
+  {
+    if (listenAddress instanceof Inet4Address) {
+      return String.format(
+        "%s:%d",
+        listenAddress.getHostAddress(),
+        Integer.valueOf(listenPort)
+      );
+    }
+    if (listenAddress instanceof Inet6Address) {
+      return String.format(
+        "[%s]:%d",
+        listenAddress.getHostAddress(),
+        Integer.valueOf(listenPort)
+      );
+    }
+    throw new UnreachableCodeException();
+  }
+
+  private static void configureBhyveDeviceE1000Network(
+    final WXMCommandExecution.Builder command,
+    final WXMDeviceE1000 device)
+  {
+    command.addArguments("-s");
+    command.addArguments(String.format(
+      "%s,%s,%s",
+      device.deviceSlot(),
+      device.externalName(),
+      configureBhyveNetworkBackend(device.backend())
+    ));
+  }
+
+  private static void configureBhyveDevicePassthru(
+    final WXMCommandExecution.Builder command,
+    final WXMDevicePassthru device)
+  {
+    final var hostSlot = device.hostPCISlot();
+    command.addArguments("-s");
+    command.addArguments(
+      String.format(
+        "%s,%s,%d/%d/%d",
+        device.deviceSlot(),
+        device.externalName(),
+        Integer.valueOf(hostSlot.busID()),
+        Integer.valueOf(hostSlot.slotID()),
+        Integer.valueOf(hostSlot.functionID())
+      )
+    );
+  }
+
   private WXMEvaluatedBootCommands generateGRUBBhyveCommands(
     final WXMBootConfigurationType bootConfiguration,
     final Map<WXMDeviceSlot, WXMBootDiskAttachment> attachments)
@@ -691,95 +780,6 @@ public final class WXMBootConfigurationEvaluator
         return;
     }
     throw new UnreachableCodeException();
-  }
-
-  private static void configureBhyveDeviceXHCIUSBTablet(
-    final WXMCommandExecution.Builder command,
-    final WXMDeviceXHCIUSBTablet device)
-  {
-    command.addArguments("-s");
-
-    final var arguments = new ArrayList<String>(8);
-    arguments.add(device.deviceSlot().toString());
-    arguments.add(device.externalName());
-    command.addArguments(String.join(",", arguments));
-  }
-
-  private static void configureBhyveDeviceFramebuffer(
-    final WXMCommandExecution.Builder command,
-    final WXMDeviceFramebuffer device)
-  {
-    command.addArguments("-s");
-
-    final var arguments = new ArrayList<String>(8);
-    arguments.add(device.deviceSlot().toString());
-    arguments.add(device.externalName());
-    arguments.add(String.format(
-      "tcp=%s",
-      formatVNCSocketAddress(
-        device.listenAddress(),
-        device.listenPort())));
-    arguments.add(String.format("w=%d", Integer.valueOf(device.width())));
-    arguments.add(String.format("h=%d", Integer.valueOf(device.height())));
-    arguments.add(String.format(
-      "vga=%s",
-      device.vgaConfiguration().externalName()));
-    if (device.waitForVNC()) {
-      arguments.add("wait");
-    }
-    command.addArguments(String.join(",", arguments));
-  }
-
-  private static String formatVNCSocketAddress(
-    final InetAddress listenAddress,
-    final int listenPort)
-  {
-    if (listenAddress instanceof Inet4Address) {
-      return String.format(
-        "%s:%d",
-        listenAddress.getHostAddress(),
-        Integer.valueOf(listenPort)
-      );
-    }
-    if (listenAddress instanceof Inet6Address) {
-      return String.format(
-        "[%s]:%d",
-        listenAddress.getHostAddress(),
-        Integer.valueOf(listenPort)
-      );
-    }
-    throw new UnreachableCodeException();
-  }
-
-  private static void configureBhyveDeviceE1000Network(
-    final WXMCommandExecution.Builder command,
-    final WXMDeviceE1000 device)
-  {
-    command.addArguments("-s");
-    command.addArguments(String.format(
-      "%s,%s,%s",
-      device.deviceSlot(),
-      device.externalName(),
-      configureBhyveNetworkBackend(device.backend())
-    ));
-  }
-
-  private static void configureBhyveDevicePassthru(
-    final WXMCommandExecution.Builder command,
-    final WXMDevicePassthru device)
-  {
-    final var hostSlot = device.hostPCISlot();
-    command.addArguments("-s");
-    command.addArguments(
-      String.format(
-        "%s,%s,%d/%d/%d",
-        device.deviceSlot(),
-        device.externalName(),
-        Integer.valueOf(hostSlot.busID()),
-        Integer.valueOf(hostSlot.slotID()),
-        Integer.valueOf(hostSlot.functionID())
-      )
-    );
   }
 
   private void configureBhyveDeviceLPC(

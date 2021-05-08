@@ -68,6 +68,12 @@ public final class Main implements Runnable
   private final String[] args;
   private final ClaypotType claypot;
 
+  /**
+   * The main entry point.
+   *
+   * @param inArgs Command-line arguments
+   */
+
   public Main(
     final String[] inArgs)
   {

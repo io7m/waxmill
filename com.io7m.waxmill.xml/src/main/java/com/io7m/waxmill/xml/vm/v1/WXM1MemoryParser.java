@@ -30,10 +30,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Memory parser.
+ */
+
 public final class WXM1MemoryParser
   implements BTElementHandlerType<Object, WXMMemory>
 {
   private final WXMMemory.Builder builder;
+
+  /**
+   * Memory parser.
+   */
 
   public WXM1MemoryParser()
   {

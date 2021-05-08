@@ -32,10 +32,18 @@ import java.util.Map;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * "FramebufferDevice" parser.
+ */
+
 public final class WXM1FramebufferDeviceParser
   implements BTElementHandlerType<Object, WXMDeviceFramebuffer>
 {
   private final WXMDeviceFramebuffer.Builder builder;
+
+  /**
+   * "FramebufferDevice" parser.
+   */
 
   public WXM1FramebufferDeviceParser()
   {

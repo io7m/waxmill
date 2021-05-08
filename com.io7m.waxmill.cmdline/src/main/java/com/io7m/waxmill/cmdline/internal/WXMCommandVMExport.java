@@ -33,6 +33,10 @@ import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-export" command.
+ */
+
 @Parameters(commandDescription = "Export virtual machine descriptions.")
 public final class WXMCommandVMExport extends
   WXMAbstractCommandWithConfiguration

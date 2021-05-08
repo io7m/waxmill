@@ -30,6 +30,10 @@ import java.util.Objects;
 import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-list-with-name" command.
+ */
+
 @Parameters(commandDescription = "List the virtual machines with the given name.")
 public final class WXMCommandVMListWithName extends
   WXMAbstractCommandWithConfiguration

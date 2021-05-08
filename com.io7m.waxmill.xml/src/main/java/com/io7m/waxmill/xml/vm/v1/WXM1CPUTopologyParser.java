@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * CPU topology parser.
+ */
+
 public final class WXM1CPUTopologyParser
   implements BTElementHandlerType<Object, WXMCPUTopology>
 {
   private final WXMCPUTopology.Builder builder;
+
+  /**
+   * CPU topology parser.
+   */
 
   public WXM1CPUTopologyParser()
   {

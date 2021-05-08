@@ -44,6 +44,10 @@ import static com.io7m.waxmill.xml.utilities.WXMParserUtilities.publishError;
 import static com.io7m.waxmill.xml.utilities.WXMParserUtilities.safeMessage;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A boot configuration parser.
+ */
+
 public final class WXMBootConfigurationParser
   implements WXMBootConfigurationParserType
 {
@@ -55,6 +59,16 @@ public final class WXMBootConfigurationParser
   private final URI source;
   private final InputStream stream;
   private final XMLReader reader;
+
+  /**
+   * A boot configuration parser.
+   *
+   * @param inFileSystem The file system
+   * @param inErrors     The error consumer
+   * @param inUri        The source URI
+   * @param inStream     The input stream
+   * @param inReader     The XML reader
+   */
 
   public WXMBootConfigurationParser(
     final FileSystem inFileSystem,

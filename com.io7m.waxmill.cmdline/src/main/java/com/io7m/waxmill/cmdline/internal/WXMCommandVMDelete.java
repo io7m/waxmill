@@ -27,6 +27,10 @@ import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-delete" command.
+ */
+
 @Parameters(commandDescription = "Delete a virtual machine.")
 public final class WXMCommandVMDelete extends
   WXMAbstractCommandWithConfiguration

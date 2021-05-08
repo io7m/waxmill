@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * LPC device parser.
+ */
+
 public final class WXM1LPCDeviceParser
   implements BTElementHandlerType<Object, WXMDeviceLPC>
 {
   private final WXMDeviceLPC.Builder builder;
+
+  /**
+   * LPC device parser.
+   */
 
   public WXM1LPCDeviceParser()
   {

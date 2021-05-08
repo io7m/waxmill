@@ -20,6 +20,10 @@ import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
 import java.util.ResourceBundle;
 
+/**
+ * The boot string resources.
+ */
+
 public final class WXMBootMessages extends WXMAbstractStrings
 {
   private WXMBootMessages(
@@ -27,6 +31,10 @@ public final class WXMBootMessages extends WXMAbstractStrings
   {
     super(inResources);
   }
+
+  /**
+   * @return The boot string resources
+   */
 
   public static WXMBootMessages create()
   {

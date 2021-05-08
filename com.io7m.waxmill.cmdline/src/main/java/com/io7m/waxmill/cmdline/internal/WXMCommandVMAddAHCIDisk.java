@@ -45,6 +45,10 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 
+/**
+ * The "vm-add-ahci-disk" command.
+ */
+
 @Parameters(commandDescription = "Add an AHCI disk to a virtual machine.")
 public final class WXMCommandVMAddAHCIDisk extends
   WXMAbstractCommandWithConfiguration

@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * "E1000NetworkDevice" parser.
+ */
+
 public final class WXM1E1000NetworkDeviceParser
   implements BTElementHandlerType<Object, WXMDeviceE1000>
 {
   private final WXMDeviceE1000.Builder builder;
+
+  /**
+   * "E1000NetworkDevice" parser.
+   */
 
   public WXM1E1000NetworkDeviceParser()
   {

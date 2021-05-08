@@ -21,12 +21,24 @@ import com.io7m.waxmill.xml.WXMSchemas;
 
 import java.util.Objects;
 
+/**
+ * Functions to create element names.
+ */
+
 public final class WXM1CNames
 {
   private WXM1CNames()
   {
 
   }
+
+  /**
+   * Create a qualified name for the local name.
+   *
+   * @param localName The local name
+   *
+   * @return A qualified name
+   */
 
   public static BTQualifiedName element(
     final String localName)

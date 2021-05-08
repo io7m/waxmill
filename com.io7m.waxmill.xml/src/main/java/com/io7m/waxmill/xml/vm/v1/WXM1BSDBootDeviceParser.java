@@ -31,11 +31,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A BSD boot device parser.
+ */
+
 public final class WXM1BSDBootDeviceParser
   implements BTElementHandlerType<Object, WXM1BSDBootDevice>
 {
   private final FileSystem fileSystem;
   private final WXM1BSDBootDevice.Builder builder;
+
+  /**
+   * A BSD boot device parser.
+   *
+   * @param inFileSystem The file system
+   */
 
   public WXM1BSDBootDeviceParser(
     final FileSystem inFileSystem)

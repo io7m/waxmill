@@ -31,11 +31,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Linux initrd device parser.
+ */
+
 public final class WXM1LinuxInitRDDeviceParser
   implements BTElementHandlerType<Object, WXM1LinuxInitRDDevice>
 {
   private final FileSystem fileSystem;
   private final WXM1LinuxInitRDDevice.Builder builder;
+
+  /**
+   * Linux initrd device parser.
+   *
+   * @param inFileSystem The filesystem
+   */
 
   public WXM1LinuxInitRDDeviceParser(
     final FileSystem inFileSystem)

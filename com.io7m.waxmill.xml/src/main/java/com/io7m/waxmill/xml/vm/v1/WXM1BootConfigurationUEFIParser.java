@@ -34,11 +34,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * UEFI boot configuration parser.
+ */
+
 public final class WXM1BootConfigurationUEFIParser
   implements BTElementHandlerType<Object, WXMBootConfigurationUEFI>
 {
   private final WXMBootConfigurationUEFI.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * UEFI boot configuration parser.
+   *
+   * @param inFileSystem The file system
+   */
 
   public WXM1BootConfigurationUEFIParser(
     final FileSystem inFileSystem)

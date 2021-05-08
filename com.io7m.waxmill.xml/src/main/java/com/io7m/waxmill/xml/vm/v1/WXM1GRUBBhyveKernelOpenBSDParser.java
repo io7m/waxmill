@@ -29,11 +29,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * "GRUBBhyveKernelOpenBSD" parser.
+ */
+
 public final class WXM1GRUBBhyveKernelOpenBSDParser
   implements BTElementHandlerType<Object, WXMGRUBKernelOpenBSD>
 {
   private final WXMGRUBKernelOpenBSD.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * "GRUBBhyveKernelOpenBSD" parser.
+   *
+   * @param inFileSystem The filesystem
+   */
 
   public WXM1GRUBBhyveKernelOpenBSDParser(
     final FileSystem inFileSystem)

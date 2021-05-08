@@ -28,6 +28,10 @@ import java.util.Objects;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.WRITE;
 
+/**
+ * A file lock.
+ */
+
 public final class WXMFileLock implements AutoCloseable
 {
   private final FileChannel channel;
@@ -42,6 +46,16 @@ public final class WXMFileLock implements AutoCloseable
     this.lock =
       Objects.requireNonNull(inLock, "lock");
   }
+
+  /**
+   * Acquire a lock on the given path.
+   *
+   * @param lockFile The lock file
+   *
+   * @return A lock
+   *
+   * @throws IOException On I/O errors
+   */
 
   public static WXMFileLock acquire(
     final Path lockFile)

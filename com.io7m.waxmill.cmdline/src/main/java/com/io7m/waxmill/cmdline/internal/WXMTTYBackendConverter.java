@@ -26,10 +26,18 @@ import java.util.Locale;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMTTYBackendType;
 
+/**
+ * A converter of TTY values.
+ */
+
 public final class WXMTTYBackendConverter
   implements IStringConverter<WXMTTYBackendType>
 {
   private final WXMMessages messages;
+
+  /**
+   * A converter of TTY values.
+   */
 
   public WXMTTYBackendConverter()
   {

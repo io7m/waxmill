@@ -30,6 +30,10 @@ import java.util.Map;
 import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "schema" command.
+ */
+
 @Parameters(commandDescription = "Export schemas.")
 public final class WXMCommandSchema extends CLPAbstractCommand
 {

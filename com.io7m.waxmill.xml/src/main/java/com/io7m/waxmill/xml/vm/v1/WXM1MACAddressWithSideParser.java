@@ -24,10 +24,18 @@ import com.io7m.waxmill.machines.WXMSide;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * A "MAC address with side" parser.
+ */
+
 public final class WXM1MACAddressWithSideParser
   implements BTElementHandlerType<Object, WXMMACAddressWithSide>
 {
   private final WXMMACAddressWithSide.Builder builder;
+
+  /**
+   * A "MAC address with side" parser.
+   */
 
   public WXM1MACAddressWithSideParser()
   {

@@ -25,10 +25,18 @@ import java.nio.file.Paths;
 
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 
+/**
+ * A storage backend converter.
+ */
+
 public final class WXMStorageBackendConverter
   implements IStringConverter<WXMStorageBackendType>
 {
   private final WXMMessages messages;
+
+  /**
+   * A storage backend converter.
+   */
 
   public WXMStorageBackendConverter()
   {

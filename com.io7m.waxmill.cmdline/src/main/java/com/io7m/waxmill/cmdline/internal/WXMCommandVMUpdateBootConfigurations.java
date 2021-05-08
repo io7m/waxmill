@@ -32,6 +32,10 @@ import java.util.UUID;
 import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-update-boot-configurations" command.
+ */
+
 @Parameters(commandDescription = "Add/replace boot configurations in a virtual machine.")
 public final class WXMCommandVMUpdateBootConfigurations
   extends WXMAbstractCommandWithConfiguration

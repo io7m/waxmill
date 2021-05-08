@@ -51,6 +51,10 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
+/**
+ * The boot configuration executor.
+ */
+
 public final class WXMBootConfigurationExecutor
   implements WXMBootConfigurationExecutorType
 {
@@ -81,6 +85,17 @@ public final class WXMBootConfigurationExecutor
     this.bootConfiguration =
       Objects.requireNonNull(inBootConfiguration, "bootConfiguration");
   }
+
+  /**
+   * The boot configuration executor.
+   *
+   * @param inProcesses           The process provider
+   * @param inClientConfiguration The client configuration
+   * @param inMachine             The virtual machine
+   * @param inBootConfiguration   The boot configuration
+   *
+   * @return A boot executor
+   */
 
   public static WXMBootConfigurationExecutorType create(
     final WXMProcessesType inProcesses,

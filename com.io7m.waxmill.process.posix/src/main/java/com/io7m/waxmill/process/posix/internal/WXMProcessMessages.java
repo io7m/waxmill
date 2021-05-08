@@ -20,6 +20,10 @@ import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
 import java.util.ResourceBundle;
 
+/**
+ * Process string resources.
+ */
+
 public final class WXMProcessMessages extends WXMAbstractStrings
 {
   private WXMProcessMessages(
@@ -27,6 +31,10 @@ public final class WXMProcessMessages extends WXMAbstractStrings
   {
     super(inResources);
   }
+
+  /**
+   * @return The process string resources
+   */
 
   public static WXMProcessMessages create()
   {

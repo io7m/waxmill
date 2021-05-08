@@ -50,6 +50,10 @@ import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
 import static com.io7m.waxmill.machines.WXMTTYBackends.NMDMSide.NMDM_HOST;
 
+/**
+ * The default client implementation.
+ */
+
 public final class WXMClient implements WXMClientType
 {
   private static final Logger LOG = LoggerFactory.getLogger(WXMClient.class);
@@ -57,6 +61,14 @@ public final class WXMClient implements WXMClientType
   private final WXMClientConfiguration configuration;
   private final WXMVirtualMachineDatabaseType database;
   private final WXMProcessesType processes;
+
+  /**
+   * The default client implementation.
+   *
+   * @param inConfiguration The client configuration
+   * @param inDatabase      The database
+   * @param inProcesses     The process provider
+   */
 
   public WXMClient(
     final WXMClientConfiguration inConfiguration,

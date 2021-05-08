@@ -22,9 +22,17 @@ import org.immutables.value.Value;
 
 import java.util.List;
 
+/**
+ * A list of pinned CPUs.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1PinCPUsType
 {
+  /**
+   * @return The list of pinned CPUs.
+   */
+
   List<WXMPinCPU> cpus();
 }

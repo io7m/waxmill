@@ -38,6 +38,10 @@ import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-add-virtio-network-device" command.
+ */
+
 @Parameters(commandDescription = "Add a virtio network device to a virtual machine.")
 public final class WXMCommandVMAddVirtioNetworkDevice
   extends WXMAbstractCommandWithConfiguration

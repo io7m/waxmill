@@ -29,11 +29,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * "GRUBBhyveKernelLinux" parser.
+ */
+
 public final class WXM1GRUBBhyveKernelLinuxParser
   implements BTElementHandlerType<Object, WXMGRUBKernelLinux>
 {
   private final WXMGRUBKernelLinux.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * "GRUBBhyveKernelLinux" parser.
+   *
+   * @param inFileSystem The filesystem
+   */
 
   public WXM1GRUBBhyveKernelLinuxParser(
     final FileSystem inFileSystem)

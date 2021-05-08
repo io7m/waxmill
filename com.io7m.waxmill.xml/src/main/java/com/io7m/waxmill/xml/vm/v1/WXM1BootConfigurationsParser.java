@@ -31,11 +31,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Boot configurations parser.
+ */
+
 public final class WXM1BootConfigurationsParser
   implements BTElementHandlerType<Object, List<WXMBootConfigurationType>>
 {
   private final List<WXMBootConfigurationType> bootConfigurations;
   private final FileSystem fileSystem;
+
+  /**
+   * Boot configurations parser.
+   *
+   * @param inFileSystem The file system
+   */
 
   public WXM1BootConfigurationsParser(
     final FileSystem inFileSystem)

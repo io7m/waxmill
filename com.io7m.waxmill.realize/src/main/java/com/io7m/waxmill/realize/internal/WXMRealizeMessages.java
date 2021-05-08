@@ -20,6 +20,10 @@ import com.io7m.waxmill.strings.api.WXMAbstractStrings;
 
 import java.util.ResourceBundle;
 
+/**
+ * Realization string resources.
+ */
+
 public final class WXMRealizeMessages extends WXMAbstractStrings
 {
   private WXMRealizeMessages(
@@ -27,6 +31,10 @@ public final class WXMRealizeMessages extends WXMAbstractStrings
   {
     super(inResources);
   }
+
+  /**
+   * @return The realization string resources.
+   */
 
   public static WXMRealizeMessages create()
   {

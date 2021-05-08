@@ -29,6 +29,10 @@ import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
 
+/**
+ * The "vm-kill" command.
+ */
+
 @Parameters(commandDescription = "Kill a virtual machine.")
 public final class WXMCommandVMKill extends WXMAbstractCommandWithConfiguration
 {

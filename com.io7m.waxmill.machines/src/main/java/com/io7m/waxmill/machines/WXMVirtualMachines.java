@@ -60,6 +60,19 @@ public final class WXMVirtualMachines
     return Set.copyOf(referencing);
   }
 
+  /**
+   * Update the virtual machine with the given device.
+   *
+   * @param messages The string resources
+   * @param machine  The input machine
+   * @param device   The device
+   * @param replace  {@code true} if existing devices should be replaced
+   *
+   * @return A machine with the device added
+   *
+   * @throws WXMExceptionDuplicate If {@code replace} is {@code false} and a device already exists
+   */
+
   public static WXMVirtualMachine updateWithDevice(
     final WXMMachineMessages messages,
     final WXMVirtualMachine machine,

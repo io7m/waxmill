@@ -29,10 +29,18 @@ import java.util.Map;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A VirtIO block storage device parser.
+ */
+
 public final class WXM1VirtioBlockStorageDeviceParser
   implements BTElementHandlerType<Object, WXMDeviceVirtioBlockStorage>
 {
   private final WXMDeviceVirtioBlockStorage.Builder builder;
+
+  /**
+   * A VirtIO block storage device parser.
+   */
 
   public WXM1VirtioBlockStorageDeviceParser()
   {

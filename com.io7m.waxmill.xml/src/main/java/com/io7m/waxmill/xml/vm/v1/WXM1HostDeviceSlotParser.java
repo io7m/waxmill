@@ -22,10 +22,18 @@ import com.io7m.waxmill.machines.WXMDeviceSlot;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * Host device slot parser.
+ */
+
 public final class WXM1HostDeviceSlotParser
   implements BTElementHandlerType<Object, WXM1HostDeviceSlot>
 {
   private final WXMDeviceSlot.Builder builder;
+
+  /**
+   * Host device slot parser.
+   */
 
   public WXM1HostDeviceSlotParser()
   {

@@ -44,6 +44,10 @@ import java.util.function.Consumer;
 import static com.io7m.waxmill.parser.api.WXMParseErrorType.Severity.ERROR;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Virtual machine parser.
+ */
+
 public final class WXMVirtualMachineParser
   implements WXMVirtualMachineParserType
 {
@@ -55,6 +59,16 @@ public final class WXMVirtualMachineParser
   private final FileSystem fileSystem;
   private final Consumer<WXMParseError> errors;
   private final URI source;
+
+  /**
+   * Virtual machine parser.
+   *
+   * @param inFileSystem The file system
+   * @param inErrors     The error consumer
+   * @param inSource     The source URI
+   * @param inStream     The source stream
+   * @param inReader     The source reader
+   */
 
   public WXMVirtualMachineParser(
     final FileSystem inFileSystem,

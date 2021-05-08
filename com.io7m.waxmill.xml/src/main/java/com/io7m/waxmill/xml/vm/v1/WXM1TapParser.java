@@ -32,10 +32,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * TAP device parser.
+ */
+
 public final class WXM1TapParser
   implements BTElementHandlerType<Object, WXMTap>
 {
   private final WXMTap.Builder builder;
+
+  /**
+   * TAP device parser.
+   */
 
   public WXM1TapParser()
   {

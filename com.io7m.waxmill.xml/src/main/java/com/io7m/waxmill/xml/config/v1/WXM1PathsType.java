@@ -24,12 +24,24 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * A set of paths.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1PathsType
 {
+  /**
+   * @return The paths
+   */
+
   @Value.Parameter
   List<WXM1Path> paths();
+
+  /**
+   * @return The paths by type
+   */
 
   @Value.Derived
   default Map<String, WXM1Path> pathMap()

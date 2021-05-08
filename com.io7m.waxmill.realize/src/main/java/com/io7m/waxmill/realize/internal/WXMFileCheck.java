@@ -33,6 +33,10 @@ import java.util.UUID;
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
+/**
+ * A realization step that checks a file exists.
+ */
+
 public final class WXMFileCheck implements WXMRealizationStepType
 {
   private static final Logger LOG =
@@ -42,6 +46,15 @@ public final class WXMFileCheck implements WXMRealizationStepType
   private final WXMDeviceSlot slot;
   private final UUID machineId;
   private final Path file;
+
+  /**
+   * A realization step that checks a file exists.
+   *
+   * @param inMessages  The string resources
+   * @param inSlot      The device slot
+   * @param inMachineId The machine ID
+   * @param inFile      The file
+   */
 
   public WXMFileCheck(
     final WXMRealizeMessages inMessages,

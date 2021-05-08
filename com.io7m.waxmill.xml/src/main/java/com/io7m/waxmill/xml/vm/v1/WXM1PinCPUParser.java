@@ -22,10 +22,18 @@ import com.io7m.waxmill.machines.WXMPinCPU;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Pinned CPU parser.
+ */
+
 public final class WXM1PinCPUParser
   implements BTElementHandlerType<Object, WXMPinCPU>
 {
   private final WXMPinCPU.Builder builder;
+
+  /**
+   * Pinned CPU parser.
+   */
 
   public WXM1PinCPUParser()
   {

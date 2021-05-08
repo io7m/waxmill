@@ -21,12 +21,24 @@ import org.immutables.value.Value;
 
 import java.nio.file.Path;
 
+/**
+ * A configuration path.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1PathType
 {
+  /**
+   * @return The path type
+   */
+
   @Value.Parameter
   String type();
+
+  /**
+   * @return The path
+   */
 
   @Value.Parameter
   Path path();

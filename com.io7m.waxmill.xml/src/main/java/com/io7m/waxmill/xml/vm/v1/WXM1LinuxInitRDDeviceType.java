@@ -22,11 +22,23 @@ import org.immutables.value.Value;
 
 import java.nio.file.Path;
 
+/**
+ * A Linux initrd device.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1LinuxInitRDDeviceType
 {
+  /**
+   * @return The device slot
+   */
+
   WXMDeviceSlot deviceSlot();
+
+  /**
+   * @return The device path
+   */
 
   Path initRDPath();
 }

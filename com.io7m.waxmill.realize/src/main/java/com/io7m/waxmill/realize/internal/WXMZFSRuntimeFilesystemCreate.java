@@ -35,6 +35,10 @@ import java.util.UUID;
 
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 
+/**
+ * A realization step that creates a ZFS volume.
+ */
+
 public final class WXMZFSRuntimeFilesystemCreate
   implements WXMRealizationStepType
 {
@@ -46,6 +50,15 @@ public final class WXMZFSRuntimeFilesystemCreate
   private final WXMClientConfiguration clientConfiguration;
   private final WXMProcessesType processes;
   private List<WXMProcessDescription> processesList;
+
+  /**
+   * A realization step that creates a ZFS volume.
+   *
+   * @param inClientConfiguration The client configuration
+   * @param inMessages            The realization string resources
+   * @param inProcesses           The process provider
+   * @param inMachineId           The machine ID
+   */
 
   public WXMZFSRuntimeFilesystemCreate(
     final WXMClientConfiguration inClientConfiguration,

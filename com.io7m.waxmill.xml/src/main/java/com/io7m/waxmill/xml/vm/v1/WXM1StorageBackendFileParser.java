@@ -31,10 +31,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * File-based storage backend parser.
+ */
+
 public final class WXM1StorageBackendFileParser
   implements BTElementHandlerType<Object, WXMStorageBackendFile>
 {
   private final WXMStorageBackendFile.Builder builder;
+
+  /**
+   * File-based storage backend parser.
+   */
 
   public WXM1StorageBackendFileParser()
   {

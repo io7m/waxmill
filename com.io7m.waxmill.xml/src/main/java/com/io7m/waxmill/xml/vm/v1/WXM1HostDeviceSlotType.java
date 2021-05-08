@@ -20,10 +20,18 @@ import com.io7m.immutables.styles.ImmutablesStyleType;
 import com.io7m.waxmill.machines.WXMDeviceSlot;
 import org.immutables.value.Value;
 
+/**
+ * The host device slot.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1HostDeviceSlotType
 {
+  /**
+   * @return The slot
+   */
+
   @Value.Parameter
   WXMDeviceSlot slot();
 }

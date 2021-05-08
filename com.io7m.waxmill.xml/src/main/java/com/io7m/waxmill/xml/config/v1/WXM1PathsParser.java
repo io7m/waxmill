@@ -27,11 +27,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.config.v1.WXM1CNames.element;
 
+/**
+ * "Paths" parser.
+ */
+
 public final class WXM1PathsParser
   implements BTElementHandlerType<WXM1Path, WXM1Paths>
 {
   private final WXM1Paths.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * "Paths" parser.
+   *
+   * @param inFileSystem The filesystem
+   */
 
   public WXM1PathsParser(
     final FileSystem inFileSystem)

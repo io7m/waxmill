@@ -32,10 +32,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * VMNet parser.
+ */
+
 public final class WXM1VMNetParser
   implements BTElementHandlerType<Object, WXMVMNet>
 {
   private final WXMVMNet.Builder builder;
+
+  /**
+   * VMNet parser.
+   */
 
   public WXM1VMNetParser()
   {

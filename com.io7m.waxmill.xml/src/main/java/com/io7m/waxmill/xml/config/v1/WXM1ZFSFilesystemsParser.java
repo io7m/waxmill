@@ -27,11 +27,21 @@ import java.util.Objects;
 
 import static com.io7m.waxmill.xml.config.v1.WXM1CNames.element;
 
+/**
+ * "ZFSFilesystems" parser.
+ */
+
 public final class WXM1ZFSFilesystemsParser
   implements BTElementHandlerType<WXM1ZFSFilesystem, WXM1ZFSFilesystems>
 {
   private final WXM1ZFSFilesystems.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * "ZFSFilesystems" parser.
+   *
+   * @param inFileSystem The filesystem
+   */
 
   public WXM1ZFSFilesystemsParser(
     final FileSystem inFileSystem)

@@ -43,6 +43,10 @@ import static com.io7m.waxmill.xml.config.v1.WXM1CNames.element;
 import static com.io7m.waxmill.xml.utilities.WXMParserUtilities.publishError;
 import static com.io7m.waxmill.xml.utilities.WXMParserUtilities.safeMessage;
 
+/**
+ * A client configuration parser.
+ */
+
 public final class WXMClientConfigurationParser
   implements WXMClientConfigurationParserType
 {
@@ -54,6 +58,16 @@ public final class WXMClientConfigurationParser
   private final Consumer<WXMParseError> errors;
   private final URI source;
   private final FileSystem fileSystem;
+
+  /**
+   * A client configuration parser.
+   *
+   * @param inFileSystem The filesystem
+   * @param inErrors     The error consumer
+   * @param inSource     The source URI
+   * @param inStream     The source stream
+   * @param inReader     The source XML reader
+   */
 
   public WXMClientConfigurationParser(
     final FileSystem inFileSystem,

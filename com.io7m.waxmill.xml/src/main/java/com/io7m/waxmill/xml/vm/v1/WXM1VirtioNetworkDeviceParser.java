@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A VirtIO network device parser.
+ */
+
 public final class WXM1VirtioNetworkDeviceParser
   implements BTElementHandlerType<Object, WXMDeviceVirtioNetwork>
 {
   private final WXMDeviceVirtioNetwork.Builder builder;
+
+  /**
+   * A VirtIO network device parser.
+   */
 
   public WXM1VirtioNetworkDeviceParser()
   {

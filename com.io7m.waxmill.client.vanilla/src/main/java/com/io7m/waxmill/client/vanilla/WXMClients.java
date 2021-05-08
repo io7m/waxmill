@@ -31,11 +31,24 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.ServiceLoader;
 
+/**
+ * The default client provider.
+ */
+
 public final class WXMClients implements WXMClientProviderType
 {
   private final WXMClientConfigurationParserProviderType clientConfigurationParsers;
   private final WXMVirtualMachineDatabaseProviderType databases;
   private final WXMProcessesType processes;
+
+  /**
+   * The default client provider.
+   *
+   * @param inClientConfigurationParsers     The provider of configuration parsers
+   * @param inClientConfigurationSerializers The provider of configuration serializers
+   * @param inDatabases                      The provider of databases
+   * @param inProcesses                      The provider of processes
+   */
 
   public WXMClients(
     final WXMClientConfigurationParserProviderType inClientConfigurationParsers,
@@ -55,6 +68,10 @@ public final class WXMClients implements WXMClientProviderType
     this.processes =
       Objects.requireNonNull(inProcesses, "inProcesses");
   }
+
+  /**
+   * The default client provider. Dependencies are resolved from {@link ServiceLoader}.
+   */
 
   public WXMClients()
   {

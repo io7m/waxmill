@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Stdio-based TTY backend parser.
+ */
+
 public final class WXM1TTYBackendStdioParser
   implements BTElementHandlerType<Object, WXMTTYBackendStdio>
 {
   private final WXMTTYBackendStdio.Builder builder;
+
+  /**
+   * Stdio-based TTY backend parser.
+   */
 
   public WXM1TTYBackendStdioParser()
   {

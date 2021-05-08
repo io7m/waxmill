@@ -20,12 +20,24 @@ import com.io7m.immutables.styles.ImmutablesStyleType;
 import com.io7m.waxmill.machines.WXMZFSFilesystem;
 import org.immutables.value.Value;
 
+/**
+ * A ZFS filesystem.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1ZFSFilesystemType
 {
+  /**
+   * @return The filesystem type
+   */
+
   @Value.Parameter
   String type();
+
+  /**
+   * @return The filesystem
+   */
 
   @Value.Parameter
   WXMZFSFilesystem filesystem();

@@ -29,6 +29,10 @@ import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
 
+/**
+ * The "vm-realize" command.
+ */
+
 @Parameters(commandDescription = "Realize a virtual machine.")
 public final class WXMCommandVMRealize extends
   WXMAbstractCommandWithConfiguration

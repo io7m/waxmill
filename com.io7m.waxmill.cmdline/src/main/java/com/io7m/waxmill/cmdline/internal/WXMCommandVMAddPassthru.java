@@ -32,6 +32,10 @@ import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-add-passthru-device" command.
+ */
+
 @Parameters(commandDescription = "Add a PCI passthru device to a virtual machine.")
 public final class WXMCommandVMAddPassthru extends
   WXMAbstractCommandWithConfiguration

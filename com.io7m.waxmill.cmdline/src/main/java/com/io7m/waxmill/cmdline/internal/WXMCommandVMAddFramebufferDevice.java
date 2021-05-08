@@ -35,6 +35,10 @@ import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceFramebufferType.WXMVGAConfiguration.IO;
 
+/**
+ * The "vm-add-framebuffer-device" command.
+ */
+
 @Parameters(commandDescription = "Add a framebuffer device to a virtual machine.")
 public final class WXMCommandVMAddFramebufferDevice
   extends WXMAbstractCommandWithConfiguration

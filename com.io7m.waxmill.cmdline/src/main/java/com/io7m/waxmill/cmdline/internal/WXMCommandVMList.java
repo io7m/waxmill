@@ -27,6 +27,10 @@ import java.util.stream.Collectors;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-list" command.
+ */
+
 @Parameters(commandDescription = "List the available virtual machines.")
 public final class WXMCommandVMList extends WXMAbstractCommandWithConfiguration
 {

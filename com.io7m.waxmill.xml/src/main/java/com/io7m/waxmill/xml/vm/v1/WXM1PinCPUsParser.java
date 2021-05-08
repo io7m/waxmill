@@ -27,10 +27,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Pinned CPUs parser.
+ */
+
 public final class WXM1PinCPUsParser
   implements BTElementHandlerType<Object, WXM1PinCPUs>
 {
   private final WXM1PinCPUs.Builder builder;
+
+  /**
+   * Pinned CPUs parser.
+   */
 
   public WXM1PinCPUsParser()
   {

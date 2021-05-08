@@ -19,10 +19,18 @@ package com.io7m.waxmill.xml.vm.v1;
 import com.io7m.blackthorne.api.BTElementHandlerType;
 import com.io7m.blackthorne.api.BTElementParsingContextType;
 
+/**
+ * "Comment" parser.
+ */
+
 public final class WXM1CommentParser
   implements BTElementHandlerType<Object, WXM1Comment>
 {
   private final WXM1Comment.Builder builder;
+
+  /**
+   * "Comment" parser.
+   */
 
   public WXM1CommentParser()
   {

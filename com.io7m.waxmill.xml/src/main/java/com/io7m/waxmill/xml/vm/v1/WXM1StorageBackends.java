@@ -31,12 +31,25 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Functions over storage backends.
+ */
+
 public final class WXM1StorageBackends
 {
   private WXM1StorageBackends()
   {
 
   }
+
+  /**
+   * Serialize a storage backend.
+   *
+   * @param backend The backend
+   * @param writer  An XML writer
+   *
+   * @throws XMLStreamException On errors
+   */
 
   public static void serializeStorageBackend(
     final WXMDeviceType.WXMStorageBackendType backend,

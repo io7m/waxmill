@@ -27,10 +27,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * "Flags" parser.
+ */
+
 public final class WXM1FlagsParser
   implements BTElementHandlerType<WXM1Flag, WXMFlags>
 {
   private final WXMFlags.Builder builder;
+
+  /**
+   * "Flags" parser.
+   */
 
   public WXM1FlagsParser()
   {

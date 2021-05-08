@@ -28,6 +28,10 @@ import java.util.UUID;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-set" command.
+ */
+
 @Parameters(commandDescription = "Set virtual machine configuration flags.")
 public final class WXMCommandVMSet extends WXMAbstractCommandWithConfiguration
 {

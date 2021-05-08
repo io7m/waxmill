@@ -28,10 +28,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * An AHCI optical disk device parser.
+ */
+
 public final class WXM1AHCIOpticalDiskDeviceParser
   implements BTElementHandlerType<Object, WXMDeviceAHCIOpticalDisk>
 {
   private final WXMDeviceAHCIOpticalDisk.Builder builder;
+
+  /**
+   * An AHCI optical disk device parser.
+   */
 
   public WXM1AHCIOpticalDiskDeviceParser()
   {

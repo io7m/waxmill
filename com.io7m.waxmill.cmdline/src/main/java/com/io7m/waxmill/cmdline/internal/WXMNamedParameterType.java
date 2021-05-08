@@ -19,12 +19,26 @@ package com.io7m.waxmill.cmdline.internal;
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import org.immutables.value.Value;
 
+/**
+ * A named parameter.
+ *
+ * @param <T> The type of parameter value
+ */
+
 @ImmutablesStyleType
 @Value.Immutable
 public interface WXMNamedParameterType<T>
 {
+  /**
+   * @return The name
+   */
+
   @Value.Parameter
   String name();
+
+  /**
+   * @return The value
+   */
 
   @Value.Parameter
   T value();

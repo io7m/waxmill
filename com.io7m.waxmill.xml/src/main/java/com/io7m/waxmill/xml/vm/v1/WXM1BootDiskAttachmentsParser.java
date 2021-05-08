@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Boot disk attachments parser.
+ */
+
 public final class WXM1BootDiskAttachmentsParser
   implements BTElementHandlerType<Object, List<WXMBootDiskAttachment>>
 {
   private final List<WXMBootDiskAttachment> attachments;
+
+  /**
+   * Boot disk attachments parser.
+   */
 
   public WXM1BootDiskAttachmentsParser()
   {

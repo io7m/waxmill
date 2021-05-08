@@ -197,10 +197,28 @@ public interface WXMDeviceType
     WXM_XHCI_USB_TABLET
   }
 
+  /**
+   * The names of various TTY devices.
+   */
+
   enum WXMLPCTTYNames
   {
+    /**
+     * "com1"
+     */
+
     WXM_COM1("com1"),
+
+    /**
+     * "com2"
+     */
+
     WXM_COM2("com2"),
+
+    /**
+     * "bootrom"
+     */
+
     WXM_BOOTROM("bootrom");
 
     private final String deviceName;
@@ -211,6 +229,10 @@ public interface WXMDeviceType
       this.deviceName =
         Objects.requireNonNull(inDeviceName, "deviceName");
     }
+
+    /**
+     * @return The device name
+     */
 
     public String deviceName()
     {
@@ -470,12 +492,20 @@ public interface WXMDeviceType
     }
   }
 
+  /**
+   * A host bridge device.
+   */
+
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMDeviceHostBridgeType extends WXMDeviceType
   {
     @Override
     WXMDeviceSlot deviceSlot();
+
+    /**
+     * @return The host bridge vendor
+     */
 
     Vendor vendor();
 
@@ -505,10 +535,31 @@ public interface WXMDeviceType
       }
     }
 
+    /**
+     * The host bridge vendor.
+     */
+
     enum Vendor
     {
+      /**
+       * An unspecified vendor.
+       */
+
       WXM_UNSPECIFIED,
+
+      /**
+       * AMD.
+       */
+
       WXM_AMD;
+
+      /**
+       * @param vendor The name of the vendor
+       *
+       * @return The vendor of the external string
+       *
+       * @see #externalName()
+       */
 
       public static Vendor ofExternalString(
         final String vendor)
@@ -525,6 +576,12 @@ public interface WXMDeviceType
         }
       }
 
+      /**
+       * @return The external name of the vendor
+       *
+       * @see #ofExternalString(String)
+       */
+
       public String externalName()
       {
         switch (this) {
@@ -538,6 +595,10 @@ public interface WXMDeviceType
       }
     }
   }
+
+  /**
+   * A Virtio network device.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -569,8 +630,16 @@ public interface WXMDeviceType
     WXMNetworkDeviceBackendType backend();
   }
 
+  /**
+   * The storage backend.
+   */
+
   interface WXMStorageBackendType
   {
+    /**
+     * @return The backend kind
+     */
+
     Kind kind();
 
     /**
@@ -579,19 +648,49 @@ public interface WXMDeviceType
 
     String comment();
 
+    /**
+     * The kind of storage backend.
+     */
+
     enum Kind
     {
+      /**
+       * The backend is a file.
+       */
+
       WXM_STORAGE_FILE,
+
+      /**
+       * The backend is a ZFS volume.
+       */
+
       WXM_STORAGE_ZFS_VOLUME,
+
+      /**
+       * The backend is a SCSI device.
+       */
+
       WXM_SCSI
     }
   }
+
+  /**
+   * The sector sizes for a device.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMSectorSizesType
   {
+    /**
+     * @return The logical sector size
+     */
+
     BigInteger logical();
+
+    /**
+     * @return The physical sector size
+     */
 
     @Value.Default
     default BigInteger physical()
@@ -599,6 +698,10 @@ public interface WXMDeviceType
       return this.logical();
     }
   }
+
+  /**
+   * A file-based storage backend.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -610,9 +713,21 @@ public interface WXMDeviceType
       return WXM_STORAGE_FILE;
     }
 
+    /**
+     * @return The file path
+     */
+
     Path file();
 
+    /**
+     * @return The file open options
+     */
+
     Set<WXMOpenOption> options();
+
+    /**
+     * @return The sector size specification
+     */
 
     Optional<WXMSectorSizes> sectorSizes();
 
@@ -637,6 +752,10 @@ public interface WXMDeviceType
       );
     }
   }
+
+  /**
+   * A ZFS volume-based storage backend.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -678,6 +797,10 @@ public interface WXMDeviceType
     }
   }
 
+  /**
+   * A Virtio block storage device.
+   */
+
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMDeviceVirtioBlockStorageType extends WXMDeviceType
@@ -704,8 +827,16 @@ public interface WXMDeviceType
       return "virtio-blk";
     }
 
+    /**
+     * @return The storage backend
+     */
+
     WXMStorageBackendType backend();
   }
+
+  /**
+   * An AHCI block storage device.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -733,8 +864,16 @@ public interface WXMDeviceType
       return "ahci-hd";
     }
 
+    /**
+     * @return The storage backend
+     */
+
     WXMStorageBackendType backend();
   }
+
+  /**
+   * An AHCI optical storage device.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -763,21 +902,59 @@ public interface WXMDeviceType
     }
   }
 
+  /**
+   * The type of TTY backends.
+   */
+
   interface WXMTTYBackendType
   {
+    /**
+     * @return The TTY backend kind
+     */
+
     Kind kind();
+
+    /**
+     * @return The comment associated with the backend
+     */
 
     String comment();
 
+    /**
+     * @return The device name
+     */
+
     String device();
+
+    /**
+     * The TTY backend kind.
+     */
 
     enum Kind
     {
+      /**
+       * A file-based TTY backend.
+       */
+
       WXM_FILE,
+
+      /**
+       * An nmdm device backend.
+       */
+
       WXM_NMDM,
+
+      /**
+       * A stdio backend.
+       */
+
       WXM_STDIO
     }
   }
+
+  /**
+   * A file-based TTY backend.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -788,6 +965,10 @@ public interface WXMDeviceType
     {
       return WXM_FILE;
     }
+
+    /**
+     * @return The file path
+     */
 
     Path path();
 
@@ -816,6 +997,10 @@ public interface WXMDeviceType
     }
   }
 
+  /**
+   * An nmdm TTY backend.
+   */
+
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMTTYBackendNMDMType extends WXMTTYBackendType
@@ -837,6 +1022,10 @@ public interface WXMDeviceType
     }
   }
 
+  /**
+   * A stdio TTY backend.
+   */
+
   @ImmutablesStyleType
   @Value.Immutable
   interface WXMTTYBackendStdioType extends WXMTTYBackendType
@@ -857,6 +1046,10 @@ public interface WXMDeviceType
       return "";
     }
   }
+
+  /**
+   * An LPC device.
+   */
 
   @ImmutablesStyleType
   @Value.Immutable
@@ -884,7 +1077,15 @@ public interface WXMDeviceType
       return "lpc";
     }
 
+    /**
+     * @return The list of TTY backends
+     */
+
     List<WXMTTYBackendType> backends();
+
+    /**
+     * @return The map of TTY backends
+     */
 
     @Value.Derived
     @Value.Auxiliary

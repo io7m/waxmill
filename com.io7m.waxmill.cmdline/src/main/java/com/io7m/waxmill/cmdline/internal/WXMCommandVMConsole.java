@@ -31,6 +31,10 @@ import java.util.stream.Collectors;
 import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-console" command.
+ */
+
 @Parameters(commandDescription = "Connect to the console of a virtual machine")
 public final class WXMCommandVMConsole
   extends WXMAbstractCommandWithConfiguration

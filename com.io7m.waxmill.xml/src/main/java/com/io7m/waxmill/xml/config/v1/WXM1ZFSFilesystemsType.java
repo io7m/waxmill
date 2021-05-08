@@ -24,12 +24,24 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * A set of ZFS filesystems.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1ZFSFilesystemsType
 {
+  /**
+   * @return The list of filesystems
+   */
+
   @Value.Parameter
   List<WXM1ZFSFilesystem> filesystems();
+
+  /**
+   * @return The filesystems by type
+   */
 
   @Value.Derived
   default Map<String, WXM1ZFSFilesystem> pathMap()

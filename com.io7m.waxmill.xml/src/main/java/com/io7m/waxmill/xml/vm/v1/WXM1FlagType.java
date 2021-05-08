@@ -19,12 +19,24 @@ package com.io7m.waxmill.xml.vm.v1;
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import org.immutables.value.Value;
 
+/**
+ * A configuration flag.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1FlagType
 {
+  /**
+   * @return The flag name
+   */
+
   @Value.Parameter
   String name();
+
+  /**
+   * @return The flag value
+   */
 
   @Value.Parameter
   boolean value();

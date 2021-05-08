@@ -30,6 +30,10 @@ import java.util.Objects;
 import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
+/**
+ * The "vm-id-of" command.
+ */
+
 @Parameters(commandDescription = "Find the ID of a virtual machine")
 public final class WXMCommandVMIDOf extends WXMAbstractCommandWithConfiguration
 {

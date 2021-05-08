@@ -21,10 +21,18 @@ import com.io7m.blackthorne.api.BTElementParsingContextType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
+/**
+ * "Flag" parser.
+ */
+
 public final class WXM1FlagParser
   implements BTElementHandlerType<Object, WXM1Flag>
 {
   private final WXM1Flag.Builder builder;
+
+  /**
+   * "Flag" parser.
+   */
 
   public WXM1FlagParser()
   {

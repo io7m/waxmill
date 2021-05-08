@@ -21,12 +21,25 @@ import com.io7m.waxmill.xml.WXMSchemas;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+/**
+ * Functions over comments.
+ */
+
 public final class WXM1Comments
 {
   private WXM1Comments()
   {
 
   }
+
+  /**
+   * Serialize a comment.
+   *
+   * @param comment The comment
+   * @param writer  The XML writer
+   *
+   * @throws XMLStreamException On errors
+   */
 
   public static void serializeComment(
     final String comment,

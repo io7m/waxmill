@@ -33,12 +33,26 @@ import java.util.List;
 
 import static com.io7m.waxmill.machines.WXMSide.GUEST;
 
+/**
+ * Functions over boot configurations.
+ */
+
 public final class WXM1BootConfigurations
 {
   private WXM1BootConfigurations()
   {
 
   }
+
+  /**
+   * Serialize boot configurations.
+   *
+   * @param bootConfigurations The boot configurations
+   * @param writer             The XML writer
+   * @param root               {@code true} if this is the root element
+   *
+   * @throws XMLStreamException On errors
+   */
 
   public static void serializeBootConfigurations(
     final List<WXMBootConfigurationType> bootConfigurations,

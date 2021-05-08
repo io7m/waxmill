@@ -31,10 +31,18 @@ import java.util.Map;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMDeviceHostBridgeType.Vendor;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A host bridge parser.
+ */
+
 public final class WXM1HostBridgeParser
   implements BTElementHandlerType<Object, WXMDeviceHostBridge>
 {
   private final WXMDeviceHostBridge.Builder builder;
+
+  /**
+   * A host bridge parser.
+   */
 
   public WXM1HostBridgeParser()
   {

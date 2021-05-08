@@ -22,9 +22,17 @@ import org.immutables.value.Value;
 
 import java.util.List;
 
+/**
+ * A list of open options.
+ */
+
 @Value.Immutable
 @ImmutablesStyleType
 public interface WXM1OpenOptionsType
 {
+  /**
+   * @return A list of open options.
+   */
+
   List<WXMOpenOption> openOptions();
 }

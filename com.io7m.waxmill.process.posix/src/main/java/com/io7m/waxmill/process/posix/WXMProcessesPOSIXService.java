@@ -29,6 +29,10 @@ public final class WXMProcessesPOSIXService implements WXMProcessesType
 {
   private final WXMProcessesType delegate;
 
+  /**
+   * A JNA POSIX implementation of the process creator.
+   */
+
   public WXMProcessesPOSIXService()
   {
     this.delegate = WXMProcessesPOSIX.create();

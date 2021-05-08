@@ -27,6 +27,10 @@ import java.util.Objects;
 import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
 import static com.io7m.waxmill.cmdline.internal.WXMEnvironment.checkConfigurationPath;
 
+/**
+ * The abstract base command.
+ */
+
 public abstract class WXMAbstractCommandWithConfiguration
   extends CLPAbstractCommand
 {

@@ -21,10 +21,18 @@ import com.io7m.blackthorne.api.BTElementParsingContextType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Linux kernel argument parser.
+ */
+
 public final class WXM1LinuxKernelArgumentParser
   implements BTElementHandlerType<Object, String>
 {
   private String argument;
+
+  /**
+   * Linux kernel argument parser.
+   */
 
   public WXM1LinuxKernelArgumentParser()
   {

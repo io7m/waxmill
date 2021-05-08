@@ -22,10 +22,18 @@ import com.io7m.waxmill.machines.WXMInterfaceGroupName;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * Interface group parser.
+ */
+
 public final class WXM1InterfaceGroupParser
   implements BTElementHandlerType<Object, WXMInterfaceGroupName>
 {
   private final WXMInterfaceGroupName.Builder builder;
+
+  /**
+   * Interface group parser.
+   */
 
   public WXM1InterfaceGroupParser()
   {

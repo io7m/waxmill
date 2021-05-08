@@ -21,14 +21,21 @@ import com.io7m.blackthorne.api.BTElementParsingContextType;
 import com.io7m.waxmill.machines.WXMTag;
 import org.xml.sax.Attributes;
 
+/**
+ * A tag parser.
+ */
+
 public final class WXM1TagParser
   implements BTElementHandlerType<Object, WXMTag>
 {
   private WXMTag tag;
 
+  /**
+   * A tag parser.
+   */
+
   public WXM1TagParser()
   {
-
 
   }
 

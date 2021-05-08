@@ -21,11 +21,23 @@ import com.io7m.waxmill.machines.WXMDeviceType;
 import java.nio.file.Path;
 import java.util.Objects;
 
+/**
+ * Device and path pair.
+ */
+
 public final class WXMDeviceAndPath
 {
   private final int index;
   private final WXMDeviceType device;
   private final Path path;
+
+  /**
+   * Device and path pair.
+   *
+   * @param inDevice The device
+   * @param inIndex  The index
+   * @param inPath   The path
+   */
 
   public WXMDeviceAndPath(
     final int inIndex,
@@ -40,15 +52,27 @@ public final class WXMDeviceAndPath
       Objects.requireNonNull(inPath, "path");
   }
 
+  /**
+   * @return The device index
+   */
+
   public int index()
   {
     return this.index;
   }
 
+  /**
+   * @return The device
+   */
+
   public WXMDeviceType device()
   {
     return this.device;
   }
+
+  /**
+   * @return The device path
+   */
 
   public Path path()
   {
@@ -59,7 +83,7 @@ public final class WXMDeviceAndPath
   public String toString()
   {
     return String.format(
-      "[WXMGRUBDeviceAndPath 0x%s]",
+      "[WXMDeviceAndPath 0x%s]",
       Long.toUnsignedString(System.identityHashCode(this), 16)
     );
   }

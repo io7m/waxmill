@@ -30,6 +30,10 @@ import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 import static com.io7m.waxmill.machines.WXMDryRun.DRY_RUN;
 import static com.io7m.waxmill.machines.WXMDryRun.EXECUTE;
 
+/**
+ * The "vm-run" command.
+ */
+
 @Parameters(commandDescription = "Run a virtual machine.")
 public final class WXMCommandVMRun extends WXMAbstractCommandWithConfiguration
 {

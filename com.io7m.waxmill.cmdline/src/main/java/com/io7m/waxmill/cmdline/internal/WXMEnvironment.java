@@ -20,12 +20,20 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
+/**
+ * Environment variable handling.
+ */
+
 public final class WXMEnvironment
 {
   private WXMEnvironment()
   {
 
   }
+
+  /**
+   * @return The configuration file path
+   */
 
   public static Path configurationFile()
   {
@@ -35,6 +43,15 @@ public final class WXMEnvironment
     }
     return null;
   }
+
+  /**
+   * Check a configuration file is specified.
+   *
+   * @param logger            The logger
+   * @param configurationFile The configuration path
+   *
+   * @return {@code true} if everything is specified correctly
+   */
 
   public static boolean checkConfigurationPath(
     final Logger logger,

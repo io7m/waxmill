@@ -29,14 +29,35 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Functions over network backend arguments.
+ */
+
 public final class WXMNetworkBackendArguments
 {
   private final WXMMessages messages;
+
+  /**
+   * Functions over network backend arguments.
+   */
 
   public WXMNetworkBackendArguments()
   {
     this.messages = WXMMessages.create();
   }
+
+  /**
+   * Parse arguments.
+   *
+   * @param type       The named type parameter
+   * @param comment    The comment
+   * @param deviceName The device name
+   * @param hostMAC    The host MAC
+   * @param guestMAC   The guest MAC
+   * @param groups     The interface groups
+   *
+   * @return A device backend
+   */
 
   public WXMNetworkDeviceBackendType parse(
     final WXMNamedParameter<WXMNetworkDeviceBackendType.Kind> type,

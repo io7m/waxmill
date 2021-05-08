@@ -29,10 +29,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * Device list parser.
+ */
+
 public final class WXM1DevicesParser
   implements BTElementHandlerType<Object, List<WXMDeviceType>>
 {
   private final List<WXMDeviceType> devices;
+
+  /**
+   * Device list parser.
+   */
 
   public WXM1DevicesParser()
   {

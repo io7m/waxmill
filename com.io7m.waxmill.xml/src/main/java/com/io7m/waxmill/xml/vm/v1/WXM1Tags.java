@@ -21,9 +21,19 @@ import com.io7m.waxmill.machines.WXMTag;
 import java.util.Objects;
 import java.util.SortedSet;
 
+/**
+ * A set of tags.
+ */
+
 public final class WXM1Tags
 {
   private final SortedSet<WXMTag> tags;
+
+  /**
+   * A set of tags.
+   *
+   * @param inTags The tags
+   */
 
   public WXM1Tags(
     final SortedSet<WXMTag> inTags)
@@ -31,6 +41,10 @@ public final class WXM1Tags
     this.tags =
       Objects.requireNonNull(inTags, "tags");
   }
+
+  /**
+   * @return The tags
+   */
 
   public SortedSet<WXMTag> tags()
   {

@@ -30,10 +30,18 @@ import java.util.Map;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * File-based TTY backend parser.
+ */
+
 public final class WXM1TTYBackendFileParser
   implements BTElementHandlerType<Object, WXMTTYBackendFile>
 {
   private final WXMTTYBackendFile.Builder builder;
+
+  /**
+   * File-based TTY backend parser.
+   */
 
   public WXM1TTYBackendFileParser()
   {

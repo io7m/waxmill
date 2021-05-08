@@ -33,6 +33,10 @@ import java.util.UUID;
 
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * A parser for a set of virtual machines.
+ */
+
 public final class WXM1VirtualMachineSetParser
   implements BTElementHandlerType<Object, WXMVirtualMachineSet>
 {
@@ -40,6 +44,13 @@ public final class WXM1VirtualMachineSetParser
   private final TreeMap<UUID, WXMVirtualMachine> machines;
   private final FileSystem fileSystem;
   private final URI sourceURI;
+
+  /**
+   * A virtual machine set parser.
+   *
+   * @param inFileSystem The file system
+   * @param inSourceURI  The source URI
+   */
 
   public WXM1VirtualMachineSetParser(
     final FileSystem inFileSystem,

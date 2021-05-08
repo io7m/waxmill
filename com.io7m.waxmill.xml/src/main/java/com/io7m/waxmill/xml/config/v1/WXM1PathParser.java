@@ -24,11 +24,21 @@ import org.xml.sax.SAXException;
 import java.nio.file.FileSystem;
 import java.util.Objects;
 
+/**
+ * "Path" parser.
+ */
+
 public final class WXM1PathParser
   implements BTElementHandlerType<Object, WXM1Path>
 {
   private final WXM1Path.Builder builder;
   private final FileSystem fileSystem;
+
+  /**
+   * "Path" parser.
+   *
+   * @param inFileSystem The filesystem
+   */
 
   public WXM1PathParser(
     final FileSystem inFileSystem)

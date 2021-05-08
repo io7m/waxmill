@@ -29,10 +29,18 @@ import java.util.Map;
 import static com.io7m.waxmill.machines.WXMDeviceType.WXMStorageBackendType;
 import static com.io7m.waxmill.xml.vm.v1.WXM1Names.element;
 
+/**
+ * An AHCI disk device parser.
+ */
+
 public final class WXM1AHCIDiskDeviceParser
   implements BTElementHandlerType<Object, WXMDeviceAHCIDisk>
 {
   private final WXMDeviceAHCIDisk.Builder builder;
+
+  /**
+   * An AHCI disk device parser.
+   */
 
   public WXM1AHCIDiskDeviceParser()
   {
