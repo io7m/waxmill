@@ -346,4 +346,16 @@
     <Bug pattern="EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS"/>
   </Match>
 
+  <Match>
+    <Or>
+      <Class name="com.io7m.waxmill.strings.api.WXMAbstractStrings"/>
+      <Class name="com.io7m.waxmill.boot.internal.WXMDeviceMap"/>
+      <Class name="com.io7m.waxmill.realize.WXMRealizationInstructions"/>
+      <Class name="com.io7m.waxmill.realize.internal.WXMZFSVolumeCheck"/>
+      <Class name="com.io7m.waxmill.parser.api.WXMParseException"/>
+      <Class name="com.io7m.waxmill.xml.config.v1.WXM1Paths"/>
+    </Or>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+
 </FindBugsFilter>
