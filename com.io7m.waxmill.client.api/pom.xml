@@ -16,7 +16,7 @@
 
   <description>FreeBSD BHyve Manager (Client API)</description>
   <name>com.io7m.waxmill.client.api</name>
-  <url>https://www.github.com/io7m/waxmill</url>
+  <url>https://www.io7m.com/software/waxmill</url>
 
   <dependencies>
     <dependency>
