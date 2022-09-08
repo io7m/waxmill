@@ -7,7 +7,7 @@
     <li>Designed to run virtual machines under process supervision.</li>
     <li>Rich command-line interface with extensive correctness checking and detailed usage and error messages.</li>
     <li>Extensive documentation.</li>
-    <li><a href="https://www.osgi.org/">OSGi</a>-ready.</li>
+    <li><a href="https://www.osgi.org/">OSGi</a>-ready</li>
     <li><a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">JPMS</a>-ready</li>
     <li>High coverage automated test suite</li>
     <li>ISC license</li>
