@@ -41,7 +41,7 @@
   </modules>
 
   <properties>
-    <com.io7m.xstructural.version>1.6.0</com.io7m.xstructural.version>
+    <com.io7m.xstructural.version>1.7.1</com.io7m.xstructural.version>
     <io7m.api.previousVersion>0.0.1-SNAPSHOT</io7m.api.previousVersion>
     <junit.version>5.8.2</junit.version>
     <org.immutables.version>2.9.0</org.immutables.version>
