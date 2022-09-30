@@ -2,7 +2,7 @@ waxmill
 ===
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.io7m.waxmill/com.io7m.waxmill.svg?style=flat-square)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.waxmill%22)
-[![Maven Central (snapshot)](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.io7m.waxmill/com.io7m.waxmill.svg?style=flat-square)](https://oss.sonatype.org/content/repositories/snapshots/com/io7m/waxmill/)
+[![Maven Central (snapshot)](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.io7m.waxmill/com.io7m.waxmill.svg?style=flat-square)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/io7m/waxmill/)
 [![Codecov](https://img.shields.io/codecov/c/github/io7m/waxmill.svg?style=flat-square)](https://codecov.io/gh/io7m/waxmill)
 
 ![waxmill](./src/site/resources/waxmill.jpg?raw=true)
